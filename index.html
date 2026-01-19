@@ -483,6 +483,11 @@ function showLoading() { loadingOverlay.style.display = 'flex'; }
 
 function hideLoading() { loadingOverlay.style.display = 'none'; }
 
+async function yieldToBrowser() {
+    await new Promise(r => setTimeout(r, 0)); // OLD
+    // if (!document.hidden) await new Promise(r => setTimeout(r, 0));
+}
+
 async function updateLoadingProgress(startPercent, endPercent, currentStep, totalSteps) {
     if (totalSteps <= 0) totalSteps = 1;
 
@@ -494,8 +499,7 @@ async function updateLoadingProgress(startPercent, endPercent, currentStep, tota
 
     //console.log(`Progress: ${totalPercent.toFixed(2)}% | Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`); // debug
 
-    // Yield to browser for repainting
-    await new Promise(r => setTimeout(r, 0));
+    await yieldToBrowser();
 }
 
 async function loadCsv(input) {
@@ -536,7 +540,7 @@ async function loadCsv(input) {
 
             // Yield to browser occasionally to keep UI responsive
             if (rowsProcessed % THROTTLE === 0) {
-                await new Promise(r => setTimeout(r, 0));
+                await yieldToBrowser();
             }
         },
         complete: async function () {
@@ -548,27 +552,35 @@ async function loadCsv(input) {
                 await updateLoadingProgress(0, 0, 0, 1);
                 return;
             }
-
-
-            // Build columns: first column for images (if not stripped), rest from CSV headers
-            const columns = [
-                {
-                    title: '🖼',
-                    data: null,
-                    orderable: false,
-                    searchable: false,
-                    render: () => `<button class="btn view-images">View</button>`
-                },
-                ...Object.keys(parsedData[0]).map(key => ({
-                    title: key,
-                    data: key,
-                    render: renderCellValue
-                }))
-            ];
-
+            
+            const columns = buildColumnsFromData(parsedData);
             await buildDataTable(parsedData, columns);
         }
     });
+}
+
+function buildColumnsFromData(parsedData) {
+    if (!parsedData || !parsedData.length) return [];
+
+    const keys = Object.keys(parsedData[0]);
+    const columns = keys.map(key => ({
+        title: key,
+        data: key,
+        render: renderCellValue
+    }));
+
+    // Only add the image button column if "location" exists
+    if (keys.includes('location')) {
+        columns.unshift({
+            title: '🖼',
+            data: null,
+            orderable: false,
+            searchable: false,
+            render: () => `<button class="btn view-images">View</button>`
+        });
+    }
+
+    return columns;
 }
 
 async function buildDataTable(data, columns) {
@@ -643,7 +655,7 @@ async function insertRowsInChunks(data, columns, tbody) {
         tbody[0].appendChild(fragment);
 
         await updateLoadingProgress(30, 60, Math.min(start + CHUNK_SIZE, data.length), data.length);
-        await new Promise(r => setTimeout(r, 0)); // yield
+        await yieldToBrowser();
     }
 }
 
@@ -756,7 +768,7 @@ async function buildColumnFilters(api) {
 
 
         await updateLoadingProgress(60, 90, colIdx + 1, api.columns().count());
-        await new Promise(r => setTimeout(r, 0));
+        await yieldToBrowser();
     }
 }
 
