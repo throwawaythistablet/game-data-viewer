@@ -525,15 +525,15 @@ async function loadCsv(input) {
 
     const { file, totalSize } = await prepareFile(input);
 
-    const filters = await loadFilters();
-    const preFilter = filters && Object.keys(filters).length > 0
-        ? await buildPrefilterUi(filters)
+    const loadedPreFilters = await loadPreFilters();
+    const builtPreFilters = loadedPreFilters && Object.keys(loadedPreFilters).length > 0
+        ? await buildPrefilterUi(loadedPreFilters)
         : {};
 
     await updateLoadingProgress(0, 0, 0, 1);
     showLoading();
 
-    const parsedData = await parseCsv(file, totalSize, preFilter);
+    const parsedData = await parseCsv(file, totalSize, builtPreFilters);
 
     if (!parsedData.length) {
         hideLoading();
@@ -558,7 +558,7 @@ async function prepareFile(input) {
     return { file, totalSize };
 }
 
-async function loadFilters() {
+async function loadPreFilters() {
     try {
         if (prefilters && Object.keys(prefilters).length) return prefilters;
 
@@ -569,7 +569,6 @@ async function loadFilters() {
                 if (!response.ok) continue;
                 const json = await response.json();
                 prefilters = json;
-                updatePrefilterFilename(url.split('/').pop());
                 return json;
             } catch (err) {
                 console.warn(`Could not fetch ${url}:`, err);
