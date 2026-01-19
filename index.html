@@ -560,7 +560,7 @@ async function loadFilters() {
     try {
         if (prefilters && Object.keys(prefilters).length) return prefilters;
 
-        const urls = ['data/game_prefilters.json', 'game_prefilters.json'];
+        const urls = ['./data/game_prefilters.json', './game_prefilters.json'];
         for (const url of urls) {
             try {
                 const response = await fetch(url);
