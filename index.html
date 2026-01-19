@@ -314,6 +314,22 @@
             background: var(--accent-hover);
         }
 
+        .highlight-cell {
+            display: block;
+            padding: 2px 4px;
+            border-radius: 2px;
+            text-align: center;
+            font-weight: normal;
+            transition: background-color 0.2s, font-weight 0.2s;
+        }
+
+        .highlight-cell.low { font-weight: normal; }
+        .highlight-cell.medium { font-weight: 500; }
+        .highlight-cell.high { font-weight: bold; }
+
+        body.light-mode .highlight-cell { color: black; }
+        body.dark-mode  .highlight-cell { color: white; }
+
         /* =========================================================
            LOADING OVERLAY & PROGRESS
            ========================================================= */
@@ -448,7 +464,7 @@
 <table id="csvTable" class="display"></table>
 
 <div id="loadingOverlay">
-    <div>Processing CSV...</div>
+    <div>Loading CSV...</div>
     <div class="spinner"></div>
     <div id="csvProgressBarContainer">
         <div id="csvProgressBar"></div>
@@ -505,9 +521,31 @@ async function updateLoadingProgress(startPercent, endPercent, currentStep, tota
 async function loadCsv(input) {
     if (!input) return;
 
-    let file;
-    let totalSize;
+    const { file, totalSize } = await prepareFile(input);
 
+    const filters = await loadFilters();
+    const preFilter = filters && Object.keys(filters).length > 0
+        ? await buildPrefilterUi(filters)
+        : {};
+
+    await updateLoadingProgress(0, 0, 0, 1);
+    showLoading();
+
+    const parsedData = await parseCsv(file, totalSize, preFilter);
+
+    if (!parsedData.length) {
+        hideLoading();
+        alert('No rows loaded.');
+        await updateLoadingProgress(0, 0, 0, 1);
+        return;
+    }
+
+    const columns = buildColumnsFromData(parsedData);
+    await buildDataTable(parsedData, columns);
+}
+
+async function prepareFile(input) {
+    let file, totalSize;
     if (typeof input === 'string') {
         file = new Blob([input], { type: 'text/csv' });
         totalSize = file.size;
@@ -515,47 +553,105 @@ async function loadCsv(input) {
         file = input;
         totalSize = input.size;
     }
+    return { file, totalSize };
+}
 
-    await updateLoadingProgress(0, 0, 0, 1);
-    showLoading();
+async function loadFilters() {
+    try {
+        if (prefilters && Object.keys(prefilters).length) return prefilters;
 
+        const urls = ['data/game_prefilters.json', 'game_prefilters.json'];
+        for (const url of urls) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) continue;
+                const json = await response.json();
+                prefilters = json;
+                updatePrefilterFilename(url.split('/').pop());
+                return json;
+            } catch (err) {
+                console.warn(`Could not fetch ${url}:`, err);
+            }
+        }
+
+        prefilters = {};
+        updatePrefilterFilename(null);
+        return {};
+    } catch (err) {
+        console.warn('Prefilters could not be loaded, continuing without prefiltering:', err);
+        return {};
+    }
+}
+
+async function buildPrefilterUi(filters) {
+    try {
+        const normalized = normalizeFilters(filters);
+        const overlay = createOverlay('Select Filters Before Loading CSV');
+        const form = document.createElement('form');
+
+        Object.entries(normalized).forEach(([col, values]) => {
+            form.appendChild(buildFilterSection(col, values));
+        });
+
+        form.appendChild(createSubmitButton('Apply Filters & Load CSV'));
+        overlay.appendChild(form);
+        document.body.appendChild(overlay);
+
+        return new Promise(resolve => handleFormSubmit(form, resolve, overlay));
+    } catch (err) {
+        console.warn('Prefilter UI failed, continuing without prefiltering:', err);
+        return {};
+    }
+}
+
+async function parseCsv(file, totalSize, preFilter) {
     const parsedData = [];
     let rowsProcessed = 0;
-    let bytesProcessed = 0; // approximate bytes processed
-    const THROTTLE = 100; // yield to UI every THROTTLE rows
+    let bytesProcessed = 0;
+    const THROTTLE = 100;
 
-    Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        worker: true, // worker: false, // worker: true, // comment out when debugging // parse in background
-        step: async function (row) {
-            parsedData.push(row.data);
-            rowsProcessed++;
+    return new Promise((resolve, reject) => {
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            worker: true,
+            step: function (row) {
+                // Add row if passes prefilter
+                if (!preFilter || Object.keys(preFilter).length === 0 || rowPassesPreFilter(row.data, preFilter)) {
+                    parsedData.push(row.data);
+                }
 
-            const csvLine = Object.values(row.data).join(',') + '\n';
-            bytesProcessed += new TextEncoder().encode(csvLine).length;
+                rowsProcessed++;
+                bytesProcessed += new TextEncoder().encode(Object.values(row.data).join(',') + '\n').length;
 
-            await updateLoadingProgress(0, 30, bytesProcessed, totalSize);
-
-
-            // Yield to browser occasionally to keep UI responsive
-            if (rowsProcessed % THROTTLE === 0) {
-                await yieldToBrowser();
+                // Throttle progress updates
+                if (rowsProcessed % THROTTLE === 0) {
+                    updateLoadingProgress(0, 30, bytesProcessed, totalSize);
+                }
+            },
+            complete: function () {
+                updateLoadingProgress(0, 30, totalSize, totalSize);
+                resolve(parsedData);
+            },
+            error: function(err) {
+                reject(err);
             }
-        },
-        complete: async function () {
-            await updateLoadingProgress(30, 30, 1, 1);
+        });
+    });
+}
 
-            if (!parsedData.length) {
-                hideLoading();
-                alert('The CSV file appears to be empty.');
-                await updateLoadingProgress(0, 0, 0, 1);
-                return;
-            }
-            
-            const columns = buildColumnsFromData(parsedData);
-            await buildDataTable(parsedData, columns);
+function rowPassesPreFilter(row, preFilter) {
+    return Object.entries(preFilter).every(([col, allowedValues]) => {
+        const rawVal = row[col];
+        const val = rawVal != null ? String(rawVal).trim() : '';
+
+        // Empty or invalid allowedValues or empty string → allow all
+        if (!Array.isArray(allowedValues) || allowedValues.length === 0 || val === "") {
+            return true;
         }
+
+        // Check if value is allowed
+        return allowedValues.includes(val);
     });
 }
 
@@ -566,17 +662,19 @@ function buildColumnsFromData(parsedData) {
     const columns = keys.map(key => ({
         title: key,
         data: key,
-        render: renderCellValue
+        render: (data, type, row, meta) => renderCellValue(data, key)
     }));
 
-    // Only add the image button column if "location" exists
+    // Add the "View Images" column if "location" exists
     if (keys.includes('location')) {
         columns.unshift({
-            title: '🖼',
-            data: null,
+            title: 'View Images',
+            data: '__view_images__', // reserved key
             orderable: false,
             searchable: false,
-            render: () => `<button class="btn view-images">View</button>`
+            render: (data, type, row, meta) => {
+                return `<button class="btn view-images">View</button>`;
+            }
         });
     }
 
@@ -600,9 +698,14 @@ async function buildDataTable(data, columns) {
 }
 
 function destroyExistingTable() {
-    if ($.fn.DataTable.isDataTable(tableElement)) {
-        tableElement.DataTable().destroy();
-        tableElement.empty();
+    try {
+        if ($.fn.DataTable.isDataTable(tableElement)) {
+            tableElement.DataTable().destroy();
+        }
+    } catch (e) {
+        console.warn('Failed to destroy existing DataTable:', e);
+    } finally {
+        tableElement.empty(); // clear old header/body safely
     }
 }
 
@@ -640,11 +743,11 @@ async function insertRowsInChunks(data, columns, tbody) {
             columns.forEach(col => {
                 const td = document.createElement('td');
 
-
-                if (col.data !== null) {
-                    td.innerHTML = renderCellValue(rowData[col.data]);
+                if (col.data === '__view_images__') {
+                    td.innerHTML = `<button class="btn view-images">View</button>`;
+                } else {
+                    td.innerHTML = renderCellValue(rowData[col.data], col.data);
                 }
-
 
                 tr.appendChild(td);
             });
@@ -674,21 +777,6 @@ function initializeDataTable(columns) {
             autoWidth: false,
             orderCellsTop: true,
 
-            headerCallback: function (thead) {
-                $(thead).find('th').each(function (index) {
-                    const th = $(this);
-
-                    if (!th.find('.sort-asc').length) {
-                        const title = th.text().trim();
-                        th.html(`
-                            ${title}
-                            <button class="sort-asc btn" data-col="${index}">↑</button>
-                            <button class="sort-desc btn" data-col="${index}">↓</button>
-                        `);
-                    }
-                });
-            },
-
             initComplete: async function () {
                 const api = this.api();
 
@@ -701,11 +789,15 @@ function initializeDataTable(columns) {
     });
 }
 
+
 async function buildColumnFilters(api) {
-    for (let colIdx = 0; colIdx < api.columns().count(); colIdx++) {
+    const colCount = api.columns().count();
+
+    for (let colIdx = 0; colIdx < colCount; colIdx++) {
         const column = api.column(colIdx);
         const cell = $('.filters th').eq(colIdx);
 
+        // Collect unique values
         const values = new Set();
         column.data().each(val => {
             const clean = $('<div>').html(val).text().trim();
@@ -717,13 +809,9 @@ async function buildColumnFilters(api) {
         if (sorted.length <= 20) {
             const box = $('<div class="filter-box"></div>').appendTo(cell);
 
-            // Add "Uncheck All" checkbox at the top
-            box.append(`
-                <label>
-                    <input type="checkbox" class="uncheck-all">
-                    Uncheck All
-                </label>
-            `);
+            // Add "Select All / Uncheck All" checkbox at the top
+            const selectAll = $(`<label><input type="checkbox" class="select-all" checked> Toggle All</label>`);
+            box.append(selectAll);
 
             sorted.forEach(v => {
                 box.append(`
@@ -734,21 +822,24 @@ async function buildColumnFilters(api) {
                 `);
             });
 
-            // Event: Uncheck All
-            box.on('change', '.uncheck-all', function () {
+            // Event: toggle all checkboxes
+            box.on('change', '.select-all', function () {
                 const checked = $(this).is(':checked');
-                // If checked, uncheck all other checkboxes
-                box.find('input[type="checkbox"]').not(this).prop('checked', !checked).trigger('change');
+                box.find('input[type="checkbox"]').not(this).prop('checked', checked).trigger('change');
             });
 
-            // Event: regular checkboxes
-            box.on('change', 'input:not(.uncheck-all)', function () {
-                const checkedVals = box.find('input[type="checkbox"]:not(.uncheck-all):checked')
+            // Event: individual checkboxes
+            box.on('change', 'input:not(.select-all)', function () {
+                const checkedVals = box.find('input[type="checkbox"]:not(.select-all):checked')
                     .map((_, el) => $(el).val())
                     .get();
 
-                if (checkedVals.length === 0) {
-                    column.search('a^', true, false).draw();
+                // Update "Select All" checkbox based on individual checkboxes
+                selectAll.find('input').prop('checked', checkedVals.length === sorted.length);
+
+                // Apply filtering
+                if (checkedVals.length === 0 || checkedVals.length === sorted.length) {
+                    column.search('').draw(); // show all if nothing or all selected
                     return;
                 }
 
@@ -766,8 +857,7 @@ async function buildColumnFilters(api) {
                 });
         }
 
-
-        await updateLoadingProgress(60, 90, colIdx + 1, api.columns().count());
+        await updateLoadingProgress(60, 90, colIdx + 1, colCount);
         await yieldToBrowser();
     }
 }
@@ -806,13 +896,23 @@ async function addSortingButtons(api, dt) {
     }
 }
 
-function renderCellValue(val) {
+const HIGHLIGHT_COLUMNS = {
+    user_rating: { min: 0, max: 100 },
+    bayesian_rating: { min: 2, max: 5 },
+    site_rating: { min: 1, max: 5 }
+};
+
+function renderCellValue(val, colName = null) {
     if (typeof val !== 'string') return val;
 
     const text = val.trim();
 
-    const toFileUrl = path =>
-        path.startsWith('http') ? path : 'file:///' + path.replace(/\\/g, '/');
+    const toFileUrl = path => {
+        if (path.startsWith('http')) return path;
+        let urlPath = path.replace(/\\/g, '/');
+        if (!urlPath.startsWith('/')) urlPath = '/' + urlPath;
+        return 'file:///' + urlPath;
+    };
 
     // Excel-style HYPERLINK formula
     const hyperlinkMatch = text.match(/^=HYPERLINK\("([^"]+)",\s*"([^"]+)"\)$/i);
@@ -827,7 +927,129 @@ function renderCellValue(val) {
     // Local Windows path
     if (/^[a-zA-Z]:\\/.test(text)) return `<a href="${toFileUrl(text)}" target="_blank">${text}</a>`;
 
-    return val;
+    // Column-specific highlighting
+    if (colName && HIGHLIGHT_COLUMNS[colName]) {
+        const { min, max } = HIGHLIGHT_COLUMNS[colName];
+        return highlightValue(text, min, max);
+    }
+
+    return text;
+}
+
+function highlightValue(val, min, max) {
+    const num = parseFloat(val);
+    if (isNaN(num)) return val;
+
+    // Compute intensity 0 → 1
+    const intensity = Math.max(0, Math.min(1, (num - min) / (max - min)));
+
+    const isLightMode = document.body.classList.contains('light-theme');
+
+    // --- Four fixed extremes ---
+    let low, high;
+    if (isLightMode) {
+        // Light mode: black text, red → green
+        low  = { h: 0,   s: 70, l: 80 };  // light red
+        high = { h: 120, s: 70, l: 80 };  // light green (readable on black)
+    } else {
+        // Dark mode: white text, red → green
+        low  = { h: 0,   s: 70, l: 20 };  // dark red
+        high = { h: 120, s: 70, l: 20 };  // dark green (readable on white)
+    }
+
+    // Interpolate HSL between low and high
+    const hue = Math.round(low.h + (high.h - low.h) * intensity);
+    const saturation = Math.round(low.s + (high.s - low.s) * intensity);
+    const lightness = Math.round(low.l + (high.l - low.l) * intensity);
+    const bgColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    const textColor = isLightMode ? '#000000' : '#ffffff';
+    const weightClass = intensity > 0.7 ? 'high' : intensity > 0.4 ? 'medium' : 'low';
+    return `<span class="highlight-cell ${weightClass}" style="background-color:${bgColor}; color:${textColor}">${val}</span>`;
+}
+
+function normalizeFilters(filters) {
+    const normalized = {};
+    Object.entries(filters).forEach(([col, values]) => {
+        normalized[col] = Array.isArray(values)
+            ? values.map(v => String(v).trim()).filter(v => v !== '')
+            : [];
+    });
+    return normalized;
+}
+
+function createOverlay(title) {
+    const overlay = document.createElement('div');
+    overlay.id = 'prefilterOverlay';
+    Object.assign(overlay.style, {
+        position: 'fixed',
+        inset: '0',
+        background: 'rgba(0,0,0,0.9)',
+        color: 'white',
+        zIndex: '3000',
+        padding: '20px',
+        overflowY: 'auto'
+    });
+    overlay.innerHTML = `<h2>${title}</h2>`;
+    return overlay;
+}
+
+function buildFilterSection(col, values) {
+    const section = document.createElement('div');
+    section.style.marginBottom = '16px';
+    section.innerHTML = `<strong>${col}</strong>`;
+
+    if (!values.length || values.length > 30) {
+        section.appendChild(createTextInput(col));
+    } else {
+        values.forEach(v => section.appendChild(createCheckbox(col, v)));
+    }
+
+    return section;
+}
+
+function createTextInput(name, placeholder = null) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = name;
+    input.placeholder = placeholder || `Filter ${name}...`;
+    input.style.width = '100%';
+    return input;
+}
+
+function createCheckbox(name, value) {
+    const label = document.createElement('label');
+    label.style.display = 'block';
+    label.style.marginLeft = '10px';
+    label.innerHTML = `<input type="checkbox" name="${name}" value="${value}" checked> ${value}`;
+    return label;
+}
+
+function createSubmitButton(label = 'Submit') {
+    const btn = document.createElement('button');
+    btn.type = 'submit';
+    btn.textContent = label;
+    btn.className = 'btn';
+    btn.style.marginTop = '10px';
+    return btn;
+}
+
+function handleFormSubmit(form, resolve, overlay) {
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const preFilter = {};
+
+        // Collect values from form inputs
+        new FormData(form).forEach((value, key) => {
+            value = String(value).trim();
+            if (!value) return; // skip empty inputs
+
+            if (!preFilter[key]) preFilter[key] = [];
+            preFilter[key].push(value);
+        });
+
+        overlay.remove();
+        resolve(preFilter);
+    });
 }
 
 function loadAndUpdateTheme() {
@@ -853,19 +1075,22 @@ resetFiltersBtn.addEventListener('click', () => {
 
     const dt = tableElement.DataTable();
 
-    // 1. Reset column searches
+    // Reset column searches
     dt.columns().every(function() {
-        this.search('').draw();
+        this.search('');
     });
 
-    // 2. Reset checkboxes
+    // Reset checkboxes
     $('.filter-box input[type="checkbox"]').prop('checked', true);
 
-    // 3. Reset text inputs
+    // Reset text inputs
     $('.filter-text').val('');
 
-    // 4. Reset sorting to default (original order)
-    dt.order([]).draw();
+    // Reset column order
+    if (dt.colReorder) dt.colReorder.reset();
+
+    // Reset sorting
+    dt.order([]).draw(); // only one redraw here
 });
 
 // Theme toggle button
