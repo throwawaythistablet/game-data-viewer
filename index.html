@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Table from CSV</title>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.6.2/css/colReorder.dataTables.min.css">
+
+    <style>
+
+        /* =========================================================
+           THEME VARIABLES
+           ========================================================= */
+        :root {
+            --bg-main: #121212;
+            --bg-panel: #1e1e1e;
+            --bg-elevated: #252525;
+            --bg-hover: #2f2f2f;
+
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+
+            --border-subtle: #333;
+            --border-strong: #444;
+
+            --accent: #4dabf7;
+            --accent-hover: #339af0;
+
+            --danger: #ff6b6b;
+        }
+
+        body.light-theme {
+            --bg-main: #f8f9fa;
+            --bg-panel: #ffffff;
+            --bg-elevated: #f1f3f5;
+            --bg-hover: #e9ecef;
+
+            --text-main: #212529;
+            --text-muted: #6c757d;
+
+            --border-subtle: #ced4da;
+            --border-strong: #adb5bd;
+
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+        }
+
+        /* =========================================================
+           BASE LAYOUT
+           ========================================================= */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        table {
+            width: 100%;
+            background: var(--bg-panel);
+            color: var(--text-main);
+        }
+
+        /* =========================================================
+           CONTROLS / TOOLBAR
+           ========================================================= */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--bg-panel);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Top bar: Title and Main Actions */
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .controls-title {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+        }
+
+        .controls-main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: stretch;
+            transition:
+                max-height 0.22s ease,
+                opacity 0.18s ease,
+                transform 0.18s ease;
+            overflow: hidden;
+        }
+
+        /* Collapsed state (after CSV load) */
+        .controls-main-grid.is-collapsed {
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-4px);
+            pointer-events: none;
+        }
+
+        /* Expanded state (hover or pinned) */
+        .controls-main-grid.is-expanded {
+            max-height: 800px; /* comfortably larger than content */
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Pin button active state remains same */
+        #controlsPinBtn.is-active {
+            background: var(--accent);
+            color: var(--bg-main);
+        }
+
+        @media (max-width: 768px) {
+            .controls-main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Info Cards */
+        .status-card {
+            background: var(--bg-elevated);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .controls-value {
+            text-align: right;
+            max-width: 70%; 
+            color: var(--accent);
+            font-weight: bold;
+            
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .controls-status-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 4px;
+        }
+
+        .controls-status-item:last-child { border: none; }
+
+        /* =========================================================
+           DROP ZONE
+           ========================================================= */
+        #dropZone {
+            background: var(--bg-elevated);
+            border: 2px dashed var(--border-strong);
+            color: var(--text-muted);
+            padding: 16px; 
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%; 
+            box-sizing: border-box; 
+        }
+        
+        #dropZone.dragover {
+            background-color: #162233;
+            color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        
+        #dropZone:hover {
+            transform: scale(1.02);
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--bg-hover);
+        }
+
+        /* =========================================================
+           BUTTONS
+           ========================================================= */
+        .btn {
+            background: var(--accent);
+            color: var(--bg-main);
+            padding: 6px 14px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-main);
+            border: 1px solid var(--border-strong);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Hide default file input */
+        #csvFile {
+            display: none;
+        }
+
+        #fileBtn {
+            margin-right: 0;
+        }
+
+        /* =========================================================
+           TABLE FILTERS
+           ========================================================= */
+        .filters th {
+            vertical-align: top;
+            padding: 4px;
+        }
+
+        /* Checkbox filter */
+        .filter-box {
+            background: var(--bg-elevated);
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 4px;
+            font-size: 12px;
+        }
+
+        .filter-box label {
+            display: block;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-box input {
+            margin-right: 4px;
+        }
+
+        /* Text filter */
+        .filter-text {
+            background: var(--bg-elevated);
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 12px;
+            padding: 4px;
+        }
+
+        /* =========================================================
+           SORTING BUTTONS (TABLE HEADERS)
+           ========================================================= */
+        th .sort-asc,
+        th .sort-desc {
+            font-size: 10px;
+            padding: 2px 4px;
+            margin-left: 4px;
+            border-radius: 3px;
+            background: var(--accent);
+            color: var(--bg-main);
+            cursor: pointer;
+            height: auto;
+            line-height: 1;
+            min-width: 0;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+
+        th .sort-asc:hover,
+        th .sort-desc:hover {
+            background: var(--accent-hover);
+        }
+
+        /* =========================================================
+           LOADING OVERLAY & PROGRESS
+           ========================================================= */
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(0,0,0,0.85);
+            color: var(--accent);
+            font-size: 18px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin-top: 10px;
+            border-radius: 50%;
+            border: 6px solid #eee;
+            border-top: 6px solid var(--accent);
+            animation: spin 0.5s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* Progress bar */
+        #csvProgressBarContainer {
+            width: 80%;
+            margin-top: 15px;
+            background: #333;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #csvProgressBar {
+            width: 0%;
+            height: 20px;
+            background: var(--accent);
+            transition: width 0.1s;
+        }
+
+        #csvProgressText {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        /* =========================================================
+           IMAGE MODAL
+           ========================================================= */
+        #imageModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,0.95);
+            color: white;
+            flex-direction: column;
+        }
+
+        #imageModalHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: #111;
+        }
+
+        #imageModalGrid {
+            flex-grow: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        #imageModalGrid img {
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Fullscreen image preview */
+        #imageOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,0.9);
+            align-items: center;
+            justify-content: center;
+        }
+
+        #imageOverlay img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+    </style>
+
+</head>
+<body>
+
+
+<div class="controls">
+    <div class="controls-header">
+        <h2 class="controls-title">Games Analysis</h2>
+        <div class="btn-group">
+            <button id="themeToggleBtn" class="btn btn-secondary" title="Toggle between light and dark theme">🌙 Dark</button>
+            <button id="resetFiltersBtn" class="btn" title="Reset all filters and sorting to their default state">🔄 Reset Filters</button>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+<table id="csvTable" class="display"></table>
+
+<div id="loadingOverlay">
+    <div>Processing CSV...</div>
+    <div class="spinner"></div>
+    <div id="csvProgressBarContainer">
+        <div id="csvProgressBar"></div>
+        <span id="csvProgressText">0%</span>
+    </div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/colreorder/1.6.2/js/dataTables.colReorder.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+
+
+
+
+<script>
+
+
+const tableElement = $('#csvTable');
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const resetFiltersBtn = document.getElementById('resetFiltersBtn')
+const loadingOverlay = document.getElementById('loadingOverlay');
+const progressBarEl = document.getElementById('csvProgressBar');
+const progressTextEl = document.getElementById('csvProgressText');
+
+
+function showLoading() { loadingOverlay.style.display = 'flex'; }
+
+function hideLoading() { loadingOverlay.style.display = 'none'; }
+
+async function updateLoadingProgress(startPercent, endPercent, currentStep, totalSteps) {
+    if (totalSteps <= 0) totalSteps = 1;
+
+    const fractionOfPhase = currentStep / totalSteps;
+    const totalPercent = startPercent + fractionOfPhase * (endPercent - startPercent);
+
+    progressBarEl.style.width = totalPercent + '%';
+    if (progressTextEl) progressTextEl.textContent = totalPercent.toFixed(2) + '%';
+
+    //console.log(`Progress: ${totalPercent.toFixed(2)}% | Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`); // debug
+
+    // Yield to browser for repainting
+    await new Promise(r => setTimeout(r, 0));
+}
+
+async function loadCsv(input) {
+    if (!input) return;
+
+    let file;
+    let totalSize;
+
+    if (typeof input === 'string') {
+        file = new Blob([input], { type: 'text/csv' });
+        totalSize = file.size;
+    } else {
+        file = input;
+        totalSize = input.size;
+    }
+
+    await updateLoadingProgress(0, 0, 0, 1);
+    showLoading();
+
+    const parsedData = [];
+    let rowsProcessed = 0;
+    let bytesProcessed = 0; // approximate bytes processed
+    const THROTTLE = 100; // yield to UI every THROTTLE rows
+
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        worker: true, // worker: false, // worker: true, // comment out when debugging // parse in background
+        step: async function (row) {
+            parsedData.push(row.data);
+            rowsProcessed++;
+
+            const csvLine = Object.values(row.data).join(',') + '\n';
+            bytesProcessed += new TextEncoder().encode(csvLine).length;
+
+            await updateLoadingProgress(0, 30, bytesProcessed, totalSize);
+
+
+            // Yield to browser occasionally to keep UI responsive
+            if (rowsProcessed % THROTTLE === 0) {
+                await new Promise(r => setTimeout(r, 0));
+            }
+        },
+        complete: async function () {
+            await updateLoadingProgress(30, 30, 1, 1);
+
+            if (!parsedData.length) {
+                hideLoading();
+                alert('The CSV file appears to be empty.');
+                await updateLoadingProgress(0, 0, 0, 1);
+                return;
+            }
+
+
+            // Build columns: first column for images (if not stripped), rest from CSV headers
+            const columns = [
+                {
+                    title: '🖼',
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    render: () => `<button class="btn view-images">View</button>`
+                },
+                ...Object.keys(parsedData[0]).map(key => ({
+                    title: key,
+                    data: key,
+                    render: renderCellValue
+                }))
+            ];
+
+            await buildDataTable(parsedData, columns);
+        }
+    });
+}
+
+async function buildDataTable(data, columns) {
+    showLoading();
+    
+    tableElement.hide();
+    
+    destroyExistingTable();
+    buildTableHeader(columns);
+    const tbody = buildTableBody();
+    await insertRowsInChunks(data, columns, tbody);
+    await initializeDataTable(columns);
+    
+    tableElement.show();
+    await updateLoadingProgress(100, 100, 1, 1);
+    hideLoading();
+}
+
+function destroyExistingTable() {
+    if ($.fn.DataTable.isDataTable(tableElement)) {
+        tableElement.DataTable().destroy();
+        tableElement.empty();
+    }
+}
+
+function buildTableHeader(columns) {
+    const thead = $('<thead>');
+    const headerRow = $('<tr>');
+    const filterRow = $('<tr class="filters">');
+
+    columns.forEach(col => {
+        headerRow.append(`<th>${col.title}</th>`);
+        filterRow.append('<th></th>');
+    });
+
+    thead.append(headerRow).append(filterRow);
+    tableElement.append(thead);
+}
+
+function buildTableBody() {
+    const tbody = $('<tbody>');
+    tableElement.append(tbody);
+    return tbody;
+}
+
+async function insertRowsInChunks(data, columns, tbody) {
+    const CHUNK_SIZE = 500;
+
+    for (let start = 0; start < data.length; start += CHUNK_SIZE) {
+        const chunk = data.slice(start, start + CHUNK_SIZE);
+        const fragment = document.createDocumentFragment();
+
+        chunk.forEach(rowData => {
+            const tr = document.createElement('tr');
+
+            // Render cells based on column definitions
+            columns.forEach(col => {
+                const td = document.createElement('td');
+
+
+                if (col.data !== null) {
+                    td.innerHTML = renderCellValue(rowData[col.data]);
+                }
+
+
+                tr.appendChild(td);
+            });
+
+            fragment.appendChild(tr);
+        });
+
+        tbody[0].appendChild(fragment);
+
+        await updateLoadingProgress(30, 60, Math.min(start + CHUNK_SIZE, data.length), data.length);
+        await new Promise(r => setTimeout(r, 0)); // yield
+    }
+}
+
+function initializeDataTable(columns) {
+    return new Promise(resolve => {
+
+        const dt = tableElement.DataTable({
+            paging: true,
+            pageLength: 100,
+            lengthMenu: [
+                [50, 100, 200, 500, 1000],
+                [50, 100, 200, 500, 1000]
+            ],
+            fixedHeader: true,
+            colReorder: true,
+            autoWidth: false,
+            orderCellsTop: true,
+
+            headerCallback: function (thead) {
+                $(thead).find('th').each(function (index) {
+                    const th = $(this);
+
+                    if (!th.find('.sort-asc').length) {
+                        const title = th.text().trim();
+                        th.html(`
+                            ${title}
+                            <button class="sort-asc btn" data-col="${index}">↑</button>
+                            <button class="sort-desc btn" data-col="${index}">↓</button>
+                        `);
+                    }
+                });
+            },
+
+            initComplete: async function () {
+                const api = this.api();
+
+                await buildColumnFilters(api);
+                await addSortingButtons(api, dt);
+
+                resolve(); // EVERYTHING IS REALLY DONE NOW
+            }
+        });
+    });
+}
+
+async function buildColumnFilters(api) {
+    for (let colIdx = 0; colIdx < api.columns().count(); colIdx++) {
+        const column = api.column(colIdx);
+        const cell = $('.filters th').eq(colIdx);
+
+        const values = new Set();
+        column.data().each(val => {
+            const clean = $('<div>').html(val).text().trim();
+            values.add(clean || '(Blanks)');
+        });
+
+        const sorted = Array.from(values).sort();
+
+        if (sorted.length <= 20) {
+            const box = $('<div class="filter-box"></div>').appendTo(cell);
+
+            // Add "Uncheck All" checkbox at the top
+            box.append(`
+                <label>
+                    <input type="checkbox" class="uncheck-all">
+                    Uncheck All
+                </label>
+            `);
+
+            sorted.forEach(v => {
+                box.append(`
+                    <label>
+                        <input type="checkbox" value="${v}" checked>
+                        ${v}
+                    </label>
+                `);
+            });
+
+            // Event: Uncheck All
+            box.on('change', '.uncheck-all', function () {
+                const checked = $(this).is(':checked');
+                // If checked, uncheck all other checkboxes
+                box.find('input[type="checkbox"]').not(this).prop('checked', !checked).trigger('change');
+            });
+
+            // Event: regular checkboxes
+            box.on('change', 'input:not(.uncheck-all)', function () {
+                const checkedVals = box.find('input[type="checkbox"]:not(.uncheck-all):checked')
+                    .map((_, el) => $(el).val())
+                    .get();
+
+                if (checkedVals.length === 0) {
+                    column.search('a^', true, false).draw();
+                    return;
+                }
+
+                const regex = '^(' + checkedVals.map(v =>
+                    v === '(Blanks)' ? '' : $.fn.dataTable.util.escapeRegex(v)
+                ).join('|') + ')$';
+
+                column.search(regex, true, false).draw();
+            });
+        } else {
+            $('<input type="text" class="filter-text" placeholder="Filter..." />')
+                .appendTo(cell)
+                .on('keyup change clear', function () {
+                    column.search(this.value).draw();
+                });
+        }
+
+
+        await updateLoadingProgress(60, 90, colIdx + 1, api.columns().count());
+        await new Promise(r => setTimeout(r, 0));
+    }
+}
+
+async function addSortingButtons(api, dt) {
+    const totalSortingSteps = tableElement.find('thead tr:first-child th').length;
+
+    tableElement.find('thead tr:first-child th').each(async function (index) {
+        const th = $(this);
+
+        // Only add buttons once
+        if (!th.find('.sort-asc').length) {
+            const title = th.text().trim();
+            th.html(`
+                ${title}
+                <button class="sort-asc btn" data-col="${index}">↑</button>
+                <button class="sort-desc btn" data-col="${index}">↓</button>
+            `);
+        }
+
+        // Update progress
+        await updateLoadingProgress(90, 100, index + 1, totalSortingSteps);
+    });
+
+    // Attach click handlers (if not already attached)
+    if (!tableElement.data('sortingButtonsBound')) {
+        tableElement.on('click', '.sort-asc', function () {
+            dt.order([$(this).data('col'), 'asc']).draw();
+        });
+
+        tableElement.on('click', '.sort-desc', function () {
+            dt.order([$(this).data('col'), 'desc']).draw();
+        });
+
+        tableElement.data('sortingButtonsBound', true);
+    }
+}
+
+function renderCellValue(val) {
+    if (typeof val !== 'string') return val;
+
+    const text = val.trim();
+
+    const toFileUrl = path =>
+        path.startsWith('http') ? path : 'file:///' + path.replace(/\\/g, '/');
+
+    // Excel-style HYPERLINK formula
+    const hyperlinkMatch = text.match(/^=HYPERLINK\("([^"]+)",\s*"([^"]+)"\)$/i);
+    if (hyperlinkMatch) {
+        const [, rawPath, label] = hyperlinkMatch;
+        return `<a href="${toFileUrl(rawPath)}" target="_blank">${label}</a>`;
+    }
+
+    // Web URLs
+    if (/^https?:\/\//i.test(text)) return `<a href="${text}" target="_blank">${text}</a>`;
+
+    // Local Windows path
+    if (/^[a-zA-Z]:\\/.test(text)) return `<a href="${toFileUrl(text)}" target="_blank">${text}</a>`;
+
+    return val;
+}
+
+function loadAndUpdateTheme() {
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-theme');
+    }
+    updateThemeButton()
+}
+
+function updateThemeButton() {
+    const isLight = document.body.classList.contains('light-theme');
+    themeToggleBtn.textContent = isLight ? '🌞 Light' : '🌙 Dark';
+}
+
+
+loadAndUpdateTheme();
+
+
+// Reset filters button
+resetFiltersBtn.addEventListener('click', () => {
+    if (!$.fn.DataTable.isDataTable(tableElement)) return;
+
+    const dt = tableElement.DataTable();
+
+    // 1. Reset column searches
+    dt.columns().every(function() {
+        this.search('').draw();
+    });
+
+    // 2. Reset checkboxes
+    $('.filter-box input[type="checkbox"]').prop('checked', true);
+
+    // 3. Reset text inputs
+    $('.filter-text').val('');
+
+    // 4. Reset sorting to default (original order)
+    dt.order([]).draw();
+});
+
+// Theme toggle button
+themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    updateThemeButton();
+});
+
+
+</script>
+
+
+
+
+
+
+
+
+<script>
+fetch('data/game_data.csv')
+    .then(response => response.text())
+    .then(csvText => loadCsv(csvText))
+    .catch(err => console.error('Failed to load CSV:', err));
+</script>
+
+
+
+
+</body>
+</html>
