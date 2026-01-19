@@ -330,6 +330,127 @@
         body.light-mode .highlight-cell { color: black; }
         body.dark-mode  .highlight-cell { color: white; }
 
+/* =========================================================
+   PREFILTER OVERLAY
+   ========================================================= */
+#prefilterOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 24px;
+    color: #eee;
+
+    /* single vertical scrollbar for overlay */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.prefilter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+
+    width: 100%;
+    max-width: 1400px;
+
+    /* grid itself does not scroll */
+    overflow: visible;
+}
+
+/* Cards with capped height */
+.filter-section {
+    background: #1c1c1c;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    /* max height for long cards */
+    max-height: 180px;
+    overflow: hidden;
+}
+
+.filter-section h3 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* Values scroll only when needed */
+.filter-values {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 6px;
+    overflow-y: auto;
+
+    /* critical for flex/grid shrink behavior */
+    min-height: 0;
+    min-width: 0;
+}
+
+/* Checkbox layout with text wrapping */
+.filter-checkbox {
+    font-size: 12px;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start; /* allow multi-line labels */
+    min-height: 20px;
+    line-height: 1.2;
+
+    /* text wrapping */
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* Prevent checkbox shrinking */
+.filter-checkbox input {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Text input filters behave normally */
+.filter-section input[type="text"] {
+    width: 100%;
+    padding: 6px;
+    background: #111;
+    border: 1px solid #444;
+    color: #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Footer */
+.prefilter-actions {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    justify-content: center;
+    padding: 16px 0;
+    flex-shrink: 0;
+}
+
+.prefilter-actions button {
+    padding: 10px 24px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+
+
+
+
+
         /* =========================================================
            LOADING OVERLAY & PROGRESS
            ========================================================= */
@@ -584,26 +705,6 @@ async function loadPreFilters() {
     }
 }
 
-async function buildPrefilterUi(filters) {
-    try {
-        const normalized = normalizeFilters(filters);
-        const overlay = createOverlay('Select Filters Before Loading CSV');
-        const form = document.createElement('form');
-
-        Object.entries(normalized).forEach(([col, values]) => {
-            form.appendChild(buildFilterSection(col, values));
-        });
-
-        form.appendChild(createSubmitButton('Apply Filters & Load CSV'));
-        overlay.appendChild(form);
-        document.body.appendChild(overlay);
-
-        return new Promise(resolve => handleFormSubmit(form, resolve, overlay));
-    } catch (err) {
-        console.warn('Prefilter UI failed, continuing without prefiltering:', err);
-        return {};
-    }
-}
 
 async function parseCsv(file, totalSize, preFilter) {
     const parsedData = [];
@@ -994,34 +1095,75 @@ function createOverlay(title) {
     return overlay;
 }
 
+async function buildPrefilterUi(filters) {
+    try {
+        const normalized = normalizeFilters(filters);
+        const overlay = createOverlay('Select Filters Before Loading CSV');
+
+        const form = document.createElement('form');
+        form.className = 'prefilter-form';
+
+        for (const [col, values] of Object.entries(normalized)) {
+            form.appendChild(buildFilterSection(col, values));
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'prefilter-actions';
+        actions.appendChild(createSubmitButton('Apply Filters & Load CSV'));
+
+        form.appendChild(actions);
+        overlay.appendChild(form);
+        document.body.appendChild(overlay);
+
+        return new Promise(resolve =>
+            handleFormSubmit(form, resolve, overlay)
+        );
+    } catch (err) {
+        console.warn('Prefilter UI failed, continuing without prefiltering:', err);
+        return {};
+    }
+}
+
 function buildFilterSection(col, values) {
-    const section = document.createElement('div');
-    section.style.marginBottom = '16px';
-    section.innerHTML = `<strong>${col}</strong>`;
+    const section = document.createElement('section');
+    section.className = 'filter-section';
+
+    const title = document.createElement('h3');
+    title.textContent = col;
+    section.appendChild(title);
 
     if (!values.length || values.length > 30) {
         section.appendChild(createTextInput(col));
     } else {
-        values.forEach(v => section.appendChild(createCheckbox(col, v)));
+        const list = document.createElement('div');
+        list.className = 'filter-values';
+
+        values.forEach(v => list.appendChild(createCheckbox(col, v)));
+        section.appendChild(list);
     }
 
     return section;
 }
 
-function createTextInput(name, placeholder = null) {
+function createTextInput(name) {
     const input = document.createElement('input');
     input.type = 'text';
     input.name = name;
-    input.placeholder = placeholder || `Filter ${name}...`;
-    input.style.width = '100%';
+    input.placeholder = `Filter ${name}…`;
     return input;
 }
 
 function createCheckbox(name, value) {
     const label = document.createElement('label');
-    label.style.display = 'block';
-    label.style.marginLeft = '10px';
-    label.innerHTML = `<input type="checkbox" name="${name}" value="${value}" checked> ${value}`;
+    label.className = 'filter-checkbox';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.name = name;
+    input.value = value;
+    input.checked = true;
+
+    label.append(input, document.createTextNode(value));
     return label;
 }
 

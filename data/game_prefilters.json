@@ -7,7 +7,6 @@
     "Onhold"
   ],
   "url": [],
-  "user_rating": [],
   "bayesian_rating": [],
   "site_rating": [],
   "site_rating_count": [],
@@ -1898,12 +1897,5 @@
   "small labia": [
     "0",
     "1"
-  ],
-  "folder_creation_date": [],
-  "latest_local_version": [],
-  "total_size": [],
-  "location": [],
-  "has_user_review": [],
-  "is_up_to_date": [],
-  "latest_local_std_version": []
+  ]
 }
