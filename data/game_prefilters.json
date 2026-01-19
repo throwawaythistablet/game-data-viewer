@@ -1899,11 +1899,11 @@
     "0",
     "1"
   ],
-  "is_up_to_date": [],
   "latest_local_std_version": [],
   "has_user_review": [],
   "location": [],
   "folder_creation_date": [],
+  "latest_local_version": [],
   "total_size": [],
-  "latest_local_version": []
+  "is_up_to_date": []
 }
