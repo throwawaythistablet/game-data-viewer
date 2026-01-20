@@ -585,7 +585,7 @@
 <table id="csvTable" class="display"></table>
 
 <div id="loadingOverlay">
-    <div>Loading CSV...</div>
+    <div>Loading Data...</div>
     <div class="spinner"></div>
     <div id="csvProgressBarContainer">
         <div id="csvProgressBar"></div>
@@ -1098,7 +1098,7 @@ function createOverlay(title) {
 async function buildPrefilterUi(filters) {
     try {
         const normalized = normalizeFilters(filters);
-        const overlay = createOverlay('Select Filters Before Loading CSV');
+        const overlay = createOverlay('Select Filters Before Loading Data');
 
         const form = document.createElement('form');
         form.className = 'prefilter-form';
@@ -1255,10 +1255,16 @@ themeToggleBtn.addEventListener('click', () => {
 
 
 <script>
-fetch('data/game_data.csv')
-    .then(response => response.text())
-    .then(csvText => loadCsv(csvText))
-    .catch(err => console.error('Failed to load CSV:', err));
+(async () => {
+    while (true) {
+        try {
+            if (await loadCsv(await fetch('data/game_data.csv'))) break;
+        } catch (err) {
+            console.error('Loading attempt failed:', err);
+            alert(err.message || 'Failed to load data');
+        }
+    }
+})();
 </script>
 
 
