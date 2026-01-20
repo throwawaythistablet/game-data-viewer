@@ -725,7 +725,7 @@ async function parseCsv(file, totalSize, preFilter) {
     const MAX_ROWS = 10000; // maximum rows to prevent memory overload
 
     return new Promise((resolve, reject) => {
-        const parser = Papa.parse(file, {
+        Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
             worker: true,
@@ -743,19 +743,19 @@ async function parseCsv(file, totalSize, preFilter) {
                     updateLoadingProgress(0, 30, bytesProcessed, totalSize);
                 }
 
-                // Check row limit
+                // Stop if max rows exceeded
                 if (parsedData.length >= MAX_ROWS) {
-                    parser.abort(); // stop parsing
-                    reject(new Error(
+                    // Throwing inside step will terminate the worker and call the error callback
+                    throw new Error(
                         `Too many items loaded (${MAX_ROWS}). Please use filters to reduce the number of items before loading.`
-                    ));
+                    );
                 }
             },
             complete: function () {
                 updateLoadingProgress(0, 30, totalSize, totalSize);
                 resolve(parsedData);
             },
-            error: function(err) {
+            error: function (err) {
                 reject(err);
             }
         });
@@ -1120,18 +1120,23 @@ async function buildPrefilterUi(filters) {
         const normalized = normalizeFilters(filters);
         const overlay = createOverlay('Select Filters Before Loading Data');
 
+        // Form wrapper
         const form = document.createElement('form');
-        form.className = 'prefilter-form';
 
-        for (const [col, values] of Object.entries(normalized)) {
-            form.appendChild(buildFilterSection(col, values));
-        }
-
+        // Submit button outside the grid
         const actions = document.createElement('div');
-        actions.className = 'prefilter-actions';
+        actions.className = 'prefilter-actions sticky-top';
         actions.appendChild(createSubmitButton('Apply Filters & Load CSV'));
-
         form.appendChild(actions);
+
+        // Grid of filters
+        const grid = document.createElement('div');
+        grid.className = 'prefilter-form'; // only the filters are inside this grid
+        for (const [col, values] of Object.entries(normalized)) {
+            grid.appendChild(buildFilterSection(col, values));
+        }
+        form.appendChild(grid);
+
         overlay.appendChild(form);
         document.body.appendChild(overlay);
 
@@ -1143,6 +1148,7 @@ async function buildPrefilterUi(filters) {
         return {};
     }
 }
+
 
 function buildFilterSection(col, values) {
     const section = document.createElement('section');
