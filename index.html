@@ -123,7 +123,7 @@
         }
 
         /* Pin button active state remains same */
-        #controlsPinBtn.is-active {
+        #controlsPinButton.is-active {
             background: var(--accent);
             color: var(--bg-main);
         }
@@ -170,7 +170,7 @@
         /* =========================================================
            DROP ZONE
            ========================================================= */
-        #dropZone {
+        #csvDropZone {
             background: var(--bg-elevated);
             border: 2px dashed var(--border-strong);
             color: var(--text-muted);
@@ -189,14 +189,14 @@
             box-sizing: border-box; 
         }
         
-        #dropZone.dragover {
+        #csvDropZone.dragover {
             background-color: #162233;
             color: var(--accent);
             border-color: var(--accent);
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
         
-        #dropZone:hover {
+        #csvDropZone:hover {
             transform: scale(1.02);
             border-color: var(--accent);
             color: var(--accent);
@@ -246,7 +246,7 @@
             display: none;
         }
 
-        #fileBtn {
+        #fileButton {
             margin-right: 0;
         }
 
@@ -454,7 +454,7 @@
         /* =========================================================
            LOADING OVERLAY & PROGRESS
            ========================================================= */
-        #loadingOverlay {
+        #loadingOverlayElement {
             display: none;
             position: fixed;
             inset: 0;
@@ -570,10 +570,11 @@
 
 <div class="controls">
     <div class="controls-header">
-        <h2 class="controls-title">Games Analysis</h2>
+        <h2 class="controls-title">Game Data Viewer</h2>
         <div class="btn-group">
-            <button id="themeToggleBtn" class="btn btn-secondary" title="Toggle between light and dark theme">🌙 Dark</button>
-            <button id="resetFiltersBtn" class="btn" title="Reset all filters and sorting to their default state">🔄 Reset Filters</button>
+            <button id="themeToggleButton" class="btn btn-secondary" title="Toggle between light and dark theme">🌙 Dark</button>
+            <button id="resetFiltersButton" class="btn btn-secondary" title="Reset all filters and sorting to their default state">🔄 Reset Filters</button>
+            <button id="searchButton" class="btn" title="Search the data">🔄 Search</button>
         </div>
     </div>
 
@@ -584,7 +585,7 @@
 
 <table id="csvTable" class="display"></table>
 
-<div id="loadingOverlay">
+<div id="loadingOverlayElement">
     <div>Loading Data...</div>
     <div class="spinner"></div>
     <div id="csvProgressBarContainer">
@@ -608,24 +609,25 @@
 <script>
 
 
-const tableElement = $('#csvTable');
-const themeToggleBtn = document.getElementById('themeToggleBtn');
-const resetFiltersBtn = document.getElementById('resetFiltersBtn')
-const loadingOverlay = document.getElementById('loadingOverlay');
-const progressBarEl = document.getElementById('csvProgressBar');
-const progressTextEl = document.getElementById('csvProgressText');
+const csvTableElement = $('#csvTable');
+const themeToggleButton = document.getElementById('themeToggleButton');
+const resetFiltersButton = document.getElementById('resetFiltersButton')
+const searchButton = document.getElementById('searchButton')
+const loadingOverlayElement = document.getElementById('loadingOverlayElement');
+const loadingProgressBar = document.getElementById('csvProgressBar');
+const loadingProgressText = document.getElementById('csvProgressText');
 
-let prefilters = {};
-
-
-function showLoading() { loadingOverlay.style.display = 'flex'; }
-
-function hideLoading() { loadingOverlay.style.display = 'none'; }
+let activeCsvFile = null;
+let activePrefilters = {};
 
 async function yieldToBrowser() {
     await new Promise(r => setTimeout(r, 0)); // OLD
     // if (!document.hidden) await new Promise(r => setTimeout(r, 0));
 }
+
+function showLoading() { loadingOverlayElement.style.display = 'flex'; }
+
+function hideLoading() { loadingOverlayElement.style.display = 'none'; }
 
 async function updateLoadingProgress(startPercent, endPercent, currentStep, totalSteps) {
     if (totalSteps <= 0) totalSteps = 1;
@@ -633,91 +635,106 @@ async function updateLoadingProgress(startPercent, endPercent, currentStep, tota
     const fractionOfPhase = currentStep / totalSteps;
     const totalPercent = startPercent + fractionOfPhase * (endPercent - startPercent);
 
-    progressBarEl.style.width = totalPercent + '%';
-    if (progressTextEl) progressTextEl.textContent = totalPercent.toFixed(2) + '%';
+    loadingProgressBar.style.width = totalPercent + '%';
+    if (loadingProgressText) loadingProgressText.textContent = totalPercent.toFixed(2) + '%';
 
     //console.log(`Progress: ${totalPercent.toFixed(2)}% | Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`); // debug
 
     await yieldToBrowser();
 }
 
-async function loadCsv(input) {
-    if (!input) return false;
+async function setActiveCsvFile(file) {
+    activeCsvFile = file;
+}
+
+function updatePrefilters(prefilters, fileName) {
+    activePrefilters = prefilters;
+}
+
+async function loadDefaultCsv() {
+    if(activeCsvFile){
+        return; // already loaded
+    }
+    const response = await fetch('data/game_data.csv');
+    if (!response.ok) {
+        alert('Failed to load default CSV');
+        return;
+    }
+
+    const blob = await response.blob();
+    const file = new File([blob], 'game_data.csv', { type: 'text/csv' });
+
+    setActiveCsvFile(file);
+}
+
+async function loadDefaultPrefiltersJson() {
+    if(activePrefilters){
+        return; // already loaded
+    }
+    const response = await fetch('data/game_prefilters.json');
+    if (!response.ok) {
+        alert('Failed to load default prefilters');
+        return;
+    }
+    const prefilters = await response.json();
+    updatePrefilters(prefilters, 'game_prefilters.json');
+}
+
+async function executeCsvSearchWithRetries() {
+    while (true) {
+        try {
+            const success = await executeCsvSearch(activeCsvFile);
+            if (success) return true; // search finished successfully
+
+        } catch (err) {
+            console.error('CSV search failed:', err);
+            alert(`Error: ${err.message || 'Unknown error'}\nFailed to search CSV: ${activeCsvFile?.name || 'unknown file'}`);
+            break; // stop the loop on exception
+        }
+
+        // Optional small delay (if loop continues in future)
+        await new Promise(r => setTimeout(r, 100));
+    }
+}
+
+async function executeCsvSearch(file) {
+    if (!file) return false;
 
     try {
-        const { file, totalSize } = await prepareFile(input);
-        if (!file) throw new Error('File preparation failed');
-
-        const loadedPreFilters = await loadPreFilters();
-        const builtPreFilters =
-            loadedPreFilters && Object.keys(loadedPreFilters).length > 0
-                ? await buildPrefilterUi(loadedPreFilters)
+        const collectedPrefilters =
+            activePrefilters && Object.keys(activePrefilters).length > 0
+                ? await showPrefilterOverlayAndCollectFilters(activePrefilters)
                 : {};
 
         await updateLoadingProgress(0, 0, 0, 1);
         showLoading();
 
-        const parsedData = await parseCsv(file, totalSize, builtPreFilters);
+        await loadCsvAndBuildTable({ file, totalSize: file.size, preFilters: collectedPrefilters });
 
-        if (!Array.isArray(parsedData) || parsedData.length === 0) {
-            throw new Error('No rows loaded');
-        }
-
-        const columns = buildColumnsFromData(parsedData);
-        await buildDataTable(parsedData, columns);
-
-        return true; // ✅ SUCCESS
+        return true;
     } catch (err) {
-        console.error('loadCsv failed:', err);
-        alert(err.message || 'Failed to load data');
-        return false; // ❌ FAILURE
+        console.error('executeCsvSearch failed:', err);
+        alert(`Error: ${err.message || 'Unknown error'}\nFailed to search CSV`);
+        return false;
     } finally {
         hideLoading();
         await updateLoadingProgress(0, 0, 0, 1);
     }
 }
 
+async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
+    const parsedData = await parseAndFilterCsv(file, totalSize, preFilters);
 
-async function prepareFile(input) {
-    let file, totalSize;
-    if (typeof input === 'string') {
-        file = new Blob([input], { type: 'text/csv' });
-        totalSize = file.size;
-    } else {
-        file = input;
-        totalSize = input.size;
+    if (!Array.isArray(parsedData) || parsedData.length === 0) {
+        throw new Error('No rows loaded');
     }
-    return { file, totalSize };
-}
 
-async function loadPreFilters() {
-    try {
-        if (prefilters && Object.keys(prefilters).length) return prefilters;
-
-        const urls = ['./data/game_prefilters.json', './game_prefilters.json'];
-        for (const url of urls) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) continue;
-                const json = await response.json();
-                prefilters = json;
-                return json;
-            } catch (err) {
-                console.warn(`Could not fetch ${url}:`, err);
-            }
-        }
-
-        prefilters = {};
-        updatePrefilterFilename(null);
-        return {};
-    } catch (err) {
-        console.warn('Prefilters could not be loaded, continuing without prefiltering:', err);
-        return {};
-    }
+    const columns = createTableColumns(parsedData);
+    await renderCsvTable(parsedData, columns);
 }
 
 
-async function parseCsv(file, totalSize, preFilter) {
+async function parseAndFilterCsv(file, totalSize, preFilters) {
     const parsedData = [];
     let rowsProcessed = 0;
     let bytesProcessed = 0;
@@ -730,8 +747,8 @@ async function parseCsv(file, totalSize, preFilter) {
             skipEmptyLines: true,
             worker: true,
             step: function (row) {
-                // Add row if passes prefilter
-                if (!preFilter || Object.keys(preFilter).length === 0 || rowPassesPreFilter(row.data, preFilter)) {
+                // Add row if passes preFilters
+                if (!preFilters || Object.keys(preFilters).length === 0 || isRowAllowedByPrefilter(row.data, preFilters)) {
                     parsedData.push(row.data);
                 }
 
@@ -762,7 +779,7 @@ async function parseCsv(file, totalSize, preFilter) {
     });
 }
 
-function rowPassesPreFilter(row, preFilter) {
+function isRowAllowedByPrefilter(row, preFilter) {
     return Object.entries(preFilter).every(([col, allowedValues]) => {
         const rawVal = row[col];
         const val = rawVal != null ? String(rawVal).trim() : '';
@@ -777,7 +794,7 @@ function rowPassesPreFilter(row, preFilter) {
     });
 }
 
-function buildColumnsFromData(parsedData) {
+function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
     const keys = Object.keys(parsedData[0]);
@@ -803,35 +820,35 @@ function buildColumnsFromData(parsedData) {
     return columns;
 }
 
-async function buildDataTable(data, columns) {
+async function renderCsvTable(data, columns) {
     showLoading();
     
-    tableElement.hide();
+    csvTableElement.hide();
     
     destroyExistingTable();
-    buildTableHeader(columns);
-    const tbody = buildTableBody();
-    await insertRowsInChunks(data, columns, tbody);
-    await initializeDataTable(columns);
+    createTableHeader(columns);
+    const tbody = createTableBody();
+    await appendRowsToTableInChunks(data, columns, tbody);
+    await initializeDataTableWithOptions(columns);
     
-    tableElement.show();
+    csvTableElement.show();
     await updateLoadingProgress(100, 100, 1, 1);
     hideLoading();
 }
 
 function destroyExistingTable() {
     try {
-        if ($.fn.DataTable.isDataTable(tableElement)) {
-            tableElement.DataTable().destroy();
+        if ($.fn.DataTable.isDataTable(csvTableElement)) {
+            csvTableElement.DataTable().destroy();
         }
     } catch (e) {
         console.warn('Failed to destroy existing DataTable:', e);
     } finally {
-        tableElement.empty(); // clear old header/body safely
+        csvTableElement.empty(); // clear old header/body safely
     }
 }
 
-function buildTableHeader(columns) {
+function createTableHeader(columns) {
     const thead = $('<thead>');
     const headerRow = $('<tr>');
     const filterRow = $('<tr class="filters">');
@@ -842,16 +859,16 @@ function buildTableHeader(columns) {
     });
 
     thead.append(headerRow).append(filterRow);
-    tableElement.append(thead);
+    csvTableElement.append(thead);
 }
 
-function buildTableBody() {
+function createTableBody() {
     const tbody = $('<tbody>');
-    tableElement.append(tbody);
+    csvTableElement.append(tbody);
     return tbody;
 }
 
-async function insertRowsInChunks(data, columns, tbody) {
+async function appendRowsToTableInChunks(data, columns, tbody) {
     const CHUNK_SIZE = 500;
 
     for (let start = 0; start < data.length; start += CHUNK_SIZE) {
@@ -884,10 +901,10 @@ async function insertRowsInChunks(data, columns, tbody) {
     }
 }
 
-function initializeDataTable(columns) {
+function initializeDataTableWithOptions(columns) {
     return new Promise(resolve => {
 
-        const dt = tableElement.DataTable({
+        const dt = csvTableElement.DataTable({
             paging: true,
             pageLength: 100,
             lengthMenu: [
@@ -904,8 +921,8 @@ function initializeDataTable(columns) {
             initComplete: async function () {
                 const api = this.api();
 
-                await buildColumnFilters(api);
-                await addSortingButtons(api, dt);
+                await addColumnFilters(api);
+                await addSortingControls(api, dt);
 
                 resolve(); // EVERYTHING IS REALLY DONE NOW
             }
@@ -914,7 +931,7 @@ function initializeDataTable(columns) {
 }
 
 
-async function buildColumnFilters(api) {
+async function addColumnFilters(api) {
     const colCount = api.columns().count();
 
     for (let colIdx = 0; colIdx < colCount; colIdx++) {
@@ -986,10 +1003,10 @@ async function buildColumnFilters(api) {
     }
 }
 
-async function addSortingButtons(api, dt) {
-    const totalSortingSteps = tableElement.find('thead tr:first-child th').length;
+async function addSortingControls(api, dt) {
+    const totalSortingSteps = csvTableElement.find('thead tr:first-child th').length;
 
-    tableElement.find('thead tr:first-child th').each(async function (index) {
+    csvTableElement.find('thead tr:first-child th').each(async function (index) {
         const th = $(this);
 
         // Only add buttons once
@@ -1007,16 +1024,16 @@ async function addSortingButtons(api, dt) {
     });
 
     // Attach click handlers (if not already attached)
-    if (!tableElement.data('sortingButtonsBound')) {
-        tableElement.on('click', '.sort-asc', function () {
+    if (!csvTableElement.data('sortingButtonsBound')) {
+        csvTableElement.on('click', '.sort-asc', function () {
             dt.order([$(this).data('col'), 'asc']).draw();
         });
 
-        tableElement.on('click', '.sort-desc', function () {
+        csvTableElement.on('click', '.sort-desc', function () {
             dt.order([$(this).data('col'), 'desc']).draw();
         });
 
-        tableElement.data('sortingButtonsBound', true);
+        csvTableElement.data('sortingButtonsBound', true);
     }
 }
 
@@ -1101,7 +1118,7 @@ function normalizeFilters(filters) {
     return normalized;
 }
 
-function createOverlay(title) {
+function createPrefilterOverlay(title) {
     const overlay = document.createElement('div');
     overlay.id = 'prefilterOverlay';
     Object.assign(overlay.style, {
@@ -1117,10 +1134,10 @@ function createOverlay(title) {
     return overlay;
 }
 
-async function buildPrefilterUi(filters) {
+async function showPrefilterOverlayAndCollectFilters(filters) {
     try {
         const normalized = normalizeFilters(filters);
-        const overlay = createOverlay('Select Filters Before Loading Data');
+        const overlay = createPrefilterOverlay('Select Filters Before Loading Data');
 
         // Form wrapper
         const form = document.createElement('form');
@@ -1128,14 +1145,14 @@ async function buildPrefilterUi(filters) {
         // Submit button outside the grid
         const actions = document.createElement('div');
         actions.className = 'prefilter-actions sticky-top';
-        actions.appendChild(createSubmitButton('Apply Filters & Load CSV'));
+        actions.appendChild(createPrefilterSubmitButton('Apply Filters & Load CSV'));
         form.appendChild(actions);
 
         // Grid of filters
         const grid = document.createElement('div');
         grid.className = 'prefilter-form'; // only the filters are inside this grid
         for (const [col, values] of Object.entries(normalized)) {
-            grid.appendChild(buildFilterSection(col, values));
+            grid.appendChild(createFilterSectionForColumn(col, values));
         }
         form.appendChild(grid);
 
@@ -1143,7 +1160,7 @@ async function buildPrefilterUi(filters) {
         document.body.appendChild(overlay);
 
         return new Promise(resolve =>
-            handleFormSubmit(form, resolve, overlay)
+            waitForPrefilterFormSubmission(form, resolve, overlay)
         );
     } catch (err) {
         console.warn('Prefilter UI failed, continuing without prefiltering:', err);
@@ -1152,7 +1169,7 @@ async function buildPrefilterUi(filters) {
 }
 
 
-function buildFilterSection(col, values) {
+function createFilterSectionForColumn(col, values) {
     const section = document.createElement('section');
     section.className = 'filter-section';
 
@@ -1161,19 +1178,19 @@ function buildFilterSection(col, values) {
     section.appendChild(title);
 
     if (!values.length || values.length > 30) {
-        section.appendChild(createTextInput(col));
+        section.appendChild(createTextFilterInput(col));
     } else {
         const list = document.createElement('div');
         list.className = 'filter-values';
 
-        values.forEach(v => list.appendChild(createCheckbox(col, v)));
+        values.forEach(v => list.appendChild(createPrefilterCheckbox(col, v)));
         section.appendChild(list);
     }
 
     return section;
 }
 
-function createTextInput(name) {
+function createTextFilterInput(name) {
     const input = document.createElement('input');
     input.type = 'text';
     input.name = name;
@@ -1181,7 +1198,7 @@ function createTextInput(name) {
     return input;
 }
 
-function createCheckbox(name, value) {
+function createPrefilterCheckbox(name, value) {
     const label = document.createElement('label');
     label.className = 'filter-checkbox';
 
@@ -1195,7 +1212,7 @@ function createCheckbox(name, value) {
     return label;
 }
 
-function createSubmitButton(label = 'Submit') {
+function createPrefilterSubmitButton(label = 'Submit') {
     const btn = document.createElement('button');
     btn.type = 'submit';
     btn.textContent = label;
@@ -1204,7 +1221,7 @@ function createSubmitButton(label = 'Submit') {
     return btn;
 }
 
-function handleFormSubmit(form, resolve, overlay) {
+function waitForPrefilterFormSubmission(form, resolve, overlay) {
     form.addEventListener('submit', e => {
         e.preventDefault();
         const preFilter = {};
@@ -1233,18 +1250,25 @@ function loadAndUpdateTheme() {
 
 function updateThemeButton() {
     const isLight = document.body.classList.contains('light-theme');
-    themeToggleBtn.textContent = isLight ? '🌞 Light' : '🌙 Dark';
+    themeToggleButton.textContent = isLight ? '🌞 Light' : '🌙 Dark';
 }
 
 
 loadAndUpdateTheme();
 
 
-// Reset filters button
-resetFiltersBtn.addEventListener('click', () => {
-    if (!$.fn.DataTable.isDataTable(tableElement)) return;
+// Search button
+searchButton.addEventListener('click', async () => {
+    if (!activeCsvFile) return alert('No CSV file loaded yet.');
+    if (!activePrefilters || Object.keys(activePrefilters).length === 0) return alert('No prefilters json loaded yet.');
+    await executeCsvSearchWithRetries();
+});
 
-    const dt = tableElement.DataTable();
+// Reset filters button
+resetFiltersButton.addEventListener('click', () => {
+    if (!$.fn.DataTable.isDataTable(csvTableElement)) return;
+
+    const dt = csvTableElement.DataTable();
 
     // Reset column searches
     dt.columns().every(function() {
@@ -1265,7 +1289,7 @@ resetFiltersBtn.addEventListener('click', () => {
 });
 
 // Theme toggle button
-themeToggleBtn.addEventListener('click', () => {
+themeToggleButton.addEventListener('click', () => {
     document.body.classList.toggle('light-theme');
     const isLight = document.body.classList.contains('light-theme');
     localStorage.setItem('theme', isLight ? 'light' : 'dark');
@@ -1285,23 +1309,22 @@ themeToggleBtn.addEventListener('click', () => {
 <!-- Code injected for standalone web deployment -->
 <script>
 (async () => {
-    while (true) {
-        try {
-            const response = await fetch('data/game_data.csv');
-            if (!response.ok) throw new Error('Failed to fetch CSV');
-
-            const csvText = await response.text(); // now clonable
-            if (await loadCsv(csvText)) break;
-        } catch (err) {
-            console.error('Loading attempt failed:', err);
-            alert(err.message || 'Failed to load data');
-        }
-    }
+    await loadDefaultCsv();
+    await loadDefaultPrefiltersJson();
+    await executeCsvSearchWithRetries();
 })();
 </script>
 
 
-
+<!--
+<script>
+(async () => {
+    await loadDefaultCsv();
+    await loadDefaultPrefiltersJson();
+    await executeCsvSearchWithRetries();
+})();
+</script>
+ -->
 
 </body>
 </html>
