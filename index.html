@@ -642,30 +642,41 @@ async function updateLoadingProgress(startPercent, endPercent, currentStep, tota
 }
 
 async function loadCsv(input) {
-    if (!input) return;
+    if (!input) return false;
 
-    const { file, totalSize } = await prepareFile(input);
+    try {
+        const { file, totalSize } = await prepareFile(input);
+        if (!file) throw new Error('File preparation failed');
 
-    const loadedPreFilters = await loadPreFilters();
-    const builtPreFilters = loadedPreFilters && Object.keys(loadedPreFilters).length > 0
-        ? await buildPrefilterUi(loadedPreFilters)
-        : {};
+        const loadedPreFilters = await loadPreFilters();
+        const builtPreFilters =
+            loadedPreFilters && Object.keys(loadedPreFilters).length > 0
+                ? await buildPrefilterUi(loadedPreFilters)
+                : {};
 
-    await updateLoadingProgress(0, 0, 0, 1);
-    showLoading();
-
-    const parsedData = await parseCsv(file, totalSize, builtPreFilters);
-
-    if (!parsedData.length) {
-        hideLoading();
-        alert('No rows loaded.');
         await updateLoadingProgress(0, 0, 0, 1);
-        return;
-    }
+        showLoading();
 
-    const columns = buildColumnsFromData(parsedData);
-    await buildDataTable(parsedData, columns);
+        const parsedData = await parseCsv(file, totalSize, builtPreFilters);
+
+        if (!Array.isArray(parsedData) || parsedData.length === 0) {
+            throw new Error('No rows loaded');
+        }
+
+        const columns = buildColumnsFromData(parsedData);
+        await buildDataTable(parsedData, columns);
+
+        return true; // ✅ SUCCESS
+    } catch (err) {
+        console.error('loadCsv failed:', err);
+        alert(err.message || 'Failed to load data');
+        return false; // ❌ FAILURE
+    } finally {
+        hideLoading();
+        await updateLoadingProgress(0, 0, 0, 1);
+    }
 }
+
 
 async function prepareFile(input) {
     let file, totalSize;
@@ -711,9 +722,10 @@ async function parseCsv(file, totalSize, preFilter) {
     let rowsProcessed = 0;
     let bytesProcessed = 0;
     const THROTTLE = 100;
+    const MAX_ROWS = 10000; // maximum rows to prevent memory overload
 
     return new Promise((resolve, reject) => {
-        Papa.parse(file, {
+        const parser = Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
             worker: true,
@@ -729,6 +741,14 @@ async function parseCsv(file, totalSize, preFilter) {
                 // Throttle progress updates
                 if (rowsProcessed % THROTTLE === 0) {
                     updateLoadingProgress(0, 30, bytesProcessed, totalSize);
+                }
+
+                // Check row limit
+                if (parsedData.length >= MAX_ROWS) {
+                    parser.abort(); // stop parsing
+                    reject(new Error(
+                        `Too many items loaded (${MAX_ROWS}). Please use filters to reduce the number of items before loading.`
+                    ));
                 }
             },
             complete: function () {
@@ -1254,11 +1274,16 @@ themeToggleBtn.addEventListener('click', () => {
 
 
 
+<!-- Code injected for standalone web deployment -->
 <script>
 (async () => {
     while (true) {
         try {
-            if (await loadCsv(await fetch('data/game_data.csv'))) break;
+            const response = await fetch('data/game_data.csv');
+            if (!response.ok) throw new Error('Failed to fetch CSV');
+
+            const csvText = await response.text(); // now clonable
+            if (await loadCsv(csvText)) break;
         } catch (err) {
             console.error('Loading attempt failed:', err);
             alert(err.message || 'Failed to load data');
