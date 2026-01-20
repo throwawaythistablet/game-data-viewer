@@ -668,7 +668,7 @@ async function loadDefaultCsv() {
 }
 
 async function loadDefaultPrefiltersJson() {
-    if(activePrefilters){
+    if(activePrefilters && Object.keys(activePrefilters).length > 0){
         return; // already loaded
     }
     const response = await fetch('data/game_prefilters.json');
@@ -1316,6 +1316,7 @@ themeToggleButton.addEventListener('click', () => {
 </script>
 
 
+
 <!--
 <script>
 (async () => {
@@ -1324,7 +1325,8 @@ themeToggleButton.addEventListener('click', () => {
     await executeCsvSearchWithRetries();
 })();
 </script>
- -->
+-->
+
 
 </body>
 </html>
