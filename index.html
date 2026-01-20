@@ -745,10 +745,10 @@ async function parseCsv(file, totalSize, preFilter) {
 
                 // Stop if max rows exceeded
                 if (parsedData.length >= MAX_ROWS) {
-                    // Throwing inside step will terminate the worker and call the error callback
-                    throw new Error(
+                    // Reject the promise instead of throwing
+                    reject(new Error(
                         `Too many items loaded (${MAX_ROWS}). Please use filters to reduce the number of items before loading.`
-                    );
+                    ));
                 }
             },
             complete: function () {
@@ -756,7 +756,7 @@ async function parseCsv(file, totalSize, preFilter) {
                 resolve(parsedData);
             },
             error: function (err) {
-                reject(err);
+                reject(err); // Ensure rejection on any parsing error
             }
         });
     });
