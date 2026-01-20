@@ -330,126 +330,121 @@
         body.light-mode .highlight-cell { color: black; }
         body.dark-mode  .highlight-cell { color: white; }
 
-/* =========================================================
-   PREFILTER OVERLAY
-   ========================================================= */
-#prefilterOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 1000;
+        /* =========================================================
+           PREFILTER OVERLAY
+           ========================================================= */
+        #prefilterOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
 
-    padding: 24px;
-    color: #eee;
+            padding: 24px;
+            color: #eee;
 
-    /* single vertical scrollbar for overlay */
-    overflow-y: auto;
-    overflow-x: hidden;
-}
+            /* single vertical scrollbar for overlay */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
 
-.prefilter-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
+        .prefilter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
 
-    width: 100%;
-    max-width: 1400px;
+            width: 100%;
+            max-width: 1400px;
 
-    /* grid itself does not scroll */
-    overflow: visible;
-}
+            /* grid itself does not scroll */
+            overflow: visible;
+        }
 
-/* Cards with capped height */
-.filter-section {
-    background: #1c1c1c;
-    border: 1px solid #333;
-    border-radius: 6px;
-    padding: 12px;
+        /* Cards with capped height */
+        .filter-section {
+            background: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
 
-    display: flex;
-    flex-direction: column;
+            display: flex;
+            flex-direction: column;
 
-    /* max height for long cards */
-    max-height: 180px;
-    overflow: hidden;
-}
+            /* max height for long cards */
+            max-height: 180px;
+            overflow: hidden;
+        }
 
-.filter-section h3 {
-    margin: 0 0 6px;
-    font-size: 14px;
-    font-weight: 600;
-    flex-shrink: 0;
-}
+        .filter-section h3 {
+            margin: 0 0 6px;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
 
-/* Values scroll only when needed */
-.filter-values {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 6px;
-    overflow-y: auto;
+        /* Values scroll only when needed */
+        .filter-values {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 6px;
+            overflow-y: auto;
 
-    /* critical for flex/grid shrink behavior */
-    min-height: 0;
-    min-width: 0;
-}
+            /* critical for flex/grid shrink behavior */
+            min-height: 0;
+            min-width: 0;
+        }
 
-/* Checkbox layout with text wrapping */
-.filter-checkbox {
-    font-size: 12px;
-    display: flex;
-    gap: 6px;
-    align-items: flex-start; /* allow multi-line labels */
-    min-height: 20px;
-    line-height: 1.2;
+        /* Checkbox layout with text wrapping */
+        .filter-checkbox {
+            font-size: 12px;
+            display: flex;
+            gap: 6px;
+            align-items: flex-start; /* allow multi-line labels */
+            min-height: 20px;
+            line-height: 1.2;
 
-    /* text wrapping */
-    min-width: 0;
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-}
+            /* text wrapping */
+            min-width: 0;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
 
-/* Prevent checkbox shrinking */
-.filter-checkbox input {
-    flex-shrink: 0;
-    margin-top: 2px;
-}
+        /* Prevent checkbox shrinking */
+        .filter-checkbox input {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
 
-/* Text input filters behave normally */
-.filter-section input[type="text"] {
-    width: 100%;
-    padding: 6px;
-    background: #111;
-    border: 1px solid #444;
-    color: #eee;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
+        /* Text input filters behave normally */
+        .filter-section input[type="text"] {
+            width: 100%;
+            padding: 6px;
+            background: #111;
+            border: 1px solid #444;
+            color: #eee;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
 
-/* Footer */
-.prefilter-actions {
-    width: 100%;
-    max-width: 1400px;
-    display: flex;
-    justify-content: center;
-    padding: 16px 0;
-    flex-shrink: 0;
-}
+        /* Footer */
+        .prefilter-actions {
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: center;
+            padding: 16px 0;
+            flex-shrink: 0;
+        }
 
-.prefilter-actions button {
-    padding: 10px 24px;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-
-
-
-
+        .prefilter-actions button {
+            padding: 10px 24px;
+            font-size: 15px;
+            cursor: pointer;
+        }
 
         /* =========================================================
            LOADING OVERLAY & PROGRESS
@@ -482,8 +477,16 @@
             to   { transform: rotate(360deg); }
         }
 
+        #loadingHeaderDisplay {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
         /* Progress bar */
-        #csvProgressBarContainer {
+        #loadingProgressDisplayContainer {
             width: 80%;
             margin-top: 15px;
             background: #333;
@@ -492,14 +495,14 @@
             position: relative;
         }
 
-        #csvProgressBar {
+        #loadingProgressBarDisplay {
             width: 0%;
             height: 20px;
             background: var(--accent);
             transition: width 0.1s;
         }
 
-        #csvProgressText {
+        #loadingProgressTextDisplay {
             position: absolute;
             inset: 0;
             display: flex;
@@ -509,6 +512,23 @@
             font-size: 14px;
             font-weight: bold;
             pointer-events: none;
+        }
+
+        #stopLoadingButton {
+            margin-top: 20px;
+            padding: 10px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: var(--danger);
+            color: var(--bg-main);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #stopLoadingButton:hover {
+            background-color: #ff4c4c; /* slightly brighter red on hover */
         }
 
         /* =========================================================
@@ -586,12 +606,14 @@
 <table id="csvTable" class="display"></table>
 
 <div id="loadingOverlayElement">
-    <div>Loading Data...</div>
+    <div id="loadingHeaderDisplay">Loading Data...</div>
     <div class="spinner"></div>
-    <div id="csvProgressBarContainer">
-        <div id="csvProgressBar"></div>
-        <span id="csvProgressText">0%</span>
+    <div id="loadingProgressDisplayContainer">
+        <div id="loadingProgressBarDisplay"></div>
+        <span id="loadingProgressTextDisplay">0%</span>
     </div>
+    <button id="stopLoadingButton">⏹ Stop</button>
+</div>
 </div>
 
 
@@ -613,12 +635,15 @@ const csvTableElement = $('#csvTable');
 const themeToggleButton = document.getElementById('themeToggleButton');
 const resetFiltersButton = document.getElementById('resetFiltersButton')
 const searchButton = document.getElementById('searchButton')
+const stopLoadingButton = document.getElementById('stopLoadingButton')
 const loadingOverlayElement = document.getElementById('loadingOverlayElement');
-const loadingProgressBar = document.getElementById('csvProgressBar');
-const loadingProgressText = document.getElementById('csvProgressText');
+const loadingHeader = document.getElementById('loadingHeaderDisplay');
+const loadingProgressBar = document.getElementById('loadingProgressBarDisplay');
+const loadingProgressText = document.getElementById('loadingProgressTextDisplay');
 
 let activeCsvFile = null;
 let activePrefilters = {};
+let loadingCancelled = false;
 
 async function yieldToBrowser() {
     await new Promise(r => setTimeout(r, 0)); // OLD
@@ -629,14 +654,19 @@ function showLoading() { loadingOverlayElement.style.display = 'flex'; }
 
 function hideLoading() { loadingOverlayElement.style.display = 'none'; }
 
-async function updateLoadingProgress(startPercent, endPercent, currentStep, totalSteps) {
+function resetLoadingCancellation() {loadingCancelled = false;}
+
+function cancelLoading() {loadingCancelled = true;}
+
+async function updateLoadingProgress(header, startPercent, endPercent, currentStep, totalSteps) {
     if (totalSteps <= 0) totalSteps = 1;
 
     const fractionOfPhase = currentStep / totalSteps;
     const totalPercent = startPercent + fractionOfPhase * (endPercent - startPercent);
 
+    loadingHeader.textContent = header
     loadingProgressBar.style.width = totalPercent + '%';
-    if (loadingProgressText) loadingProgressText.textContent = totalPercent.toFixed(2) + '%';
+    loadingProgressText.textContent = totalPercent.toFixed(2) + '%';
 
     //console.log(`Progress: ${totalPercent.toFixed(2)}% | Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`); // debug
 
@@ -706,7 +736,8 @@ async function executeCsvSearch(file) {
                 ? await showPrefilterOverlayAndCollectFilters(activePrefilters)
                 : {};
 
-        await updateLoadingProgress(0, 0, 0, 1);
+        await updateLoadingProgress("Starting Data Search...", 0, 0, 0, 1);
+        resetLoadingCancellation();
         showLoading();
 
         await loadCsvAndBuildTable({ file, totalSize: file.size, preFilters: collectedPrefilters });
@@ -718,7 +749,8 @@ async function executeCsvSearch(file) {
         return false;
     } finally {
         hideLoading();
-        await updateLoadingProgress(0, 0, 0, 1);
+        resetLoadingCancellation();
+        await updateLoadingProgress("", 0, 0, 0, 1);
     }
 }
 
@@ -747,6 +779,12 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
             skipEmptyLines: true,
             worker: true,
             step: function (row) {
+                if (loadingCancelled) {
+                    this.abort(); // stops PapaParse
+                    reject(new Error('Loading cancelled by user.'));
+                    return;
+                }
+                
                 // Add row if passes preFilters
                 if (!preFilters || Object.keys(preFilters).length === 0 || isRowAllowedByPrefilter(row.data, preFilters)) {
                     parsedData.push(row.data);
@@ -757,7 +795,7 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
 
                 // Throttle progress updates
                 if (rowsProcessed % THROTTLE === 0) {
-                    updateLoadingProgress(0, 30, bytesProcessed, totalSize);
+                    updateLoadingProgress("Loading Data From File...", 0, 30, bytesProcessed, totalSize);
                 }
 
                 // Stop if max rows exceeded
@@ -769,7 +807,7 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
                 }
             },
             complete: function () {
-                updateLoadingProgress(0, 30, totalSize, totalSize);
+                updateLoadingProgress("Loading Data From File Finished...", 0, 30, totalSize, totalSize);
                 resolve(parsedData);
             },
             error: function (err) {
@@ -832,7 +870,7 @@ async function renderCsvTable(data, columns) {
     await initializeDataTableWithOptions(columns);
     
     csvTableElement.show();
-    await updateLoadingProgress(100, 100, 1, 1);
+    await updateLoadingProgress("Csv Table Render Complete.", 100, 100, 1, 1);
     hideLoading();
 }
 
@@ -872,6 +910,8 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
     const CHUNK_SIZE = 500;
 
     for (let start = 0; start < data.length; start += CHUNK_SIZE) {
+        if (loadingCancelled) throw new Error('Loading cancelled by user.');
+        
         const chunk = data.slice(start, start + CHUNK_SIZE);
         const fragment = document.createDocumentFragment();
 
@@ -896,7 +936,7 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
 
         tbody[0].appendChild(fragment);
 
-        await updateLoadingProgress(30, 60, Math.min(start + CHUNK_SIZE, data.length), data.length);
+        await updateLoadingProgress("Filling Rows In Table...", 30, 70, Math.min(start + CHUNK_SIZE, data.length), data.length);
         await yieldToBrowser();
     }
 }
@@ -935,6 +975,8 @@ async function addColumnFilters(api) {
     const colCount = api.columns().count();
 
     for (let colIdx = 0; colIdx < colCount; colIdx++) {
+        if (loadingCancelled) throw new Error('Loading cancelled by user.');
+        
         const column = api.column(colIdx);
         const cell = $('.filters th').eq(colIdx);
 
@@ -998,7 +1040,7 @@ async function addColumnFilters(api) {
                 });
         }
 
-        await updateLoadingProgress(60, 90, colIdx + 1, colCount);
+        await updateLoadingProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
         await yieldToBrowser();
     }
 }
@@ -1018,9 +1060,6 @@ async function addSortingControls(api, dt) {
                 <button class="sort-desc btn" data-col="${index}">↓</button>
             `);
         }
-
-        // Update progress
-        await updateLoadingProgress(90, 100, index + 1, totalSortingSteps);
     });
 
     // Attach click handlers (if not already attached)
@@ -1294,6 +1333,12 @@ themeToggleButton.addEventListener('click', () => {
     const isLight = document.body.classList.contains('light-theme');
     localStorage.setItem('theme', isLight ? 'light' : 'dark');
     updateThemeButton();
+});
+
+// Stop loading button
+stopLoadingButton.addEventListener('click', () => {
+    cancelLoading();
+    hideLoading();
 });
 
 
