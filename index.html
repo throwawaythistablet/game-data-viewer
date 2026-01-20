@@ -333,7 +333,7 @@
         /* =========================================================
            PREFILTER OVERLAY
            ========================================================= */
-        #prefilterOverlay {
+        .prefilter-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.85);
@@ -341,7 +341,6 @@
 
             display: flex;
             flex-direction: column;
-            align-items: center;
 
             padding: 24px;
             color: #eee;
@@ -351,16 +350,64 @@
             overflow-x: hidden;
         }
 
+        .prefilter-notice {
+            background-color: #2b2b2b;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .prefilter-notice ul {
+            margin: 4px 0 0 16px;
+            padding: 0;
+        }
+
+        .prefilter-notice strong {
+            font-weight: bold;
+        }
+
         .prefilter-form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 16px;
-
-            width: 100%;
-            max-width: 1400px;
+            margin-top: 10px;
 
             /* grid itself does not scroll */
             overflow: visible;
+        }
+
+        /* PREFILTER ACTIONS */
+        .prefilter-actions {
+            width: 100%;
+            display: flex;
+            justify-content: center; /* center horizontally */
+            position: sticky;
+            bottom: 0; /* stick to bottom of viewport */
+            background: rgba(44,44,44,0.95); /* semi-transparent for prominence */
+            padding: 16px 0;
+            z-index: 1100;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.5); /* subtle top shadow */
+        }
+
+        /* Submit button prominent styling */
+        .prefilter-actions button {
+            background: #f39c12; /* bright accent color */
+            color: #111;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .prefilter-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
         }
 
         /* Cards with capped height */
@@ -428,22 +475,6 @@
             color: #eee;
             border-radius: 4px;
             box-sizing: border-box;
-        }
-
-        /* Footer */
-        .prefilter-actions {
-            width: 100%;
-            max-width: 1400px;
-            display: flex;
-            justify-content: center;
-            padding: 16px 0;
-            flex-shrink: 0;
-        }
-
-        .prefilter-actions button {
-            padding: 10px 24px;
-            font-size: 15px;
-            cursor: pointer;
         }
 
         /* =========================================================
@@ -1157,47 +1188,25 @@ function normalizeFilters(filters) {
     return normalized;
 }
 
-function createPrefilterOverlay(title) {
-    const overlay = document.createElement('div');
-    overlay.id = 'prefilterOverlay';
-    Object.assign(overlay.style, {
-        position: 'fixed',
-        inset: '0',
-        background: 'rgba(0,0,0,0.9)',
-        color: 'white',
-        zIndex: '3000',
-        padding: '20px',
-        overflowY: 'auto'
-    });
-    overlay.innerHTML = `<h2>${title}</h2>`;
-    return overlay;
-}
-
 async function showPrefilterOverlayAndCollectFilters(filters) {
     try {
         const normalized = normalizeFilters(filters);
-        const overlay = createPrefilterOverlay('Select Filters Before Loading Data');
+        const overlay = createPrefilterOverlayContainer('Refine Your Search');
+
+        // Add notice
+        overlay.appendChild(createPrefilterNotice());
 
         // Form wrapper
         const form = document.createElement('form');
 
-        // Submit button outside the grid
-        const actions = document.createElement('div');
-        actions.className = 'prefilter-actions sticky-top';
-        actions.appendChild(createPrefilterSubmitButton('Apply Filters & Load CSV'));
-        form.appendChild(actions);
-
-        // Grid of filters
-        const grid = document.createElement('div');
-        grid.className = 'prefilter-form'; // only the filters are inside this grid
-        for (const [col, values] of Object.entries(normalized)) {
-            grid.appendChild(createFilterSectionForColumn(col, values));
-        }
-        form.appendChild(grid);
+        // Add actions and grid
+        form.appendChild(createPrefilterActions());
+        form.appendChild(createPrefilterGrid(normalized));
 
         overlay.appendChild(form);
         document.body.appendChild(overlay);
 
+        // Wait for submission
         return new Promise(resolve =>
             waitForPrefilterFormSubmission(form, resolve, overlay)
         );
@@ -1207,6 +1216,54 @@ async function showPrefilterOverlayAndCollectFilters(filters) {
     }
 }
 
+// Main function to create the overlay container
+function createPrefilterOverlayContainer(title) {
+    const overlay = document.createElement('div');
+    overlay.id = 'prefilterOverlay';
+    overlay.className = 'prefilter-overlay'; // move all styling to CSS
+    overlay.innerHTML = `<h2>${title}</h2>`;
+    return overlay;
+}
+
+// ⚠ Important notice
+function createPrefilterNotice() {
+    const notice = document.createElement('div');
+    notice.className = 'prefilter-notice';
+    notice.innerHTML = `
+        ⚠ <strong>Important: Use Prefilters to Reduce Load</strong><br>
+        The tool loads the entire dataset captured from the site, which can be very large. 
+        Unless you use prefilters to narrow it down, your browser may take a long time to load the data, 
+        and it can become very memory-intensive.<br><br>
+        All processing happens client-side — this is just a static webpage running in your browser. 
+        You’ll see a “Loading Data…” overlay while it loads.<br><br>
+        <strong>To improve performance:</strong>
+        <ul>
+            <li>Use the prefilters to limit the number of rows loaded.</li>
+            <li>Start with broad filters and refine them gradually if needed.</li>
+            <li>If loading becomes too slow, stop the processing, refresh the page and adjust your prefilters.</li>
+        </ul>
+        Proper use of prefilters ensures a faster, smoother experience when exploring the table.
+    `;
+    return notice;
+}
+
+// Action buttons container
+function createPrefilterActions() {
+    const actions = document.createElement('div');
+    actions.className = 'prefilter-actions sticky-top';
+    actions.appendChild(createPrefilterSubmitButton('Apply Filters & Search'));
+    return actions;
+}
+
+// Grid containing all filters
+function createPrefilterGrid(normalizedFilters) {
+    const grid = document.createElement('div');
+    grid.className = 'prefilter-form'; // CSS handles layout
+    for (const [col, values] of Object.entries(normalizedFilters)) {
+        grid.appendChild(createFilterSectionForColumn(col, values));
+    }
+    return grid;
+}
 
 function createFilterSectionForColumn(col, values) {
     const section = document.createElement('section');
