@@ -899,6 +899,8 @@ function initializeDataTable(columns) {
             autoWidth: false,
             orderCellsTop: true,
 
+            dom: '<"top"lfip>rt<"bottom"lfip><"clear">',
+
             initComplete: async function () {
                 const api = this.api();
 
