@@ -1108,8 +1108,6 @@ function determineColumnDetailsFromDataIfNeeded(parsedData) {
     updateColumnDetails(columnDetails, "", "Determined from loaded data.");
 }
 
-
-
 function destroyExistingTable() {
     try {
         if ($.fn.DataTable.isDataTable(csvTableElement)) {
@@ -1851,7 +1849,15 @@ function updateThemeButton() {
 }
 
 
+
+async function initializeWebsite() {
+    await loadDefaultCsv();
+    await loadDefaultColumnDetailsJson();
+    await executeCsvSearchWithRetries();
+}
+
 loadAndUpdateTheme();
+
 
 
 // Search button
@@ -1911,22 +1917,14 @@ stopLoadingButton.addEventListener('click', () => {
 
 <!-- Code injected for standalone web deployment -->
 <script>
-(async () => {
-    await loadDefaultCsv();
-    await loadDefaultColumnDetailsJson();
-    await executeCsvSearchWithRetries();
-})();
+initializeWebsite();
 </script>
 
 
 
 <!--
 <script>
-(async () => {
-    await loadDefaultCsv();
-    await loadDefaultColumnDetailsJson();
-    await executeCsvSearchWithRetries();
-})();
+initializeWebsite();
 </script>
 -->
 
