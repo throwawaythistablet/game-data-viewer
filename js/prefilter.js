@@ -7,6 +7,7 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
         const form = document.createElement('form');
 
         form.appendChild(createPrefilterActions());
+        form.appendChild(createPrefilterSearchBox());
         form.appendChild(createPrefilterGridFromColumnDetails(columnDetails));
 
         overlay.appendChild(form);
@@ -55,6 +56,24 @@ function createPrefilterActions() {
     actions.className = 'prefilter-actions sticky-top';
     actions.appendChild(createPrefilterSubmitButton('Apply Filters & Search'));
     return actions;
+}
+
+function createPrefilterSearchBox() {
+    const container = document.createElement('div');
+    container.className = 'prefilter-search-box';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Search filters…';
+    input.className = 'prefilter-search-input';
+
+    // Add event listener for live filtering
+    input.addEventListener('input', () => {
+        filterPrefilterSections(input.value);
+    });
+
+    container.appendChild(input);
+    return container;
 }
 
 function createPrefilterSubmitButton(label = 'Submit') {
@@ -219,6 +238,20 @@ function createTextFilterInput(name) {
     return input;
 }
 
+function filterPrefilterSections(searchText) {
+    searchText = searchText.toLowerCase().trim();
+    const sections = document.querySelectorAll('#prefilterOverlay .filter-section');
+
+    sections.forEach(section => {
+        const title = section.querySelector('h3')?.textContent.toLowerCase() || '';
+        if (!searchText || title.includes(searchText)) {
+            section.style.display = '';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+}
+
 // Wait for prefilter form submission
 function waitForPrefilterFormSubmission(form, resolve, overlay) {
     form.addEventListener('submit', e => {
@@ -232,15 +265,15 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
 // Main entry: returns the structured preFilter
 function collectPrefilterFromForm(form) {
     const preFilter = {};
-    processRangeColumns(form, preFilter);
-    processTagColumns(form, preFilter);
-    processChoiceColumns(form, preFilter);
-    processTextColumns(form, preFilter);
+    processRangePrefilters(form, preFilter);
+    processTagPrefilters(form, preFilter);
+    processChoicePrefilters(form, preFilter);
+    processTextPrefilters(form, preFilter);
     return preFilter;
 }
 
 // Process range columns
-function processRangeColumns(form, preFilter, colDefMap = getActiveColumnDetails()) {
+function processRangePrefilters(form, preFilter, colDefMap = getActiveColumnDetails()) {
     Object.entries(colDefMap).forEach(([col, def]) => {
         if (def.type !== 'int' && def.type !== 'float') return;
 
@@ -264,7 +297,7 @@ function processRangeColumns(form, preFilter, colDefMap = getActiveColumnDetails
 }
 
 // Build tag entries in preFilter
-function processTagColumns(form, preFilter, colDefMap = getActiveColumnDetails()) {
+function processTagPrefilters(form, preFilter, colDefMap = getActiveColumnDetails()) {
     Object.entries(colDefMap).forEach(([col, def]) => {
         if (def.type !== 'tag') return;
 
@@ -279,7 +312,7 @@ function processTagColumns(form, preFilter, colDefMap = getActiveColumnDetails()
 }
 
 // Process choice checkboxes
-function processChoiceColumns(form, preFilter, colDefMap = getActiveColumnDetails()) {
+function processChoicePrefilters(form, preFilter, colDefMap = getActiveColumnDetails()) {
     Object.entries(colDefMap).forEach(([col, def]) => {
         if (!Array.isArray(def.choices) || def.choices.length === 0) return;
         if (def.type === 'tag') return;
@@ -302,7 +335,7 @@ function processChoiceColumns(form, preFilter, colDefMap = getActiveColumnDetail
 }
 
 // Process text inputs
-function processTextColumns(form, preFilter) {
+function processTextPrefilters(form, preFilter) {
     const inputs = Array.from(form.querySelectorAll('input[type="text"], textarea'));
     for (const input of inputs) {
         const val = input.value.trim();

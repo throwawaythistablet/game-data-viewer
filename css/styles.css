@@ -434,7 +434,6 @@ body.dark-mode  .highlight-cell { color: white; }
     overflow: visible;
 }
 
-/* PREFILTER ACTIONS */
 .prefilter-actions {
     width: 100%;
     display: flex;
@@ -447,7 +446,48 @@ body.dark-mode  .highlight-cell { color: white; }
     box-shadow: 0 -4px 10px rgba(0,0,0,0.5); /* subtle top shadow */
 }
 
-/* Submit button prominent styling */
+.prefilter-search-box {
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    margin: 12px auto;
+}
+
+.prefilter-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+
+    border: 2px solid #f39c12;   /* match glow color */
+    border-radius: 6px;
+    background-color: #111;
+    color: #eee;
+    box-sizing: border-box;
+
+    /* ALWAYS visible glow */
+    box-shadow:
+        inset 0 1px 3px rgba(0,0,0,0.6),
+        0 0 10px rgba(243, 156, 18, 0.45),
+        0 0 20px rgba(243, 156, 18, 0.25);
+
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.prefilter-search-input::placeholder {
+    color: #bbb;
+}
+
+.prefilter-search-input:focus {
+    outline: none;
+    box-shadow:
+        inset 0 1px 3px rgba(0,0,0,0.6),
+        0 0 14px rgba(243, 156, 18, 0.8),
+        0 0 28px rgba(243, 156, 18, 0.5);
+}
+
+
 .prefilter-actions button {
     background: #f39c12; /* bright accent color */
     color: #111;
