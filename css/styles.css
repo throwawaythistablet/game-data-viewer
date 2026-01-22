@@ -1,0 +1,671 @@
+/* =========================================================
+   THEME VARIABLES
+   ========================================================= */
+:root {
+    --bg-main: #121212;
+    --bg-panel: #1e1e1e;
+    --bg-elevated: #252525;
+    --bg-hover: #2f2f2f;
+
+    --text-main: #e0e0e0;
+    --text-muted: #a0a0a0;
+
+    --border-subtle: #333;
+    --border-strong: #444;
+
+    --accent: #4dabf7;
+    --accent-hover: #339af0;
+
+    --danger: #ff6b6b;
+}
+
+body.light-theme {
+    --bg-main: #f8f9fa;
+    --bg-panel: #ffffff;
+    --bg-elevated: #f1f3f5;
+    --bg-hover: #e9ecef;
+
+    --text-main: #212529;
+    --text-muted: #6c757d;
+
+    --border-subtle: #ced4da;
+    --border-strong: #adb5bd;
+
+    --accent: #007bff;
+    --accent-hover: #0056b3;
+}
+
+/* =========================================================
+   BASE LAYOUT
+   ========================================================= */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+table {
+    width: 100%;
+    background: var(--bg-panel);
+    color: var(--text-main);
+}
+
+/* =========================================================
+   CONTROLS / TOOLBAR
+   ========================================================= */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--bg-panel);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Top bar: Title and Main Actions */
+.controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.controls-title {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+}
+
+.controls-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+    transition:
+        max-height 0.22s ease,
+        opacity 0.18s ease,
+        transform 0.18s ease;
+    overflow: hidden;
+}
+
+/* Collapsed state (after CSV load) */
+.controls-main-grid.is-collapsed {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+}
+
+/* Expanded state (hover or pinned) */
+.controls-main-grid.is-expanded {
+    max-height: 800px; /* comfortably larger than content */
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Pin button active state remains same */
+#controlsPinButton.is-active {
+    background: var(--accent);
+    color: var(--bg-main);
+}
+
+@media (max-width: 768px) {
+    .controls-main-grid { grid-template-columns: 1fr; }
+}
+
+/* Info Cards */
+.status-card {
+    background: var(--bg-elevated);
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.controls-value {
+    text-align: right;
+    max-width: 70%; 
+    color: var(--accent);
+    font-weight: bold;
+    
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.controls-status-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 4px;
+}
+
+.controls-status-item:last-child { border: none; }
+
+/* =========================================================
+   DROP ZONE
+   ========================================================= */
+#csvDropZone {
+    background: var(--bg-elevated);
+    border: 2px dashed var(--border-strong);
+    color: var(--text-muted);
+    padding: 16px; 
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; 
+    box-sizing: border-box; 
+}
+
+#csvDropZone.dragover {
+    background-color: #162233;
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+#csvDropZone:hover {
+    transform: scale(1.02);
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--bg-hover);
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn {
+    background: var(--accent);
+    color: var(--bg-main);
+    padding: 6px 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-secondary {
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border: 1px solid var(--border-strong);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-hover);
+}
+
+.btn:hover {
+    background: var(--accent-hover);
+}
+
+/* Hide default file input */
+#csvFile {
+    display: none;
+}
+
+#fileButton {
+    margin-right: 0;
+}
+
+/* =========================================================
+   TABLE FILTERS
+   ========================================================= */
+
+.filters th {
+    padding: 4px;
+    vertical-align: top;
+}
+
+.filters .filter-container {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-6px);
+    transition:
+        max-height 0.22s ease,
+        opacity 0.18s ease,
+        transform 0.18s ease;
+}
+
+.filters.is-expanded .filter-container {
+    max-height: 160px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.filters.is-collapsed .filter-container {
+    pointer-events: none;
+}
+
+/* ------------------- Checkbox Filter ------------------- */
+.filter-box {
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 4px;
+    font-size: 12px;
+}
+
+.filter-box label {
+    display: block;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.filter-box input {
+    margin-right: 4px;
+}
+
+.toggle-all-label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* ------------------- Text Filter ------------------- */
+.filter-text {
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 12px;
+    padding: 4px;
+}
+
+/* ------------------- Range Filter ------------------- */
+.filter-range {
+    display: flex;
+    flex-wrap: wrap;  /* allow min/max to wrap to next line */
+    gap: 8px;
+    align-items: flex-start; /* align top when wrapped */
+}
+
+/* wrapper for individual input + label */
+.range-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 80px;  /* flexible width, min 80px */
+    min-width: 80px; /* avoid inputs getting too small */
+    width: 100%;  /* always fill wrapper */
+    box-sizing: border-box;
+}
+
+/* label above the input */
+.range-label {
+    font-size: 10px;
+    color: var(--text-subtle);
+    margin-bottom: 2px;
+}
+
+/* input styling consistent with other filters */
+.range-min,
+.range-max {
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+    padding: 2px 4px;
+    font-size: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+
+/* =========================================================
+   SORTING BUTTONS (TABLE HEADERS)
+   ========================================================= */
+th .sort-asc,
+th .sort-desc {
+    font-size: 10px;
+    padding: 2px 4px;
+    margin-left: 4px;
+    border-radius: 3px;
+    background: var(--accent);
+    color: var(--bg-main);
+    cursor: pointer;
+    height: auto;
+    line-height: 1;
+    min-width: 0;
+    display: inline-block;
+    transition: background 0.2s;
+}
+
+th .sort-asc:hover,
+th .sort-desc:hover {
+    background: var(--accent-hover);
+}
+
+.highlight-cell {
+    display: block;
+    padding: 2px 4px;
+    border-radius: 2px;
+    text-align: center;
+    font-weight: normal;
+    transition: background-color 0.2s, font-weight 0.2s;
+}
+
+.highlight-cell.low { font-weight: normal; }
+.highlight-cell.medium { font-weight: 500; }
+.highlight-cell.high { font-weight: bold; }
+
+body.light-mode .highlight-cell { color: black; }
+body.dark-mode  .highlight-cell { color: white; }
+
+/* =========================================================
+   PREFILTER OVERLAY
+   ========================================================= */
+.prefilter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 24px;
+    color: #eee;
+
+    /* single vertical scrollbar for overlay */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.prefilter-notice {
+    background-color: #2b2b2b;
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.prefilter-notice ul {
+    margin: 4px 0 0 16px;
+    padding: 0;
+}
+
+.prefilter-notice strong {
+    font-weight: bold;
+}
+
+.prefilter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+
+    /* grid itself does not scroll */
+    overflow: visible;
+}
+
+/* PREFILTER ACTIONS */
+.prefilter-actions {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* center horizontally */
+    position: sticky;
+    bottom: 0; /* stick to bottom of viewport */
+    background: rgba(44,44,44,0.95); /* semi-transparent for prominence */
+    padding: 16px 0;
+    z-index: 1100;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.5); /* subtle top shadow */
+}
+
+/* Submit button prominent styling */
+.prefilter-actions button {
+    background: #f39c12; /* bright accent color */
+    color: #111;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.prefilter-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
+/* Cards with capped height */
+.filter-section {
+    background: #1c1c1c;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    /* max height for long cards */
+    max-height: 180px;
+    overflow: hidden;
+}
+
+.filter-section h3 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* Values scroll only when needed */
+.filter-values {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 6px;
+    overflow-y: auto;
+
+    /* critical for flex/grid shrink behavior */
+    min-height: 0;
+    min-width: 0;
+}
+
+/* Checkbox layout with text wrapping */
+.filter-checkbox {
+    font-size: 12px;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start; /* allow multi-line labels */
+    min-height: 20px;
+    line-height: 1.2;
+
+    /* text wrapping */
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* Prevent checkbox shrinking */
+.filter-checkbox input {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Text input filters behave normally */
+.filter-section input[type="text"] {
+    width: 100%;
+    padding: 6px;
+    background: #111;
+    border: 1px solid #444;
+    color: #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   LOADING OVERLAY & PROGRESS
+   ========================================================= */
+#loadingOverlayElement {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0,0,0,0.85);
+    color: var(--accent);
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
+    border-radius: 50%;
+    border: 6px solid #eee;
+    border-top: 6px solid var(--accent);
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+#loadingHeaderDisplay {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+/* Progress bar */
+#loadingProgressDisplayContainer {
+    width: 80%;
+    margin-top: 15px;
+    background: #333;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+#loadingProgressBarDisplay {
+    width: 0%;
+    height: 20px;
+    background: var(--accent);
+    transition: width 0.1s;
+}
+
+#loadingProgressTextDisplay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+#stopLoadingButton {
+    margin-top: 20px;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: var(--danger);
+    color: var(--bg-main);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#stopLoadingButton:hover {
+    background-color: #ff4c4c; /* slightly brighter red on hover */
+}
+
+/* =========================================================
+   IMAGE MODAL
+   ========================================================= */
+#imageModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,0.95);
+    color: white;
+    flex-direction: column;
+}
+
+#imageModalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: #111;
+}
+
+#imageModalGrid {
+    flex-grow: 1;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    overflow-y: auto;
+}
+
+#imageModalGrid img {
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Fullscreen image preview */
+#imageOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,0.9);
+    align-items: center;
+    justify-content: center;
+}
+
+#imageOverlay img {
+    max-width: 90%;
+    max-height: 90%;
+}

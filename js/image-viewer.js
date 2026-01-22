@@ -1,0 +1,102 @@
+
+
+async function openImageModalForFolder(windowsPath) {
+    const dir = await resolveDirHandleFromRelativePath(windowsPath);
+    if (!dir) return;
+
+    showImageModal();
+    await scanDirectoryAndRenderImages(dir);
+}
+
+async function resolveDirHandleFromRelativePath(windowsPath) {
+    const parts = windowsPath.replace(/^[A-Z]:\\/, '').trim().split('\\').filter(Boolean);
+
+    let dir = activeRootDirectoryHandle;
+    const rootName = dir.name;
+    const rootIndex = parts.indexOf(rootName);
+    if (rootIndex === -1) {
+        alert(`Selected root "${rootName}" is not part of this path.`);
+        return;
+    }
+    const relativeParts = parts.slice(rootIndex + 1);
+    if (!relativeParts) return null;
+
+    try {
+        for (const part of relativeParts) {
+            dir = await dir.getDirectoryHandle(part);
+        }
+        return dir;
+    } catch (e) {
+        console.error(e);
+        alert('Folder not found inside selected root.');
+        return null;
+    }
+}
+
+function showImageModal() {
+    const grid = document.getElementById('imageModalGrid');
+
+    // Cleanup old URLs if modal is reused
+    modalImageUrls.forEach(url => URL.revokeObjectURL(url));
+    modalImageUrls = [];
+
+    // Clear DOM
+    grid.innerHTML = '';
+
+    document.getElementById('imageModal').style.display = 'flex';
+}
+
+async function scanDirectoryAndRenderImages(dir) {
+    const imagesFound = [];
+    scanCancelled = false;
+
+    await scanDirectoryIncrementallyForImages(dir, imgHandle => {
+        imagesFound.push(imgHandle);
+        appendImageToModal(imgHandle);
+    });
+
+    document.getElementById('imageModalTitle').textContent = `Images (${imagesFound.length})`;
+}
+
+async function appendImageToModal(h) {
+    const grid = document.getElementById('imageModalGrid');
+    const file = await h.getFile();
+    const url = URL.createObjectURL(file);
+    modalImageUrls.push(url);
+
+    const img = document.createElement('img');
+    img.src = url;
+
+    img.onclick = () => {
+        // Revoke previous overlay URL
+        if (activeOverlayImageUrl) URL.revokeObjectURL(activeOverlayImageUrl);
+        activeOverlayImageUrl = URL.createObjectURL(file);
+        const overlayImg = document.getElementById('imageOverlayImg');
+        overlayImg.src = activeOverlayImageUrl;
+        document.getElementById('imageOverlay').style.display = 'flex';
+    };
+
+    grid.appendChild(img);
+}
+
+// Iterative, incremental directory scan
+async function scanDirectoryIncrementallyForImages(dirHandle, onImageFound) {
+    const stack = [dirHandle];
+
+    while (stack.length) {
+        if (scanCancelled) return; // STOP if modal was closed
+        const currentDir = stack.pop();
+
+        for await (const [name, handle] of currentDir.entries()) {
+            if (handle.kind === 'file') {
+                const ext = name.split('.').pop().toLowerCase();
+                if (SUPPORTED_IMAGE_EXTS.includes(ext)) {
+                    onImageFound(handle);
+                    await yieldToBrowser();
+                }
+            } else if (handle.kind === 'directory') {
+                stack.push(handle);
+            }
+        }
+    }
+}

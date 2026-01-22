@@ -2994,7 +2994,7 @@
     "min": 0,
     "max": 1
   },
-  "foreshadowing": {
+  "netorase": {
     "type": "tag",
     "choices": [
       0,
@@ -3003,7 +3003,7 @@
     "min": 0,
     "max": 1
   },
-  "netorase": {
+  "foreshadowing": {
     "type": "tag",
     "choices": [
       0,
