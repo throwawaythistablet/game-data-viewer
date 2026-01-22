@@ -253,12 +253,34 @@
         /* =========================================================
            TABLE FILTERS
            ========================================================= */
+
         .filters th {
-            vertical-align: top;
             padding: 4px;
+            vertical-align: top;
         }
 
-        /* Checkbox filter */
+        .filters .filter-container {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(-6px);
+            transition:
+                max-height 0.22s ease,
+                opacity 0.18s ease,
+                transform 0.18s ease;
+        }
+
+        .filters.is-expanded .filter-container {
+            max-height: 160px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .filters.is-collapsed .filter-container {
+            pointer-events: none;
+        }
+
+        /* ------------------- Checkbox Filter ------------------- */
         .filter-box {
             background: var(--bg-elevated);
             color: var(--text-main);
@@ -279,7 +301,13 @@
             margin-right: 4px;
         }
 
-        /* Text filter */
+        .toggle-all-label {
+            font-weight: bold;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* ------------------- Text Filter ------------------- */
         .filter-text {
             background: var(--bg-elevated);
             color: var(--text-main);
@@ -288,6 +316,44 @@
             box-sizing: border-box;
             font-size: 12px;
             padding: 4px;
+        }
+
+        /* ------------------- Range Filter ------------------- */
+        .filter-range {
+            display: flex;
+            flex-wrap: wrap;  /* allow min/max to wrap to next line */
+            gap: 8px;
+            align-items: flex-start; /* align top when wrapped */
+        }
+
+        /* wrapper for individual input + label */
+        .range-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 80px;  /* flexible width, min 80px */
+            min-width: 80px; /* avoid inputs getting too small */
+            width: 100%;  /* always fill wrapper */
+            box-sizing: border-box;
+        }
+
+        /* label above the input */
+        .range-label {
+            font-size: 10px;
+            color: var(--text-subtle);
+            margin-bottom: 2px;
+        }
+
+        /* input styling consistent with other filters */
+        .range-min,
+        .range-max {
+            background: var(--bg-elevated);
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            padding: 2px 4px;
+            font-size: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 3px;
         }
 
         /* =========================================================
@@ -401,6 +467,7 @@
             padding: 12px 24px;
             border: none;
             border-radius: 8px;
+            margin-top: 10px;
             cursor: pointer;
             transition: transform 0.15s, box-shadow 0.15s;
         }
@@ -673,7 +740,7 @@ const loadingProgressBar = document.getElementById('loadingProgressBarDisplay');
 const loadingProgressText = document.getElementById('loadingProgressTextDisplay');
 
 let activeCsvFile = null;
-let activePrefilters = {};
+let activeColumnDetails = {};
 let loadingCancelled = false;
 
 async function yieldToBrowser() {
@@ -708,8 +775,8 @@ async function setActiveCsvFile(file) {
     activeCsvFile = file;
 }
 
-function updatePrefilters(prefilters, fileName) {
-    activePrefilters = prefilters;
+function updateColumnDetails(columnDetails, fileName, description) {
+    activeColumnDetails = columnDetails;
 }
 
 async function loadDefaultCsv() {
@@ -728,17 +795,17 @@ async function loadDefaultCsv() {
     setActiveCsvFile(file);
 }
 
-async function loadDefaultPrefiltersJson() {
-    if(activePrefilters && Object.keys(activePrefilters).length > 0){
+async function loadDefaultColumnDetailsJson() {
+    if(activeColumnDetails && Object.keys(activeColumnDetails).length > 0){
         return; // already loaded
     }
-    const response = await fetch('data/game_prefilters.json');
+    const response = await fetch('data/game_column_details.json');
     if (!response.ok) {
-        alert('Failed to load default prefilters');
+        alert('Failed to load default column details');
         return;
     }
-    const prefilters = await response.json();
-    updatePrefilters(prefilters, 'game_prefilters.json');
+    const columnDetails = await response.json();
+    updateColumnDetails(columnDetails, 'game_column_details.json', 'Loaded from data/game_column_details.json');
 }
 
 async function executeCsvSearchWithRetries() {
@@ -763,8 +830,8 @@ async function executeCsvSearch(file) {
 
     try {
         const collectedPrefilters =
-            activePrefilters && Object.keys(activePrefilters).length > 0
-                ? await showPrefilterOverlayAndCollectFilters(activePrefilters)
+            activeColumnDetails && Object.keys(activeColumnDetails).length > 0
+                ? await showPrefilterOverlayAndCollectFilters(activeColumnDetails)
                 : {};
 
         await updateLoadingProgress("Starting Data Search...", 0, 0, 0, 1);
@@ -792,17 +859,17 @@ async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
         throw new Error('No rows loaded');
     }
 
+    determineColumnDetailsFromDataIfNeeded(parsedData)
     const columns = createTableColumns(parsedData);
     await renderCsvTable(parsedData, columns);
 }
-
 
 async function parseAndFilterCsv(file, totalSize, preFilters) {
     const parsedData = [];
     let rowsProcessed = 0;
     let bytesProcessed = 0;
     const THROTTLE = 100;
-    const MAX_ROWS = 10000; // maximum rows to prevent memory overload
+    const MAX_ROWS = 30000; // maximum rows to prevent memory overload
 
     return new Promise((resolve, reject) => {
         Papa.parse(file, {
@@ -831,6 +898,7 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
 
                 // Stop if max rows exceeded
                 if (parsedData.length >= MAX_ROWS) {
+                    this.abort();
                     // Reject the promise instead of throwing
                     reject(new Error(
                         `Too many items loaded (${MAX_ROWS}). Please use filters to reduce the number of items before loading.`
@@ -849,17 +917,60 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
 }
 
 function isRowAllowedByPrefilter(row, preFilter) {
-    return Object.entries(preFilter).every(([col, allowedValues]) => {
-        const rawVal = row[col];
-        const val = rawVal != null ? String(rawVal).trim() : '';
+    if (!preFilter || Object.keys(preFilter).length === 0) return true;
 
-        // Empty or invalid allowedValues or empty string → allow all
-        if (!Array.isArray(allowedValues) || allowedValues.length === 0 || val === "") {
+    const normalize = v => (v == null ? '' : typeof v === 'string' ? v.trim() : v);
+
+    return Object.entries(preFilter).every(([col, criterion]) => {
+        const colDef = activeColumnDetails[col];
+        if (!colDef) return true;
+
+        const rawVal = row[col];
+        const val = normalize(rawVal);
+
+        // Numeric
+        if (colDef.type === 'int' || colDef.type === 'float') {
+            const num = Number(val);
+            if (Number.isNaN(num)) return true;
+            if (criterion.min != null && num < criterion.min) return false;
+            if (criterion.max != null && num > criterion.max) return false;
+            if (Array.isArray(criterion.choices) && criterion.choices.length > 0) {
+                if (!criterion.choices.includes(num)) return false;
+            }
             return true;
         }
 
-        // Check if value is allowed
-        return allowedValues.includes(val);
+        // Tag (0/1)
+        if (colDef.type === 'tag') {
+            if (!Array.isArray(criterion.choices)) return true;
+            return criterion.choices.includes(Number(val));
+        }
+
+        // Boolean
+        if (colDef.type === 'bool') {
+            if (!Array.isArray(criterion.choices)) return true;
+            return criterion.choices.includes(Boolean(val));
+        }
+
+        // Any type with choices
+        if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
+            if (!Array.isArray(criterion.choices)) return true;
+            if (criterion.choices.length === 0) return false;
+            let typedVal = val;
+            if (colDef.type === 'int') typedVal = parseInt(val, 10);
+            if (colDef.type === 'float') typedVal = parseFloat(val);
+            if (colDef.type === 'bool') typedVal = Boolean(val);
+            if (!criterion.choices.includes(typedVal)) return false;
+            return true;
+        }
+
+        // Text search
+        if (criterion.text && Array.isArray(criterion.text)) {
+            const lowerVal = String(val).toLowerCase();
+            return criterion.text.some(t => lowerVal.includes(String(t).toLowerCase()));
+        }
+
+        return true;
     });
 }
 
@@ -867,13 +978,20 @@ function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
     const keys = Object.keys(parsedData[0]);
-    const columns = keys.map(key => ({
-        title: key,
-        data: key,
-        render: (data, type, row, meta) => renderCellValue(data, key)
-    }));
 
-    // Add the "View Images" column if "location" exists
+    // Build columns, but skip columns with type 'tag'
+    const columns = keys
+        .filter(key => {
+            const colDef = activeColumnDetails[key];
+            return !(colDef && colDef.type === 'tag');
+        })
+        .map(key => ({
+            title: key,
+            data: key,
+            render: (data, type, row, meta) => renderCellValue(data, key)
+        }));
+
+    // Add the "View Images" column at the front if "location" exists
     if (keys.includes('location')) {
         columns.unshift({
             title: 'View Images',
@@ -893,8 +1011,8 @@ async function renderCsvTable(data, columns) {
     showLoading();
     
     csvTableElement.hide();
-    
     destroyExistingTable();
+    
     createTableHeader(columns);
     const tbody = createTableBody();
     await appendRowsToTableInChunks(data, columns, tbody);
@@ -904,6 +1022,93 @@ async function renderCsvTable(data, columns) {
     await updateLoadingProgress("Csv Table Render Complete.", 100, 100, 1, 1);
     hideLoading();
 }
+
+function determineColumnDetailsFromDataIfNeeded(parsedData) {
+    if (activeColumnDetails && Object.keys(activeColumnDetails).length > 0) return;
+    if (!parsedData || parsedData.length === 0) return;
+
+    const columnDetails = {};
+
+    const numericRegex = /^[+-]?(?:\d+|\d*\.\d+)(?:[eE][+-]?\d+)?$/;
+    const looksNumericString = v => {
+        if (v === null || v === undefined) return false;
+        const s = String(v).trim();
+        return s !== '' && numericRegex.test(s);
+    };
+
+    const keys = Object.keys(parsedData[0] || {});
+    keys.forEach(col => {
+        const rawValues = parsedData.map(r => r[col]);
+        const values = rawValues
+            .filter(v => v !== undefined && v !== null)
+            .map(v => String(v).trim())
+            .filter(v => v !== '');
+
+        if (values.length === 0) {
+            columnDetails[col] = { type: 'str', choices: [] };
+            return;
+        }
+
+        /* ---------- NUMERIC ---------- */
+        if (values.every(looksNumericString)) {
+            const nums = values.map(Number);
+            const uniqueNums = Array.from(new Set(nums));
+            const allInts = nums.every(Number.isInteger);
+
+            // TAG (binary)
+            if (uniqueNums.every(v => v === 0 || v === 1)) {
+                columnDetails[col] = {
+                    type: 'tag',
+                    choices: [0, 1],
+                    min: 0,
+                    max: 1
+                };
+                return;
+            }
+
+            // RANGE
+            columnDetails[col] = {
+                type: allInts ? 'int' : 'float',
+                choices: [],
+                min: Math.min(...nums),
+                max: Math.max(...nums)
+            };
+            return;
+        }
+
+        /* ---------- BOOLEAN DETECTION ---------- */
+        const lowerVals = values.map(v => v.toLowerCase());
+        if (lowerVals.every(v => v === 'true' || v === 'false')) {
+            columnDetails[col] = {
+                type: 'bool',
+                choices: [false, true]
+            };
+            return;
+        }
+
+        /* ---------- STRING ---------- */
+        const uniqueStrings = Array.from(new Set(values));
+
+        columnDetails[col] = {
+            type: 'str',
+            choices: uniqueStrings.length <= 20 ? uniqueStrings : []
+        };
+    });
+
+    // Hardcoded bounds
+    if (columnDetails["bayesian_rating"]) {
+        columnDetails["bayesian_rating"].min = 0;
+        columnDetails["bayesian_rating"].max = 5;
+    }
+    if (columnDetails["site_rating"]) {
+        columnDetails["site_rating"].min = 0;
+        columnDetails["site_rating"].max = 5;
+    }
+
+    updateColumnDetails(columnDetails, "", "Determined from loaded data.");
+}
+
+
 
 function destroyExistingTable() {
     try {
@@ -967,7 +1172,7 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
 
         tbody[0].appendChild(fragment);
 
-        await updateLoadingProgress("Filling Rows In Table...", 30, 70, Math.min(start + CHUNK_SIZE, data.length), data.length);
+        await updateLoadingProgress("Adding Rows To The Table...", 30, 70, Math.min(start + CHUNK_SIZE, data.length), data.length);
         await yieldToBrowser();
     }
 }
@@ -1001,80 +1206,226 @@ function initializeDataTableWithOptions(columns) {
     });
 }
 
-
 async function addColumnFilters(api) {
     const colCount = api.columns().count();
 
     for (let colIdx = 0; colIdx < colCount; colIdx++) {
         if (loadingCancelled) throw new Error('Loading cancelled by user.');
-        
+
         const column = api.column(colIdx);
-        const cell = $('.filters th').eq(colIdx);
+        const th = $('.filters th').eq(colIdx);
+        const colName = column.header().textContent.trim();
+        const colDef = activeColumnDetails[colName];
 
-        // Collect unique values
-        const values = new Set();
-        column.data().each(val => {
-            const clean = $('<div>').html(val).text().trim();
-            values.add(clean || '(Blanks)');
-        });
+        if (!colDef) continue;
 
-        const sorted = Array.from(values).sort();
+        // Create filter container
+        const container = $('<div class="filter-container"></div>').appendTo(th);
 
-        if (sorted.length <= 20) {
-            const box = $('<div class="filter-box"></div>').appendTo(cell);
-
-            // Add "Select All / Uncheck All" checkbox at the top
-            const selectAll = $(`<label><input type="checkbox" class="select-all" checked> Toggle All</label>`);
-            box.append(selectAll);
-
-            sorted.forEach(v => {
-                box.append(`
-                    <label>
-                        <input type="checkbox" value="${v}" checked>
-                        ${v}
-                    </label>
-                `);
-            });
-
-            // Event: toggle all checkboxes
-            box.on('change', '.select-all', function () {
-                const checked = $(this).is(':checked');
-                box.find('input[type="checkbox"]').not(this).prop('checked', checked).trigger('change');
-            });
-
-            // Event: individual checkboxes
-            box.on('change', 'input:not(.select-all)', function () {
-                const checkedVals = box.find('input[type="checkbox"]:not(.select-all):checked')
-                    .map((_, el) => $(el).val())
-                    .get();
-
-                // Update "Select All" checkbox based on individual checkboxes
-                selectAll.find('input').prop('checked', checkedVals.length === sorted.length);
-
-                // Apply filtering
-                if (checkedVals.length === 0 || checkedVals.length === sorted.length) {
-                    column.search('').draw(); // show all if nothing or all selected
-                    return;
-                }
-
-                const regex = '^(' + checkedVals.map(v =>
-                    v === '(Blanks)' ? '' : $.fn.dataTable.util.escapeRegex(v)
-                ).join('|') + ')$';
-
-                column.search(regex, true, false).draw();
-            });
+        if (colDef.choices && colDef.choices.length > 0) {
+            addCheckboxFilter(container, column, colDef);
+        } else if (colDef.type === 'int' || colDef.type === 'float') {
+            addRangeFilter(container, column, colDef);
         } else {
-            $('<input type="text" class="filter-text" placeholder="Filter..." />')
-                .appendTo(cell)
-                .on('keyup change clear', function () {
-                    column.search(this.value).draw();
-                });
+            addTextFilter(container, column);
         }
 
         await updateLoadingProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
         await yieldToBrowser();
     }
+
+    // Setup hover expand/collapse
+    setupFiltersExpandCollapse();
 }
+
+function setupFiltersExpandCollapse() {
+    const table = document.querySelector('#csvTable');
+    if (!table) return;
+
+    const headerRow = table.querySelector('thead tr:first-child'); // column headers
+    const filtersRow = table.querySelector('tr.filters');           // filters row
+
+    if (!headerRow || !filtersRow) return;
+
+    let isHoverHeader = false;
+    let isHoverFilters = false;
+    let isFocusInside = false;
+
+    function updateFiltersState() {
+        const shouldExpand = isHoverHeader || isHoverFilters || isFocusInside;
+        filtersRow.classList.toggle('is-expanded', shouldExpand);
+        filtersRow.classList.toggle('is-collapsed', !shouldExpand);
+    }
+
+    // Hover on headers
+    headerRow.addEventListener('mouseenter', () => {
+        isHoverHeader = true;
+        updateFiltersState();
+    });
+    headerRow.addEventListener('mouseleave', () => {
+        isHoverHeader = false;
+        updateFiltersState();
+    });
+
+    // Hover on filters row itself (hover buffer)
+    filtersRow.addEventListener('mouseenter', () => {
+        isHoverFilters = true;
+        updateFiltersState();
+    });
+    filtersRow.addEventListener('mouseleave', () => {
+        isHoverFilters = false;
+        updateFiltersState();
+    });
+
+    // Keep open while interacting
+    filtersRow.addEventListener('focusin', () => {
+        isFocusInside = true;
+        updateFiltersState();
+    });
+    filtersRow.addEventListener('focusout', (e) => {
+        const newTarget = e.relatedTarget;
+        if (!filtersRow.contains(newTarget)) {
+            isFocusInside = false;
+            updateFiltersState();
+        }
+    });
+
+    // Start collapsed
+    updateFiltersState();
+}
+
+function ensureFiltersWrapper() {
+    const filtersRow = document.querySelector('tr.filters');
+    if (!filtersRow) return null;
+
+    if (filtersRow.parentElement.classList.contains('filters-wrapper')) {
+        return filtersRow.parentElement;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'filters-wrapper';
+
+    filtersRow.parentElement.insertBefore(wrapper, filtersRow);
+    wrapper.appendChild(filtersRow);
+
+    return wrapper;
+}
+
+function addCheckboxFilter(th, column, colDef) {
+    const box = $('<div class="filter-box"></div>').appendTo(th);
+    const toggleAll = $('<label class="toggle-all-label"><input type="checkbox" class="toggle-all" checked> Toggle All</label>');
+    box.append(toggleAll);
+
+    colDef.choices.forEach(v => {
+        box.append(`
+            <label>
+                <input type="checkbox" value="${v}" checked>
+                ${v}
+            </label>
+        `);
+    });
+
+    // Toggle all
+    box.on('change', '.toggle-all', function () {
+        const checked = $(this).is(':checked');
+        box.find('input[type="checkbox"]').not(this).prop('checked', checked).trigger('change');
+    });
+
+    // Individual checkbox filtering
+    box.on('change', 'input:not(.toggle-all)', function () {
+        const checkedVals = box.find('input[type="checkbox"]:not(.toggle-all):checked')
+            .map((_, el) => $(el).val())
+            .get();
+
+        toggleAll.find('input').prop('checked', checkedVals.length === colDef.choices.length);
+
+        let searchRegex;
+        if (checkedVals.length === 0) {
+            // No checkboxes checked → match nothing
+            searchRegex = 'a^'; // regex that never matches
+        } else if (checkedVals.length === colDef.choices.length) {
+            // All checked → remove filter
+            searchRegex = '';
+        } else {
+            // Some checked → match only selected values
+            searchRegex = '^(' + checkedVals.map(v => $.fn.dataTable.util.escapeRegex(v)).join('|') + ')$';
+        }
+
+        column.search(searchRegex, true, false).draw();
+    });
+}
+
+function addTextFilter(th, column) {
+    $('<input type="text" class="filter-text" placeholder="Filter..." />')
+        .appendTo(th)
+        .on('keyup change clear', function () {
+            column.search(this.value).draw();
+        });
+}
+
+function addRangeFilter(th, column, colDef) {
+    // container
+    const box = $('<div class="filter-range"></div>').appendTo(th);
+
+    // labeled inputs
+    const minWrapper = $('<div class="range-input-wrapper"></div>').appendTo(box);
+    $('<label class="range-label">Min</label>').appendTo(minWrapper);
+    const minInput = $('<input type="number" class="range-min" placeholder="Min" />')
+        .val(colDef.min ?? '')
+        .appendTo(minWrapper);
+
+    const maxWrapper = $('<div class="range-input-wrapper"></div>').appendTo(box);
+    $('<label class="range-label">Max</label>').appendTo(maxWrapper);
+    const maxInput = $('<input type="number" class="range-max" placeholder="Max" />')
+        .val(colDef.max ?? '')
+        .appendTo(maxWrapper);
+
+    const colIdx = column.index();
+    const dataKey = column.dataSrc();
+    const table = column.table();
+    let lastFilterName = null;
+
+    function stripHtml(text) {
+        if (typeof text !== 'string') return text;
+        const tmp = document.createElement('div');
+        tmp.innerHTML = text;
+        return (tmp.textContent || tmp.innerText || '').trim();
+    }
+
+    function applyRangeFilter() {
+        const minVal = minInput.val() === '' ? NaN : parseFloat(minInput.val());
+        const maxVal = maxInput.val() === '' ? NaN : parseFloat(maxInput.val());
+
+        if (lastFilterName) {
+            $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn.name !== lastFilterName);
+            lastFilterName = null;
+        }
+
+        const rangeFilter = function(settings, data) {
+            let rawVal;
+            if (data == null) rawVal = undefined;
+            else if (typeof data === 'object' && !Array.isArray(data)) rawVal = data[dataKey];
+            else if (Array.isArray(data)) rawVal = data[colIdx];
+            else rawVal = data;
+
+            const num = parseFloat(String(stripHtml(rawVal)).replace(/,/g, '').trim());
+            if (isNaN(num)) return true;
+            if (!isNaN(minVal) && num < minVal) return false;
+            if (!isNaN(maxVal) && num > maxVal) return false;
+            return true;
+        };
+
+        rangeFilter.name = `rangeFilter_${colIdx}_${Date.now()}`;
+        lastFilterName = rangeFilter.name;
+        $.fn.dataTable.ext.search.push(rangeFilter);
+
+        table.draw();
+    }
+
+    box.on('input change', 'input', applyRangeFilter);
+    applyRangeFilter();
+}
+
 
 async function addSortingControls(api, dt) {
     const totalSortingSteps = csvTableElement.find('thead tr:first-child th').length;
@@ -1107,16 +1458,11 @@ async function addSortingControls(api, dt) {
     }
 }
 
-const HIGHLIGHT_COLUMNS = {
-    user_rating: { min: 0, max: 100 },
-    bayesian_rating: { min: 2, max: 5 },
-    site_rating: { min: 1, max: 5 }
-};
-
 function renderCellValue(val, colName = null) {
-    if (typeof val !== 'string') return val;
+    if (val === undefined || val === null) return '';
 
-    const text = val.trim();
+    // Non-string values can be returned directly
+    const text = String(val).trim();
 
     const toFileUrl = path => {
         if (path.startsWith('http')) return path;
@@ -1138,9 +1484,9 @@ function renderCellValue(val, colName = null) {
     // Local Windows path
     if (/^[a-zA-Z]:\\/.test(text)) return `<a href="${toFileUrl(text)}" target="_blank">${text}</a>`;
 
-    // Column-specific highlighting
-    if (colName && HIGHLIGHT_COLUMNS[colName]) {
-        const { min, max } = HIGHLIGHT_COLUMNS[colName];
+    // Highlight numeric columns automatically
+    if (colName && activeColumnDetails[colName] && ['int', 'float'].includes(activeColumnDetails[colName].type)) {
+        const { min, max } = activeColumnDetails[colName];
         return highlightValue(text, min, max);
     }
 
@@ -1178,35 +1524,19 @@ function highlightValue(val, min, max) {
     return `<span class="highlight-cell ${weightClass}" style="background-color:${bgColor}; color:${textColor}">${val}</span>`;
 }
 
-function normalizeFilters(filters) {
-    const normalized = {};
-    Object.entries(filters).forEach(([col, values]) => {
-        normalized[col] = Array.isArray(values)
-            ? values.map(v => String(v).trim()).filter(v => v !== '')
-            : [];
-    });
-    return normalized;
-}
-
-async function showPrefilterOverlayAndCollectFilters(filters) {
+async function showPrefilterOverlayAndCollectFilters(activeColumnDetails) {
     try {
-        const normalized = normalizeFilters(filters);
         const overlay = createPrefilterOverlayContainer('Refine Your Search');
-
-        // Add notice
         overlay.appendChild(createPrefilterNotice());
 
-        // Form wrapper
         const form = document.createElement('form');
 
-        // Add actions and grid
         form.appendChild(createPrefilterActions());
-        form.appendChild(createPrefilterGrid(normalized));
+        form.appendChild(createPrefilterGridFromColumnDetails(activeColumnDetails));
 
         overlay.appendChild(form);
         document.body.appendChild(overlay);
 
-        // Wait for submission
         return new Promise(resolve =>
             waitForPrefilterFormSubmission(form, resolve, overlay)
         );
@@ -1216,16 +1546,14 @@ async function showPrefilterOverlayAndCollectFilters(filters) {
     }
 }
 
-// Main function to create the overlay container
 function createPrefilterOverlayContainer(title) {
     const overlay = document.createElement('div');
     overlay.id = 'prefilterOverlay';
-    overlay.className = 'prefilter-overlay'; // move all styling to CSS
+    overlay.className = 'prefilter-overlay';
     overlay.innerHTML = `<h2>${title}</h2>`;
     return overlay;
 }
 
-// ⚠ Important notice
 function createPrefilterNotice() {
     const notice = document.createElement('div');
     notice.className = 'prefilter-notice';
@@ -1247,7 +1575,6 @@ function createPrefilterNotice() {
     return notice;
 }
 
-// Action buttons container
 function createPrefilterActions() {
     const actions = document.createElement('div');
     actions.className = 'prefilter-actions sticky-top';
@@ -1255,17 +1582,25 @@ function createPrefilterActions() {
     return actions;
 }
 
-// Grid containing all filters
-function createPrefilterGrid(normalizedFilters) {
+function createPrefilterSubmitButton(label = 'Submit') {
+    const btn = document.createElement('button');
+    btn.type = 'submit';
+    btn.textContent = label;
+    btn.className = 'btn';
+    return btn;
+}
+
+function createPrefilterGridFromColumnDetails(columnDetails) {
     const grid = document.createElement('div');
-    grid.className = 'prefilter-form'; // CSS handles layout
-    for (const [col, values] of Object.entries(normalizedFilters)) {
-        grid.appendChild(createFilterSectionForColumn(col, values));
+    grid.className = 'prefilter-form';
+    for (const [col, colDef] of Object.entries(columnDetails)) {
+        grid.appendChild(createFilterSectionForColumnDetails(col, colDef));
     }
     return grid;
 }
 
-function createFilterSectionForColumn(col, values) {
+// Section for a column, decides which small helper to call
+function createFilterSectionForColumnDetails(col, colDef) {
     const section = document.createElement('section');
     section.className = 'filter-section';
 
@@ -1273,19 +1608,134 @@ function createFilterSectionForColumn(col, values) {
     title.textContent = col;
     section.appendChild(title);
 
-    if (!values.length || values.length > 30) {
-        section.appendChild(createTextFilterInput(col));
+    if (colDef.type === 'tag') {
+        section.appendChild(createTagFilter(col));
+    } else if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
+        section.appendChild(createChoiceFilter(col, colDef.choices));
+    } else if (colDef.type === 'int' || colDef.type === 'float') {
+        section.appendChild(createRangeFilter(col, colDef.min, colDef.max));
     } else {
-        const list = document.createElement('div');
-        list.className = 'filter-values';
-
-        values.forEach(v => list.appendChild(createPrefilterCheckbox(col, v)));
-        section.appendChild(list);
+        section.appendChild(createTextFilterInput(col));
     }
 
     return section;
 }
 
+// Choice checkbox group with toggle-all
+function createChoiceFilter(name, choices) {
+    const box = document.createElement('div');
+    box.className = 'filter-box';
+
+    const toggleLabel = document.createElement('label');
+    toggleLabel.className = 'toggle-all-label';
+    toggleLabel.innerHTML = `<input type="checkbox" class="toggle-all" data-col="${name}" checked> Toggle All`;
+    box.appendChild(toggleLabel);
+
+    choices.forEach(choice => {
+        const lbl = document.createElement('label');
+        lbl.className = 'filter-checkbox';
+        const inp = document.createElement('input');
+        inp.type = 'checkbox';
+        inp.name = name;
+        inp.value = String(choice);
+        inp.checked = true;
+        lbl.appendChild(inp);
+        lbl.appendChild(document.createTextNode(' ' + String(choice)));
+        box.appendChild(lbl);
+    });
+
+    toggleLabel.querySelector('input').addEventListener('change', function () {
+        const checked = this.checked;
+        box.querySelectorAll(`input[name="${name}"]`).forEach(i => i.checked = checked);
+    });
+
+    return box;
+}
+
+// Tag checkboxes
+function createTagFilter(name) {
+    const container = document.createElement('div');
+    container.className = 'filter-tag-group';
+
+    // 0 checkbox
+    const lbl0 = document.createElement('label');
+    lbl0.className = 'filter-checkbox';
+    const inp0 = document.createElement('input');
+    inp0.type = 'checkbox';
+    inp0.name = name;
+    inp0.value = '0';
+    inp0.checked = false;
+    lbl0.appendChild(inp0);
+    lbl0.appendChild(document.createTextNode(' No (0)'));
+
+    // 1 checkbox
+    const lbl1 = document.createElement('label');
+    lbl1.className = 'filter-checkbox';
+    const inp1 = document.createElement('input');
+    inp1.type = 'checkbox';
+    inp1.name = name;
+    inp1.value = '1';
+    inp1.checked = false;
+    lbl1.appendChild(inp1);
+    lbl1.appendChild(document.createTextNode(' Yes (1)'));
+
+    container.appendChild(lbl0);
+    container.appendChild(lbl1);
+
+    return container;
+}
+
+// Range filter (min / max inputs) — sleek version
+function createRangeFilter(name, min = null, max = null) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'filter-range';
+
+    const minWrap = document.createElement('div');
+    minWrap.className = 'range-input-wrapper';
+    // Use placeholder (if available) instead of pre-filling the value.
+    minWrap.appendChild(createNumberInput(`${name}__min`, null, 'Min', 'range-min', (min != null ? String(min) : '')));
+
+    const maxWrap = document.createElement('div');
+    maxWrap.className = 'range-input-wrapper';
+    maxWrap.appendChild(createNumberInput(`${name}__max`, null, 'Max', 'range-max', (max != null ? String(max) : '')));
+
+    wrapper.appendChild(minWrap);
+    wrapper.appendChild(maxWrap);
+    return wrapper;
+}
+
+// Create labeled number input with optional class for styling
+function createNumberInput(name, value = null, labelText = '', inputClass = '', placeholder = '') {
+    const container = document.createElement('div');
+
+    const label = document.createElement('label');
+    label.className = 'range-label';
+    label.textContent = labelText;
+    container.appendChild(label);
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.name = name;
+
+    if (value !== null && value !== undefined && value !== '') {
+        input.value = value;
+    } else if (placeholder) {
+        input.placeholder = placeholder;
+    }
+
+    if (inputClass) input.className = inputClass;
+
+    input.step = 'any';
+    input.min = '';
+    input.max = '';
+
+    input.addEventListener('invalid', e => e.preventDefault());
+
+    container.appendChild(input);
+    return container;
+}
+
+// Text input filter (fallback)
 function createTextFilterInput(name) {
     const input = document.createElement('input');
     input.type = 'text';
@@ -1294,47 +1744,98 @@ function createTextFilterInput(name) {
     return input;
 }
 
-function createPrefilterCheckbox(name, value) {
-    const label = document.createElement('label');
-    label.className = 'filter-checkbox';
-
-    const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.name = name;
-    input.value = value;
-    input.checked = true;
-
-    label.append(input, document.createTextNode(value));
-    return label;
-}
-
-function createPrefilterSubmitButton(label = 'Submit') {
-    const btn = document.createElement('button');
-    btn.type = 'submit';
-    btn.textContent = label;
-    btn.className = 'btn';
-    btn.style.marginTop = '10px';
-    return btn;
-}
-
+// Wait for prefilter form submission
 function waitForPrefilterFormSubmission(form, resolve, overlay) {
     form.addEventListener('submit', e => {
         e.preventDefault();
-        const preFilter = {};
-
-        // Collect values from form inputs
-        new FormData(form).forEach((value, key) => {
-            value = String(value).trim();
-            if (!value) return; // skip empty inputs
-
-            if (!preFilter[key]) preFilter[key] = [];
-            preFilter[key].push(value);
-        });
-
+        const preFilter = collectPrefilterFromForm(form);
         overlay.remove();
         resolve(preFilter);
     });
 }
+
+// Main entry: returns the structured preFilter
+function collectPrefilterFromForm(form) {
+    const preFilter = {};
+    processRangeColumns(form, preFilter);
+    processTagColumns(form, preFilter);
+    processChoiceColumns(form, preFilter);
+    processTextColumns(form, preFilter);
+    return preFilter;
+}
+
+// Process range columns
+function processRangeColumns(form, preFilter, colDefMap = activeColumnDetails) {
+    Object.entries(colDefMap).forEach(([col, def]) => {
+        if (def.type !== 'int' && def.type !== 'float') return;
+
+        const minEl = form.querySelector(`[name="${col}__min"]`);
+        const maxEl = form.querySelector(`[name="${col}__max"]`);
+
+        if (!minEl && !maxEl) return;
+
+        let min = minEl?.value === '' ? null : Number(minEl.value);
+        let max = maxEl?.value === '' ? null : Number(maxEl.value);
+
+        if (def.type === 'int') {
+            if (min != null) min = Math.round(min);
+            if (max != null) max = Math.round(max);
+        }
+
+        if (min != null || max != null) {
+            preFilter[col] = { type: def.type, min, max };
+        }
+    });
+}
+
+// Build tag entries in preFilter
+function processTagColumns(form, preFilter, colDefMap = activeColumnDetails) {
+    Object.entries(colDefMap).forEach(([col, def]) => {
+        if (def.type !== 'tag') return;
+
+        const checkboxes = Array.from(form.querySelectorAll(`input[type="checkbox"][name="${col}"]`));
+        if (checkboxes.length === 0) return;
+
+        const checked = checkboxes.filter(c => c.checked).map(c => Number(c.value));
+        if (checked.length === 0 || checked.length === def.choices.length) return;
+
+        preFilter[col] = { type: 'tag', choices: checked };
+    });
+}
+
+// Process choice checkboxes
+function processChoiceColumns(form, preFilter, colDefMap = activeColumnDetails) {
+    Object.entries(colDefMap).forEach(([col, def]) => {
+        if (!Array.isArray(def.choices) || def.choices.length === 0) return;
+        if (def.type === 'tag') return;
+
+        const checkboxes = Array.from(form.querySelectorAll(`input[type="checkbox"][name="${col}"]`));
+        if (checkboxes.length === 0) return;
+
+        const checked = checkboxes
+            .filter(c => c.checked)
+            .map(c => {
+                if (def.type === 'bool') return c.value === 'true';
+                if (def.type === 'int') return parseInt(c.value, 10);
+                if (def.type === 'float') return parseFloat(c.value);
+                return String(c.value);
+            });
+
+        if (checked.length === 0 || checked.length === def.choices.length) return;
+        preFilter[col] = { type: def.type, choices: checked };
+    });
+}
+
+// Process text inputs
+function processTextColumns(form, preFilter) {
+    const inputs = Array.from(form.querySelectorAll('input[type="text"], textarea'));
+    for (const input of inputs) {
+        const val = input.value.trim();
+        if (!val) continue;
+        preFilter[input.name] = { text: [val] };
+    }
+}
+
 
 function loadAndUpdateTheme() {
     // Load saved theme
@@ -1356,7 +1857,7 @@ loadAndUpdateTheme();
 // Search button
 searchButton.addEventListener('click', async () => {
     if (!activeCsvFile) return alert('No CSV file loaded yet.');
-    if (!activePrefilters || Object.keys(activePrefilters).length === 0) return alert('No prefilters json loaded yet.');
+    if (!activeColumnDetails || Object.keys(activeColumnDetails).length === 0) return alert('No column details json loaded yet.');
     await executeCsvSearchWithRetries();
 });
 
@@ -1412,7 +1913,7 @@ stopLoadingButton.addEventListener('click', () => {
 <script>
 (async () => {
     await loadDefaultCsv();
-    await loadDefaultPrefiltersJson();
+    await loadDefaultColumnDetailsJson();
     await executeCsvSearchWithRetries();
 })();
 </script>
@@ -1423,7 +1924,7 @@ stopLoadingButton.addEventListener('click', () => {
 <script>
 (async () => {
     await loadDefaultCsv();
-    await loadDefaultPrefiltersJson();
+    await loadDefaultColumnDetailsJson();
     await executeCsvSearchWithRetries();
 })();
 </script>
