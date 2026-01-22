@@ -16,6 +16,11 @@
     --accent: #4dabf7;
     --accent-hover: #339af0;
 
+    /* 🔆 Glow (attention / focus) */
+    --glow: #f1c40f;          /* warm yellow for dark mode */
+    --glow-soft: rgba(241, 196, 15, 0.45);
+    --glow-strong: rgba(241, 196, 15, 0.75);
+
     --danger: #ff6b6b;
 }
 
@@ -33,6 +38,11 @@ body.light-theme {
 
     --accent: #007bff;
     --accent-hover: #0056b3;
+
+    /* 🔆 Glow tuned for light backgrounds */
+    --glow: #0d6efd;          /* soft blue */
+    --glow-soft: rgba(13, 110, 253, 0.35);
+    --glow-strong: rgba(13, 110, 253, 0.6);
 }
 
 /* =========================================================
@@ -163,26 +173,28 @@ table {
     background: var(--bg-elevated);
     border: 2px dashed var(--border-strong);
     color: var(--text-muted);
-    padding: 16px; 
+    padding: 16px;
     text-align: center;
     border-radius: 5px;
     font-weight: bold;
     font-size: 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
     cursor: pointer;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%; 
-    box-sizing: border-box; 
+    height: 100%;
+    box-sizing: border-box;
 }
 
 #csvDropZone.dragover {
-    background-color: #162233;
+    background: var(--accent-soft-bg);
     color: var(--accent);
     border-color: var(--accent);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 #csvDropZone:hover {
@@ -382,37 +394,34 @@ th .sort-desc:hover {
 .highlight-cell.medium { font-weight: 500; }
 .highlight-cell.high { font-weight: bold; }
 
-body.light-mode .highlight-cell { color: black; }
-body.dark-mode  .highlight-cell { color: white; }
-
 /* =========================================================
    PREFILTER OVERLAY
    ========================================================= */
 .prefilter-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.7); /* dim backdrop, theme-neutral */
     z-index: 1000;
 
     display: flex;
     flex-direction: column;
 
     padding: 24px;
-    color: #eee;
+    color: var(--text-main);
 
-    /* single vertical scrollbar for overlay */
     overflow-y: auto;
     overflow-x: hidden;
 }
 
 .prefilter-notice {
-    background-color: #2b2b2b;
-    border: 1px solid #555;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
     border-radius: 6px;
     padding: 12px;
     margin-bottom: 20px;
     font-size: 14px;
     line-height: 1.5;
+    color: var(--text-main);
 }
 
 .prefilter-notice ul {
@@ -429,21 +438,19 @@ body.dark-mode  .highlight-cell { color: white; }
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 16px;
     margin-top: 10px;
-
-    /* grid itself does not scroll */
-    overflow: visible;
+    overflow: visible; /* grid itself does not scroll */
 }
 
 .prefilter-actions {
     width: 100%;
     display: flex;
-    justify-content: center; /* center horizontally */
+    justify-content: center;
     position: sticky;
-    bottom: 0; /* stick to bottom of viewport */
-    background: rgba(44,44,44,0.95); /* semi-transparent for prominence */
+    bottom: 0;
+    background: color-mix(in srgb, var(--bg-panel) 95%, transparent);
     padding: 16px 0;
     z-index: 1100;
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.5); /* subtle top shadow */
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.35);
 }
 
 .prefilter-search-box {
@@ -460,37 +467,36 @@ body.dark-mode  .highlight-cell { color: white; }
     padding: 8px 12px;
     font-size: 14px;
 
-    border: 2px solid #f39c12;   /* match glow color */
+    border: 2px solid var(--glow);
     border-radius: 6px;
-    background-color: #111;
-    color: #eee;
+    background: var(--bg-elevated);
+    color: var(--text-main);
     box-sizing: border-box;
 
-    /* ALWAYS visible glow */
+    /* theme-aware glow */
     box-shadow:
-        inset 0 1px 3px rgba(0,0,0,0.6),
-        0 0 10px rgba(243, 156, 18, 0.45),
-        0 0 20px rgba(243, 156, 18, 0.25);
+        inset 0 1px 3px rgba(0,0,0,0.4),
+        0 0 10px var(--glow-soft),
+        0 0 20px var(--glow-soft);
 
     transition: box-shadow 0.2s, border-color 0.2s;
 }
 
 .prefilter-search-input::placeholder {
-    color: #bbb;
+    color: var(--text-muted);
 }
 
 .prefilter-search-input:focus {
     outline: none;
     box-shadow:
-        inset 0 1px 3px rgba(0,0,0,0.6),
-        0 0 14px rgba(243, 156, 18, 0.8),
-        0 0 28px rgba(243, 156, 18, 0.5);
+        inset 0 1px 3px rgba(0,0,0,0.4),
+        0 0 14px var(--glow-strong),
+        0 0 28px var(--glow-strong);
 }
 
-
 .prefilter-actions button {
-    background: #f39c12; /* bright accent color */
-    color: #111;
+    background: var(--glow); /* use theme-aware glow color */
+    color: var(--bg-main);
     font-weight: bold;
     font-size: 16px;
     padding: 12px 24px;
@@ -498,25 +504,26 @@ body.dark-mode  .highlight-cell { color: white; }
     border-radius: 8px;
     margin-top: 10px;
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
+
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
 }
 
 .prefilter-actions button:hover {
     transform: translateY(-2px);
+    background: var(--glow-strong);
     box-shadow: 0 6px 14px rgba(0,0,0,0.3);
 }
 
 /* Cards with capped height */
 .filter-section {
-    background: #1c1c1c;
-    border: 1px solid #333;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: 6px;
     padding: 12px;
 
     display: flex;
     flex-direction: column;
 
-    /* max height for long cards */
     max-height: 180px;
     overflow: hidden;
 }
@@ -526,6 +533,7 @@ body.dark-mode  .highlight-cell { color: white; }
     font-size: 14px;
     font-weight: 600;
     flex-shrink: 0;
+    color: var(--text-main);
 }
 
 /* Values scroll only when needed */
@@ -535,7 +543,6 @@ body.dark-mode  .highlight-cell { color: white; }
     gap: 6px;
     overflow-y: auto;
 
-    /* critical for flex/grid shrink behavior */
     min-height: 0;
     min-width: 0;
 }
@@ -545,18 +552,16 @@ body.dark-mode  .highlight-cell { color: white; }
     font-size: 12px;
     display: flex;
     gap: 6px;
-    align-items: flex-start; /* allow multi-line labels */
+    align-items: flex-start;
     min-height: 20px;
     line-height: 1.2;
 
-    /* text wrapping */
     min-width: 0;
     white-space: normal;
     word-break: break-word;
     overflow-wrap: anywhere;
 }
 
-/* Prevent checkbox shrinking */
 .filter-checkbox input {
     flex-shrink: 0;
     margin-top: 2px;
@@ -566,9 +571,9 @@ body.dark-mode  .highlight-cell { color: white; }
 .filter-section input[type="text"] {
     width: 100%;
     padding: 6px;
-    background: #111;
-    border: 1px solid #444;
-    color: #eee;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -581,8 +586,8 @@ body.dark-mode  .highlight-cell { color: white; }
     position: fixed;
     inset: 0;
     z-index: 999;
-    background: rgba(0,0,0,0.85);
-    color: var(--accent);
+    background: rgba(0,0,0,0.85); /* semi-transparent backdrop */
+    color: var(--accent); /* theme accent color */
     font-size: 18px;
     align-items: center;
     justify-content: center;
@@ -594,8 +599,8 @@ body.dark-mode  .highlight-cell { color: white; }
     height: 40px;
     margin-top: 10px;
     border-radius: 50%;
-    border: 6px solid #eee;
-    border-top: 6px solid var(--accent);
+    border: 6px solid var(--bg-elevated);  /* theme panel color */
+    border-top: 6px solid var(--accent);   /* accent color for spinner */
     animation: spin 0.5s linear infinite;
 }
 
@@ -607,7 +612,7 @@ body.dark-mode  .highlight-cell { color: white; }
 #loadingHeaderDisplay {
     font-size: 22px;
     font-weight: bold;
-    color: var(--accent);
+    color: var(--accent); /* use theme accent */
     margin-bottom: 16px;
     text-align: center;
 }
@@ -616,7 +621,7 @@ body.dark-mode  .highlight-cell { color: white; }
 #loadingProgressDisplayContainer {
     width: 80%;
     margin-top: 15px;
-    background: #333;
+    background: var(--bg-panel);
     border-radius: 6px;
     overflow: hidden;
     position: relative;
@@ -625,7 +630,7 @@ body.dark-mode  .highlight-cell { color: white; }
 #loadingProgressBarDisplay {
     width: 0%;
     height: 20px;
-    background: var(--accent);
+    background: var(--accent); /* use theme accent */
     transition: width 0.1s;
 }
 
@@ -635,7 +640,7 @@ body.dark-mode  .highlight-cell { color: white; }
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--text-main); /* main text color */
     font-size: 14px;
     font-weight: bold;
     pointer-events: none;
@@ -651,11 +656,12 @@ body.dark-mode  .highlight-cell { color: white; }
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, box-shadow 0.2s;
 }
 
 #stopLoadingButton:hover {
-    background-color: #ff4c4c; /* slightly brighter red on hover */
+    background-color: color-mix(in srgb, var(--danger) 80%, #fff 20%);
+    box-shadow: 0 0 12px var(--danger); /* subtle glow on hover using danger color */
 }
 
 /* =========================================================
