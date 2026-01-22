@@ -71,6 +71,7 @@ const loadingProgressText = document.getElementById('loadingProgressTextDisplay'
 
 let activeCsvFile = null;
 let activeColumnDetails = {};
+let activeTagFullPatterns = {};
 
 
 function getActiveCsvFile() {
@@ -89,8 +90,16 @@ function hasValidColumnDetails() {
     return activeColumnDetails && Object.keys(activeColumnDetails).length > 0
 }
 
+function getTagFullPatterns() {
+    return activeTagFullPatterns;
+}
+
 function updateColumnDetails(columnDetails, fileName, description) {
     activeColumnDetails = columnDetails;
+}
+
+function updateTagFullPatterns(tagFullPatterns, fileName) {
+    activeTagFullPatterns = tagFullPatterns;
 }
 
 async function loadDefaultCsv() {
@@ -121,6 +130,17 @@ async function loadDefaultColumnDetailsJson() {
     const columnDetails = await response.json();
     updateColumnDetails(columnDetails, 'game_column_details.json', 'Loaded from data/game_column_details.json');
 }
+
+async function loadDefaultTagFullPatternsJson() {
+    const response = await fetch('data/tag_full_patterns.json');
+    if (!response.ok) {
+        alert('Failed to load tag full patterns details');
+        return;
+    }
+    const tagFullPatterns = await response.json();
+    updateTagFullPatterns(tagFullPatterns, 'tag_full_patterns.json');
+}
+
 
 </script>
 
@@ -215,6 +235,7 @@ async function initialize() {
 async function initializeWebsite() {
     await loadDefaultCsv();
     await loadDefaultColumnDetailsJson();
+    await loadDefaultTagFullPatternsJson();
     await executeCsvSearchWithRetries();
 }
 

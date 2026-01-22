@@ -150,6 +150,12 @@ function createChoiceFilter(name, choices) {
 function createTagFilter(name) {
     const container = document.createElement('div');
     container.className = 'filter-tag-group';
+    
+    // Set tooltip if a regex exists for this tag
+    const patterns = getTagFullPatterns();
+    if (patterns[name]) {
+        container.title = `Regex pattern:\n${patterns[name]}`; // tooltip shows the regex
+    }
 
     // 0 checkbox
     const lbl0 = document.createElement('label');
@@ -239,17 +245,40 @@ function createTextFilterInput(name) {
 }
 
 function filterPrefilterSections(searchText) {
-    searchText = searchText.toLowerCase().trim();
+    searchText = searchText.trim();
     const sections = document.querySelectorAll('#prefilterOverlay .filter-section');
+    const patterns = getTagFullPatterns();
 
     sections.forEach(section => {
-        const title = section.querySelector('h3')?.textContent.toLowerCase() || '';
-        if (!searchText || title.includes(searchText)) {
-            section.style.display = '';
-        } else {
-            section.style.display = 'none';
-        }
+        const colName = section.querySelector('h3')?.textContent || '';
+        section.style.display = sectionMatchesSearch(colName, searchText, patterns) ? '' : 'none';
     });
+}
+
+function sectionMatchesSearch(colName, searchText, patterns) {
+    if (!searchText) return true; // empty search shows everything
+
+    const lowerSearch = searchText.toLowerCase();
+
+    // 1️⃣ Fastest check: does the column title include the search text?
+    if (colName.toLowerCase().includes(lowerSearch)) return true;
+
+    const regexStr = patterns[colName];
+    if (!regexStr) return false; // no regex to check
+
+    // 2️⃣ Check if the regex string itself contains the search text
+    if (regexStr.toLowerCase().includes(lowerSearch)) return true;
+
+    // 3️⃣ Only now apply the actual regex to the search text
+    try {
+        const regex = new RegExp(regexStr, 'i'); // case-insensitive
+        if (regex.test(searchText)) return true;
+    } catch (e) {
+        console.warn('Invalid regex for column', colName, regexStr);
+    }
+
+    // 4️⃣ No match
+    return false;
 }
 
 // Wait for prefilter form submission
