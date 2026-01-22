@@ -6,12 +6,18 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
 
         const form = document.createElement('form');
 
+        // Add the warning inside the form
+        form.appendChild(createPrefilterWarning());
+
         form.appendChild(createPrefilterActions());
         form.appendChild(createPrefilterSearchBox());
         form.appendChild(createPrefilterGridFromColumnDetails(columnDetails));
 
         overlay.appendChild(form);
         document.body.appendChild(overlay);
+
+        // Bind live warning after form is attached
+        bindPrefilterWarning(form);
 
         return new Promise(resolve =>
             waitForPrefilterFormSubmission(form, resolve, overlay)
@@ -30,6 +36,7 @@ function createPrefilterOverlayContainer(title) {
     return overlay;
 }
 
+// Create the informational notice (without the warning)
 function createPrefilterNotice() {
     const notice = document.createElement('div');
     notice.className = 'prefilter-notice';
@@ -51,6 +58,36 @@ function createPrefilterNotice() {
     return notice;
 }
 
+// Create the warning element and prepend it to the form
+function createPrefilterWarning() {
+    const warningEl = document.createElement('div');
+    warningEl.id = 'prefilter-warning';
+    warningEl.className = 'prefilter-warning'; // move styling to CSS
+    warningEl.textContent = '⚠ No filters applied! Searching the full dataset may be heavy.';
+    return warningEl;
+}
+
+// Show/hide the warning depending on whether any filters are applied
+function updatePrefilterWarning(form) {
+    const warningEl = form.querySelector('#prefilter-warning');
+    if (!warningEl) return;
+
+    const preFilter = collectPrefilterFromForm(form);
+    warningEl.style.display = Object.keys(preFilter).length === 0 ? 'block' : 'none';
+}
+
+// Bind inputs for live warning updates
+function bindPrefilterWarning(form) {
+    const inputs = form.querySelectorAll('input, textarea, select'); // cover all filter types
+    inputs.forEach(input => {
+        input.addEventListener('input', () => updatePrefilterWarning(form));
+        input.addEventListener('change', () => updatePrefilterWarning(form));
+    });
+
+    // Initial check
+    updatePrefilterWarning(form);
+}
+
 function createPrefilterActions() {
     const actions = document.createElement('div');
     actions.className = 'prefilter-actions sticky-top';
@@ -64,7 +101,7 @@ function createPrefilterSearchBox() {
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.placeholder = 'Search filters…';
+    input.placeholder = 'Search filters to change…';
     input.className = 'prefilter-search-input';
 
     // Add event listener for live filtering
@@ -286,6 +323,17 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
     form.addEventListener('submit', e => {
         e.preventDefault();
         const preFilter = collectPrefilterFromForm(form);
+
+        // Check if preFilter is empty
+        if (Object.keys(preFilter).length === 0) {
+            const proceed = confirm(
+                "⚠ You haven't applied any filters.\n" +
+                "Loading the full dataset may be very memory-intensive and slow.\n\n" +
+                "Do you want to continue anyway?"
+            );
+            if (!proceed) return; // stop submission
+        }
+
         overlay.remove();
         resolve(preFilter);
     });

@@ -433,6 +433,22 @@ th .sort-desc:hover {
     font-weight: bold;
 }
 
+/* Prefilter warning message */
+#prefilter-warning {
+    display: none;                    /* hidden by default */
+    color: var(--bg-main);            /* text color stands out */
+    background-color: var(--danger);  /* bright danger background */
+    font-weight: bold;
+    padding: 16px 20px;               /* good internal spacing */
+    margin: 20px 0;                   /* spacing from other elements */
+    border: 2px solid var(--bg-main); /* high contrast border */
+    border-radius: 6px;               /* smooth corners */
+    text-align: center;               /* center text for attention */
+    box-shadow: 0 0 8px var(--danger-soft); /* simple glow */
+    line-height: 1.5;
+}
+
+
 .prefilter-form {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -454,7 +470,7 @@ th .sort-desc:hover {
 }
 
 .prefilter-search-box {
-    width: 180px;
+    width: 200px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
