@@ -261,8 +261,8 @@ table {
 }
 
 .filters .filter-container {
-    max-height: 0;
-    opacity: 0;
+    max-height: 24px;   /* small visible bar when collapsed */
+    opacity: 0.3;       /* semi-transparent hint */
     overflow: hidden;
     transform: translateY(-6px);
     transition:
