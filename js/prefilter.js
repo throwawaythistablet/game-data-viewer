@@ -69,16 +69,19 @@ function createPrefilterWarning() {
 
 // Show/hide the warning depending on whether any filters are applied
 function updatePrefilterWarning(form) {
+    const preFilter = collectPrefilterFromForm(form);
     const warningEl = form.querySelector('#prefilter-warning');
     if (!warningEl) return;
 
-    const preFilter = collectPrefilterFromForm(form);
-    warningEl.style.display = Object.keys(preFilter).length === 0 ? 'block' : 'none';
+    // Only consider actual filters, ignore empty form
+    const hasFilters = Object.keys(preFilter).length > 0;
+    warningEl.style.display = hasFilters ? 'none' : 'block';
 }
 
 // Bind inputs for live warning updates
 function bindPrefilterWarning(form) {
-    const inputs = form.querySelectorAll('input, textarea, select'); // cover all filter types
+    // Only watch inputs that are part of actual filters, not the search box
+    const inputs = form.querySelectorAll('input:not(.prefilter-search-input)');
     inputs.forEach(input => {
         input.addEventListener('input', () => updatePrefilterWarning(form));
         input.addEventListener('change', () => updatePrefilterWarning(form));
@@ -413,7 +416,7 @@ function processChoicePrefilters(form, preFilter, colDefMap = getActiveColumnDet
 
 // Process text inputs
 function processTextPrefilters(form, preFilter) {
-    const inputs = Array.from(form.querySelectorAll('input[type="text"], textarea'));
+    const inputs = Array.from(form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea'));
     for (const input of inputs) {
         const val = input.value.trim();
         if (!val) continue;
