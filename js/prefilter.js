@@ -6,18 +6,19 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
 
         const form = document.createElement('form');
 
-        // Add the warning inside the form
+        // Add warning, actions, active filters, search box, and grid
         form.appendChild(createPrefilterWarning());
-
         form.appendChild(createPrefilterActions());
+        form.appendChild(createActivePrefiltersSummary());
         form.appendChild(createPrefilterSearchBox());
         form.appendChild(createPrefilterGridFromColumnDetails(columnDetails));
 
         overlay.appendChild(form);
         document.body.appendChild(overlay);
 
-        // Bind live warning after form is attached
+        // Bind live updates AFTER form is attached
         bindPrefilterWarning(form);
+        bindActivePrefiltersSummary(form);
 
         return new Promise(resolve =>
             waitForPrefilterFormSubmission(form, resolve, overlay)
@@ -154,6 +155,14 @@ function createPrefilterActions() {
     actions.className = 'prefilter-actions sticky-top';
     actions.appendChild(createPrefilterSubmitButton('Apply Prefilters & Search'));
     return actions;
+}
+
+function createActivePrefiltersSummary() {
+    const container = document.createElement('div');
+    container.className = 'prefilter-active-summary';
+    container.id = 'prefilter-active-summary';
+    container.textContent = 'Active Prefilters: None';
+    return container;
 }
 
 function createPrefilterSearchBox() {
@@ -351,6 +360,42 @@ function filterPrefilterSections(searchText) {
         const colName = section.querySelector('h3')?.textContent || '';
         section.style.display = sectionMatchesSearch(colName, searchText, patterns) ? '' : 'none';
     });
+}
+
+function bindActivePrefiltersSummary(form) {
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => updateActivePrefiltersSummary(form));
+        input.addEventListener('change', () => updateActivePrefiltersSummary(form));
+    });
+
+    // initial update
+    updateActivePrefiltersSummary(form);
+}
+
+function updateActivePrefiltersSummary(form) {
+    const preFilter = collectPrefilterFromForm(form);
+    const summaryEl = form.querySelector('#prefilter-active-summary');
+    if (!summaryEl) return;
+
+    const items = [];
+
+    for (const [col, val] of Object.entries(preFilter)) {
+        let text = '';
+        if (val.type === 'tag' || Array.isArray(val.choices)) {
+            text = `${col}: ${val.choices?.join(', ') || val.text?.join(', ')}`;
+        } else if (val.type === 'int' || val.type === 'float') {
+            const minMax = [];
+            if (val.min != null) minMax.push(`min=${val.min}`);
+            if (val.max != null) minMax.push(`max=${val.max}`);
+            text = `${col}: ${minMax.join(', ')}`;
+        } else if (val.text) {
+            text = `${col}: ${val.text.join(', ')}`;
+        }
+        if (text) items.push(`<span class="prefilter-active-item">${text}</span>`);
+    }
+
+    summaryEl.innerHTML = items.length > 0 ? items.join(' ') : 'Active Prefilters: None';
 }
 
 function sectionMatchesSearch(colName, searchText, patterns) {

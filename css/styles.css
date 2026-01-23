@@ -530,6 +530,35 @@ th .sort-desc:hover {
     box-shadow: 0 6px 14px rgba(0,0,0,0.3);
 }
 
+/* Active prefilters summary */
+.prefilter-active-summary {
+    position: sticky;
+    top: 0; /* sticks just below overlay header */
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    z-index: 1200;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-main);
+}
+
+.prefilter-active-summary strong {
+    font-weight: bold;
+}
+
+.prefilter-active-item {
+    display: inline-block;
+    background: var(--glow-soft);
+    color: var(--text-main);
+    padding: 2px 8px;
+    margin: 2px 4px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
 .prefilter-search-box {
     width: 240px;
     display: flex;
