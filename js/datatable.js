@@ -3,32 +3,33 @@ function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
     const keys = Object.keys(parsedData[0]);
+    const searchedPrefilters = lastSearchedPrefilters || {};
+    const columnDetails = getActiveColumnDetails();
 
-    // Build columns, but skip columns with type 'tag'
     const columns = keys
         .filter(key => {
-            const colDef = getActiveColumnDetails()[key];
-            return !(colDef && colDef.type === 'tag');
+            const colDef = columnDetails[key];
+            return (
+                !colDef ||
+                colDef.type !== 'tag' ||
+                key in searchedPrefilters
+            );
         })
         .map(key => ({
             title: key,
             data: key,
-            render: (data, type, row, meta) => renderCellValue(data, key)
+            render: (data) => renderCellValue(data, key)
         }));
 
-    // Add the "View Images" column at the front if "location" exists
     if (keys.includes('location')) {
         columns.unshift({
             title: 'View Images',
-            data: '__view_images__', // reserved key
+            data: '__view_images__',
             orderable: false,
             searchable: false,
-            render: (data, type, row, meta) => {
-                return `<button class="btn view-images">View</button>`;
-            }
+            render: () => `<button class="btn view-images">View</button>`
         });
     }
-
     return columns;
 }
 

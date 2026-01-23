@@ -1,5 +1,4 @@
 
-let lastPrefilters = {}; // remembers last applied prefilters
 
 async function showPrefilterOverlayAndCollectFilters(columnDetails) {
     try {
@@ -13,7 +12,7 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
         form.appendChild(createPrefilterActions(form));
         form.appendChild(createPrefilterSearchBox());
         form.appendChild(createActivePrefiltersSummary());
-        form.appendChild(createPrefilterGridFromColumnDetails(columnDetails, lastPrefilters));
+        form.appendChild(createPrefilterGridFromColumnDetails(columnDetails, lastSearchedPrefilters));
 
         overlay.appendChild(form);
         document.body.appendChild(overlay);
@@ -394,7 +393,7 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
         }
 
         // Save for next time
-        lastPrefilters = preFilter;
+        lastSearchedPrefilters = preFilter;
 
         overlay.remove();
         resolve(preFilter);
