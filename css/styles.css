@@ -501,33 +501,59 @@ th .sort-desc:hover {
 .prefilter-actions {
     width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* two rows */
+    align-items: center;    /* center buttons horizontally */
+    gap: 8px;               /* space between buttons */
     position: sticky;
     bottom: 0;
     background: color-mix(in srgb, var(--bg-panel) 95%, transparent);
     padding: 16px 0;
     z-index: 1100;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.35);
+    margin-bottom: 16px;
 }
 
-.prefilter-actions button {
-    background: var(--glow); /* use theme-aware glow color */
+/* Apply button */
+.prefilter-actions .btn-apply {
+    background: var(--glow); 
     color: var(--bg-main);
     font-weight: bold;
     font-size: 16px;
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
-    margin-top: 10px;
     cursor: pointer;
-
     transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    width: auto;            /* fit content */
+    min-width: 160px;       /* optional minimum */
 }
 
-.prefilter-actions button:hover {
+/* Apply button hover */
+.prefilter-actions .btn-apply:hover {
     transform: translateY(-2px);
     background: var(--glow-strong);
     box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
+/* Reset button (subtle) – always visible now */
+.btn-reset-subtle {
+    background-color: var(--bg-elevated);
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    width: auto;          
+    min-width: 80px;
+    /* removed opacity and visibility defaults */
+}
+
+/* Hover effect for reset */
+.btn-reset-subtle:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-main);
 }
 
 /* Active prefilters summary */

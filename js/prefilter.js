@@ -1,4 +1,6 @@
 
+let lastPrefilters = {}; // remembers last applied prefilters
+
 async function showPrefilterOverlayAndCollectFilters(columnDetails) {
     try {
         const overlay = createPrefilterOverlayContainer('Refine Your Search Using Prefilters');
@@ -8,10 +10,10 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
 
         // Add warning, actions, active filters, search box, and grid
         form.appendChild(createPrefilterWarning());
-        form.appendChild(createPrefilterActions());
-        form.appendChild(createActivePrefiltersSummary());
+        form.appendChild(createPrefilterActions(form));
         form.appendChild(createPrefilterSearchBox());
-        form.appendChild(createPrefilterGridFromColumnDetails(columnDetails));
+        form.appendChild(createActivePrefiltersSummary());
+        form.appendChild(createPrefilterGridFromColumnDetails(columnDetails, lastPrefilters));
 
         overlay.appendChild(form);
         document.body.appendChild(overlay);
@@ -150,10 +152,21 @@ function bindPrefilterWarning(form) {
     updatePrefilterWarning(form);
 }
 
-function createPrefilterActions() {
+function createPrefilterActions(form) {
     const actions = document.createElement('div');
     actions.className = 'prefilter-actions sticky-top';
-    actions.appendChild(createPrefilterSubmitButton('Apply Prefilters & Search'));
+
+    // Apply button – top row
+    const applyBtn = createPrefilterSubmitButton('Apply Prefilters & Search');
+    applyBtn.classList.add('btn-apply'); // prominent apply button
+    actions.appendChild(applyBtn);
+
+    // Reset button – second row, subtle style
+    const resetBtn = createPrefiltersResetButton(form);
+    resetBtn.classList.add('btn-reset-subtle'); // subtle, smaller
+    resetBtn.style.display = 'inline-block'; // always visible now
+    actions.appendChild(resetBtn);
+
     return actions;
 }
 
@@ -191,17 +204,29 @@ function createPrefilterSubmitButton(label = 'Submit') {
     return btn;
 }
 
-function createPrefilterGridFromColumnDetails(columnDetails) {
+function createPrefiltersResetButton(form) {
+    const resetBtn = document.createElement('button');
+    resetBtn.type = 'button'; // prevent form submission
+    resetBtn.textContent = 'Reset Prefilters';
+    resetBtn.className = 'btn btn-reset';
+
+    // On click, reset all prefilters in the form
+    resetBtn.addEventListener('click', () => resetPrefilters(form));
+
+    return resetBtn;
+}
+
+function createPrefilterGridFromColumnDetails(columnDetails, prefill = {}) {
     const grid = document.createElement('div');
     grid.className = 'prefilter-form';
     for (const [col, colDef] of Object.entries(columnDetails)) {
-        grid.appendChild(createFilterSectionForColumnDetails(col, colDef));
+        grid.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
     }
     return grid;
 }
 
 // Section for a column, decides which small helper to call
-function createFilterSectionForColumnDetails(col, colDef) {
+function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
     const section = document.createElement('section');
     section.className = 'prefilter-section';
 
@@ -210,20 +235,56 @@ function createFilterSectionForColumnDetails(col, colDef) {
     section.appendChild(title);
 
     if (colDef.type === 'tag') {
-        section.appendChild(createTagFilter(col));
+        section.appendChild(createTagFilter(col, prefill));
     } else if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
-        section.appendChild(createChoiceFilter(col, colDef.choices));
+        section.appendChild(createChoiceFilter(col, colDef.choices, prefill));
     } else if (colDef.type === 'int' || colDef.type === 'float') {
-        section.appendChild(createRangeFilter(col, colDef.min, colDef.max));
+        section.appendChild(createRangeFilter(col, colDef.min, colDef.max, prefill));
     } else {
-        section.appendChild(createTextFilterInput(col));
+        section.appendChild(createTextFilterInput(col, prefill));
     }
 
     return section;
 }
 
+// Tag checkboxes
+function createTagFilter(name, prefill = null) {
+    const container = document.createElement('div');
+    container.className = 'prefilter-tag-group';
+
+    const patterns = getTagFullPatterns();
+    if (patterns[name]) container.title = `Regex pattern:\n${patterns[name]}`;
+
+    const checkedValues = prefill?.choices || [];
+
+    const lbl0 = document.createElement('label');
+    lbl0.className = 'prefilter-checkbox';
+    const inp0 = document.createElement('input');
+    inp0.type = 'checkbox';
+    inp0.name = name;
+    inp0.value = '0';
+    inp0.checked = checkedValues.includes(0);
+    lbl0.appendChild(inp0);
+    lbl0.appendChild(document.createTextNode(' No (0)'));
+
+    const lbl1 = document.createElement('label');
+    lbl1.className = 'prefilter-checkbox';
+    const inp1 = document.createElement('input');
+    inp1.type = 'checkbox';
+    inp1.name = name;
+    inp1.value = '1';
+    inp1.checked = checkedValues.includes(1);
+    lbl1.appendChild(inp1);
+    lbl1.appendChild(document.createTextNode(' Yes (1)'));
+
+    container.appendChild(lbl0);
+    container.appendChild(lbl1);
+
+    return container;
+}
+
 // Choice checkbox group with toggle-all
-function createChoiceFilter(name, choices) {
+function createChoiceFilter(name, choices, prefill = null) {
     const box = document.createElement('div');
     box.className = 'prefilter-box';
 
@@ -232,6 +293,8 @@ function createChoiceFilter(name, choices) {
     toggleLabel.innerHTML = `<input type="checkbox" class="toggle-all" data-col="${name}" checked> Toggle All`;
     box.appendChild(toggleLabel);
 
+    const checkedValues = prefill?.choices || choices;
+
     choices.forEach(choice => {
         const lbl = document.createElement('label');
         lbl.className = 'prefilter-checkbox';
@@ -239,7 +302,7 @@ function createChoiceFilter(name, choices) {
         inp.type = 'checkbox';
         inp.name = name;
         inp.value = String(choice);
-        inp.checked = true;
+        inp.checked = checkedValues.includes(choice);
         lbl.appendChild(inp);
         lbl.appendChild(document.createTextNode(' ' + String(choice)));
         box.appendChild(lbl);
@@ -253,58 +316,21 @@ function createChoiceFilter(name, choices) {
     return box;
 }
 
-// Tag checkboxes
-function createTagFilter(name) {
-    const container = document.createElement('div');
-    container.className = 'prefilter-tag-group';
-    
-    // Set tooltip if a regex exists for this tag
-    const patterns = getTagFullPatterns();
-    if (patterns[name]) {
-        container.title = `Regex pattern:\n${patterns[name]}`; // tooltip shows the regex
-    }
-
-    // 0 checkbox
-    const lbl0 = document.createElement('label');
-    lbl0.className = 'prefilter-checkbox';
-    const inp0 = document.createElement('input');
-    inp0.type = 'checkbox';
-    inp0.name = name;
-    inp0.value = '0';
-    inp0.checked = false;
-    lbl0.appendChild(inp0);
-    lbl0.appendChild(document.createTextNode(' No (0)'));
-
-    // 1 checkbox
-    const lbl1 = document.createElement('label');
-    lbl1.className = 'prefilter-checkbox';
-    const inp1 = document.createElement('input');
-    inp1.type = 'checkbox';
-    inp1.name = name;
-    inp1.value = '1';
-    inp1.checked = false;
-    lbl1.appendChild(inp1);
-    lbl1.appendChild(document.createTextNode(' Yes (1)'));
-
-    container.appendChild(lbl0);
-    container.appendChild(lbl1);
-
-    return container;
-}
-
 // Range prefilter (min / max inputs) — sleek version
-function createRangeFilter(name, min = null, max = null) {
+function createRangeFilter(name, min = null, max = null, prefill = null) {
     const wrapper = document.createElement('div');
     wrapper.className = 'prefilter-range';
 
+    const minVal = prefill?.min != null ? prefill.min : '';
+    const maxVal = prefill?.max != null ? prefill.max : '';
+
     const minWrap = document.createElement('div');
     minWrap.className = 'range-input-wrapper';
-    // Use placeholder (if available) instead of pre-filling the value.
-    minWrap.appendChild(createNumberInput(`${name}__min`, null, 'Min', 'range-min', (min != null ? String(min) : '')));
+    minWrap.appendChild(createNumberInput(`${name}__min`, minVal, 'Min', 'range-min', String(min ?? '')));
 
     const maxWrap = document.createElement('div');
     maxWrap.className = 'range-input-wrapper';
-    maxWrap.appendChild(createNumberInput(`${name}__max`, null, 'Max', 'range-max', (max != null ? String(max) : '')));
+    maxWrap.appendChild(createNumberInput(`${name}__max`, maxVal, 'Max', 'range-max', String(max ?? '')));
 
     wrapper.appendChild(minWrap);
     wrapper.appendChild(maxWrap);
@@ -343,12 +369,66 @@ function createNumberInput(name, value = null, labelText = '', inputClass = '', 
 }
 
 // Text input prefilter (fallback)
-function createTextFilterInput(name) {
+function createTextFilterInput(name, prefill = null) {
     const input = document.createElement('input');
     input.type = 'text';
     input.name = name;
     input.placeholder = `Prefilter ${name}…`;
+    if (prefill?.text?.[0]) input.value = prefill.text[0];
     return input;
+}
+
+// Wait for prefilter form submission
+function waitForPrefilterFormSubmission(form, resolve, overlay) {
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const preFilter = collectPrefilterFromForm(form);
+
+        if (Object.keys(preFilter).length === 0) {
+            const proceed = confirm(
+                "⚠ You haven't applied any prefilters.\n" +
+                "Loading the full dataset may be very memory-intensive and slow.\n\n" +
+                "Do you want to continue anyway?"
+            );
+            if (!proceed) return;
+        }
+
+        // Save for next time
+        lastPrefilters = preFilter;
+
+        overlay.remove();
+        resolve(preFilter);
+    });
+}
+
+// Main entry: returns the structured preFilter
+function collectPrefilterFromForm(form) {
+    const preFilter = {};
+    processRangePrefilters(form, preFilter);
+    processTagPrefilters(form, preFilter);
+    processChoicePrefilters(form, preFilter);
+    processTextPrefilters(form, preFilter);
+    return preFilter;
+}
+
+function resetPrefilters(form) {
+    if (!form) return;
+
+    // Clear tag checkboxes
+    form.querySelectorAll('.prefilter-tag-group input[type="checkbox"]').forEach(inp => inp.checked = false);
+
+    // Clear choice checkboxes
+    form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach(inp => inp.checked = true);
+
+    // Clear range inputs
+    form.querySelectorAll('.prefilter-range input[type="number"]').forEach(inp => inp.value = '');
+
+    // Clear text inputs (excluding search box)
+    form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea').forEach(inp => inp.value = '');
+
+    // Update summary and warning
+    updateActivePrefiltersSummary(form);
+    updatePrefilterWarning(form);
 }
 
 function filterPrefilterSections(searchText) {
@@ -422,37 +502,6 @@ function sectionMatchesSearch(colName, searchText, patterns) {
 
     // 4️⃣ No match
     return false;
-}
-
-// Wait for prefilter form submission
-function waitForPrefilterFormSubmission(form, resolve, overlay) {
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const preFilter = collectPrefilterFromForm(form);
-
-        // Check if preFilter is empty
-        if (Object.keys(preFilter).length === 0) {
-            const proceed = confirm(
-                "⚠ You haven't applied any prefilters.\n" +
-                "Loading the full dataset may be very memory-intensive and slow.\n\n" +
-                "Do you want to continue anyway?"
-            );
-            if (!proceed) return; // stop submission
-        }
-
-        overlay.remove();
-        resolve(preFilter);
-    });
-}
-
-// Main entry: returns the structured preFilter
-function collectPrefilterFromForm(form) {
-    const preFilter = {};
-    processRangePrefilters(form, preFilter);
-    processTagPrefilters(form, preFilter);
-    processChoicePrefilters(form, preFilter);
-    processTextPrefilters(form, preFilter);
-    return preFilter;
 }
 
 // Process range columns
