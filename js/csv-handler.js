@@ -141,7 +141,13 @@ function isRowAllowedByPrefilter(row, preFilter) {
         // Boolean
         if (colDef.type === 'bool') {
             if (!Array.isArray(criterion.choices)) return true;
-            return criterion.choices.includes(Boolean(val));
+
+            const rowBool = normalizeBool(val);
+            if (rowBool === null) return true;
+
+            return criterion.choices
+                .map(normalizeBool)
+                .includes(rowBool);
         }
 
         // Any type with choices
@@ -151,7 +157,7 @@ function isRowAllowedByPrefilter(row, preFilter) {
             let typedVal = val;
             if (colDef.type === 'int') typedVal = parseInt(val, 10);
             if (colDef.type === 'float') typedVal = parseFloat(val);
-            if (colDef.type === 'bool') typedVal = Boolean(val);
+            if (colDef.type === 'bool') typedVal = normalizeBool(val);
             if (!criterion.choices.includes(typedVal)) return false;
             return true;
         }
@@ -164,4 +170,11 @@ function isRowAllowedByPrefilter(row, preFilter) {
 
         return true;
     });
+}
+
+// Normalize boolean values from strings/CSV/etc
+function normalizeBool(val) {
+    if (val === true || val === 'true' || val === 'True' || val === 1 || val === '1') return true;
+    if (val === false || val === 'false' || val === 'False' || val === 0 || val === '0') return false;
+    return null; // unknown / invalid
 }
