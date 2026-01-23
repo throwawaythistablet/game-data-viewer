@@ -73,6 +73,10 @@
     "type": "str",
     "choices": []
   },
+  "site_release_date": {
+    "type": "str",
+    "choices": []
+  },
   "developer": {
     "type": "str",
     "choices": []
