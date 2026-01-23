@@ -17,6 +17,7 @@
         <h2 class="controls-title">Game Data Viewer</h2>
         <div class="btn-group">
             <button id="themeToggleButton" class="btn btn-secondary" title="Toggle between light and dark theme">🌙 Dark</button>
+            <button id="discussionButton" class="btn btn-secondary" title="Join the discussion about the tool">👥 Discussion</button>
             <button id="feedbackButton" class="btn btn-secondary" title="Provide feedback or suggestions about the tool">💬 Feedback</button>
             <button id="resetFiltersButton" class="btn btn-secondary" title="Reset all filters and sorting to their default state">🔄 Reset Column Filters</button>
             <button id="searchButton" class="btn" title="Search the game data">🔍 Search</button>
@@ -60,6 +61,7 @@
 
 const csvTableElement = $('#csvTable');
 const themeToggleButton = document.getElementById('themeToggleButton');
+const discussionButton = document.getElementById('discussionButton')
 const feedbackButton = document.getElementById('feedbackButton')
 const resetFiltersButton = document.getElementById('resetFiltersButton')
 const searchButton = document.getElementById('searchButton')
@@ -184,6 +186,11 @@ resetFiltersButton.addEventListener('click', () => {
 
     // Reset sorting
     dt.order([]).draw(); // only one redraw here
+});
+
+// Discussion button
+discussionButton.addEventListener('click', () => {
+    window.open('https://f95zone.to/threads/cant-find-the-game-youre-looking-for-try-this.284593/', '_blank');
 });
 
 // Feedback button

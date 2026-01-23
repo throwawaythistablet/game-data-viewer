@@ -1,7 +1,7 @@
 
 async function showPrefilterOverlayAndCollectFilters(columnDetails) {
     try {
-        const overlay = createPrefilterOverlayContainer('Refine Your Search');
+        const overlay = createPrefilterOverlayContainer('Refine Your Search Using Prefilters');
         overlay.appendChild(createPrefilterNotice());
 
         const form = document.createElement('form');
@@ -36,26 +36,84 @@ function createPrefilterOverlayContainer(title) {
     return overlay;
 }
 
-// Create the informational notice (without the warning)
+// Create the informational notice
 function createPrefilterNotice() {
     const notice = document.createElement('div');
-    notice.className = 'prefilter-notice';
-    notice.innerHTML = `
-        ⚠ <strong>Important: Use Prefilters to Reduce Load</strong><br>
-        The tool loads the entire dataset captured from the site, which can be very large. 
-        Unless you use prefilters to narrow it down, your browser may take a long time to load the data, 
-        and it can become very memory-intensive.<br><br>
-        All processing happens client-side — this is just a static webpage running in your browser. 
-        You’ll see a “Loading Data…” overlay while it loads.<br><br>
-        <strong>To improve performance:</strong>
-        <ul>
-            <li>Use the prefilters to limit the number of rows loaded.</li>
-            <li>Start with broad filters and refine them gradually if needed.</li>
-            <li>If loading becomes too slow, stop the processing, refresh the page and adjust your prefilters.</li>
-        </ul>
-        Proper use of prefilters ensures a faster, smoother experience when exploring the table.
-    `;
+    notice.className = 'prefilter-notice is-collapsed';
+    notice.innerHTML = getPrefilterNoticeContent()
+    bindPrefilterNoticeToggle(notice);
     return notice;
+}
+
+function getPrefilterNoticeContent() {
+    return `
+        <div class="prefilter-notice-body">
+            <strong>Guide to Prefilters, Search, and Table Navigation</strong>
+            <ol style="margin-top: 8px;">
+                <li>
+                    <strong>Open Prefilter Overlay</strong> – Click the <em>Search</em> button to see all available prefilters.
+                    (This is shown by default, so clicking the button isn’t always necessary.)
+                </li>
+                <li>
+                    <strong>Search Prefilters</strong> – Choose prefilters to narrow your search before the table loads, saving time and memory.
+                    Use the glowing search box to quickly locate specific prefilter sections.
+                </li>
+                <li>
+                    <strong>Use Prefilters</strong> – Apply checkboxes, ranges, or text inputs to narrow the dataset.
+                    Combine tags for precise results (e.g., <em>female protagonist</em> + <em>2D CG</em>).
+                </li>
+                <li>
+                    <strong>Load Table</strong> – Click <em>Apply Prefilters &amp; Search</em> to load only the filtered rows.
+                    A warning appears if no prefilters are selected.
+                </li>
+                <li>
+                    <strong>Sort, Refine, &amp; Reset the Table</strong> – Once the table is loaded:
+                    <ul>
+                        <li><strong>Sort the Table</strong> – Click column headers to sort by Bayesian score, game time, or other attributes.</li>
+                        <li><strong>Refine Column Filters</strong> – Hover over column headers to access column-specific filters.
+                            Start broad, then refine step by step for smooth browsing.</li>
+                        <li><strong>Reset Column Filters</strong> – Use the <em>Reset Column Filters</em> button to restore the table to its default state.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Provide Feedback</strong> – Click the <em>Feedback</em> button to suggest new tags, report issues, or give general feedback.
+                </li>
+                <li>
+                    <strong>New Search</strong> – Use the <em>Search</em> button to adjust prefilters or start a new search.
+                </li>
+            </ol>
+
+            <hr style="margin: 12px 0;">
+
+            ⚠ <strong>Important: Use Prefilters to Reduce Load</strong><br>
+            The dataset is large, and all processing happens client-side in your browser.
+            Without prefilters, loading can be slow and memory-intensive.
+            You’ll see a “Loading Data…” overlay while it loads.
+            Using prefilters ensures a faster, smoother experience when exploring the table.
+        </div>
+    `;
+}
+
+function bindPrefilterNoticeToggle(notice) {
+    let isHover = false;
+
+    function updateNoticeState() {
+        notice.classList.toggle('is-expanded', isHover);
+        notice.classList.toggle('is-collapsed', !isHover);
+    }
+
+    notice.addEventListener('mouseenter', () => {
+        isHover = true;
+        updateNoticeState();
+    });
+
+    notice.addEventListener('mouseleave', () => {
+        isHover = false;
+        updateNoticeState();
+    });
+
+    // Initial state
+    updateNoticeState();
 }
 
 // Create the warning element and prepend it to the form
@@ -63,24 +121,24 @@ function createPrefilterWarning() {
     const warningEl = document.createElement('div');
     warningEl.id = 'prefilter-warning';
     warningEl.className = 'prefilter-warning'; // move styling to CSS
-    warningEl.textContent = '⚠ No filters applied! Searching the full dataset may be heavy.';
+    warningEl.textContent = '⚠ No prefilters applied! Searching the full dataset may be heavy.';
     return warningEl;
 }
 
-// Show/hide the warning depending on whether any filters are applied
+// Show/hide the warning depending on whether any prefilters are applied
 function updatePrefilterWarning(form) {
     const preFilter = collectPrefilterFromForm(form);
     const warningEl = form.querySelector('#prefilter-warning');
     if (!warningEl) return;
 
-    // Only consider actual filters, ignore empty form
+    // Only consider actual prefilters, ignore empty form
     const hasFilters = Object.keys(preFilter).length > 0;
     warningEl.style.display = hasFilters ? 'none' : 'block';
 }
 
 // Bind inputs for live warning updates
 function bindPrefilterWarning(form) {
-    // Only watch inputs that are part of actual filters, not the search box
+    // Only watch inputs that are part of actual prefilters, not the search box
     const inputs = form.querySelectorAll('input:not(.prefilter-search-input)');
     inputs.forEach(input => {
         input.addEventListener('input', () => updatePrefilterWarning(form));
@@ -94,7 +152,7 @@ function bindPrefilterWarning(form) {
 function createPrefilterActions() {
     const actions = document.createElement('div');
     actions.className = 'prefilter-actions sticky-top';
-    actions.appendChild(createPrefilterSubmitButton('Apply Filters & Search'));
+    actions.appendChild(createPrefilterSubmitButton('Apply Prefilters & Search'));
     return actions;
 }
 
@@ -104,10 +162,10 @@ function createPrefilterSearchBox() {
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.placeholder = 'Search filters to change…';
+    input.placeholder = 'Search prefilters to change…';
     input.className = 'prefilter-search-input';
 
-    // Add event listener for live filtering
+    // Add event listener for live prefiltering
     input.addEventListener('input', () => {
         filterPrefilterSections(input.value);
     });
@@ -136,7 +194,7 @@ function createPrefilterGridFromColumnDetails(columnDetails) {
 // Section for a column, decides which small helper to call
 function createFilterSectionForColumnDetails(col, colDef) {
     const section = document.createElement('section');
-    section.className = 'filter-section';
+    section.className = 'prefilter-section';
 
     const title = document.createElement('h3');
     title.textContent = col;
@@ -158,7 +216,7 @@ function createFilterSectionForColumnDetails(col, colDef) {
 // Choice checkbox group with toggle-all
 function createChoiceFilter(name, choices) {
     const box = document.createElement('div');
-    box.className = 'filter-box';
+    box.className = 'prefilter-box';
 
     const toggleLabel = document.createElement('label');
     toggleLabel.className = 'toggle-all-label';
@@ -167,7 +225,7 @@ function createChoiceFilter(name, choices) {
 
     choices.forEach(choice => {
         const lbl = document.createElement('label');
-        lbl.className = 'filter-checkbox';
+        lbl.className = 'prefilter-checkbox';
         const inp = document.createElement('input');
         inp.type = 'checkbox';
         inp.name = name;
@@ -189,7 +247,7 @@ function createChoiceFilter(name, choices) {
 // Tag checkboxes
 function createTagFilter(name) {
     const container = document.createElement('div');
-    container.className = 'filter-tag-group';
+    container.className = 'prefilter-tag-group';
     
     // Set tooltip if a regex exists for this tag
     const patterns = getTagFullPatterns();
@@ -199,7 +257,7 @@ function createTagFilter(name) {
 
     // 0 checkbox
     const lbl0 = document.createElement('label');
-    lbl0.className = 'filter-checkbox';
+    lbl0.className = 'prefilter-checkbox';
     const inp0 = document.createElement('input');
     inp0.type = 'checkbox';
     inp0.name = name;
@@ -210,7 +268,7 @@ function createTagFilter(name) {
 
     // 1 checkbox
     const lbl1 = document.createElement('label');
-    lbl1.className = 'filter-checkbox';
+    lbl1.className = 'prefilter-checkbox';
     const inp1 = document.createElement('input');
     inp1.type = 'checkbox';
     inp1.name = name;
@@ -225,10 +283,10 @@ function createTagFilter(name) {
     return container;
 }
 
-// Range filter (min / max inputs) — sleek version
+// Range prefilter (min / max inputs) — sleek version
 function createRangeFilter(name, min = null, max = null) {
     const wrapper = document.createElement('div');
-    wrapper.className = 'filter-range';
+    wrapper.className = 'prefilter-range';
 
     const minWrap = document.createElement('div');
     minWrap.className = 'range-input-wrapper';
@@ -275,18 +333,18 @@ function createNumberInput(name, value = null, labelText = '', inputClass = '', 
     return container;
 }
 
-// Text input filter (fallback)
+// Text input prefilter (fallback)
 function createTextFilterInput(name) {
     const input = document.createElement('input');
     input.type = 'text';
     input.name = name;
-    input.placeholder = `Filter ${name}…`;
+    input.placeholder = `Prefilter ${name}…`;
     return input;
 }
 
 function filterPrefilterSections(searchText) {
     searchText = searchText.trim();
-    const sections = document.querySelectorAll('#prefilterOverlay .filter-section');
+    const sections = document.querySelectorAll('#prefilterOverlay .prefilter-section');
     const patterns = getTagFullPatterns();
 
     sections.forEach(section => {
@@ -330,7 +388,7 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
         // Check if preFilter is empty
         if (Object.keys(preFilter).length === 0) {
             const proceed = confirm(
-                "⚠ You haven't applied any filters.\n" +
+                "⚠ You haven't applied any prefilters.\n" +
                 "Loading the full dataset may be very memory-intensive and slow.\n\n" +
                 "Do you want to continue anyway?"
             );

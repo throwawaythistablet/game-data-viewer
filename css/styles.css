@@ -413,24 +413,65 @@ th .sort-desc:hover {
     overflow-x: hidden;
 }
 
+/* ================= Prefilter Notice Collapsible ================= */
+
+/* Base body */
 .prefilter-notice {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-strong);
+    background: var(--bg-elevated); /* match the overlay sections */
+    border: 1px solid var(--border-subtle);
     border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    line-height: 1.5;
+    padding: 12px 16px;
+    margin: 16px 0;
     color: var(--text-main);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    font-size: 14px;
+    line-height: 1.4;
 }
 
-.prefilter-notice ul {
-    margin: 4px 0 0 16px;
-    padding: 0;
+.prefilter-notice-body {
+    overflow: hidden;
+    max-height: 64px;        /* peek state by default */
+    opacity: 0.50;
+    transform: translateY(-2px);
+    pointer-events: none;
+    transition:
+        max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.35s ease,
+        transform 0.35s ease; /* slower, smoother motion */
 }
 
+/* Hovered / Expanded */
+.prefilter-notice.is-expanded .prefilter-notice-body {
+    max-height: 1000px; /* temporary high value for smooth animation */
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Optional toggle indicator rotation */
+.prefilter-notice-toggle {
+    display: inline-block;
+    transition: transform 0.35s ease;
+    font-size: 14px;
+}
+
+.prefilter-notice.is-expanded .prefilter-notice-toggle {
+    transform: rotate(90deg);
+}
+.prefilter-notice.is-collapsed .prefilter-notice-toggle {
+    transform: rotate(0deg);
+}
+
+/* Strong text */
 .prefilter-notice strong {
     font-weight: bold;
+}
+
+/* Optional horizontal separator for clarity */
+.prefilter-notice hr {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 12px 0;
 }
 
 /* Prefilter warning message */
@@ -469,8 +510,28 @@ th .sort-desc:hover {
     box-shadow: 0 -4px 10px rgba(0,0,0,0.35);
 }
 
+.prefilter-actions button {
+    background: var(--glow); /* use theme-aware glow color */
+    color: var(--bg-main);
+    font-weight: bold;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+}
+
+.prefilter-actions button:hover {
+    transform: translateY(-2px);
+    background: var(--glow-strong);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
 .prefilter-search-box {
-    width: 200px;
+    width: 240px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -510,28 +571,8 @@ th .sort-desc:hover {
         0 0 28px var(--glow-strong);
 }
 
-.prefilter-actions button {
-    background: var(--glow); /* use theme-aware glow color */
-    color: var(--bg-main);
-    font-weight: bold;
-    font-size: 16px;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    margin-top: 10px;
-    cursor: pointer;
-
-    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-}
-
-.prefilter-actions button:hover {
-    transform: translateY(-2px);
-    background: var(--glow-strong);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-}
-
 /* Cards with capped height */
-.filter-section {
+.prefilter-section {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
     border-radius: 6px;
@@ -544,7 +585,7 @@ th .sort-desc:hover {
     overflow: hidden;
 }
 
-.filter-section h3 {
+.prefilter-section h3 {
     margin: 0 0 6px;
     font-size: 14px;
     font-weight: 600;
@@ -552,8 +593,19 @@ th .sort-desc:hover {
     color: var(--text-main);
 }
 
+/* Text input filters behave normally */
+.prefilter-section input[type="text"] {
+    width: 100%;
+    padding: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 /* Values scroll only when needed */
-.filter-values {
+.prefilter-values {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 6px;
@@ -563,8 +615,29 @@ th .sort-desc:hover {
     min-width: 0;
 }
 
+/* ------------------- Checkbox Filter ------------------- */
+.prefilter-box {
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 4px;
+    font-size: 12px;
+}
+
+.prefilter-box label {
+    display: block;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.prefilter-box input {
+    margin-right: 4px;
+}
+
 /* Checkbox layout with text wrapping */
-.filter-checkbox {
+.prefilter-checkbox {
     font-size: 12px;
     display: flex;
     gap: 6px;
@@ -578,20 +651,34 @@ th .sort-desc:hover {
     overflow-wrap: anywhere;
 }
 
-.filter-checkbox input {
+.prefilter-checkbox input {
     flex-shrink: 0;
     margin-top: 2px;
 }
 
-/* Text input filters behave normally */
-.filter-section input[type="text"] {
-    width: 100%;
-    padding: 6px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
+.toggle-all-label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* ------------------- Text Filter ------------------- */
+.prefilter-text {
+    background: var(--bg-elevated);
     color: var(--text-main);
-    border-radius: 4px;
+    border: 1px solid var(--border-subtle);
+    width: 100%;
     box-sizing: border-box;
+    font-size: 12px;
+    padding: 4px;
+}
+
+/* ------------------- Range Filter ------------------- */
+.prefilter-range {
+    display: flex;
+    flex-wrap: wrap;  /* allow min/max to wrap to next line */
+    gap: 8px;
+    align-items: flex-start; /* align top when wrapped */
 }
 
 /* =========================================================
