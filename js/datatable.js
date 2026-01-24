@@ -6,31 +6,77 @@ function createTableColumns(parsedData) {
     const searchedPrefilters = lastSearchedPrefilters || {};
     const columnDetails = getActiveColumnDetails();
 
-    const columns = keys
-        .filter(key => {
-            const colDef = columnDetails[key];
-            return (
-                !colDef ||
-                colDef.type !== 'tag' ||
-                key in searchedPrefilters
-            );
-        })
+    const columns = buildCsvColumns(keys, columnDetails, searchedPrefilters);
+
+    const thumbnailColumn = buildThumbnailColumn();
+    if (thumbnailColumn) {
+        columns.unshift(thumbnailColumn);
+    }
+
+    const viewImagesColumn = buildViewImagesColumn(keys);
+    if (viewImagesColumn) {
+        columns.unshift(viewImagesColumn);
+    }
+
+    return columns;
+}
+
+function buildCsvColumns(keys, columnDetails, searchedPrefilters) {
+    return keys
+        .filter(key => shouldIncludeColumn(key, columnDetails, searchedPrefilters))
         .map(key => ({
             title: key,
             data: key,
             render: (data) => renderCellValue(data, key)
         }));
+}
 
-    if (keys.includes('location')) {
-        columns.unshift({
-            title: 'View Images',
-            data: '__view_images__',
-            orderable: false,
-            searchable: false,
-            render: () => `<button class="btn view-images">View</button>`
-        });
-    }
-    return columns;
+function buildViewImagesColumn(keys) {
+    if (!keys.includes('location')) return null;
+
+    return {
+        title: 'View Images',
+        data: '__view_images__',
+        orderable: false,
+        searchable: false,
+        render: () => `<button class="btn view-images">View</button>`
+    };
+}
+
+function buildThumbnailColumn() {
+    if (!activeThumbnails) return null;
+
+    return {
+        title: 'Image',
+        data: '__thumbnail__',
+        orderable: false,
+        searchable: false,
+        render: (data, type, row) => {
+            const key = row['key'];
+            if (!key) return '';
+
+            const entry = activeThumbnails[key];
+            if (!entry || !entry.thumbnail_image) return '';
+
+            return `
+                <img
+                    class="table-thumbnail"
+                    src="${entry.thumbnail_image}"
+                    alt="thumbnail"
+                    loading="lazy"
+                >
+            `;
+        }
+    };
+}
+
+function shouldIncludeColumn(key, columnDetails, searchedPrefilters) {
+    const colDef = columnDetails[key];
+    return (
+        !colDef ||
+        colDef.type !== 'tag' ||
+        key in searchedPrefilters
+    );
 }
 
 async function renderCsvTable(data, columns) {
@@ -182,11 +228,15 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
             columns.forEach(col => {
                 const td = document.createElement('td');
 
-                if (col.data === '__view_images__') {
-                    td.innerHTML = `<button class="btn view-images">View</button>`;
-                } else {
-                    td.innerHTML = renderCellValue(rowData[col.data], col.data);
-                }
+            if (col.data === '__view_images__') {
+                td.innerHTML = `<button class="btn view-images">View</button>`;
+            }
+            else if (col.data === '__thumbnail__') {
+                td.innerHTML = col.render(null, 'display', rowData);
+            }
+            else {
+                td.innerHTML = renderCellValue(rowData[col.data], col.data);
+            }
 
                 tr.appendChild(td);
             });

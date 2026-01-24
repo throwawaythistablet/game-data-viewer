@@ -11,14 +11,14 @@ async function openImageModalForFolder(windowsPath) {
 async function resolveDirHandleFromRelativePath(windowsPath) {
     const parts = windowsPath.replace(/^[A-Z]:\\/, '').trim().split('\\').filter(Boolean);
 
-    let dir = activeRootDirectoryHandle;
-    const rootName = dir.name;
-    const rootIndex = parts.indexOf(rootName);
-    if (rootIndex === -1) {
-        alert(`Selected root "${rootName}" is not part of this path.`);
+    let dir = gamesFolderHandle;
+    const gamesFolderName = dir.name;
+    const dataIndex = parts.indexOf(gamesFolderName);
+    if (dataIndex === -1) {
+        alert(`Selected games folder "${gamesFolderName}" is not part of this path.`);
         return;
     }
-    const relativeParts = parts.slice(rootIndex + 1);
+    const relativeParts = parts.slice(dataIndex + 1);
     if (!relativeParts) return null;
 
     try {
@@ -28,7 +28,7 @@ async function resolveDirHandleFromRelativePath(windowsPath) {
         return dir;
     } catch (e) {
         console.error(e);
-        alert('Folder not found inside selected root.');
+        alert('Folder not found using selected games folder.');
         return null;
     }
 }

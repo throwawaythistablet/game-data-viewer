@@ -88,7 +88,6 @@ let activeColumnDetails = {};
 let activeTagFullPatterns = {};
 let lastSearchedPrefilters = {};
 
-
 function getActiveCsvFile() {
     return activeCsvFile;
 }
@@ -117,6 +116,18 @@ function updateTagFullPatterns(tagFullPatterns, fileName) {
     activeTagFullPatterns = tagFullPatterns;
 }
 
+function updateThumbnails(thumbnails, fileName) {
+    activeThumbnails = thumbnails;
+}
+
+async function initializeWebsite() {
+    await loadDefaultCsv();
+    await loadDefaultColumnDetailsJson();
+    await loadDefaultTagFullPatternsJson();
+    await loadDefaultThumbnailsJson();
+    await executeCsvSearch(getActiveCsvFile());
+}
+
 async function loadDefaultCsv() {
     if(getActiveCsvFile()){
         return; // already loaded
@@ -143,7 +154,7 @@ async function loadDefaultColumnDetailsJson() {
         return;
     }
     const columnDetails = await response.json();
-    updateColumnDetails(columnDetails, 'game_column_details.json', 'Loaded from data/game_column_details.json');
+    updateColumnDetails(columnDetails, 'game_column_details.json', 'data/game_column_details.json');
 }
 
 async function loadDefaultTagFullPatternsJson() {
@@ -153,7 +164,17 @@ async function loadDefaultTagFullPatternsJson() {
         return;
     }
     const tagFullPatterns = await response.json();
-    updateTagFullPatterns(tagFullPatterns, 'tag_full_patterns.json');
+    updateTagFullPatterns(tagFullPatterns, 'data/tag_full_patterns.json');
+}
+
+async function loadDefaultThumbnailsJson() {
+    const response = await fetch('data/game_thumbnails.json');
+    if (!response.ok) {
+        alert('Failed to load thumbnails details');
+        return;
+    }
+    const thumbnails = await response.json();
+    updateThumbnails(thumbnails, 'data/game_thumbnails.json');
 }
 
 
@@ -255,13 +276,6 @@ function updateThemeButton() {
 
 async function initialize() {
     loadAndUpdateTheme();
-}
-
-async function initializeWebsite() {
-    await loadDefaultCsv();
-    await loadDefaultColumnDetailsJson();
-    await loadDefaultTagFullPatternsJson();
-    await executeCsvSearch(getActiveCsvFile());
 }
 
 </script>
