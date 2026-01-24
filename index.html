@@ -29,6 +29,7 @@
             <button id="themeToggleButton" class="btn btn-secondary" title="Toggle between light and dark theme">🌙 Dark</button>
             <button id="discussionButton" class="btn btn-secondary" title="Join the discussion about the tool">👥 Discussion</button>
             <button id="feedbackButton" class="btn btn-secondary" title="Provide feedback or suggestions about the tool">💬 Feedback</button>
+            <button id="tagPatternsButton" class="btn btn-secondary" title="View the full tag regex patterns">📄 Tag Patterns</button>
             <button id="resetFiltersButton" class="btn btn-secondary" title="Reset all filters and sorting to their default state">🔄 Reset Column Filters</button>
             <button id="searchButton" class="btn" title="Search the game data">🔍 Search</button>
         </div>
@@ -73,6 +74,7 @@ const csvTableElement = $('#csvTable');
 const themeToggleButton = document.getElementById('themeToggleButton');
 const discussionButton = document.getElementById('discussionButton')
 const feedbackButton = document.getElementById('feedbackButton')
+const tagPatternsButton = document.getElementById('tagPatternsButton')
 const resetFiltersButton = document.getElementById('resetFiltersButton')
 const searchButton = document.getElementById('searchButton')
 const stopLoadingButton = document.getElementById('stopLoadingButton')
@@ -207,6 +209,11 @@ discussionButton.addEventListener('click', () => {
 // Feedback button
 feedbackButton.addEventListener('click', () => {
     window.open('https://docs.google.com/forms/d/e/1FAIpQLSevpNoZzTm6fDrWfT_3Sb4RsA8btJTFxhJByBBf9e_cw0UOEQ/viewform?usp=dialog', '_blank');
+});
+
+// Tag Patterns button
+tagPatternsButton.addEventListener('click', () => {
+    window.open('data/tag_full_patterns.json', '_blank');
 });
 
 // Theme toggle button
