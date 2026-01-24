@@ -161,6 +161,68 @@ table {
 }
 
 .controls-status-item:last-child { border: none; }
+
+/* ==========================================================================
+   HELP NOTICE
+   ========================================================================== */
+
+.help-notice {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    color: var(--text-main);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.help-notice-body {
+    overflow: hidden;
+    max-height: 48px;
+    opacity: 0.40;
+    transform: translateY(-2px);
+    pointer-events: none;
+    transition:
+        max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.35s ease,
+        transform 0.35s ease;
+}
+
+.help-notice.is-expanded .help-notice-body {
+    max-height: 1000px;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.help-notice-toggle {
+    display: inline-block;
+    transition: transform 0.35s ease;
+    font-size: 14px;
+}
+
+.help-notice.is-expanded .help-notice-toggle {
+    transform: rotate(90deg);
+}
+.help-notice.is-collapsed .help-notice-toggle {
+    transform: rotate(0deg);
+}
+
+.help-notice strong {
+    font-weight: bold;
+}
+
+.help-notice hr {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 12px 0;
+}
+
 /* ==========================================================================
    DROP ZONE
    ========================================================================== */
@@ -432,60 +494,6 @@ th .sort-desc:hover {
 
     overflow-y: auto;
     overflow-x: hidden;
-}
-
-.prefilter-notice {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-subtle);
-    border-radius: 6px;
-    padding: 12px 16px;
-    margin: 16px 0;
-    color: var(--text-main);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.prefilter-notice-body {
-    overflow: hidden;
-    max-height: 64px;
-    opacity: 0.50;
-    transform: translateY(-2px);
-    pointer-events: none;
-    transition:
-        max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.35s ease,
-        transform 0.35s ease;
-}
-
-.prefilter-notice.is-expanded .prefilter-notice-body {
-    max-height: 1000px;
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
-.prefilter-notice-toggle {
-    display: inline-block;
-    transition: transform 0.35s ease;
-    font-size: 14px;
-}
-
-.prefilter-notice.is-expanded .prefilter-notice-toggle {
-    transform: rotate(90deg);
-}
-.prefilter-notice.is-collapsed .prefilter-notice-toggle {
-    transform: rotate(0deg);
-}
-
-.prefilter-notice strong {
-    font-weight: bold;
-}
-
-.prefilter-notice hr {
-    border: none;
-    border-top: 1px solid var(--border-subtle);
-    margin: 12px 0;
 }
 
 #prefilter-warning {

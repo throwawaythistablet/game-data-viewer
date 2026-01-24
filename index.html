@@ -22,10 +22,16 @@
 <body>
 
 
+
+
+<script src="js/utils.js"></script>
+<script src="js/helpNotice.js"></script>
+
+
 <div class="controls">
     <div class="controls-header">
         <h2 class="controls-title">Game Data Viewer</h2>
-        <div class="btn-group">
+        <div class="btn-group" id="controlsButtonGroup">
             <button id="themeToggleButton" class="btn btn-secondary" title="Toggle between light and dark theme">🌙 Dark</button>
             <button id="discussionButton" class="btn btn-secondary" title="Join the discussion about the tool">👥 Discussion</button>
             <button id="feedbackButton" class="btn btn-secondary" title="Provide feedback or suggestions about the tool">💬 Feedback</button>
@@ -33,6 +39,10 @@
             <button id="resetFiltersButton" class="btn btn-secondary" title="Reset all filters and sorting to their default state">🔄 Reset Column Filters</button>
             <button id="searchButton" class="btn" title="Search the game data">🔍 Search</button>
         </div>
+        <script>
+            const btnGroup = document.getElementById('controlsButtonGroup');
+            btnGroup.insertAdjacentElement('afterend', createHelpNotice());
+        </script>
     </div>
 
 
@@ -65,11 +75,6 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/colreorder/1.6.2/js/dataTables.colReorder.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
-
-
-
-<script src="js/utils.js"></script>
 
 
 
