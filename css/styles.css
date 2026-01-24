@@ -1,6 +1,7 @@
-/* =========================================================
+/* ==========================================================================
    THEME VARIABLES
-   ========================================================= */
+   ========================================================================== */
+
 :root {
     --bg-main: #121212;
     --bg-panel: #1e1e1e;
@@ -16,8 +17,8 @@
     --accent: #4dabf7;
     --accent-hover: #339af0;
 
-    /* 🔆 Glow (attention / focus) */
-    --glow: #f1c40f;          /* warm yellow for dark mode */
+
+    --glow: #f1c40f;
     --glow-soft: rgba(241, 196, 15, 0.45);
     --glow-strong: rgba(241, 196, 15, 0.75);
 
@@ -39,15 +40,15 @@ body.light-theme {
     --accent: #007bff;
     --accent-hover: #0056b3;
 
-    /* 🔆 Glow tuned for light backgrounds */
-    --glow: #0d6efd;          /* soft blue */
+
+    --glow: #0d6efd;
     --glow-soft: rgba(13, 110, 253, 0.35);
     --glow-strong: rgba(13, 110, 253, 0.6);
 }
-
-/* =========================================================
+/* ==========================================================================
    BASE LAYOUT
-   ========================================================= */
+   ========================================================================== */
+
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
@@ -60,10 +61,10 @@ table {
     background: var(--bg-panel);
     color: var(--text-main);
 }
-
-/* =========================================================
+/* ==========================================================================
    CONTROLS / TOOLBAR
-   ========================================================= */
+   ========================================================================== */
+
 .controls {
     display: flex;
     flex-direction: column;
@@ -76,7 +77,6 @@ table {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* Top bar: Title and Main Actions */
 .controls-header {
     display: flex;
     justify-content: space-between;
@@ -105,7 +105,6 @@ table {
     overflow: hidden;
 }
 
-/* Collapsed state (after CSV load) */
 .controls-main-grid.is-collapsed {
     max-height: 0;
     opacity: 0;
@@ -113,15 +112,13 @@ table {
     pointer-events: none;
 }
 
-/* Expanded state (hover or pinned) */
 .controls-main-grid.is-expanded {
-    max-height: 800px; /* comfortably larger than content */
+    max-height: 800px;
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
-/* Pin button active state remains same */
 #controlsPinButton.is-active {
     background: var(--accent);
     color: var(--bg-main);
@@ -131,7 +128,6 @@ table {
     .controls-main-grid { grid-template-columns: 1fr; }
 }
 
-/* Info Cards */
 .status-card {
     background: var(--bg-elevated);
     padding: 12px;
@@ -144,14 +140,14 @@ table {
 
 .controls-value {
     text-align: right;
-    max-width: 70%; 
+    max-width: 70%;
     color: var(--accent);
     font-weight: bold;
-    
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    
+
     display: inline-block;
     vertical-align: middle;
 }
@@ -165,10 +161,10 @@ table {
 }
 
 .controls-status-item:last-child { border: none; }
-
-/* =========================================================
+/* ==========================================================================
    DROP ZONE
-   ========================================================= */
+   ========================================================================== */
+
 #csvDropZone {
     background: var(--bg-elevated);
     border: 2px dashed var(--border-strong);
@@ -203,10 +199,10 @@ table {
     color: var(--accent);
     background: var(--bg-hover);
 }
-
-/* =========================================================
+/* ==========================================================================
    BUTTONS
-   ========================================================= */
+   ========================================================================== */
+
 .btn {
     background: var(--accent);
     color: var(--bg-main);
@@ -242,7 +238,6 @@ table {
     background: var(--accent-hover);
 }
 
-/* Hide default file input */
 #csvFile {
     display: none;
 }
@@ -250,10 +245,9 @@ table {
 #fileButton {
     margin-right: 0;
 }
-
-/* =========================================================
+/* ==========================================================================
    TABLE FILTERS
-   ========================================================= */
+   ========================================================================== */
 
 .filters th {
     padding: 4px;
@@ -261,8 +255,8 @@ table {
 }
 
 .filters .filter-container {
-    max-height: 24px;   /* small visible bar when collapsed */
-    opacity: 0.3;       /* semi-transparent hint */
+    max-height: 24px;
+    opacity: 0.3;
     overflow: hidden;
     transform: translateY(-6px);
     transition:
@@ -281,7 +275,6 @@ table {
     pointer-events: none;
 }
 
-/* ------------------- Checkbox Filter ------------------- */
 .filter-box {
     background: var(--bg-elevated);
     color: var(--text-main);
@@ -308,7 +301,6 @@ table {
     display: block;
 }
 
-/* ------------------- Text Filter ------------------- */
 .filter-text {
     background: var(--bg-elevated);
     color: var(--text-main);
@@ -319,32 +311,28 @@ table {
     padding: 4px;
 }
 
-/* ------------------- Range Filter ------------------- */
 .filter-range {
     display: flex;
-    flex-wrap: wrap;  /* allow min/max to wrap to next line */
+    flex-wrap: wrap;
     gap: 8px;
-    align-items: flex-start; /* align top when wrapped */
+    align-items: flex-start;
 }
 
-/* wrapper for individual input + label */
 .range-input-wrapper {
     display: flex;
     flex-direction: column;
-    flex: 1 1 80px;  /* flexible width, min 80px */
-    min-width: 80px; /* avoid inputs getting too small */
-    width: 100%;  /* always fill wrapper */
+    flex: 1 1 80px;
+    min-width: 80px;
+    width: 100%;
     box-sizing: border-box;
 }
 
-/* label above the input */
 .range-label {
     font-size: 10px;
     color: var(--text-subtle);
     margin-bottom: 2px;
 }
 
-/* input styling consistent with other filters */
 .range-min,
 .range-max {
     background: var(--bg-elevated);
@@ -356,10 +344,10 @@ table {
     box-sizing: border-box;
     border-radius: 3px;
 }
-
-/* =========================================================
+/* ==========================================================================
    SORTING BUTTONS (TABLE HEADERS)
-   ========================================================= */
+   ========================================================================== */
+
 th .sort-asc,
 th .sort-desc {
     font-size: 10px;
@@ -393,14 +381,14 @@ th .sort-desc:hover {
 .highlight-cell.low { font-weight: normal; }
 .highlight-cell.medium { font-weight: 500; }
 .highlight-cell.high { font-weight: bold; }
-
-/* =========================================================
+/* ==========================================================================
    PREFILTER OVERLAY
-   ========================================================= */
+   ========================================================================== */
+
 .prefilter-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7); /* dim backdrop, theme-neutral */
+    background: rgba(0,0,0,0.7);
     z-index: 1000;
 
     display: flex;
@@ -413,11 +401,8 @@ th .sort-desc:hover {
     overflow-x: hidden;
 }
 
-/* ================= Prefilter Notice Collapsible ================= */
-
-/* Base body */
 .prefilter-notice {
-    background: var(--bg-elevated); /* match the overlay sections */
+    background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
     border-radius: 6px;
     padding: 12px 16px;
@@ -430,25 +415,23 @@ th .sort-desc:hover {
 
 .prefilter-notice-body {
     overflow: hidden;
-    max-height: 64px;        /* peek state by default */
+    max-height: 64px;
     opacity: 0.50;
     transform: translateY(-2px);
     pointer-events: none;
     transition:
         max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
         opacity 0.35s ease,
-        transform 0.35s ease; /* slower, smoother motion */
+        transform 0.35s ease;
 }
 
-/* Hovered / Expanded */
 .prefilter-notice.is-expanded .prefilter-notice-body {
-    max-height: 1000px; /* temporary high value for smooth animation */
+    max-height: 1000px;
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
-/* Optional toggle indicator rotation */
 .prefilter-notice-toggle {
     display: inline-block;
     transition: transform 0.35s ease;
@@ -462,30 +445,27 @@ th .sort-desc:hover {
     transform: rotate(0deg);
 }
 
-/* Strong text */
 .prefilter-notice strong {
     font-weight: bold;
 }
 
-/* Optional horizontal separator for clarity */
 .prefilter-notice hr {
     border: none;
     border-top: 1px solid var(--border-subtle);
     margin: 12px 0;
 }
 
-/* Prefilter warning message */
 #prefilter-warning {
-    display: none;                    /* hidden by default */
-    color: var(--bg-main);            /* text color stands out */
-    background-color: var(--danger);  /* bright danger background */
+    display: none;
+    color: var(--bg-main);
+    background-color: var(--danger);
     font-weight: bold;
-    padding: 16px 20px;               /* good internal spacing */
-    margin: 20px 0;                   /* spacing from other elements */
-    border: 2px solid var(--bg-main); /* high contrast border */
-    border-radius: 6px;               /* smooth corners */
-    text-align: center;               /* center text for attention */
-    box-shadow: 0 0 8px var(--danger-soft); /* simple glow */
+    padding: 16px 20px;
+    margin: 20px 0;
+    border: 2px solid var(--bg-main);
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 0 8px var(--danger-soft);
     line-height: 1.5;
 }
 
@@ -494,15 +474,15 @@ th .sort-desc:hover {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 16px;
     margin-top: 10px;
-    overflow: visible; /* grid itself does not scroll */
+    overflow: visible;
 }
 
 .prefilter-actions {
     width: 100%;
     display: flex;
-    flex-direction: column; /* two rows */
-    align-items: center;    /* center buttons horizontally */
-    gap: 8px;               /* space between buttons */
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     position: sticky;
     bottom: 0;
     background: color-mix(in srgb, var(--bg-panel) 95%, transparent);
@@ -514,15 +494,14 @@ th .sort-desc:hover {
 
 .prefilter-actions .btn-row {
     display: flex;
-    gap: 8px;          /* space between Reset and Cancel */
-    margin-top: 8px;   /* space below Apply button */
-    justify-content: center; /* center the buttons horizontally */
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: center;
     width: 100%;
 }
 
-/* Apply button */
 .prefilter-actions .btn-apply {
-    background: var(--glow); 
+    background: var(--glow);
     color: var(--bg-main);
     font-weight: bold;
     font-size: 16px;
@@ -531,18 +510,16 @@ th .sort-desc:hover {
     border-radius: 8px;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-    width: auto;            /* fit content */
-    min-width: 160px;       /* optional minimum */
+    width: auto;
+    min-width: 160px;
 }
 
-/* Apply button hover */
 .prefilter-actions .btn-apply:hover {
     transform: translateY(-2px);
     background: var(--glow-strong);
     box-shadow: 0 6px 14px rgba(0,0,0,0.3);
 }
 
-/* Reset button (subtle) – always visible now */
 .prefilter-actions .btn-regular {
     background-color: var(--bg-elevated);
     color: var(--text-muted);
@@ -552,21 +529,19 @@ th .sort-desc:hover {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
-    width: auto;          
+    width: auto;
     min-width: 80px;
-    /* removed opacity and visibility defaults */
+
 }
 
-/* Hover effect for reset */
 .prefilter-actions .btn-regular:hover {
     background-color: var(--bg-hover);
     color: var(--text-main);
 }
 
-/* Active prefilters summary */
 .prefilter-active-summary {
     position: sticky;
-    top: 0; /* sticks just below overlay header */
+    top: 0;
     background: var(--bg-panel);
     border: 1px solid var(--border-subtle);
     border-radius: 6px;
@@ -612,7 +587,7 @@ th .sort-desc:hover {
     color: var(--text-main);
     box-sizing: border-box;
 
-    /* theme-aware glow */
+
     box-shadow:
         inset 0 1px 3px rgba(0,0,0,0.4),
         0 0 10px var(--glow-soft),
@@ -633,7 +608,6 @@ th .sort-desc:hover {
         0 0 28px var(--glow-strong);
 }
 
-/* Cards with capped height */
 .prefilter-section {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
@@ -655,7 +629,6 @@ th .sort-desc:hover {
     color: var(--text-main);
 }
 
-/* Text input filters behave normally */
 .prefilter-section input[type="text"] {
     width: 100%;
     padding: 6px;
@@ -666,7 +639,6 @@ th .sort-desc:hover {
     box-sizing: border-box;
 }
 
-/* Values scroll only when needed */
 .prefilter-values {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -677,7 +649,6 @@ th .sort-desc:hover {
     min-width: 0;
 }
 
-/* ------------------- Checkbox Filter ------------------- */
 .prefilter-box {
     background: var(--bg-elevated);
     color: var(--text-main);
@@ -698,7 +669,6 @@ th .sort-desc:hover {
     margin-right: 4px;
 }
 
-/* Checkbox layout with text wrapping */
 .prefilter-checkbox {
     font-size: 12px;
     display: flex;
@@ -724,7 +694,6 @@ th .sort-desc:hover {
     display: block;
 }
 
-/* ------------------- Text Filter ------------------- */
 .prefilter-text {
     background: var(--bg-elevated);
     color: var(--text-main);
@@ -735,24 +704,23 @@ th .sort-desc:hover {
     padding: 4px;
 }
 
-/* ------------------- Range Filter ------------------- */
 .prefilter-range {
     display: flex;
-    flex-wrap: wrap;  /* allow min/max to wrap to next line */
+    flex-wrap: wrap;
     gap: 8px;
-    align-items: flex-start; /* align top when wrapped */
+    align-items: flex-start;
 }
-
-/* =========================================================
+/* ==========================================================================
    LOADING OVERLAY & PROGRESS
-   ========================================================= */
+   ========================================================================== */
+
 #loadingOverlayElement {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 999;
-    background: rgba(0,0,0,0.85); /* semi-transparent backdrop */
-    color: var(--accent); /* theme accent color */
+    background: rgba(0,0,0,0.85);
+    color: var(--accent);
     font-size: 18px;
     align-items: center;
     justify-content: center;
@@ -764,8 +732,8 @@ th .sort-desc:hover {
     height: 40px;
     margin-top: 10px;
     border-radius: 50%;
-    border: 6px solid var(--bg-elevated);  /* theme panel color */
-    border-top: 6px solid var(--accent);   /* accent color for spinner */
+    border: 6px solid var(--bg-elevated);
+    border-top: 6px solid var(--accent);
     animation: spin 0.5s linear infinite;
 }
 
@@ -777,12 +745,11 @@ th .sort-desc:hover {
 #loadingHeaderDisplay {
     font-size: 22px;
     font-weight: bold;
-    color: var(--accent); /* use theme accent */
+    color: var(--accent);
     margin-bottom: 16px;
     text-align: center;
 }
 
-/* Progress bar */
 #loadingProgressDisplayContainer {
     width: 80%;
     margin-top: 15px;
@@ -795,7 +762,7 @@ th .sort-desc:hover {
 #loadingProgressBarDisplay {
     width: 0%;
     height: 20px;
-    background: var(--accent); /* use theme accent */
+    background: var(--accent);
     transition: width 0.1s;
 }
 
@@ -805,7 +772,7 @@ th .sort-desc:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-main); /* main text color */
+    color: var(--text-main);
     font-size: 14px;
     font-weight: bold;
     pointer-events: none;
@@ -826,12 +793,12 @@ th .sort-desc:hover {
 
 #stopLoadingButton:hover {
     background-color: color-mix(in srgb, var(--danger) 80%, #fff 20%);
-    box-shadow: 0 0 12px var(--danger); /* subtle glow on hover using danger color */
+    box-shadow: 0 0 12px var(--danger);
 }
-
-/* =========================================================
+/* ==========================================================================
    IMAGE MODAL
-   ========================================================= */
+   ========================================================================== */
+
 #imageModal {
     display: none;
     position: fixed;
@@ -865,7 +832,6 @@ th .sort-desc:hover {
     cursor: pointer;
 }
 
-/* Fullscreen image preview */
 #imageOverlay {
     display: none;
     position: fixed;
