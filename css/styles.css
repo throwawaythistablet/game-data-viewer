@@ -489,7 +489,6 @@ th .sort-desc:hover {
     line-height: 1.5;
 }
 
-
 .prefilter-form {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -511,6 +510,14 @@ th .sort-desc:hover {
     z-index: 1100;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.35);
     margin-bottom: 16px;
+}
+
+.prefilter-actions .btn-row {
+    display: flex;
+    gap: 8px;          /* space between Reset and Cancel */
+    margin-top: 8px;   /* space below Apply button */
+    justify-content: center; /* center the buttons horizontally */
+    width: 100%;
 }
 
 /* Apply button */
@@ -536,7 +543,7 @@ th .sort-desc:hover {
 }
 
 /* Reset button (subtle) – always visible now */
-.btn-reset-subtle {
+.prefilter-actions .btn-regular {
     background-color: var(--bg-elevated);
     color: var(--text-muted);
     font-size: 12px;
@@ -551,7 +558,7 @@ th .sort-desc:hover {
 }
 
 /* Hover effect for reset */
-.btn-reset-subtle:hover {
+.prefilter-actions .btn-regular:hover {
     background-color: var(--bg-hover);
     color: var(--text-main);
 }

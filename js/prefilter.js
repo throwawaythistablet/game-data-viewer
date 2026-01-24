@@ -7,23 +7,21 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
 
         const form = document.createElement('form');
 
-        // Add warning, actions, active filters, search box, and grid
-        form.appendChild(createPrefilterWarning());
-        form.appendChild(createPrefilterActions(form));
-        form.appendChild(createPrefilterSearchBox());
-        form.appendChild(createActivePrefiltersSummary());
-        form.appendChild(createPrefilterGridFromColumnDetails(columnDetails, lastSearchedPrefilters));
-
         overlay.appendChild(form);
         document.body.appendChild(overlay);
 
-        // Bind live updates AFTER form is attached
-        bindPrefilterWarning(form);
-        bindActivePrefiltersSummary(form);
+        return new Promise(resolve => {
+            form.appendChild(createPrefilterWarning());
+            form.appendChild(createPrefilterActions(form, resolve, overlay));
+            form.appendChild(createPrefilterSearchBox());
+            form.appendChild(createActivePrefiltersSummary());
+            form.appendChild(createPrefilterGridFromColumnDetails(columnDetails, lastSearchedPrefilters));
 
-        return new Promise(resolve =>
-            waitForPrefilterFormSubmission(form, resolve, overlay)
-        );
+            bindPrefilterWarning(form);
+            bindActivePrefiltersSummary(form);
+
+            waitForPrefilterFormSubmission(form, resolve, overlay);
+        });
     } catch (err) {
         console.warn('Prefilter UI failed, continuing without prefiltering:', err);
         return {};
@@ -151,20 +149,28 @@ function bindPrefilterWarning(form) {
     updatePrefilterWarning(form);
 }
 
-function createPrefilterActions(form) {
+function createPrefilterActions(form, resolve, overlay) {
     const actions = document.createElement('div');
     actions.className = 'prefilter-actions sticky-top';
 
-    // Apply button – top row
+    // Apply button – prominent, top row
     const applyBtn = createPrefilterSubmitButton('Apply Prefilters & Search');
-    applyBtn.classList.add('btn-apply'); // prominent apply button
+    applyBtn.classList.add('btn-apply');
     actions.appendChild(applyBtn);
 
-    // Reset button – second row, subtle style
+    // Container row for Reset + Cancel
+    const row = document.createElement('div');
+    row.className = 'btn-row';
+
     const resetBtn = createPrefiltersResetButton(form);
-    resetBtn.classList.add('btn-reset-subtle'); // subtle, smaller
-    resetBtn.style.display = 'inline-block'; // always visible now
-    actions.appendChild(resetBtn);
+    resetBtn.classList.add('btn-regular');
+    row.appendChild(resetBtn);
+
+    const cancelBtn = createPrefiltersCancelButton(resolve, overlay);
+    cancelBtn.classList.add('btn-regular');
+    row.appendChild(cancelBtn);
+
+    actions.appendChild(row);
 
     return actions;
 }
@@ -213,6 +219,20 @@ function createPrefiltersResetButton(form) {
     resetBtn.addEventListener('click', () => resetPrefilters(form));
 
     return resetBtn;
+}
+
+function createPrefiltersCancelButton(resolve, overlay) {
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.className = 'btn btn-cancel';
+
+    cancelBtn.addEventListener('click', () => {
+        if (overlay) overlay.remove(); // remove overlay immediately
+        resolve(null);                 // signal cancellation
+    });
+
+    return cancelBtn;
 }
 
 function createPrefilterGridFromColumnDetails(columnDetails, prefill = {}) {

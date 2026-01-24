@@ -172,7 +172,7 @@ async function loadDefaultTagFullPatternsJson() {
 searchButton.addEventListener('click', async () => {
     if (!getActiveCsvFile()) return alert('No CSV file loaded yet.');
     if (!hasValidColumnDetails()) return alert('No column details json loaded yet.');
-    await executeCsvSearchWithRetries();
+    await executeCsvSearch(getActiveCsvFile());
 });
 
 // Reset filters button
@@ -254,7 +254,7 @@ async function initializeWebsite() {
     await loadDefaultCsv();
     await loadDefaultColumnDetailsJson();
     await loadDefaultTagFullPatternsJson();
-    await executeCsvSearchWithRetries();
+    await executeCsvSearch(getActiveCsvFile());
 }
 
 </script>

@@ -1,22 +1,4 @@
 
-
-async function executeCsvSearchWithRetries() {
-    while (true) {
-        try {
-            const success = await executeCsvSearch(getActiveCsvFile());
-            if (success) return true; // search finished successfully
-
-        } catch (err) {
-            console.error('CSV search failed:', err);
-            alert(`Error: ${err.message || 'Unknown error'}\nFailed to search CSV: ${getActiveCsvFile()?.name || 'unknown file'}`);
-            break; // stop the loop on exception
-        }
-
-        // Optional small delay (if loop continues in future)
-        await new Promise(r => setTimeout(r, 100));
-    }
-}
-
 async function executeCsvSearch(file) {
     if (!file) return false;
 
@@ -26,10 +8,15 @@ async function executeCsvSearch(file) {
                 ? await showPrefilterOverlayAndCollectFilters(getActiveColumnDetails())
                 : {};
 
+        // user clicked Cancel
+        if (collectedPrefilters === null) {
+            return false;
+        }
+
         await updateLoadingProgress("Starting Data Search...", 0, 0, 0, 1);
         resetLoadingCancellation();
         showLoading();
-
+        
         await loadCsvAndBuildTable({ file, totalSize: file.size, preFilters: collectedPrefilters });
 
         return true;
@@ -61,7 +48,6 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
     let rowsProcessed = 0;
     let bytesProcessed = 0;
     const THROTTLE = 100;
-    const MAX_ROWS = 30000; // maximum rows to prevent memory overload
 
     return new Promise((resolve, reject) => {
         Papa.parse(file, {
@@ -86,15 +72,6 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
                 // Throttle progress updates
                 if (rowsProcessed % THROTTLE === 0) {
                     updateLoadingProgress("Loading Data From File...", 0, 30, bytesProcessed, totalSize);
-                }
-
-                // Stop if max rows exceeded
-                if (parsedData.length >= MAX_ROWS) {
-                    this.abort();
-                    // Reject the promise instead of throwing
-                    reject(new Error(
-                        `Too many items loaded (${MAX_ROWS}). Please use filters to reduce the number of items before loading.`
-                    ));
                 }
             },
             complete: function () {
