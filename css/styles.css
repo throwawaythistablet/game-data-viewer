@@ -397,6 +397,23 @@ th .sort-desc:hover {
     margin: 0 auto;
 }
 
+#previewOverlay {
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+#previewOverlay img {
+    max-width: 400px;
+    max-height: 400px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    transform: scale(1);
+    opacity: 0.95;
+}
+
 /* ==========================================================================
    PREFILTER OVERLAY
    ========================================================================== */

@@ -1,4 +1,6 @@
 
+let keyColumnIndex = null;
+
 function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
@@ -17,8 +19,13 @@ function createTableColumns(parsedData) {
     if (viewImagesColumn) {
         columns.unshift(viewImagesColumn);
     }
+    saveKeyColumnIndex(columns);
 
     return columns;
+}
+
+function saveKeyColumnIndex(columns) {
+    keyColumnIndex = columns.findIndex(col => col.data === 'key');
 }
 
 function buildCsvColumns(keys, columnDetails, searchedPrefilters) {
@@ -274,7 +281,7 @@ function initializeDataTableWithOptions(columns) {
                 await addColumnFilters(api);
                 await addSortingControls(api, dt);
 
-                resolve(); // EVERYTHING IS REALLY DONE NOW
+                resolve();
             }
         });
     });
@@ -596,4 +603,83 @@ function highlightValue(val, min, max) {
     const textColor = isLightMode ? '#000000' : '#ffffff';
     const weightClass = intensity > 0.7 ? 'high' : intensity > 0.4 ? 'medium' : 'low';
     return `<span class="highlight-cell ${weightClass}" style="background-color:${bgColor}; color:${textColor}">${val}</span>`;
+}
+
+let previewTimer = null;   // global or module-level
+let currentPreviewIndex = 0;
+
+csvTableElement.on('mouseenter', '.table-thumbnail', function(e) {
+    const thumbnail = $(this);
+    const rowData = csvTableElement.DataTable().row(thumbnail.closest('tr')).data();
+    const key = rowData[keyColumnIndex];
+    if (!key || !activeThumbnails[key]) return;
+
+    const previewImages = activeThumbnails[key].preview_images;
+    if (!previewImages || previewImages.length === 0) return;
+
+    const overlay = document.getElementById('previewOverlay');
+    const previewImg = document.getElementById('previewImage');
+    if (!overlay || !previewImg) return;
+
+    overlay.style.display = 'block';
+    moveOverlay(e);
+
+    currentPreviewIndex = 0;
+    previewImg.src = previewImages[currentPreviewIndex];
+
+    // Stop any existing slideshow first
+    if (previewTimer) {
+        clearInterval(previewTimer);
+        previewTimer = null;
+    }
+
+    // Start slideshow
+    if (previewImages.length > 1) {
+        previewTimer = setInterval(() => {
+            currentPreviewIndex = (currentPreviewIndex + 1) % previewImages.length;
+            previewImg.src = previewImages[currentPreviewIndex];
+        }, 500); // change every 0.5 second (adjust as needed)
+    }
+});
+
+// Hide on mouse leave
+csvTableElement.on('mouseleave', '.table-thumbnail', function() {
+    const overlay = document.getElementById('previewOverlay');
+    const previewImg = document.getElementById('previewImage');
+
+    if (overlay) overlay.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+
+    if (previewTimer) {
+        clearInterval(previewTimer);
+        previewTimer = null;
+    }
+
+    currentPreviewIndex = 0;
+});
+
+// Move overlay with mouse
+csvTableElement.on('mousemove', '.table-thumbnail', function(e) {
+    moveOverlay(e);
+});
+
+// Function to position overlay
+function moveOverlay(e) {
+    const overlay = document.getElementById('previewOverlay');
+    const previewImg = document.getElementById('previewImage');
+    const offset = 20; // small gap from cursor
+
+    let x = e.pageX + offset;
+    let y = e.pageY + offset;
+
+    // Keep within viewport
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const rect = previewImg.getBoundingClientRect();
+
+    if (x + rect.width > vw) x = e.pageX - rect.width - offset;
+    if (y + rect.height > vh) y = e.pageY - rect.height - offset;
+
+    overlay.style.left = x + 'px';
+    overlay.style.top = y + 'px';
 }
