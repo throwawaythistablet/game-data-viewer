@@ -401,20 +401,69 @@ function updateActivePrefiltersSummary(form) {
 
     for (const [col, val] of Object.entries(preFilter)) {
         let text = '';
+        let type = '';
         if (val.type === 'tag' || Array.isArray(val.choices)) {
             text = `${col}: ${val.choices?.join(', ') || val.text?.join(', ')}`;
+            type = 'checkbox';
         } else if (val.type === 'int' || val.type === 'float') {
             const minMax = [];
             if (val.min != null) minMax.push(`min=${val.min}`);
             if (val.max != null) minMax.push(`max=${val.max}`);
             text = `${col}: ${minMax.join(', ')}`;
+            type = 'range';
         } else if (val.text) {
             text = `${col}: ${val.text.join(', ')}`;
+            type = 'text';
         }
-        if (text) items.push(`<span class="prefilter-active-item">${text}</span>`);
+
+        if (text) {
+            const span = document.createElement('span');
+            span.className = 'prefilter-active-item';
+            span.dataset.col = col;
+            span.dataset.type = type;
+            span.innerHTML = `${text} <button type="button" class="prefilter-remove-btn">×</button>`;
+            items.push(span);
+        }
     }
 
-    summaryEl.innerHTML = items.length > 0 ? items.join(' ') : 'Active Prefilters: None';
+    if (items.length > 0) {
+        summaryEl.innerHTML = '';
+        items.forEach(span => {
+            summaryEl.appendChild(span);
+        });
+        bindActivePrefilterRemoveButtons(form); // bind click events
+    } else {
+        summaryEl.textContent = 'Active Prefilters: None';
+    }
+}
+
+function bindActivePrefilterRemoveButtons(form) {
+    const buttons = form.querySelectorAll('.prefilter-remove-btn');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', e => {
+            const span = e.target.closest('.prefilter-active-item');
+            const col = span.dataset.col;
+            const type = span.dataset.type;
+
+            if (type === 'checkbox') {
+                // uncheck all checkboxes for this column
+                form.querySelectorAll(`input[name="${col}"]`).forEach(i => i.checked = false);
+            } else if (type === 'range') {
+                // clear min/max inputs
+                const minInput = form.querySelector(`[name="${col}__min"]`);
+                const maxInput = form.querySelector(`[name="${col}__max"]`);
+                if (minInput) minInput.value = '';
+                if (maxInput) maxInput.value = '';
+            } else if (type === 'text') {
+                const input = form.querySelector(`input[name="${col}"]`) || form.querySelector(`textarea[name="${col}"]`);
+                if (input) input.value = '';
+            }
+
+            // update summary and warning
+            updateActivePrefiltersSummary(form);
+            updatePrefilterWarning(form);
+        });
+    });
 }
 
 function sectionMatchesSearch(colName, searchText, patterns) {

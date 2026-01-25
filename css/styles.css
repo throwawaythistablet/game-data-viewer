@@ -179,18 +179,27 @@ table {
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     font-size: 14px;
     line-height: 1.4;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
 }
 
 .help-notice-body {
     overflow: hidden;
     max-height: 48px;
-    opacity: 0.40;
+    opacity: 0.50;
     transform: translateY(-2px);
     pointer-events: none;
     transition:
         max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
         opacity 0.35s ease,
         transform 0.35s ease;
+}
+
+.help-notice:hover {
+    background: var(--bg-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    transform: translateY(-1px);
+    opacity: 1;
 }
 
 .help-notice.is-expanded .help-notice-body {
@@ -200,17 +209,17 @@ table {
     pointer-events: auto;
 }
 
-.help-notice-toggle {
-    display: inline-block;
-    transition: transform 0.35s ease;
-    font-size: 14px;
+.help-notice-toggle-text {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--accent);
+    margin-top: 8px;
+    text-align: left;
+    transition: color 0.2s;
 }
 
-.help-notice.is-expanded .help-notice-toggle {
-    transform: rotate(90deg);
-}
-.help-notice.is-collapsed .help-notice-toggle {
-    transform: rotate(0deg);
+.help-notice-toggle-text:hover {
+    color: var(--accent-hover);
 }
 
 .help-notice strong {
@@ -599,14 +608,35 @@ th .sort-desc:hover {
 }
 
 .prefilter-active-item {
-    display: inline-block;
-    background: var(--glow-soft);
-    color: var(--text-main);
-    padding: 2px 8px;
+    display: inline-flex;               /* better for inline items + button */
+    align-items: center;
+    background: var(--bg-elevated);     /* readable background */
+    color: var(--text-main);            /* main text color */
+    padding: 4px 10px;
     margin: 2px 4px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 13px;
+    border: 2px solid var(--glow);     /* thick border for glow effect */
+    box-shadow: 0 0 8px var(--glow-strong); /* subtle glowing shadow */
 }
+
+.prefilter-active-item .prefilter-remove-btn {
+    background: transparent;
+    border: none;
+    margin-left: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--danger);               /* always noticeable */
+    font-size: 14px;
+    line-height: 1;
+}
+
+.prefilter-active-item .prefilter-remove-btn:hover {
+    color: var(--glow-strong);               /* keep it the same for consistency */
+    transform: scale(1.2);              /* optional: slight pop on hover */
+    transition: transform 0.15s ease;
+}
+
 
 .prefilter-search-box {
     width: 240px;

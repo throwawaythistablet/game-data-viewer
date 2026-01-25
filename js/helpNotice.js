@@ -4,7 +4,15 @@
 function createHelpNotice() {
     const notice = document.createElement('div');
     notice.className = 'help-notice is-collapsed';
-    notice.innerHTML = getHelpNoticeContent()
+    
+    // Wrap body + toggle text
+    notice.innerHTML = `
+        <div class="help-notice-body">
+            ${getHelpNoticeContent()}
+        </div>
+        <div class="help-notice-toggle-text">Show More ▼</div>
+    `;
+    
     bindHelpNoticeToggle(notice);
     return notice;
 }
@@ -90,25 +98,22 @@ function getHelpNoticeContent() {
     `;
 }
 
-
 function bindHelpNoticeToggle(notice) {
-    let isHover = false;
+    notice.style.cursor = 'pointer'; // user sees it’s clickable
 
-    function updateNoticeState() {
-        notice.classList.toggle('is-expanded', isHover);
-        notice.classList.toggle('is-collapsed', !isHover);
+    const toggleText = notice.querySelector('.help-notice-toggle-text');
+
+    function toggleNotice() {
+        const expanded = notice.classList.toggle('is-expanded');
+        notice.classList.toggle('is-collapsed', !expanded);
+
+        // Update toggle text
+        toggleText.textContent = expanded ? 'Show Less ▲' : 'Show More ▼';
     }
 
-    notice.addEventListener('mouseenter', () => {
-        isHover = true;
-        updateNoticeState();
-    });
-
-    notice.addEventListener('mouseleave', () => {
-        isHover = false;
-        updateNoticeState();
-    });
+    notice.addEventListener('click', toggleNotice);
 
     // Initial state
-    updateNoticeState();
+    notice.classList.add('is-collapsed');
 }
+
