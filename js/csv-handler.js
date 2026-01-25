@@ -13,22 +13,31 @@ async function executeCsvSearch(file) {
             return false;
         }
 
-        await updateLoadingProgress("Starting Data Search...", 0, 0, 0, 1);
-        resetLoadingCancellation();
-        showLoading();
-        
+        await startCsvSearchUi();
         await loadCsvAndBuildTable({ file, totalSize: file.size, preFilters: collectedPrefilters });
-
+        
         return true;
     } catch (err) {
         console.error('executeCsvSearch failed:', err);
         alert(`Error: ${err.message || 'Unknown error'}\nFailed to search CSV`);
         return false;
     } finally {
-        hideLoading();
-        resetLoadingCancellation();
-        await updateLoadingProgress("", 0, 0, 0, 1);
+        await finishCsvSearchUi();
     }
+}
+
+async function startCsvSearchUi() {
+    await updateLoadingProgress("Starting Data Search...", 0, 0, 0, 1);
+    resetLoadingCancellation();
+    showLoading();
+    hideMainPrefiltersPanelSection();
+}
+
+async function finishCsvSearchUi() {
+    showMainPrefiltersPanelSection();
+    hideLoading();
+    resetLoadingCancellation();
+    await updateLoadingProgress("", 0, 0, 0, 1);
 }
 
 async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {

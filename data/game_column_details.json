@@ -77,6 +77,10 @@
     "type": "str",
     "choices": []
   },
+  "crawler_last_visit": {
+    "type": "str",
+    "choices": []
+  },
   "developer": {
     "type": "str",
     "choices": []
@@ -85,20 +89,19 @@
     "type": "str",
     "choices": []
   },
-  "is_vn": {
+  "censored": {
     "type": "bool",
     "choices": [
       false,
       true
     ]
   },
-  "multiple tags": {
-    "type": "tag",
+  "is_vn": {
+    "type": "bool",
     "choices": [
-      1
-    ],
-    "min": 1,
-    "max": 1
+      false,
+      true
+    ]
   },
   "adult": {
     "type": "tag",
@@ -766,15 +769,6 @@
     "min": 0,
     "max": 1
   },
-  "dark fantasy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "humiliation": {
     "type": "tag",
     "choices": [
@@ -838,7 +832,7 @@
     "min": 0,
     "max": 1
   },
-  "occult": {
+  "character archetypes": {
     "type": "tag",
     "choices": [
       0,
@@ -847,7 +841,7 @@
     "min": 0,
     "max": 1
   },
-  "character archetypes": {
+  "dark fantasy": {
     "type": "tag",
     "choices": [
       0,
@@ -884,6 +878,15 @@
     "max": 1
   },
   "innocent": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "occult": {
     "type": "tag",
     "choices": [
       0,
@@ -1396,15 +1399,6 @@
     "min": 0,
     "max": 1
   },
-  "paranormal": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "coercion": {
     "type": "tag",
     "choices": [
@@ -1612,7 +1606,7 @@
     "min": 0,
     "max": 1
   },
-  "demon": {
+  "futa trans": {
     "type": "tag",
     "choices": [
       0,
@@ -1621,7 +1615,7 @@
     "min": 0,
     "max": 1
   },
-  "futa trans": {
+  "demon": {
     "type": "tag",
     "choices": [
       0,
@@ -1703,6 +1697,15 @@
     "max": 1
   },
   "kinetic novel": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "paranormal": {
     "type": "tag",
     "choices": [
       0,
@@ -1972,25 +1975,7 @@
     "min": 0,
     "max": 1
   },
-  "ghost": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "undead": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "mystic": {
     "type": "tag",
     "choices": [
       0,
@@ -2287,15 +2272,6 @@
     "min": 0,
     "max": 1
   },
-  "possessed": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "shooter": {
     "type": "tag",
     "choices": [
@@ -2423,6 +2399,15 @@
     "max": 1
   },
   "whipping": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "possessed": {
     "type": "tag",
     "choices": [
       0,
@@ -2593,6 +2578,15 @@
     "min": 0,
     "max": 1
   },
+  "ghost": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "aliens": {
     "type": "tag",
     "choices": [
@@ -2621,6 +2615,15 @@
     "max": 1
   },
   "angel": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "mystic": {
     "type": "tag",
     "choices": [
       0,

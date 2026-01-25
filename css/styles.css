@@ -589,6 +589,25 @@ th .sort-desc:hover {
     color: var(--text-main);
 }
 
+.prefilter-main-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;       /* vertically center label and items */
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.prefilter-main-panel-label {
+    font-weight: 600;          /* moderate emphasis, not "strong" */
+    margin-right: 8px;
+}
+
 .prefilter-active-summary {
     position: sticky;
     top: 0;

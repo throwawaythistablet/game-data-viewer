@@ -49,6 +49,7 @@
 
 </div>
 
+<div id="mainPrefiltersPanelSection"></div>
 
 <table id="csvTable" class="display"></table>
 
@@ -87,6 +88,7 @@ const feedbackButton = document.getElementById('feedbackButton')
 const tagPatternsButton = document.getElementById('tagPatternsButton')
 const resetFiltersButton = document.getElementById('resetFiltersButton')
 const searchButton = document.getElementById('searchButton')
+const mainPrefiltersPanelSection = document.getElementById('mainPrefiltersPanelSection')
 const stopLoadingButton = document.getElementById('stopLoadingButton')
 const loadingOverlayElement = document.getElementById('loadingOverlayElement');
 const loadingHeader = document.getElementById('loadingHeaderDisplay');
@@ -185,6 +187,14 @@ async function loadDefaultThumbnailsJson() {
     }
     const thumbnails = await response.json();
     updateThumbnails(thumbnails, 'data/game_thumbnails.json');
+}
+
+function hideMainPrefiltersPanelSection() {
+    mainPrefiltersPanelSection.style.display = 'none';
+}
+
+function showMainPrefiltersPanelSection() {
+    mainPrefiltersPanelSection.style.display = '';
 }
 
 

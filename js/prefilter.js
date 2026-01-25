@@ -332,9 +332,8 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
             if (!proceed) return;
         }
 
-        // Save for next time
         lastSearchedPrefilters = preFilter;
-
+        renderMainPagePrefiltersPanel();
         overlay.remove();
         resolve(preFilter);
     });
@@ -400,41 +399,82 @@ function updateActivePrefiltersSummary(form) {
     const items = [];
 
     for (const [col, val] of Object.entries(preFilter)) {
-        let text = '';
-        let type = '';
-        if (val.type === 'tag' || Array.isArray(val.choices)) {
-            text = `${col}: ${val.choices?.join(', ') || val.text?.join(', ')}`;
-            type = 'checkbox';
-        } else if (val.type === 'int' || val.type === 'float') {
-            const minMax = [];
-            if (val.min != null) minMax.push(`min=${val.min}`);
-            if (val.max != null) minMax.push(`max=${val.max}`);
-            text = `${col}: ${minMax.join(', ')}`;
-            type = 'range';
-        } else if (val.text) {
-            text = `${col}: ${val.text.join(', ')}`;
-            type = 'text';
-        }
+        const text = getPrefilterDisplayText(col, val);
+        if (!text) continue;
 
-        if (text) {
-            const span = document.createElement('span');
-            span.className = 'prefilter-active-item';
-            span.dataset.col = col;
-            span.dataset.type = type;
-            span.innerHTML = `${text} <button type="button" class="prefilter-remove-btn">×</button>`;
-            items.push(span);
-        }
+        const type = getPrefilterDisplayType(val);
+
+        const span = document.createElement('span');
+        span.className = 'prefilter-active-item';
+        span.dataset.col = col;
+        span.dataset.type = type;
+        span.innerHTML = `${text} <button type="button" class="prefilter-remove-btn">×</button>`;
+        items.push(span);
     }
 
+    summaryEl.innerHTML = 'Active Prefilters: ';
     if (items.length > 0) {
-        summaryEl.innerHTML = '';
-        items.forEach(span => {
-            summaryEl.appendChild(span);
-        });
-        bindActivePrefilterRemoveButtons(form); // bind click events
+        items.forEach(span => summaryEl.appendChild(span));
+        bindActivePrefilterRemoveButtons(form);
     } else {
-        summaryEl.textContent = 'Active Prefilters: None';
+        summaryEl.innerHTML += 'None';
     }
+}
+
+function renderMainPagePrefiltersPanel() {
+    const marker = document.getElementById('mainPrefiltersPanelSection');
+    if (!marker) return;
+
+    marker.innerHTML = '';
+
+    if (!lastSearchedPrefilters || Object.keys(lastSearchedPrefilters).length === 0) return;
+
+    const container = document.createElement('div');
+    container.id = 'mainPrefiltersPanel';
+    container.className = 'prefilter-main-panel';
+    marker.appendChild(container);
+
+    // Add label
+    const label = document.createElement('span');
+    label.className = 'prefilter-main-panel-label';
+    label.textContent = 'Last Searched Prefilters:';
+    container.appendChild(label);
+
+    // Add items
+    for (const [col, val] of Object.entries(lastSearchedPrefilters)) {
+        const text = getPrefilterDisplayText(col, val);
+        if (!text) continue;
+
+        const span = document.createElement('span');
+        span.className = 'prefilter-active-item';
+        span.textContent = text;
+        container.appendChild(span);
+    }
+}
+
+function getPrefilterDisplayText(col, val) {
+    if (!val) return '';
+
+    if (val.type === 'tag' || Array.isArray(val.choices)) {
+        return `${col}: ${val.choices?.join(', ') || val.text?.join(', ')}`;
+    } else if (val.type === 'int' || val.type === 'float') {
+        const minMax = [];
+        if (val.min != null) minMax.push(`min=${val.min}`);
+        if (val.max != null) minMax.push(`max=${val.max}`);
+        return `${col}: ${minMax.join(', ')}`;
+    } else if (val.text) {
+        return `${col}: ${val.text.join(', ')}`;
+    }
+
+    return '';
+}
+
+function getPrefilterDisplayType(val) {
+    if (!val) return '';
+    if (val.type === 'tag' || Array.isArray(val.choices)) return 'checkbox';
+    if (val.type === 'int' || val.type === 'float') return 'range';
+    if (val.text) return 'text';
+    return '';
 }
 
 function bindActivePrefilterRemoveButtons(form) {
