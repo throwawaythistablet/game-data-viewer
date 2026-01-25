@@ -1,5 +1,6 @@
 
 let keyColumnIndex = null;
+let bayesianColumnIndex = null;
 
 function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
@@ -19,13 +20,14 @@ function createTableColumns(parsedData) {
     if (viewImagesColumn) {
         columns.unshift(viewImagesColumn);
     }
-    saveKeyColumnIndex(columns);
+    saveColumnIndices(columns);
 
     return columns;
 }
 
-function saveKeyColumnIndex(columns) {
+function saveColumnIndices(columns) {
     keyColumnIndex = columns.findIndex(col => col.data === 'key');
+    bayesianColumnIndex = columns.findIndex(col => col.data === 'bayesian_rating');
 }
 
 function buildCsvColumns(keys, columnDetails, searchedPrefilters) {
@@ -264,6 +266,7 @@ function initializeDataTableWithOptions(columns) {
         const dt = csvTableElement.DataTable({
             paging: true,
             pageLength: 100,
+            order: [[bayesianColumnIndex, 'desc']],
             lengthMenu: [
                 [50, 100, 200, 500, 1000],
                 [50, 100, 200, 500, 1000]
