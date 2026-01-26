@@ -194,10 +194,10 @@ function destroyExistingTable() {
         if ($.fn.DataTable.isDataTable(csvTableElement)) {
             csvTableElement.DataTable().destroy();
         }
-    } catch (e) {
-        console.warn('Failed to destroy existing DataTable:', e);
+    } catch (err) {
+        reportSilentWarning('Destroy DataTable Failed', 'Failed to destroy existing DataTable.', err, { csvTableElement });
     } finally {
-        csvTableElement.empty(); // clear old header/body safely
+        csvTableElement.empty(); // safely clear old header/body
     }
 }
 

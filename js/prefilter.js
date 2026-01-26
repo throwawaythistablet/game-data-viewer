@@ -23,7 +23,7 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
             waitForPrefilterFormSubmission(form, resolve, overlay);
         });
     } catch (err) {
-        console.warn('Prefilter UI failed, continuing without prefiltering:', err);
+        reportSilentWarning('Prefilter UI Failure', 'Prefilter overlay failed to initialize, continuing without prefiltering.', err, { columnDetails });
         return {};
     }
 }
@@ -315,18 +315,15 @@ function createTextFilterInput(name, prefill = null) {
     return input;
 }
 
-// Wait for prefilter form submission
+// Handles waiting for the prefilter form submission
 function waitForPrefilterFormSubmission(form, resolve, overlay) {
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', async e => {
         e.preventDefault();
         const preFilter = collectPrefilterFromForm(form);
 
+        // Ask user if no prefilters applied
         if (Object.keys(preFilter).length === 0) {
-            const proceed = confirm(
-                "⚠ You haven't applied any prefilters.\n" +
-                "Loading the full dataset may be very memory-intensive and slow.\n\n" +
-                "Do you want to continue anyway?"
-            );
+            const proceed = await confirmNoPrefiltersWarning();
             if (!proceed) return;
         }
 
@@ -335,6 +332,16 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
         overlay.remove();
         resolve(preFilter);
     });
+}
+
+// Reusable confirmation for no prefilters
+async function confirmNoPrefiltersWarning() {
+    return await requestUserConfirmation(
+        "No Prefilters Applied",
+        "⚠ You haven't applied any prefilters.\n" +
+        "Loading the full dataset may be very memory-intensive and slow.\n\n" +
+        "Do you want to continue anyway?"
+    );
 }
 
 // Main entry: returns the structured preFilter
@@ -511,24 +518,24 @@ function sectionMatchesSearch(colName, searchText, patterns) {
 
     const lowerSearch = searchText.toLowerCase();
 
-    // 1️⃣ Fastest check: does the column title include the search text?
+    // 1. Fastest check: does the column title include the search text?
     if (colName.toLowerCase().includes(lowerSearch)) return true;
 
     const regexStr = patterns[colName];
     if (!regexStr) return false; // no regex to check
 
-    // 2️⃣ Check if the regex string itself contains the search text
+    // 2. Check if the regex string itself contains the search text
     if (regexStr.toLowerCase().includes(lowerSearch)) return true;
 
-    // 3️⃣ Only now apply the actual regex to the search text
+    // 3. Only now apply the actual regex to the search text
     try {
         const regex = new RegExp(regexStr, 'i'); // case-insensitive
         if (regex.test(searchText)) return true;
-    } catch (e) {
-        console.warn('Invalid regex for column', colName, regexStr);
+    } catch (err) {
+        reportSilentWarning('Invalid Regex', `Column: "${colName}" contains an invalid regex pattern.`, err, { regexStr });
     }
 
-    // 4️⃣ No match
+    // 4. No match
     return false;
 }
 

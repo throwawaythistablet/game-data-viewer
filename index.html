@@ -148,52 +148,77 @@ async function initializeWebsite() {
 }
 
 async function loadDefaultCsv() {
-    if(getActiveCsvFile()){
+    if (getActiveCsvFile()) {
         return; // already loaded
     }
-    const response = await fetch('data/game_data.csv');
-    if (!response.ok) {
-        alert('Failed to load default CSV');
-        return;
+
+    try {
+        const response = await fetch('data/game_data.csv');
+        if (!response.ok) {
+            reportHardError('CSV Load Failed', 'Failed to fetch the default CSV file from "data/game_data.csv".', new Error(`HTTP status: ${response.status}`) );
+            return;
+        }
+
+        const blob = await response.blob();
+        const file = new File([blob], 'game_data.csv', { type: 'text/csv' });
+        setActiveCsvFile(file);
+    } catch (err) {
+        reportHardError('CSV Load Failed', 'An unexpected error occurred while loading the default CSV.', err);
     }
-
-    const blob = await response.blob();
-    const file = new File([blob], 'game_data.csv', { type: 'text/csv' });
-
-    setActiveCsvFile(file);
 }
 
 async function loadDefaultColumnDetailsJson() {
-    if(hasValidColumnDetails()){
+    if (hasValidColumnDetails()) {
         return; // already loaded
     }
-    const response = await fetch('data/game_column_details.json');
-    if (!response.ok) {
-        alert('Failed to load default column details');
-        return;
+
+    try {
+        const response = await fetch('data/game_column_details.json');
+        if (!response.ok) {
+            reportHardError('Column Details Load Failed', 'Failed to fetch the default column details JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_details.json' });
+            return;
+        }
+
+        const columnDetails = await response.json();
+        updateColumnDetails(columnDetails, 'game_column_details.json', 'data/game_column_details.json');
+    } catch (err) {
+        reportHardError('Column Details Load Failed', 'An unexpected error occurred while loading the default column details JSON.', err);
     }
-    const columnDetails = await response.json();
-    updateColumnDetails(columnDetails, 'game_column_details.json', 'data/game_column_details.json');
 }
 
+
 async function loadDefaultTagFullPatternsJson() {
-    const response = await fetch('data/tag_full_patterns.json');
-    if (!response.ok) {
-        alert('Failed to load tag full patterns details');
-        return;
+    try {
+        const response = await fetch('data/tag_full_patterns.json');
+
+        if (!response.ok) {
+            reportHardError('Tag Patterns Load Failed', 'Failed to fetch the default tag full patterns JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/tag_full_patterns.json' });
+            return;
+        }
+
+        const tagFullPatterns = await response.json();
+        updateTagFullPatterns(tagFullPatterns, 'data/tag_full_patterns.json');
+
+    } catch (err) {
+        reportHardError('Tag Patterns Load Failed', 'An unexpected error occurred while loading the default tag full patterns JSON.', err);
     }
-    const tagFullPatterns = await response.json();
-    updateTagFullPatterns(tagFullPatterns, 'data/tag_full_patterns.json');
 }
 
 async function loadDefaultThumbnailsJson() {
-    const response = await fetch('data/game_thumbnails.json');
-    if (!response.ok) {
-        alert('Failed to load thumbnails details');
-        return;
+    try {
+        const response = await fetch('data/game_thumbnails.json');
+
+        if (!response.ok) {
+            reportHardError('Thumbnails Load Failed', 'Failed to fetch the default thumbnails JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_thumbnails.json' });
+            return;
+        }
+
+        const thumbnails = await response.json();
+        updateThumbnails(thumbnails, 'data/game_thumbnails.json');
+
+    } catch (err) {
+        reportHardError('Thumbnails Load Failed', 'An unexpected error occurred while loading the default thumbnails JSON.', err);
     }
-    const thumbnails = await response.json();
-    updateThumbnails(thumbnails, 'data/game_thumbnails.json');
 }
 
 function hideMainPrefiltersPanelSection() {
@@ -220,8 +245,16 @@ function showMainPrefiltersPanelSection() {
 
 // Search button
 searchButton.addEventListener('click', async () => {
-    if (!getActiveCsvFile()) return alert('No CSV file loaded yet.');
-    if (!hasValidColumnDetails()) return alert('No column details json loaded yet.');
+    if (!getActiveCsvFile()) {
+        reportHardWarning('CSV Not Loaded', 'No CSV file has been loaded yet.' );
+        return;
+    }
+
+    if (!hasValidColumnDetails()) {
+        reportHardWarning('Column Details Missing', 'No column details JSON has been loaded yet.' );
+        return;
+    }
+
     await executeCsvSearch(getActiveCsvFile());
 });
 

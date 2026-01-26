@@ -8,7 +8,7 @@ async function executeCsvSearch(file) {
                 ? await showPrefilterOverlayAndCollectFilters(getActiveColumnDetails())
                 : {};
 
-        // user clicked Cancel
+        // User clicked Cancel in overlay
         if (collectedPrefilters === null) {
             return false;
         }
@@ -18,8 +18,7 @@ async function executeCsvSearch(file) {
         
         return true;
     } catch (err) {
-        console.error('executeCsvSearch failed:', err);
-        alert(`Error: ${err.message || 'Unknown error'}\nFailed to search CSV`);
+        reportHardError('CSV Search Failed', 'An error occurred while executing the CSV search.', err, { file } );
         return false;
     } finally {
         await finishCsvSearchUi();

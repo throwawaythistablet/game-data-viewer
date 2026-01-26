@@ -11,12 +11,11 @@ function cancelLoading() {loadingCancelled = true;}
 function isLoadingCancelled() {return loadingCancelled;}
 
 async function updateLoadingDirectUpdate(label, percent) {
-
-    loadingOverlayLabel.textContent = label
+    loadingOverlayLabel.textContent = label;
     loadingOverlayProgressBar.style.width = percent + '%';
     loadingOverlayProgressText.textContent = percent.toFixed(2) + '%';
 
-    //console.log(`Progress: ${percent.toFixed(2)}%`); // debug
+    // reportInformation(`Loading Direct Progress: ${percent.toFixed(2)}%`);
 
     await yieldToBrowser();
 }
@@ -27,11 +26,11 @@ async function updateLoadingStepProgress(label, startPercent, endPercent, curren
     const fractionOfPhase = currentStep / totalSteps;
     const totalPercent = startPercent + fractionOfPhase * (endPercent - startPercent);
 
-    loadingOverlayLabel.textContent = label
+    loadingOverlayLabel.textContent = label;
     loadingOverlayProgressBar.style.width = totalPercent + '%';
     loadingOverlayProgressText.textContent = totalPercent.toFixed(2) + '%';
 
-    //console.log(`Progress: ${totalPercent.toFixed(2)}% | Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`); // debug
+    // reportInformation(`Loading Step Progress: ${totalPercent.toFixed(2)}%`, `Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`, {'startPercent': startPercent, 'endPercent': endPercent, 'currentStep': currentStep, 'totalSteps': totalSteps});
 
     await yieldToBrowser();
 }

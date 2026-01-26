@@ -12,26 +12,28 @@ async function resolveDirHandleFromRelativePath(windowsPath) {
     const parts = windowsPath.replace(/^[A-Z]:\\/, '').trim().split('\\').filter(Boolean);
 
     let dir = gamesFolderHandle;
-    const gamesFolderName = dir.name;
+    const gamesFolderName = dir?.name;
+
     const dataIndex = parts.indexOf(gamesFolderName);
     if (dataIndex === -1) {
-        alert(`Selected games folder "${gamesFolderName}" is not part of this path.`);
-        return;
+        reportHardWarning('Invalid Path', `Selected games folder "${gamesFolderName}" is not part of this path.`, null, { windowsPath, gamesFolderName });
+        return null;
     }
+
     const relativeParts = parts.slice(dataIndex + 1);
-    if (!relativeParts) return null;
+    if (!relativeParts || relativeParts.length === 0) return null;
 
     try {
         for (const part of relativeParts) {
             dir = await dir.getDirectoryHandle(part);
         }
         return dir;
-    } catch (e) {
-        console.error(e);
-        alert('Folder not found using selected games folder.');
+    } catch (err) {
+        reportHardError('Folder Resolution Failed', 'Could not find folder using the selected games folder.', err, { windowsPath, relativeParts });
         return null;
     }
 }
+
 
 function showImageModal() {
     const grid = document.getElementById('imageModalGrid');
