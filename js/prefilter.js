@@ -191,9 +191,7 @@ function createTagFilter(name, prefill = null) {
     const container = document.createElement('div');
     container.className = 'prefilter-tag-group';
 
-    const patterns = getTagFullPatterns();
-    if (patterns[name]) container.title = `Regex pattern:\n${patterns[name]}`;
-
+    container.title = createTagToolTipText(name)
     const checkedValues = prefill?.choices || [];
 
     const lbl0 = document.createElement('label');
@@ -409,6 +407,7 @@ function updateActivePrefiltersSummary(form) {
         span.dataset.col = col;
         span.dataset.type = type;
         span.innerHTML = `${text} <button type="button" class="prefilter-remove-btn">×</button>`;
+        appendToolTipText(span, col, val);
         items.push(span);
     }
 
@@ -448,6 +447,7 @@ function renderMainPagePrefiltersPanel() {
         const span = document.createElement('span');
         span.className = 'prefilter-active-item';
         span.textContent = text;
+        appendToolTipText(span, col, val);
         container.appendChild(span);
     }
 }
@@ -603,3 +603,15 @@ function processTextPrefilters(form, preFilter) {
         preFilter[input.name] = { text: [val] };
     }
 }
+
+function appendToolTipText(span, col, val) {
+    if (val.type === 'tag') {
+        span.title = createTagToolTipText(col)
+    }
+}
+
+function createTagToolTipText(tagName) {
+    const regex = getTagFullPatterns()?.[tagName];
+    return regex ? `Regex pattern:\n${regex}` : "";
+}
+
