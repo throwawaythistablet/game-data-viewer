@@ -90,6 +90,15 @@ table {
     margin: 0;
     font-size: 22px;
     letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.controls-title-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
 .controls-main-grid {

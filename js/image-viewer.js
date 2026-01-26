@@ -1,4 +1,29 @@
 
+function openImagesForRow(rowElement) {
+    if (!rowElement) return;
+
+    if (!gamesFolderHandle) {
+        reportHardWarning('No Games Folder Selected', 'Please select the games folder first.');
+        return;
+    }
+
+    const dt = csvTableElement.DataTable();
+    const rowData = dt.row($(rowElement).closest('tr')).data();
+    const folderPath = extractFolderPathFromRow(rowData);
+
+    if (!folderPath) {
+        reportHardWarning('No Local Folder Path', 'No local folder path found in this row.');
+        return;
+    }
+
+    openImageModalForFolder(folderPath);
+}
+
+function closeImageModalHandler() {
+    scanCancelled = true;
+    hideImageModal();
+    revokeAllModalUrls();
+}
 
 async function openImageModalForFolder(windowsPath) {
     const dir = await resolveDirHandleFromRelativePath(windowsPath);
@@ -34,7 +59,6 @@ async function resolveDirHandleFromRelativePath(windowsPath) {
     }
 }
 
-
 function showImageModal() {
     const grid = document.getElementById('imageModalGrid');
 
@@ -48,6 +72,11 @@ function showImageModal() {
     document.getElementById('imageModal').style.display = 'flex';
 }
 
+function hideImageModal() {
+    const modal = document.getElementById('imageModal');
+    if (modal) modal.style.display = 'none';
+}
+
 async function scanDirectoryAndRenderImages(dir) {
     const imagesFound = [];
     scanCancelled = false;
@@ -58,6 +87,28 @@ async function scanDirectoryAndRenderImages(dir) {
     });
 
     document.getElementById('imageModalTitle').textContent = `Images (${imagesFound.length})`;
+}
+
+// Iterative, incremental directory scan
+async function scanDirectoryIncrementallyForImages(dirHandle, onImageFound) {
+    const stack = [dirHandle];
+
+    while (stack.length) {
+        if (scanCancelled) return; // STOP if modal was closed
+        const currentDir = stack.pop();
+
+        for await (const [name, handle] of currentDir.entries()) {
+            if (handle.kind === 'file') {
+                const ext = name.split('.').pop().toLowerCase();
+                if (SUPPORTED_IMAGE_EXTS.includes(ext)) {
+                    onImageFound(handle);
+                    await yieldToBrowser();
+                }
+            } else if (handle.kind === 'directory') {
+                stack.push(handle);
+            }
+        }
+    }
 }
 
 async function appendImageToModal(h) {
@@ -81,24 +132,30 @@ async function appendImageToModal(h) {
     grid.appendChild(img);
 }
 
-// Iterative, incremental directory scan
-async function scanDirectoryIncrementallyForImages(dirHandle, onImageFound) {
-    const stack = [dirHandle];
-
-    while (stack.length) {
-        if (scanCancelled) return; // STOP if modal was closed
-        const currentDir = stack.pop();
-
-        for await (const [name, handle] of currentDir.entries()) {
-            if (handle.kind === 'file') {
-                const ext = name.split('.').pop().toLowerCase();
-                if (SUPPORTED_IMAGE_EXTS.includes(ext)) {
-                    onImageFound(handle);
-                    await yieldToBrowser();
-                }
-            } else if (handle.kind === 'directory') {
-                stack.push(handle);
-            }
-        }
+function revokeAllModalUrls() {
+    if (Array.isArray(modalImageUrls)) {
+        modalImageUrls.forEach(url => URL.revokeObjectURL(url));
+        modalImageUrls = [];
     }
+
+    if (activeOverlayImageUrl) {
+        URL.revokeObjectURL(activeOverlayImageUrl);
+        activeOverlayImageUrl = null;
+    }
+}
+
+function extractFolderPathFromRow(rowData) {
+    for (let v of Object.values(rowData)) {
+        if (typeof v !== 'string') continue;
+        v = v.trim().replace(/^"|"$/g, '').replace(/\\\\/g, '\\');
+
+        const hyperlinkMatch = v.match(/^=HYPERLINK\("([^"]+)",/i);
+        if (hyperlinkMatch) return hyperlinkMatch[1];
+
+        const htmlHrefMatch = v.match(/href="file:\/\/\/([^"]+)"/i);
+        if (htmlHrefMatch) return htmlHrefMatch[1].replace(/\//g, '\\');
+
+        if (/^[A-Z]:\\/.test(v)) return v;
+    }
+    return null;
 }

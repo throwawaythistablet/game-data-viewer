@@ -1,5 +1,17 @@
 let loadingCancelled = false;
 
+async function startLoading() {
+    await updateLoadingDirectUpdate("Loading...", 0);
+    resetLoadingCancellation();
+    showLoading();
+}
+
+async function finishLoading() {
+    hideLoading();
+    resetLoadingCancellation();
+    await updateLoadingDirectUpdate("", 0);
+}
+
 function showLoading() { loadingOverlayElement.style.display = 'flex'; }
 
 function hideLoading() { loadingOverlayElement.style.display = 'none'; }

@@ -542,6 +542,85 @@ async function addSortingControls(api, dt) {
     }
 }
 
+async function resetAllFilters() {
+    startLoading();
+    await updateLoadingDirectUpdate("Resetting filters...", 0);
+
+    if (!$.fn.DataTable.isDataTable(csvTableElement)) {
+        await finishLoading();
+        return;
+    }
+    const dt = csvTableElement.DataTable();
+
+    // Count total steps for progress
+    const checkboxFilters = $('tr.filters .filter-box');
+    const textFilters = $('tr.filters .filter-text');
+    const rangeFilters = $('tr.filters .filter-range');
+    const totalSteps = checkboxFilters.length + textFilters.length + rangeFilters.length + 3; // +3 for column search, remove range functions, column order/sorting
+
+    let step = 0;
+
+    // Reset column searches
+    dt.columns().every(function () {
+        this.search('');
+        step++;
+    });
+    await updateLoadingStepProgress("Resetting column searches...", 0, 20, step, totalSteps);
+
+    // Reset checkboxes
+    for (let i = 0; i < checkboxFilters.length; i++) {
+        const $box = $(checkboxFilters[i]);
+        $box.find('input[type="checkbox"]').prop('checked', true);
+        $box.find('input[type="checkbox"]').not('.toggle-all').trigger('change');
+
+        step++;
+        await updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, step, totalSteps);
+        if (isLoadingCancelled()) break;
+    }
+
+    // Reset text filters
+    for (let i = 0; i < textFilters.length; i++) {
+        const $input = $(textFilters[i]);
+        $input.val('');
+        $input.trigger('keyup');
+
+        step++;
+        await updateLoadingStepProgress("Resetting text filters...", 40, 60, step, totalSteps);
+        if (isLoadingCancelled()) break;
+    }
+
+    // Reset numeric range filters
+    for (let i = 0; i < rangeFilters.length; i++) {
+        const $range = $(rangeFilters[i]);
+        $range.find('.range-min, .range-max').val('');
+        $range.find('input').trigger('input');
+
+        step++;
+        await updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, step, totalSteps);
+        if (isLoadingCancelled()) break;
+    }
+
+    await updateLoadingDirectUpdate("Clearing custom range filters...", 85);
+    // Remove custom range filter functions
+    $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => !fn.name?.startsWith('rangeFilter_'));
+    step++;
+
+    // Reset column order if ColReorder is available
+    if (dt.colReorder && typeof dt.colReorder.reset === 'function') {
+        dt.colReorder.reset();
+    }
+
+    // Reset sorting and redraw table
+    await updateLoadingDirectUpdate("Redrawing the table...", 90);
+    dt.order([]).draw();
+    step++;
+    await updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
+
+    await finishLoading();
+}
+
+
+
 function renderCellValue(val, colName = null) {
     if (val === undefined || val === null) return '';
 

@@ -1,4 +1,15 @@
 
+async function startCsvSearchUi() {
+    startLoading();
+    await updateLoadingDirectUpdate("Starting Data Search...", 0);
+    hideMainPrefiltersPanelSection();
+}
+
+async function finishCsvSearchUi() {
+    showMainPrefiltersPanelSection();
+    finishLoading();
+}
+
 async function executeCsvSearch(file) {
     if (!file) return false;
 
@@ -23,20 +34,6 @@ async function executeCsvSearch(file) {
     } finally {
         await finishCsvSearchUi();
     }
-}
-
-async function startCsvSearchUi() {
-    await updateLoadingDirectUpdate("Starting Data Search...", 0);
-    resetLoadingCancellation();
-    showLoading();
-    hideMainPrefiltersPanelSection();
-}
-
-async function finishCsvSearchUi() {
-    showMainPrefiltersPanelSection();
-    hideLoading();
-    resetLoadingCancellation();
-    await updateLoadingDirectUpdate("", 0);
 }
 
 async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
