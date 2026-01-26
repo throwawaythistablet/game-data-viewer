@@ -81,7 +81,6 @@ table {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-subtle);
     padding-bottom: 12px;
     flex-wrap: wrap;
     gap: 10px;
@@ -832,7 +831,7 @@ th .sort-desc:hover {
     to   { transform: rotate(360deg); }
 }
 
-#loadingHeaderDisplay {
+#loadingOverlayLabel {
     font-size: 22px;
     font-weight: bold;
     color: var(--accent);
@@ -840,7 +839,7 @@ th .sort-desc:hover {
     text-align: center;
 }
 
-#loadingProgressDisplayContainer {
+#loadingOverlayProgressContainer {
     width: 80%;
     margin-top: 15px;
     background: var(--bg-panel);
@@ -849,14 +848,14 @@ th .sort-desc:hover {
     position: relative;
 }
 
-#loadingProgressBarDisplay {
+#loadingOverlayProgressBar {
     width: 0%;
     height: 20px;
     background: var(--accent);
     transition: width 0.1s;
 }
 
-#loadingProgressTextDisplay {
+#loadingOverlayProgressText {
     position: absolute;
     inset: 0;
     display: flex;
@@ -868,7 +867,7 @@ th .sort-desc:hover {
     pointer-events: none;
 }
 
-#stopLoadingButton {
+#loadingOverlayStopButton {
     margin-top: 20px;
     padding: 10px 24px;
     font-size: 16px;
@@ -881,7 +880,7 @@ th .sort-desc:hover {
     transition: background 0.2s, box-shadow 0.2s;
 }
 
-#stopLoadingButton:hover {
+#loadingOverlayStopButton:hover {
     background-color: color-mix(in srgb, var(--danger) 80%, #fff 20%);
     box-shadow: 0 0 12px var(--danger);
 }

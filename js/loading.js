@@ -10,15 +10,26 @@ function cancelLoading() {loadingCancelled = true;}
 
 function isLoadingCancelled() {return loadingCancelled;}
 
-async function updateLoadingProgress(header, startPercent, endPercent, currentStep, totalSteps) {
+async function updateLoadingDirectUpdate(label, percent) {
+
+    loadingOverlayLabel.textContent = label
+    loadingOverlayProgressBar.style.width = percent + '%';
+    loadingOverlayProgressText.textContent = percent.toFixed(2) + '%';
+
+    //console.log(`Progress: ${percent.toFixed(2)}%`); // debug
+
+    await yieldToBrowser();
+}
+
+async function updateLoadingStepProgress(label, startPercent, endPercent, currentStep, totalSteps) {
     if (totalSteps <= 0) totalSteps = 1;
 
     const fractionOfPhase = currentStep / totalSteps;
     const totalPercent = startPercent + fractionOfPhase * (endPercent - startPercent);
 
-    loadingHeader.textContent = header
-    loadingProgressBar.style.width = totalPercent + '%';
-    loadingProgressText.textContent = totalPercent.toFixed(2) + '%';
+    loadingOverlayLabel.textContent = label
+    loadingOverlayProgressBar.style.width = totalPercent + '%';
+    loadingOverlayProgressText.textContent = totalPercent.toFixed(2) + '%';
 
     //console.log(`Progress: ${totalPercent.toFixed(2)}% | Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`); // debug
 

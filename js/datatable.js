@@ -100,7 +100,7 @@ async function renderCsvTable(data, columns) {
     await initializeDataTableWithOptions(columns);
     
     csvTableElement.show();
-    await updateLoadingProgress("Csv Table Render Complete.", 100, 100, 1, 1);
+    await updateLoadingDirectUpdate("Csv Table Render Complete.", 100);
     hideLoading();
 }
 
@@ -255,7 +255,7 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
 
         tbody[0].appendChild(fragment);
 
-        await updateLoadingProgress("Adding Rows To The Table...", 30, 70, Math.min(start + CHUNK_SIZE, data.length), data.length);
+        await updateLoadingStepProgress("Adding Rows To The Table...", 30, 70, Math.min(start + CHUNK_SIZE, data.length), data.length);
         await yieldToBrowser();
     }
 }
@@ -314,7 +314,7 @@ async function addColumnFilters(api) {
             addTextFilter(container, column);
         }
 
-        await updateLoadingProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
+        await updateLoadingStepProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
         await yieldToBrowser();
     }
 

@@ -54,13 +54,13 @@
 <table id="csvTable" class="display"></table>
 
 <div id="loadingOverlayElement">
-    <div id="loadingHeaderDisplay">Loading Data...</div>
+    <div id="loadingOverlayLabel">Loading Data...</div>
     <div class="spinner"></div>
-    <div id="loadingProgressDisplayContainer">
-        <div id="loadingProgressBarDisplay"></div>
-        <span id="loadingProgressTextDisplay">0%</span>
+    <div id="loadingOverlayProgressContainer">
+        <div id="loadingOverlayProgressBar"></div>
+        <span id="loadingOverlayProgressText">0%</span>
     </div>
-    <button id="stopLoadingButton">⏹ Stop</button>
+    <button id="loadingOverlayStopButton">⏹ Stop</button>
 </div>
 </div>
 
@@ -89,11 +89,11 @@ const tagPatternsButton = document.getElementById('tagPatternsButton')
 const resetFiltersButton = document.getElementById('resetFiltersButton')
 const searchButton = document.getElementById('searchButton')
 const mainPrefiltersPanelSection = document.getElementById('mainPrefiltersPanelSection')
-const stopLoadingButton = document.getElementById('stopLoadingButton')
 const loadingOverlayElement = document.getElementById('loadingOverlayElement');
-const loadingHeader = document.getElementById('loadingHeaderDisplay');
-const loadingProgressBar = document.getElementById('loadingProgressBarDisplay');
-const loadingProgressText = document.getElementById('loadingProgressTextDisplay');
+const loadingOverlayLabel = document.getElementById('loadingOverlayLabel');
+const loadingOverlayProgressBar = document.getElementById('loadingOverlayProgressBar');
+const loadingOverlayProgressText = document.getElementById('loadingOverlayProgressText');
+const loadingOverlayStopButton = document.getElementById('loadingOverlayStopButton')
 
 let activeCsvFile = null;
 let activeColumnDetails = {};
@@ -133,10 +133,17 @@ function updateThumbnails(thumbnails, fileName) {
 }
 
 async function initializeWebsite() {
-    await loadDefaultCsv();
+    await updateLoadingDirectUpdate("Preparing table structure…", 10);
+    showLoading();
     await loadDefaultColumnDetailsJson();
+    await updateLoadingDirectUpdate("Loading tag definitions…", 30);
     await loadDefaultTagFullPatternsJson();
+    await updateLoadingDirectUpdate("Loading database records…", 40);
+    await loadDefaultCsv();
+    await updateLoadingDirectUpdate("Linking thumbnails…", 90);
     await loadDefaultThumbnailsJson();
+    await updateLoadingDirectUpdate("Initialization complete.", 100);
+    hideLoading();
     await executeCsvSearch(getActiveCsvFile());
 }
 
@@ -266,7 +273,7 @@ themeToggleButton.addEventListener('click', () => {
 });
 
 // Stop loading button
-stopLoadingButton.addEventListener('click', () => {
+loadingOverlayStopButton.addEventListener('click', () => {
     cancelLoading();
     hideLoading();
 });

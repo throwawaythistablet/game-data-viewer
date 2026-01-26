@@ -27,7 +27,7 @@ async function executeCsvSearch(file) {
 }
 
 async function startCsvSearchUi() {
-    await updateLoadingProgress("Starting Data Search...", 0, 0, 0, 1);
+    await updateLoadingDirectUpdate("Starting Data Search...", 0);
     resetLoadingCancellation();
     showLoading();
     hideMainPrefiltersPanelSection();
@@ -37,7 +37,7 @@ async function finishCsvSearchUi() {
     showMainPrefiltersPanelSection();
     hideLoading();
     resetLoadingCancellation();
-    await updateLoadingProgress("", 0, 0, 0, 1);
+    await updateLoadingDirectUpdate("", 0);
 }
 
 async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
@@ -80,11 +80,11 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
 
                 // Throttle progress updates
                 if (rowsProcessed % THROTTLE === 0) {
-                    updateLoadingProgress("Loading Data From File...", 0, 30, bytesProcessed, totalSize);
+                    updateLoadingStepProgress("Loading Data From File...", 0, 30, bytesProcessed, totalSize);
                 }
             },
             complete: function () {
-                updateLoadingProgress("Loading Data From File Finished...", 0, 30, totalSize, totalSize);
+                updateLoadingDirectUpdate("Loading Data From File Finished...", 30);
                 resolve(parsedData);
             },
             error: function (err) {
