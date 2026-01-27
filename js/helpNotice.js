@@ -44,14 +44,14 @@ function getHelpNoticeContent() {
                         <li>↕️ <strong>Sort the Table</strong> – Click column headers to sort by Bayesian score, game time, or other attributes.</li>
                         <li>🔎 <strong>Refine Column Filters</strong> – Hover over column headers to access column-specific filters.
                             Start broad, then refine step by step for smooth browsing.</li>
-                        <li>♻️ <strong>Reset Column Filters</strong> – Use the <em>Reset Column Filters</em> button to restore the table to its default state.</li>
+                        <li>🔄 <strong>Reset Column Filters</strong> – Use the <em>Reset Column Filters</em> button to restore the table to its default state.</li>
                     </ul>
                 </li>
                 <li>
                     💬 <strong>Provide Feedback</strong> – Click the <em>Feedback</em> button to suggest new tags, report issues, or give general feedback.
                 </li>
                 <li>
-                    🔄 <strong>New Search</strong> – Use the <em>Search</em> button to adjust prefilters or start a new search.
+                    🔍 <strong>New Search</strong> – Use the <em>Search</em> button to adjust prefilters or start a new search.
                 </li>
             </ol>
 
