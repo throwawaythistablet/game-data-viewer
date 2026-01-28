@@ -1,9 +1,9 @@
+(function() {
 
-
-async function showPrefilterOverlayAndCollectFilters(columnDetails) {
+GDV.prefilter.showPrefilterOverlayAndCollectFilters = async function(columnDetails) {
     try {
         const overlay = createPrefilterOverlayContainer('Refine Your Search Using Prefilters');
-        overlay.appendChild(createHelpNotice());
+        overlay.appendChild(GDV.helpNotice.createHelpNotice());
 
         const form = document.createElement('form');
 
@@ -15,7 +15,7 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
             form.appendChild(createPrefilterActions(form, resolve, overlay));
             form.appendChild(createPrefilterSearchBox());
             form.appendChild(createActivePrefiltersSummary());
-            form.appendChild(createPrefilterGridFromColumnDetails(columnDetails, lastSearchedPrefilters));
+            form.appendChild(createPrefilterGridFromColumnDetails(columnDetails, GDV.state.getLastSearchedPrefilters()));
 
             bindPrefilterWarning(form);
             bindActivePrefiltersSummary(form);
@@ -23,7 +23,7 @@ async function showPrefilterOverlayAndCollectFilters(columnDetails) {
             waitForPrefilterFormSubmission(form, resolve, overlay);
         });
     } catch (err) {
-        reportSilentWarning('Prefilter UI Failure', 'Prefilter overlay failed to initialize, continuing without prefiltering.', err, { columnDetails });
+        GDV.utils.reportSilentWarning('Prefilter UI Failure', 'Prefilter overlay failed to initialize, continuing without prefiltering.', err, { columnDetails });
         return {};
     }
 }
@@ -190,8 +190,8 @@ function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
 function createTagFilter(name, prefill = null) {
     const container = document.createElement('div');
     container.className = 'prefilter-tag-group';
-
-    container.title = createTagToolTipText(name)
+    container.title = createTagToolTipText(name);
+    
     const checkedValues = prefill?.choices || [];
 
     const lbl0 = document.createElement('label');
@@ -327,7 +327,7 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
             if (!proceed) return;
         }
 
-        lastSearchedPrefilters = preFilter;
+        GDV.state.setLastSearchedPrefilters(preFilter);
         renderMainPagePrefiltersPanel();
         overlay.remove();
         resolve(preFilter);
@@ -336,7 +336,7 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
 
 // Reusable confirmation for no prefilters
 async function confirmNoPrefiltersWarning() {
-    return await requestUserConfirmation(
+    return await GDV.utils.requestUserConfirmation(
         "No Prefilters Applied",
         "⚠ You haven't applied any prefilters.\n" +
         "Loading the full dataset may be very memory-intensive and slow.\n\n" +
@@ -377,7 +377,7 @@ function resetPrefilters(form) {
 function filterPrefilterSections(searchText) {
     searchText = searchText.trim();
     const sections = document.querySelectorAll('#prefilterOverlay .prefilter-section');
-    const patterns = getTagFullPatterns();
+    const patterns = GDV.state.getTagFullPatterns();
 
     sections.forEach(section => {
         const colName = section.querySelector('h3')?.textContent || '';
@@ -433,6 +433,7 @@ function renderMainPagePrefiltersPanel() {
 
     marker.innerHTML = '';
 
+    lastSearchedPrefilters = GDV.state.getLastSearchedPrefilters()
     if (!lastSearchedPrefilters || Object.keys(lastSearchedPrefilters).length === 0) return;
 
     const container = document.createElement('div');
@@ -532,7 +533,7 @@ function sectionMatchesSearch(colName, searchText, patterns) {
         const regex = new RegExp(regexStr, 'i'); // case-insensitive
         if (regex.test(searchText)) return true;
     } catch (err) {
-        reportSilentWarning('Invalid Regex', `Column: "${colName}" contains an invalid regex pattern.`, err, { regexStr });
+        GDV.utils.reportSilentWarning('Invalid Regex', `Column: "${colName}" contains an invalid regex pattern.`, err, { regexStr });
     }
 
     // 4. No match
@@ -540,7 +541,7 @@ function sectionMatchesSearch(colName, searchText, patterns) {
 }
 
 // Process range columns
-function processRangePrefilters(form, preFilter, colDefMap = getActiveColumnDetails()) {
+function processRangePrefilters(form, preFilter, colDefMap = GDV.state.getActiveColumnDetails()) {
     Object.entries(colDefMap).forEach(([col, def]) => {
         if (def.type !== 'int' && def.type !== 'float') return;
 
@@ -564,7 +565,7 @@ function processRangePrefilters(form, preFilter, colDefMap = getActiveColumnDeta
 }
 
 // Build tag entries in preFilter
-function processTagPrefilters(form, preFilter, colDefMap = getActiveColumnDetails()) {
+function processTagPrefilters(form, preFilter, colDefMap = GDV.state.getActiveColumnDetails()) {
     Object.entries(colDefMap).forEach(([col, def]) => {
         if (def.type !== 'tag') return;
 
@@ -579,7 +580,7 @@ function processTagPrefilters(form, preFilter, colDefMap = getActiveColumnDetail
 }
 
 // Process choice checkboxes
-function processChoicePrefilters(form, preFilter, colDefMap = getActiveColumnDetails()) {
+function processChoicePrefilters(form, preFilter, colDefMap = GDV.state.getActiveColumnDetails()) {
     Object.entries(colDefMap).forEach(([col, def]) => {
         if (!Array.isArray(def.choices) || def.choices.length === 0) return;
         if (def.type === 'tag') return;
@@ -618,7 +619,8 @@ function appendToolTipText(span, col, val) {
 }
 
 function createTagToolTipText(tagName) {
-    const regex = getTagFullPatterns()?.[tagName];
+    const regex = GDV.state.getTagFullPatterns()?.[tagName];
     return regex ? `Regex pattern:\n${regex}` : "";
 }
 
+})();

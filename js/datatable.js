@@ -1,14 +1,107 @@
+(function() {
 
+const csvTableElement = $('#csvTable');
 let keyColumnIndex = null;
 let urlColumnIndex = null;
 let bayesianColumnIndex = null;
+let previewTimer = null;
+let currentPreviewIndex = 0;
+let overlayMoveScheduled = false;
+let lastMouseEvent = null;
+
+
+GDV.datatable.loadTable = async function(parsedData) {
+    GDV.loading.showLoading();
+    
+    determineColumnDetailsFromDataIfNeeded(parsedData)
+    const columns = createTableColumns(parsedData);
+    await renderCsvTable(parsedData, columns);
+
+    await GDV.loading.updateLoadingDirectUpdate("Game Data Table Loaded.", 100);
+    GDV.loading.hideLoading();
+}
+
+GDV.datatable.resetAllFilters = async function() {
+    GDV.loading.startLoading();
+    await GDV.loading.updateLoadingDirectUpdate("Resetting filters...", 0);
+
+    if (!$.fn.DataTable.isDataTable(csvTableElement)) {
+        await GDV.loading.finishLoading();
+        return;
+    }
+    const dt = csvTableElement.DataTable();
+
+    // Count total steps for progress
+    const checkboxFilters = $('tr.filters .filter-box');
+    const textFilters = $('tr.filters .filter-text');
+    const rangeFilters = $('tr.filters .filter-range');
+    const totalSteps = checkboxFilters.length + textFilters.length + rangeFilters.length + 3; // +3 for column search, remove range functions, column order/sorting
+
+    let step = 0;
+
+    // Reset column searches
+    dt.columns().every(function () {
+        this.search('');
+        step++;
+    });
+    await GDV.loading.updateLoadingStepProgress("Resetting column searches...", 0, 20, step, totalSteps);
+
+    // Reset checkboxes
+    for (let i = 0; i < checkboxFilters.length; i++) {
+        const $box = $(checkboxFilters[i]);
+        $box.find('input[type="checkbox"]').prop('checked', true);
+        $box.find('input[type="checkbox"]').not('.toggle-all').trigger('change');
+
+        step++;
+        await GDV.loading.updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, step, totalSteps);
+        if (GDV.loading.isLoadingCancelled()) break;
+    }
+
+    // Reset text filters
+    for (let i = 0; i < textFilters.length; i++) {
+        const $input = $(textFilters[i]);
+        $input.val('');
+        $input.trigger('keyup');
+
+        step++;
+        await GDV.loading.updateLoadingStepProgress("Resetting text filters...", 40, 60, step, totalSteps);
+        if (GDV.loading.isLoadingCancelled()) break;
+    }
+
+    // Reset numeric range filters
+    for (let i = 0; i < rangeFilters.length; i++) {
+        const $range = $(rangeFilters[i]);
+        $range.find('.range-min, .range-max').val('');
+        $range.find('input').trigger('input');
+
+        step++;
+        await GDV.loading.updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, step, totalSteps);
+        if (GDV.loading.isLoadingCancelled()) break;
+    }
+
+    await GDV.loading.updateLoadingDirectUpdate("Clearing custom range filters...", 85);
+    // Remove custom range filter functions
+    $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => !fn.name?.startsWith('rangeFilter_'));
+
+    // Reset column order if ColReorder is available
+    if (dt.colReorder && typeof dt.colReorder.reset === 'function') {
+        dt.colReorder.reset();
+    }
+
+    // Reset sorting and redraw table
+    await GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 90);
+    sortTable();
+    await GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
+
+    await GDV.loading.finishLoading();
+}
 
 function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
     const keys = Object.keys(parsedData[0]);
-    const searchedPrefilters = lastSearchedPrefilters || {};
-    const columnDetails = getActiveColumnDetails();
+    const searchedPrefilters = GDV.state.getLastSearchedPrefilters() || {};
+    const columnDetails = GDV.state.getActiveColumnDetails();
 
     const columns = buildCsvColumns(keys, columnDetails, searchedPrefilters);
 
@@ -26,73 +119,7 @@ function createTableColumns(parsedData) {
     return columns;
 }
 
-function saveColumnIndices(columns) {
-    keyColumnIndex = columns.findIndex(col => col.data === 'key');
-    urlColumnIndex = columns.findIndex(col => col.data === 'url');
-    bayesianColumnIndex = columns.findIndex(col => col.data === 'bayesian_rating');
-}
-
-function buildCsvColumns(keys, columnDetails, searchedPrefilters) {
-    return keys
-        .filter(key => shouldIncludeColumn(key, columnDetails, searchedPrefilters))
-        .map(key => ({
-            title: key,
-            data: key,
-            render: (data) => renderCellValue(data, key)
-        }));
-}
-
-function buildViewImagesColumn(keys) {
-    if (!keys.includes('location')) return null;
-
-    return {
-        title: 'View Images',
-        data: '__view_images__',
-        orderable: false,
-        searchable: false,
-        render: () => `<button class="btn view-images">View</button>`
-    };
-}
-
-function buildThumbnailColumn() {
-    if (!activeThumbnails) return null;
-
-    return {
-        title: 'Image',
-        data: '__thumbnail__',
-        orderable: false,
-        searchable: false,
-        render: (data, type, row) => {
-            const key = row['key'];
-            if (!key) return '';
-
-            const entry = activeThumbnails[key];
-            if (!entry || !entry.thumbnail_image) return '';
-
-            return `
-                <img
-                    class="table-thumbnail"
-                    src="${entry.thumbnail_image}"
-                    alt="thumbnail"
-                    loading="lazy"
-                >
-            `;
-        }
-    };
-}
-
-function shouldIncludeColumn(key, columnDetails, searchedPrefilters) {
-    const colDef = columnDetails[key];
-    return (
-        !colDef ||
-        colDef.type !== 'tag' ||
-        key in searchedPrefilters
-    );
-}
-
 async function renderCsvTable(data, columns) {
-    showLoading();
-    
     csvTableElement.hide();
     destroyExistingTable();
     
@@ -102,12 +129,10 @@ async function renderCsvTable(data, columns) {
     await initializeDataTableWithOptions(columns);
     
     csvTableElement.show();
-    await updateLoadingDirectUpdate("Csv Table Render Complete.", 100);
-    hideLoading();
 }
 
-function determineColumnDetailsFromDataIfNeeded(parsedData) {
-    if (hasValidColumnDetails()) return;
+function determineColumnDetailsFromDataIfNeeded (parsedData) {
+    if (GDV.state.hasValidColumnDetails()) return;
     if (!parsedData || parsedData.length === 0) return;
 
     const columnDetails = {};
@@ -191,13 +216,103 @@ function determineColumnDetailsFromDataIfNeeded(parsedData) {
     updateColumnDetails(columnDetails, "", "Determined from loaded data.");
 }
 
+function saveColumnIndices(columns) {
+    keyColumnIndex = columns.findIndex(col => col.data === 'key');
+    urlColumnIndex = columns.findIndex(col => col.data === 'url');
+    bayesianColumnIndex = columns.findIndex(col => col.data === 'bayesian_rating');
+}
+
+function buildCsvColumns(keys, columnDetails, searchedPrefilters) {
+    const prefilterKeys = Object.keys(searchedPrefilters);
+
+    // Normal columns: only include if shouldIncludeColumn returns true
+    const nonPrefilterColumns = keys.filter(k => !prefilterKeys.includes(k) && shouldIncludeColumn(k, columnDetails, searchedPrefilters));
+
+    // Prefilter columns: only include if they exist in the data
+    const prefilterColumns = prefilterKeys.filter(k => keys.includes(k));
+
+    // Combine: first normal column, then prefilter columns, then remaining normal columns
+    const resultKeys = [
+        ...nonPrefilterColumns.slice(0, 1),      // first normal column
+        ...prefilterColumns,                     // prefilter columns in the middle
+        ...nonPrefilterColumns.slice(1)          // remaining normal columns
+    ];
+
+    // Build column definitions with highlight only for prefilters
+    return resultKeys.map(key => ({
+        title: key,
+        data: key,
+        render: (data) => renderCellValue(data, key),
+        highlight: prefilterColumns.includes(key) // only prefilters highlighted
+    }));
+}
+
+
+function buildCsvColumns_OLD(keys, columnDetails, searchedPrefilters) {
+    return keys
+        .filter(key => shouldIncludeColumn(key, columnDetails, searchedPrefilters))
+        .map(key => ({
+            title: key,
+            data: key,
+            render: (data) => renderCellValue(data, key)
+        }));
+}
+
+function buildViewImagesColumn(keys) {
+    if (!keys.includes('location')) return null;
+
+    return {
+        title: 'View Images',
+        data: '__view_images__',
+        orderable: false,
+        searchable: false,
+        render: () => `<button class="btn view-images">View</button>`
+    };
+}
+
+function buildThumbnailColumn() {
+    if (!activeThumbnails) return null;
+
+    return {
+        title: 'Image',
+        data: '__thumbnail__',
+        orderable: false,
+        searchable: false,
+        render: (data, type, row) => {
+            const key = row['key'];
+            if (!key) return '';
+
+            const entry = activeThumbnails[key];
+            if (!entry || !entry.thumbnail_image) return '';
+
+            return `
+                <img
+                    class="table-thumbnail"
+                    src="${entry.thumbnail_image}"
+                    alt="thumbnail"
+                    loading="lazy"
+                >
+            `;
+        }
+    };
+}
+
+function shouldIncludeColumn(key, columnDetails, searchedPrefilters) {
+    const colDef = columnDetails[key];
+    return (
+        !colDef ||
+        colDef.type !== 'tag' ||
+        key in searchedPrefilters
+    );
+}
+
 function destroyExistingTable() {
     try {
         if ($.fn.DataTable.isDataTable(csvTableElement)) {
             csvTableElement.DataTable().destroy();
         }
     } catch (err) {
-        reportSilentWarning('Destroy DataTable Failed', 'Failed to destroy existing DataTable.', err, { csvTableElement });
+        GDV.utils.reportSilentWarning('Destroy DataTable Failed', 'Failed to destroy existing DataTable.', err, { csvTableElement });
     } finally {
         csvTableElement.empty(); // safely clear old header/body
     }
@@ -209,8 +324,15 @@ function createTableHeader(columns) {
     const filterRow = $('<tr class="filters">');
 
     columns.forEach(col => {
-        headerRow.append(`<th>${col.title}</th>`);
-        filterRow.append('<th></th>');
+        // Header cell
+        const th = $('<th>').text(col.title);
+        if (col.highlight) th.addClass('highlight-column');
+        headerRow.append(th);
+
+        // Filter cell
+        const filterTh = $('<th>');
+        if (col.highlight) filterTh.addClass('highlight-column');
+        filterRow.append(filterTh);
     });
 
     thead.append(headerRow).append(filterRow);
@@ -227,7 +349,7 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
     const CHUNK_SIZE = 500;
 
     for (let start = 0; start < data.length; start += CHUNK_SIZE) {
-        if (isLoadingCancelled()) throw new Error('Loading cancelled by user.');
+        if (GDV.loading.isLoadingCancelled()) throw new Error('Loading cancelled by user.');
         
         const chunk = data.slice(start, start + CHUNK_SIZE);
         const fragment = document.createDocumentFragment();
@@ -249,6 +371,7 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
                 td.innerHTML = renderCellValue(rowData[col.data], col.data);
             }
 
+                if (col.highlight) td.classList.add('highlight-column');
                 tr.appendChild(td);
             });
 
@@ -257,18 +380,17 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
 
         tbody[0].appendChild(fragment);
 
-        await updateLoadingStepProgress("Adding Rows To The Table...", 30, 70, Math.min(start + CHUNK_SIZE, data.length), data.length);
-        await yieldToBrowser();
+        await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 30, 70, Math.min(start + CHUNK_SIZE, data.length), data.length);
+        await GDV.utils.yieldToBrowser();
     }
 }
 
 function initializeDataTableWithOptions(columns) {
     if (isInvalidColumnIndex(bayesianColumnIndex)) {
-        reportSilentWarning('Invalid Column Index', 'Cannot sort by Bayesian rating: the column index is missing or invalid.');
+        GDV.utils.reportSilentWarning('Invalid Column Index', 'Cannot sort by Bayesian rating: the column index is missing or invalid.');
     }
     
     return new Promise(resolve => {
-
         const dt = csvTableElement.DataTable({
             paging: true,
             pageLength: 100,
@@ -300,12 +422,12 @@ async function addColumnFilters(api) {
     const colCount = api.columns().count();
 
     for (let colIdx = 0; colIdx < colCount; colIdx++) {
-        if (isLoadingCancelled()) throw new Error('Loading cancelled by user.');
+        if (GDV.loading.isLoadingCancelled()) throw new Error('Loading cancelled by user.');
 
         const column = api.column(colIdx);
         const th = $('.filters th').eq(colIdx);
         const colName = column.header().textContent.trim();
-        const colDef = getActiveColumnDetails()[colName];
+        const colDef = GDV.state.getActiveColumnDetails()[colName];
 
         if (!colDef) continue;
 
@@ -320,8 +442,8 @@ async function addColumnFilters(api) {
             addTextFilter(container, column);
         }
 
-        await updateLoadingStepProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
-        await yieldToBrowser();
+        await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
+        await GDV.utils.yieldToBrowser();
     }
 
     // Setup hover expand/collapse
@@ -516,10 +638,7 @@ function addRangeFilter(th, column, colDef) {
     applyRangeFilter();
 }
 
-
 async function addSortingControls(api, dt) {
-    const totalSortingSteps = csvTableElement.find('thead tr:first-child th').length;
-
     csvTableElement.find('thead tr:first-child th').each(async function (index) {
         const th = $(this);
 
@@ -533,96 +652,8 @@ async function addSortingControls(api, dt) {
             `);
         }
     });
-
-    // Attach click handlers (if not already attached)
-    if (!csvTableElement.data('sortingButtonsBound')) {
-        csvTableElement.on('click', '.sort-asc', function () {
-            dt.order([$(this).data('col'), 'asc']).draw();
-        });
-
-        csvTableElement.on('click', '.sort-desc', function () {
-            dt.order([$(this).data('col'), 'desc']).draw();
-        });
-
-        csvTableElement.data('sortingButtonsBound', true);
-    }
-}
-
-async function resetAllFilters() {
-    startLoading();
-    await updateLoadingDirectUpdate("Resetting filters...", 0);
-
-    if (!$.fn.DataTable.isDataTable(csvTableElement)) {
-        await finishLoading();
-        return;
-    }
-    const dt = csvTableElement.DataTable();
-
-    // Count total steps for progress
-    const checkboxFilters = $('tr.filters .filter-box');
-    const textFilters = $('tr.filters .filter-text');
-    const rangeFilters = $('tr.filters .filter-range');
-    const totalSteps = checkboxFilters.length + textFilters.length + rangeFilters.length + 3; // +3 for column search, remove range functions, column order/sorting
-
-    let step = 0;
-
-    // Reset column searches
-    dt.columns().every(function () {
-        this.search('');
-        step++;
-    });
-    await updateLoadingStepProgress("Resetting column searches...", 0, 20, step, totalSteps);
-
-    // Reset checkboxes
-    for (let i = 0; i < checkboxFilters.length; i++) {
-        const $box = $(checkboxFilters[i]);
-        $box.find('input[type="checkbox"]').prop('checked', true);
-        $box.find('input[type="checkbox"]').not('.toggle-all').trigger('change');
-
-        step++;
-        await updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, step, totalSteps);
-        if (isLoadingCancelled()) break;
-    }
-
-    // Reset text filters
-    for (let i = 0; i < textFilters.length; i++) {
-        const $input = $(textFilters[i]);
-        $input.val('');
-        $input.trigger('keyup');
-
-        step++;
-        await updateLoadingStepProgress("Resetting text filters...", 40, 60, step, totalSteps);
-        if (isLoadingCancelled()) break;
-    }
-
-    // Reset numeric range filters
-    for (let i = 0; i < rangeFilters.length; i++) {
-        const $range = $(rangeFilters[i]);
-        $range.find('.range-min, .range-max').val('');
-        $range.find('input').trigger('input');
-
-        step++;
-        await updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, step, totalSteps);
-        if (isLoadingCancelled()) break;
-    }
-
-    await updateLoadingDirectUpdate("Clearing custom range filters...", 85);
-    // Remove custom range filter functions
-    $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => !fn.name?.startsWith('rangeFilter_'));
-    step++;
-
-    // Reset column order if ColReorder is available
-    if (dt.colReorder && typeof dt.colReorder.reset === 'function') {
-        dt.colReorder.reset();
-    }
-
-    // Reset sorting and redraw table
-    await updateLoadingDirectUpdate("Redrawing the table...", 90);
-    dt.order([]).draw();
-    step++;
-    await updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
-
-    await finishLoading();
+    
+    GDV.dom.bindTableSortingButtons(dt);
 }
 
 function renderCellValue(val, colName = null) {
@@ -652,12 +683,26 @@ function renderCellValue(val, colName = null) {
     if (/^[a-zA-Z]:\\/.test(text)) return `<a href="${toFileUrl(text)}" target="_blank">${text}</a>`;
 
     // Highlight numeric columns automatically
-    if (colName && getActiveColumnDetails()[colName] && ['int', 'float'].includes(getActiveColumnDetails()[colName].type)) {
-        const { min, max } = getActiveColumnDetails()[colName];
+    if (colName && GDV.state.getActiveColumnDetails()[colName] && ['int', 'float'].includes(GDV.state.getActiveColumnDetails()[colName].type)) {
+        const { min, max } = GDV.state.getActiveColumnDetails()[colName];
         return highlightValue(text, min, max);
     }
 
     return text;
+}
+
+function sortTable() {
+    sortByBayesianRating()
+}
+
+function sortByBayesianRating() {
+    if (isInvalidColumnIndex(bayesianColumnIndex)) {
+        GDV.utils.reportSilentWarning('Invalid Column Index', 'Cannot sort by Bayesian rating: the column index is missing or invalid.');
+        return;
+    }
+
+    dt = csvTableElement.DataTable();
+    dt.order([[bayesianColumnIndex, 'desc']]).draw();
 }
 
 function highlightValue(val, min, max) {
@@ -689,60 +734,6 @@ function highlightValue(val, min, max) {
     const textColor = isLightMode ? '#000000' : '#ffffff';
     const weightClass = intensity > 0.7 ? 'high' : intensity > 0.4 ? 'medium' : 'low';
     return `<span class="highlight-cell ${weightClass}" style="background-color:${bgColor}; color:${textColor}">${val}</span>`;
-}
-
-let previewTimer = null;       // Global slideshow timer
-let currentPreviewIndex = 0;   // Index of current image in slideshow
-
-csvTableElement.on('mouseenter', '.table-thumbnail', function(e) {
-    handleThumbnailMouseEnter(this, e);
-});
-
-csvTableElement.on('mouseleave', '.table-thumbnail', function() {
-    handleThumbnailMouseLeave();
-});
-
-csvTableElement.on('mousemove', '.table-thumbnail', function(e) {
-    handleThumbnailMouseMove(e);
-});
-
-csvTableElement.on('click', '.table-thumbnail', function(e) {
-    handleThumbnailMouseClick(this, e);
-});
-
-function handleThumbnailMouseEnter(el, e) {
-    const key = getKeyFromRowElement(el);
-    if (!key) return;
-
-    const previewImages = getPreviewImagesForKey(key);
-    if (!previewImages || previewImages.length === 0) return;
-
-    showPreviewOverlay(previewImages, e);
-}
-
-function handleThumbnailMouseLeave() {
-    const overlay = document.getElementById('previewOverlay');
-    const previewImg = document.getElementById('previewImage');
-
-    if (overlay) overlay.style.display = 'none';
-    if (previewImg) previewImg.src = '';
-
-    stopPreviewSlideshow();
-    currentPreviewIndex = 0;
-}
-
-function handleThumbnailMouseMove(e) {
-    movePreviewOverlay(e);
-}
-
-function handleThumbnailMouseClick(el, e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const url = getUrlFromRowElement(el);
-    if (!url) return;
-
-    window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 function showPreviewOverlay(previewImages, e) {
@@ -804,7 +795,7 @@ function getPreviewImagesForKey(key) {
 
 function getKeyFromRowElement(el) {
     if (isInvalidColumnIndex(keyColumnIndex)) {
-        reportSilentWarning('Invalid Column Index', 'The key column index is missing or invalid.');
+        GDV.utils.reportSilentWarning('Invalid Column Index', 'The key column index is missing or invalid.');
         return null;
     }
 
@@ -821,7 +812,7 @@ function getKeyFromRowElement(el) {
 
 function getUrlFromRowElement(el) {
     if (isInvalidColumnIndex(urlColumnIndex)) {
-        reportSilentWarning('Invalid Column Index', 'The url column index is missing or invalid.');
+        GDV.utils.reportSilentWarning('Invalid Column Index', 'The url column index is missing or invalid.');
         return null;
     }
 
@@ -847,3 +838,64 @@ function isInvalidColumnIndex(columnIndex) {
 function normalizeColumnHeader(columnHeader) {
     return columnHeader.split('\n')[0].trim().toLowerCase();
 }
+
+// CSV table
+csvTableElement.on('mouseenter', '.table-thumbnail', function(e) {
+    handleThumbnailMouseEnter(this, e);
+});
+
+csvTableElement.on('mouseleave', '.table-thumbnail', function() {
+    handleThumbnailMouseLeave();
+});
+
+csvTableElement.on('mousemove', '.table-thumbnail', function(e) {
+    handleThumbnailMouseMove(e);
+});
+
+csvTableElement.on('click', '.table-thumbnail', function(e) {
+    handleThumbnailMouseClick(this, e);
+});
+
+function handleThumbnailMouseEnter(el, e) {
+    const key = getKeyFromRowElement(el);
+    if (!key) return;
+
+    const previewImages = getPreviewImagesForKey(key);
+    if (!previewImages || previewImages.length === 0) return;
+
+    showPreviewOverlay(previewImages, e);
+}
+
+function handleThumbnailMouseLeave() {
+    const overlay = document.getElementById('previewOverlay');
+    const previewImg = document.getElementById('previewImage');
+
+    if (overlay) overlay.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+
+    stopPreviewSlideshow();
+    currentPreviewIndex = 0;
+}
+
+function handleThumbnailMouseMove(e) {
+    lastMouseEvent = e;
+    if (overlayMoveScheduled) return;
+
+    overlayMoveScheduled = true;
+    requestAnimationFrame(() => {
+        movePreviewOverlay(lastMouseEvent);
+        overlayMoveScheduled = false;
+    });
+}
+
+function handleThumbnailMouseClick(el, e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const url = getUrlFromRowElement(el);
+    if (!url) return;
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+})();

@@ -1,22 +1,12 @@
+(function() {
 
-async function startCsvSearchUi() {
-    startLoading();
-    await updateLoadingDirectUpdate("Starting Data Search...", 0);
-    hideMainPrefiltersPanelSection();
-}
-
-async function finishCsvSearchUi() {
-    showMainPrefiltersPanelSection();
-    finishLoading();
-}
-
-async function executeCsvSearch(file) {
+GDV.csvHandler.executeCsvSearch = async function(file) {
     if (!file) return false;
 
     try {
         const collectedPrefilters =
-            hasValidColumnDetails()
-                ? await showPrefilterOverlayAndCollectFilters(getActiveColumnDetails())
+            GDV.state.hasValidColumnDetails()
+                ? await GDV.prefilter.showPrefilterOverlayAndCollectFilters(GDV.state.getActiveColumnDetails())
                 : {};
 
         // User clicked Cancel in overlay
@@ -29,23 +19,33 @@ async function executeCsvSearch(file) {
         
         return true;
     } catch (err) {
-        reportHardError('CSV Search Failed', 'An error occurred while executing the CSV search.', err, { file } );
+        GDV.utils.reportHardError('CSV Search Failed', 'An error occurred while executing the CSV search.', err, { file } );
         return false;
     } finally {
         await finishCsvSearchUi();
     }
 }
 
+async function startCsvSearchUi() {
+    GDV.loading.startLoading();
+    await GDV.loading.updateLoadingDirectUpdate("Starting Data Search...", 0);
+    GDV.dom.hideMainPrefiltersPanelSection();
+}
+
+async function finishCsvSearchUi() {
+    GDV.dom.showMainPrefiltersPanelSection();
+    GDV.loading.finishLoading();
+}
+
 async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
     const parsedData = await parseAndFilterCsv(file, totalSize, preFilters);
 
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
-        throw new Error('No rows loaded');
+        GDV.utils.reportHardWarning('No rows loaded', 'The search did not produce any rows after applying the prefilters.', context = { file, preFilters } );
+        return;
     }
 
-    determineColumnDetailsFromDataIfNeeded(parsedData)
-    const columns = createTableColumns(parsedData);
-    await renderCsvTable(parsedData, columns);
+    await GDV.datatable.loadTable(parsedData)
 }
 
 async function parseAndFilterCsv(file, totalSize, preFilters) {
@@ -60,7 +60,7 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
             skipEmptyLines: true,
             worker: true,
             step: function (row) {
-                if (isLoadingCancelled()) {
+                if (GDV.loading.isLoadingCancelled()) {
                     this.abort(); // stops PapaParse
                     reject(new Error('Loading cancelled by user.'));
                     return;
@@ -76,11 +76,11 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
 
                 // Throttle progress updates
                 if (rowsProcessed % THROTTLE === 0) {
-                    updateLoadingStepProgress("Loading Data From File...", 0, 30, bytesProcessed, totalSize);
+                    GDV.loading.updateLoadingStepProgress("Loading Data From File...", 0, 30, bytesProcessed, totalSize);
                 }
             },
             complete: function () {
-                updateLoadingDirectUpdate("Loading Data From File Finished...", 30);
+                GDV.loading.updateLoadingDirectUpdate("Loading Data From File Finished...", 30);
                 resolve(parsedData);
             },
             error: function (err) {
@@ -96,7 +96,7 @@ function isRowAllowedByPrefilter(row, preFilter) {
     const normalize = v => (v == null ? '' : typeof v === 'string' ? v.trim() : v);
 
     return Object.entries(preFilter).every(([col, criterion]) => {
-        const colDef = getActiveColumnDetails()[col];
+        const colDef = GDV.state.getActiveColumnDetails()[col];
         if (!colDef) return true;
 
         const rawVal = row[col];
@@ -160,3 +160,5 @@ function normalizeBool(val) {
     if (val === false || val === 'false' || val === 'False' || val === 0 || val === '0') return false;
     return null; // unknown / invalid
 }
+
+})();

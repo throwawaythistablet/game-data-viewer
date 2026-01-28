@@ -1,7 +1,6 @@
+(function() {
 
-
-// Create the informational notice
-function createHelpNotice() {
+GDV.helpNotice.createHelpNotice = function() {
     const notice = document.createElement('div');
     notice.className = 'help-notice is-collapsed';
     
@@ -117,3 +116,4 @@ function bindHelpNoticeToggle(notice) {
     notice.classList.add('is-collapsed');
 }
 
+})();

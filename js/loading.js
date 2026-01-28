@@ -1,38 +1,46 @@
+(function() {
+
+const loadingOverlayElement = document.getElementById('loadingOverlayElement');
+const loadingOverlayLabel = document.getElementById('loadingOverlayLabel');
+const loadingOverlayProgressBar = document.getElementById('loadingOverlayProgressBar');
+const loadingOverlayProgressText = document.getElementById('loadingOverlayProgressText');
+const loadingOverlayStopButton = document.getElementById('loadingOverlayStopButton');
+
 let loadingCancelled = false;
 
-async function startLoading() {
-    await updateLoadingDirectUpdate("Loading...", 0);
-    resetLoadingCancellation();
-    showLoading();
+GDV.loading.showLoading = function (){ loadingOverlayElement.style.display = 'flex'; }
+
+GDV.loading.hideLoading = function() { loadingOverlayElement.style.display = 'none'; }
+
+GDV.loading.startLoading = async function() {
+    await GDV.loading.updateLoadingDirectUpdate("Loading...", 0);
+    GDV.loading.resetLoadingCancellation();
+    GDV.loading.showLoading();
 }
 
-async function finishLoading() {
-    hideLoading();
-    resetLoadingCancellation();
-    await updateLoadingDirectUpdate("", 0);
+GDV.loading.finishLoading = async function() {
+    GDV.loading.hideLoading();
+    GDV.loading.resetLoadingCancellation();
+    await GDV.loading.updateLoadingDirectUpdate("", 0);
 }
 
-function showLoading() { loadingOverlayElement.style.display = 'flex'; }
+GDV.loading.resetLoadingCancellation = function() {loadingCancelled = false;}
 
-function hideLoading() { loadingOverlayElement.style.display = 'none'; }
+GDV.loading.cancelLoading = function() {loadingCancelled = true;}
 
-function resetLoadingCancellation() {loadingCancelled = false;}
+GDV.loading.isLoadingCancelled = function() {return loadingCancelled;}
 
-function cancelLoading() {loadingCancelled = true;}
-
-function isLoadingCancelled() {return loadingCancelled;}
-
-async function updateLoadingDirectUpdate(label, percent) {
+GDV.loading.updateLoadingDirectUpdate = async function(label, percent) {
     loadingOverlayLabel.textContent = label;
     loadingOverlayProgressBar.style.width = percent + '%';
     loadingOverlayProgressText.textContent = percent.toFixed(2) + '%';
 
-    // reportInformation(`Loading Direct Progress: ${percent.toFixed(2)}%`);
+    // GDV.utils.reportInformation(`Loading Direct Progress: ${percent.toFixed(2)}%`);
 
-    await yieldToBrowser();
+    await GDV.utils.yieldToBrowser();
 }
 
-async function updateLoadingStepProgress(label, startPercent, endPercent, currentStep, totalSteps) {
+GDV.loading.updateLoadingStepProgress = async function(label, startPercent, endPercent, currentStep, totalSteps) {
     if (totalSteps <= 0) totalSteps = 1;
 
     const fractionOfPhase = currentStep / totalSteps;
@@ -42,7 +50,15 @@ async function updateLoadingStepProgress(label, startPercent, endPercent, curren
     loadingOverlayProgressBar.style.width = totalPercent + '%';
     loadingOverlayProgressText.textContent = totalPercent.toFixed(2) + '%';
 
-    // reportInformation(`Loading Step Progress: ${totalPercent.toFixed(2)}%`, `Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`, {'startPercent': startPercent, 'endPercent': endPercent, 'currentStep': currentStep, 'totalSteps': totalSteps});
+    // GDV.utils.reportInformation(`Loading Step Progress: ${totalPercent.toFixed(2)}%`, `Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`, {'startPercent': startPercent, 'endPercent': endPercent, 'currentStep': currentStep, 'totalSteps': totalSteps});
 
-    await yieldToBrowser();
+    await GDV.utils.yieldToBrowser();
 }
+
+// Stop loading button
+loadingOverlayStopButton.addEventListener('click', () => {
+    GDV.loading.cancelLoading();
+    GDV.loading.hideLoading();
+});
+
+})();

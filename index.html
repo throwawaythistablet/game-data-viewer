@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Game Data Viewer</title>
-    
+
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="apple-touch-icon" href="assets/images/favicon.png">
     <meta name="msapplication-TileImage" content="assets/images/favicon.png">
-    
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VBDXSGTNQZ"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-      gtag('config', 'G-VBDXSGTNQZ');
+        gtag('config', 'G-VBDXSGTNQZ');
     </script>
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -25,332 +26,153 @@
     <link rel="stylesheet" href="css/styles.css">
 
 </head>
+
+
 <body>
 
+    <script>
+
+        window.GDV = {
+            utils: {},
+            controller: {},
+            state: {},
+            helpNotice: {},
+            loading: {},
+            csvHandler: {},
+            datatable: {},
+            prefilter: {},
+            localImageViewer: {},
+            dom: {},
+        };
+
+    </script>
+
+    <script src="js/utils.js"></script>
+    <script src="js/helpNotice.js"></script>
 
 
-
-<script src="js/utils.js"></script>
-<script src="js/helpNotice.js"></script>
-
-
-<div class="controls">
-    <div class="controls-header">
-        <h2 class="controls-title">
-            <img src="assets/images/favicon.png" alt="Game Data Viewer Icon" class="controls-title-icon">
-            Game Data Viewer
-        </h2>
-        <div class="btn-group" id="controlsButtonGroup">
-            <button id="themeToggleButton" class="btn btn-secondary" title="Toggle between light and dark theme">🌙 Dark</button>
-            <button id="discussionButton" class="btn btn-secondary" title="Join the discussion about the tool">👥 Discussion</button>
-            <button id="feedbackButton" class="btn btn-secondary" title="Provide feedback or suggestions about the tool">💬 Feedback</button>
-            <button id="tagPatternsButton" class="btn btn-secondary" title="View the full tag regex patterns">📄 Tag Patterns</button>
-            <button id="resetFiltersButton" class="btn btn-secondary" title="Reset all filters and sorting to their default state">🔄 Reset Column Filters</button>
-            <button id="searchButton" class="btn" title="Search the game data">🔍 Search</button>
+    <div class="controls">
+        <div class="controls-header">
+            <h2 class="controls-title">
+                <img src="assets/images/favicon.png" alt="Game Data Viewer Icon" class="controls-title-icon">
+                Game Data Viewer
+            </h2>
+            <div class="btn-group" id="controlsButtonGroup">
+                <button id="themeToggleButton" class="btn btn-secondary" title="Toggle between light and dark theme">🌙
+                    Dark</button>
+                <button id="discussionButton" class="btn btn-secondary" title="Join the discussion about the tool">👥
+                    Discussion</button>
+                <button id="feedbackButton" class="btn btn-secondary"
+                    title="Provide feedback or suggestions about the tool">💬 Feedback</button>
+                <button id="tagPatternsButton" class="btn btn-secondary" title="View the full tag regex patterns">📄 Tag
+                    Patterns</button>
+                <button id="resetFiltersButton" class="btn btn-secondary"
+                    title="Reset all filters and sorting to their default state">🔄 Reset Column Filters</button>
+                <button id="searchButton" class="btn" title="Search the game data">🔍 Search</button>
+            </div>
+            <script>
+                const btnGroup = document.getElementById('controlsButtonGroup');
+                btnGroup.insertAdjacentElement('afterend', GDV.helpNotice.createHelpNotice());
+            </script>
         </div>
-        <script>
-            const btnGroup = document.getElementById('controlsButtonGroup');
-            btnGroup.insertAdjacentElement('afterend', createHelpNotice());
-        </script>
+
+        <div class="controls-main-grid">
+            <div class="status-card">
+                <div class="btn-group">
+                    <input type="file" id="csvFile" accept=".csv">
+                    <input type="file" id="columnDetailsFileInput" accept=".json" style="display:none">
+                    <button id="fileButton" class="btn" style="flex:1"
+                        title="Select a CSV file to load into the table">📂 Select CSV</button>
+                    <button id="columnDetailsFileButton" class="btn btn-secondary" style="flex:1"
+                        title="Select a JSON file containing column details">📑 Load Column Details</button>
+                    <button id="selectGamesFolderButton" class="btn btn-secondary" style="flex:1"
+                        title="Select the games folder containing your data files">📁 Set Games Folder</button>
+                    <button id="controlsPinButton" class="btn btn-secondary"
+                        title="Pin the controls panel to stay open">📌</button>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded CSV:</span>
+                    <span id="csvFileDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded Column Details:</span>
+                    <span id="columnDetailsDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded tag patterns:</span>
+                    <span id="tagPatternsDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded thumbnails:</span>
+                    <span id="thumbnailsDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Games Folder Path:</span>
+                    <span id="gamesFolderDisplay" class="controls-value">(Not Set)</span>
+                </div>
+            </div>
+
+            <div id="csvDropZone">
+                <span>Drop <strong>Analysis CSV</strong> here</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="mainPrefiltersPanelSection"></div>
+
+    <table id="csvTable" class="display"></table>
+
+    <div id="loadingOverlayElement">
+        <div id="loadingOverlayLabel">Loading Data...</div>
+        <div class="spinner"></div>
+        <div id="loadingOverlayProgressContainer">
+            <div id="loadingOverlayProgressBar"></div>
+            <span id="loadingOverlayProgressText">0%</span>
+        </div>
+        <button id="loadingOverlayStopButton">⏹ Stop</button>
     </div>
 
 
-
-</div>
-
-<div id="mainPrefiltersPanelSection"></div>
-
-<table id="csvTable" class="display"></table>
-
-<div id="loadingOverlayElement">
-    <div id="loadingOverlayLabel">Loading Data...</div>
-    <div class="spinner"></div>
-    <div id="loadingOverlayProgressContainer">
-        <div id="loadingOverlayProgressBar"></div>
-        <span id="loadingOverlayProgressText">0%</span>
+    <div id="previewOverlay">
+        <img id="previewImage" alt="preview">
     </div>
-    <button id="loadingOverlayStopButton">⏹ Stop</button>
-</div>
-</div>
 
+    <div id="localImagesModal">
+        <div id="localImagesModalHeader">
+            <span id="localImagesModalTitle">Images</span>
+            <button class="btn" id="closeImageModal">✕</button>
+        </div>
+        <div id="localImagesModalGrid"></div>
+    </div>
 
-<div id="previewOverlay">
-    <img id="previewImage" alt="preview">
-</div>
+    <div id="localImagesOverlay">
+        <img id="localImagesOverlayImg">
+    </div>
 
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.6.2/js/dataTables.colReorder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/colreorder/1.6.2/js/dataTables.colReorder.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/dom.js"></script>
+    <script src="js/loading.js"></script>
+    <script src="js/csv-handler.js"></script>
+    <script src="js/datatable.js"></script>
+    <script src="js/prefilter.js"></script>
+    <script src="js/local-image-viewer.js"></script>
 
 
 
-<script>
-
-const csvTableElement = $('#csvTable');
-const themeToggleButton = document.getElementById('themeToggleButton');
-const discussionButton = document.getElementById('discussionButton')
-const feedbackButton = document.getElementById('feedbackButton')
-const tagPatternsButton = document.getElementById('tagPatternsButton')
-const resetFiltersButton = document.getElementById('resetFiltersButton')
-const searchButton = document.getElementById('searchButton')
-const mainPrefiltersPanelSection = document.getElementById('mainPrefiltersPanelSection')
-const loadingOverlayElement = document.getElementById('loadingOverlayElement');
-const loadingOverlayLabel = document.getElementById('loadingOverlayLabel');
-const loadingOverlayProgressBar = document.getElementById('loadingOverlayProgressBar');
-const loadingOverlayProgressText = document.getElementById('loadingOverlayProgressText');
-const loadingOverlayStopButton = document.getElementById('loadingOverlayStopButton')
-
-let activeCsvFile = null;
-let activeColumnDetails = {};
-let activeTagFullPatterns = {};
-let lastSearchedPrefilters = {};
-
-function getActiveCsvFile() {
-    return activeCsvFile;
-}
-
-function setActiveCsvFile(file) {
-    activeCsvFile = file;
-}
-
-function getActiveColumnDetails() {
-    return activeColumnDetails;
-}
-
-function hasValidColumnDetails() {
-    return activeColumnDetails && Object.keys(activeColumnDetails).length > 0
-}
-
-function getTagFullPatterns() {
-    return activeTagFullPatterns;
-}
-
-function updateColumnDetails(columnDetails, fileName, description) {
-    activeColumnDetails = columnDetails;
-}
-
-function updateTagFullPatterns(tagFullPatterns, fileName) {
-    activeTagFullPatterns = tagFullPatterns;
-}
-
-function updateThumbnails(thumbnails, fileName) {
-    activeThumbnails = thumbnails;
-}
-
-async function initializeWebsite() {
-    await updateLoadingDirectUpdate("Preparing table structure…", 10);
-    showLoading();
-    await loadDefaultColumnDetailsJson();
-    await updateLoadingDirectUpdate("Loading tag definitions…", 30);
-    await loadDefaultTagFullPatternsJson();
-    await updateLoadingDirectUpdate("Loading database records…", 40);
-    await loadDefaultCsv();
-    await updateLoadingDirectUpdate("Linking thumbnails…", 90);
-    await loadDefaultThumbnailsJson();
-    await updateLoadingDirectUpdate("Initialization complete.", 100);
-    hideLoading();
-    await executeCsvSearch(getActiveCsvFile());
-}
-
-async function loadDefaultCsv() {
-    if (getActiveCsvFile()) {
-        return; // already loaded
-    }
-
-    try {
-        const response = await fetch('data/game_data.csv');
-        if (!response.ok) {
-            reportHardError('CSV Load Failed', 'Failed to fetch the default CSV file from "data/game_data.csv".', new Error(`HTTP status: ${response.status}`) );
-            return;
-        }
-
-        const blob = await response.blob();
-        const file = new File([blob], 'game_data.csv', { type: 'text/csv' });
-        setActiveCsvFile(file);
-    } catch (err) {
-        reportHardError('CSV Load Failed', 'An unexpected error occurred while loading the default CSV.', err);
-    }
-}
-
-async function loadDefaultColumnDetailsJson() {
-    if (hasValidColumnDetails()) {
-        return; // already loaded
-    }
-
-    try {
-        const response = await fetch('data/game_column_details.json');
-        if (!response.ok) {
-            reportHardError('Column Details Load Failed', 'Failed to fetch the default column details JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_details.json' });
-            return;
-        }
-
-        const columnDetails = await response.json();
-        updateColumnDetails(columnDetails, 'game_column_details.json', 'data/game_column_details.json');
-    } catch (err) {
-        reportHardError('Column Details Load Failed', 'An unexpected error occurred while loading the default column details JSON.', err);
-    }
-}
-
-
-async function loadDefaultTagFullPatternsJson() {
-    try {
-        const response = await fetch('data/tag_full_patterns.json');
-
-        if (!response.ok) {
-            reportHardError('Tag Patterns Load Failed', 'Failed to fetch the default tag full patterns JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/tag_full_patterns.json' });
-            return;
-        }
-
-        const tagFullPatterns = await response.json();
-        updateTagFullPatterns(tagFullPatterns, 'data/tag_full_patterns.json');
-
-    } catch (err) {
-        reportHardError('Tag Patterns Load Failed', 'An unexpected error occurred while loading the default tag full patterns JSON.', err);
-    }
-}
-
-async function loadDefaultThumbnailsJson() {
-    try {
-        const response = await fetch('data/game_thumbnails.json');
-
-        if (!response.ok) {
-            reportHardError('Thumbnails Load Failed', 'Failed to fetch the default thumbnails JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_thumbnails.json' });
-            return;
-        }
-
-        const thumbnails = await response.json();
-        updateThumbnails(thumbnails, 'data/game_thumbnails.json');
-
-    } catch (err) {
-        reportHardError('Thumbnails Load Failed', 'An unexpected error occurred while loading the default thumbnails JSON.', err);
-    }
-}
-
-function hideMainPrefiltersPanelSection() {
-    mainPrefiltersPanelSection.style.display = 'none';
-}
-
-function showMainPrefiltersPanelSection() {
-    mainPrefiltersPanelSection.style.display = '';
-}
-
-
-</script>
-
-
-
-<script src="js/loading.js"></script>
-<script src="js/csv-handler.js"></script>
-<script src="js/datatable.js"></script>
-<script src="js/prefilter.js"></script>
-
-
-
-<script>
-
-// Search button
-searchButton.addEventListener('click', async () => {
-    if (!getActiveCsvFile()) {
-        reportHardWarning('CSV Not Loaded', 'No CSV file has been loaded yet.' );
-        return;
-    }
-
-    if (!hasValidColumnDetails()) {
-        reportHardWarning('Column Details Missing', 'No column details JSON has been loaded yet.' );
-        return;
-    }
-
-    await executeCsvSearch(getActiveCsvFile());
-});
-
-// Reset filters button
-resetFiltersButton.addEventListener('click', () => {
-    resetAllFilters();
-});
-
-// Discussion button
-discussionButton.addEventListener('click', () => {
-    window.open('https://f95zone.to/threads/cant-find-the-game-youre-looking-for-try-this.284593/', '_blank', 'noopener,noreferrer');
-});
-
-// Feedback button
-feedbackButton.addEventListener('click', () => {
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLSevpNoZzTm6fDrWfT_3Sb4RsA8btJTFxhJByBBf9e_cw0UOEQ/viewform?usp=dialog', '_blank', 'noopener,noreferrer');
-});
-
-// Tag Patterns button
-tagPatternsButton.addEventListener('click', () => {
-    window.open('tags/tag_patterns.json', '_blank', 'noopener,noreferrer');
-});
-
-// Theme toggle button
-themeToggleButton.addEventListener('click', () => {
-    document.body.classList.toggle('light-theme');
-    const isLight = document.body.classList.contains('light-theme');
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    updateThemeButton();
-});
-
-// Stop loading button
-loadingOverlayStopButton.addEventListener('click', () => {
-    cancelLoading();
-    hideLoading();
-});
-
-</script>
-
-
-
-
-
-
-
-<script>
-
-function loadAndUpdateTheme() {
-    // Load saved theme
-    if (localStorage.getItem('theme') === 'light') {
-        document.body.classList.add('light-theme');
-    }
-    updateThemeButton()
-}
-
-function updateThemeButton() {
-    const isLight = document.body.classList.contains('light-theme');
-    themeToggleButton.textContent = isLight ? '🌞 Light' : '🌙 Dark';
-}
-
-async function initialize() {
-    loadAndUpdateTheme();
-}
-
-</script>
-
-
-
-<script>
-initialize()
-</script>
-
-
-
-<!-- Code injected for standalone web deployment -->
-<script>
-initializeWebsite();
-</script>
-
-
-
-<!--
-<script>
-initializeWebsite();
-</script>
--->
+    <script>
+        GDV.controller.initialize()
+    </script>
 
 
 </body>
+
 </html>

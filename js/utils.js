@@ -1,5 +1,6 @@
+(function() {
 
-function logInformation(level, label, description, context) {
+GDV.utils.logInformation = function(level, label, description, context) {
     if (console[level]) {
         console.groupCollapsed(`INFO [${label}]`);
         if (description) console[level](description);
@@ -8,7 +9,7 @@ function logInformation(level, label, description, context) {
     }
 }
 
-function logError(level, label, description, error, context) {
+GDV.utils.logError = function(level, label, description, error, context) {
     if (console[level]) {
         console.groupCollapsed(`${level.toUpperCase()} [${label}]`);
         if (description) console[level](description);
@@ -18,46 +19,47 @@ function logError(level, label, description, error, context) {
     }
 }
 
-function showAlertMessage(label, description, error = null) {
+GDV.utils.showAlertMessage = function(label, description, error = null) {
     alert(
         `${label}\n\n${description}` +
         (error?.message ? `\n\n${error.message}` : '')
     );
 }
 
-function showConfirmationDialog(label, description) {
+GDV.utils.showConfirmationDialog = function(label, description) {
     return confirm(`${label}\n\n${description}`);
 }
 
-function reportHardError(label, description, error, context = null) {
-    logError('error', label, description, error, context);
-    showAlertMessage(label, description, error);
+GDV.utils.reportHardError = function(label, description, error, context = null) {
+    GDV.utils.logError('error', label, description, error, context);
+    GDV.utils.showAlertMessage(label, description, error);
 }
 
-function reportSilentError(label, description, error, context = null) {
-    logError('error', label, description, error, context);
+GDV.utils.reportSilentError = function(label, description, error, context = null) {
+    GDV.utils.logError('error', label, description, error, context);
 }
 
-function reportHardWarning(label, description, error = null, context = null) {
-    logError('warn', label, description, error, context);
-    showAlertMessage(label, description, error);
+GDV.utils.reportHardWarning = function(label, description, error = null, context = null) {
+    GDV.utils.logError('warn', label, description, error, context);
+    GDV.utils.showAlertMessage(label, description, error);
 }
 
-function reportSilentWarning(label, description, error = null, context = null) {
-    logError('warn', label, description, error, context);
+GDV.utils.reportSilentWarning = function(label, description, error = null, context = null) {
+    GDV.utils.logError('warn', label, description, error, context);
 }
 
-function reportInformation(label, description, context = null) {
-    logInformation('info', label, description, context);
+GDV.utils.reportInformation = function(label, description, context = null) {
+    GDV.utils.logInformation('info', label, description, context);
 }
 
-function requestUserConfirmation(label, description, context = null) {
-    logInformation('info', label, description, context);
-    return showConfirmationDialog(label, description);
+GDV.utils.requestUserConfirmation = function(label, description, context = null) {
+    GDV.utils.logInformation('info', label, description, context);
+    return GDV.utils.showConfirmationDialog(label, description);
 }
 
-async function yieldToBrowser() {
-    await new Promise(r => setTimeout(r, 0)); // OLD
+GDV.utils.yieldToBrowser = async function() {
+    await new Promise(r => setTimeout(r, 0));
     // if (!document.hidden) await new Promise(r => setTimeout(r, 0));
 }
 
+})();

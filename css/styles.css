@@ -67,6 +67,12 @@ td {
     overflow: visible;
 }
 
+.highlight-column {
+    background-color: var(--bg-hover);
+    font-weight: bold;
+    border: 1px solid var(--border-strong);
+}
+
 /* ==========================================================================
    CONTROLS / TOOLBAR
    ========================================================================== */
@@ -80,7 +86,7 @@ td {
     border-radius: 8px;
     border: 1px solid var(--border-subtle);
     margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .controls-header {
@@ -108,7 +114,8 @@ td {
 }
 
 .controls-main-grid {
-    display: grid;
+    display: none;
+    /* None by default but display: grid; when enabled */
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     align-items: stretch;
@@ -139,7 +146,9 @@ td {
 }
 
 @media (max-width: 768px) {
-    .controls-main-grid { grid-template-columns: 1fr; }
+    .controls-main-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .status-card {
@@ -174,7 +183,9 @@ td {
     padding-bottom: 4px;
 }
 
-.controls-status-item:last-child { border: none; }
+.controls-status-item:last-child {
+    border: none;
+}
 
 /* ==========================================================================
    HELP NOTICE
@@ -190,7 +201,7 @@ td {
     padding: 12px 16px;
     margin: 16px 0;
     color: var(--text-main);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     font-size: 14px;
     line-height: 1.4;
     transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
@@ -211,7 +222,7 @@ td {
 
 .help-notice:hover {
     background: var(--bg-hover);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     transform: translateY(-1px);
     opacity: 1;
 }
@@ -260,7 +271,7 @@ td {
     font-weight: bold;
     font-size: 20px;
 
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     cursor: pointer;
 
@@ -275,7 +286,7 @@ td {
     background: var(--accent-soft-bg);
     color: var(--accent);
     border-color: var(--accent);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 #csvDropZone:hover {
@@ -466,9 +477,17 @@ th .sort-desc:hover {
     transition: background-color 0.2s, font-weight 0.2s;
 }
 
-.highlight-cell.low { font-weight: normal; }
-.highlight-cell.medium { font-weight: 500; }
-.highlight-cell.high { font-weight: bold; }
+.highlight-cell.low {
+    font-weight: normal;
+}
+
+.highlight-cell.medium {
+    font-weight: 500;
+}
+
+.highlight-cell.high {
+    font-weight: bold;
+}
 
 
 /* ==========================================================================
@@ -531,7 +550,7 @@ th .sort-desc:hover {
 .prefilter-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     z-index: 1000;
 
     display: flex;
@@ -577,7 +596,7 @@ th .sort-desc:hover {
     background: color-mix(in srgb, var(--bg-panel) 95%, transparent);
     padding: 16px 0;
     z-index: 1100;
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.35);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.35);
     margin-bottom: 16px;
 }
 
@@ -606,7 +625,7 @@ th .sort-desc:hover {
 .prefilter-actions .btn-apply:hover {
     transform: translateY(-2px);
     background: var(--glow-strong);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
 
 .prefilter-actions .btn-regular {
@@ -632,7 +651,8 @@ th .sort-desc:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    align-items: center;       /* vertically center label and items */
+    align-items: center;
+    /* vertically center label and items */
     background: var(--bg-panel);
     border: 1px solid var(--border-subtle);
     border-radius: 6px;
@@ -643,7 +663,8 @@ th .sort-desc:hover {
 }
 
 .prefilter-main-panel-label {
-    font-weight: 600;          /* moderate emphasis, not "strong" */
+    font-weight: 600;
+    /* moderate emphasis, not "strong" */
     margin-right: 8px;
 }
 
@@ -666,16 +687,21 @@ th .sort-desc:hover {
 }
 
 .prefilter-active-item {
-    display: inline-flex;               /* better for inline items + button */
+    display: inline-flex;
+    /* better for inline items + button */
     align-items: center;
-    background: var(--bg-elevated);     /* readable background */
-    color: var(--text-main);            /* main text color */
+    background: var(--bg-elevated);
+    /* readable background */
+    color: var(--text-main);
+    /* main text color */
     padding: 4px 10px;
     margin: 2px 4px;
     border-radius: 6px;
     font-size: 13px;
-    border: 2px solid var(--glow);     /* thick border for glow effect */
-    box-shadow: 0 0 8px var(--glow-strong); /* subtle glowing shadow */
+    border: 2px solid var(--glow);
+    /* thick border for glow effect */
+    box-shadow: 0 0 8px var(--glow-strong);
+    /* subtle glowing shadow */
 }
 
 .prefilter-active-item .prefilter-remove-btn {
@@ -684,14 +710,17 @@ th .sort-desc:hover {
     margin-left: 6px;
     cursor: pointer;
     font-weight: bold;
-    color: var(--danger);               /* always noticeable */
+    color: var(--danger);
+    /* always noticeable */
     font-size: 14px;
     line-height: 1;
 }
 
 .prefilter-active-item .prefilter-remove-btn:hover {
-    color: var(--glow-strong);               /* keep it the same for consistency */
-    transform: scale(1.2);              /* optional: slight pop on hover */
+    color: var(--glow-strong);
+    /* keep it the same for consistency */
+    transform: scale(1.2);
+    /* optional: slight pop on hover */
     transition: transform 0.15s ease;
 }
 
@@ -718,7 +747,7 @@ th .sort-desc:hover {
 
 
     box-shadow:
-        inset 0 1px 3px rgba(0,0,0,0.4),
+        inset 0 1px 3px rgba(0, 0, 0, 0.4),
         0 0 10px var(--glow-soft),
         0 0 20px var(--glow-soft);
 
@@ -732,7 +761,7 @@ th .sort-desc:hover {
 .prefilter-search-input:focus {
     outline: none;
     box-shadow:
-        inset 0 1px 3px rgba(0,0,0,0.4),
+        inset 0 1px 3px rgba(0, 0, 0, 0.4),
         0 0 14px var(--glow-strong),
         0 0 28px var(--glow-strong);
 }
@@ -849,7 +878,7 @@ th .sort-desc:hover {
     position: fixed;
     inset: 0;
     z-index: 999;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0, 0, 0, 0.85);
     color: var(--accent);
     font-size: 18px;
     align-items: center;
@@ -868,8 +897,13 @@ th .sort-desc:hover {
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 #loadingOverlayLabel {
@@ -930,17 +964,17 @@ th .sort-desc:hover {
    IMAGE MODAL
    ========================================================================== */
 
-#imageModal {
+#localImagesModal {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(0,0,0,0.95);
+    background: rgba(0, 0, 0, 0.95);
     color: white;
     flex-direction: column;
 }
 
-#imageModalHeader {
+#localImagesModalHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -948,7 +982,7 @@ th .sort-desc:hover {
     background: #111;
 }
 
-#imageModalGrid {
+#localImagesModalGrid {
     flex-grow: 1;
     padding: 20px;
     display: grid;
@@ -957,23 +991,23 @@ th .sort-desc:hover {
     overflow-y: auto;
 }
 
-#imageModalGrid img {
+#localImagesModalGrid img {
     width: 100%;
     border-radius: 4px;
     cursor: pointer;
 }
 
-#imageOverlay {
+#localImagesOverlay {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(0,0,0,0.9);
+    background: rgba(0, 0, 0, 0.9);
     align-items: center;
     justify-content: center;
 }
 
-#imageOverlay img {
+#localImagesOverlay img {
     max-width: 90%;
     max-height: 90%;
 }
