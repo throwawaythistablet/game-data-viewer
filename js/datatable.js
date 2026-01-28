@@ -274,13 +274,19 @@ function buildThumbnailColumn() {
             const entry = activeThumbnails[key];
             if (!entry || !entry.thumbnail_image) return '';
 
+            const urlCellValue = row['url'];
+            const url = getUrlFromCellValue(urlCellValue);
+            if (!url) return '';
+
             return `
-                <img
-                    class="table-thumbnail"
-                    src="${entry.thumbnail_image}"
-                    alt="thumbnail"
-                    loading="lazy"
-                >
+                <a href="${url}" target="_blank" rel="noopener noreferrer">
+                    <img
+                        class="table-thumbnail"
+                        src="${entry.thumbnail_image}"
+                        alt="thumbnail"
+                        loading="lazy"
+                    >
+                </a>
             `;
         }
     };
@@ -810,14 +816,20 @@ function getUrlFromRowElement(el) {
     const rowData = table.row($tr).data();
     if (!rowData) return null;
 
-    const urlCell = rowData[urlColumnIndex];
-    if (!urlCell) return null;
+    return getUrlFromCellValue(rowData[urlColumnIndex]);
+}
 
-    // Parse <a> tag if present
-    const tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = urlCell;
-    const link = tmpDiv.querySelector('a');
-    return link ? link.href : urlCell;
+function getUrlFromCellValue(cellValue) {
+    if (!cellValue) return null;
+
+    if (typeof cellValue === 'string' && cellValue.includes('<a')) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = cellValue;
+        const a = tmp.querySelector('a');
+        return a?.href ?? a?.textContent?.trim() ?? null;
+    }
+
+    return typeof cellValue === 'string' ? cellValue : null;
 }
 
 function isInvalidColumnIndex(columnIndex) {
@@ -839,10 +851,6 @@ csvTableElement.on('mouseleave', '.table-thumbnail', function() {
 
 csvTableElement.on('mousemove', '.table-thumbnail', function(e) {
     handleThumbnailMouseMove(e);
-});
-
-csvTableElement.on('click', '.table-thumbnail', function(e) {
-    handleThumbnailMouseClick(this, e);
 });
 
 function handleThumbnailMouseEnter(el, e) {
@@ -875,16 +883,6 @@ function handleThumbnailMouseMove(e) {
         movePreviewOverlay(lastMouseEvent);
         overlayMoveScheduled = false;
     });
-}
-
-function handleThumbnailMouseClick(el, e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const url = getUrlFromRowElement(el);
-    if (!url) return;
-
-    window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 })();
