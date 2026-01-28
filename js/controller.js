@@ -90,7 +90,7 @@ async function initializeStandaloneMode() {
 
 async function initializeHostedMode() {
     await GDV.loading.updateLoadingDirectUpdate("Preparing table structure…", 10);
-    GDV.loading.showLoading();
+    await GDV.loading.showLoading();
     await loadDefaultColumnDetailsJson();
     await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 30);
     await loadDefaultTagFullPatternsJson();
@@ -99,7 +99,7 @@ async function initializeHostedMode() {
     await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 90);
     await loadDefaultThumbnailsJson();
     await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
-    GDV.loading.hideLoading();
+    await GDV.loading.hideLoading();
     await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
 }
 
@@ -186,7 +186,7 @@ async function loadFilesFromDataFolder() {
 
     try {
         await GDV.loading.updateLoadingDirectUpdate("Preparing table structure…", 10);
-        GDV.loading.showLoading();
+        await GDV.loading.showLoading();
 
         await loadColumnDetailsFromLocalDataFolder();
         await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 30);
@@ -200,12 +200,12 @@ async function loadFilesFromDataFolder() {
         await loadThumbnailsFromLocalDataFolder();
         await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
 
-        GDV.loading.hideLoading();
+        await GDV.loading.hideLoading();
         await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
 
     } catch (err) {
         GDV.utils.reportHardError('Data Folder Load Failed', 'An unexpected error occurred while loading files from the data folder.', err, { dataFolderHandle });
-        GDV.loading.hideLoading();
+        await GDV.loading.hideLoading();
     }
 }
 

@@ -8,18 +8,24 @@ const loadingOverlayStopButton = document.getElementById('loadingOverlayStopButt
 
 let loadingCancelled = false;
 
-GDV.loading.showLoading = function (){ loadingOverlayElement.style.display = 'flex'; }
+GDV.loading.showLoading = async function (){ 
+    loadingOverlayElement.style.display = 'flex'; 
+    await GDV.utils.yieldToBrowser();
+}
 
-GDV.loading.hideLoading = function() { loadingOverlayElement.style.display = 'none'; }
+GDV.loading.hideLoading = async function() { 
+    loadingOverlayElement.style.display = 'none'; 
+    await GDV.utils.yieldToBrowser();
+}
 
 GDV.loading.startLoading = async function() {
     await GDV.loading.updateLoadingDirectUpdate("Loading...", 0);
     GDV.loading.resetLoadingCancellation();
-    GDV.loading.showLoading();
+    await GDV.loading.showLoading();
 }
 
 GDV.loading.finishLoading = async function() {
-    GDV.loading.hideLoading();
+    await GDV.loading.hideLoading();
     GDV.loading.resetLoadingCancellation();
     await GDV.loading.updateLoadingDirectUpdate("", 0);
 }
@@ -56,9 +62,9 @@ GDV.loading.updateLoadingStepProgress = async function(label, startPercent, endP
 }
 
 // Stop loading button
-loadingOverlayStopButton.addEventListener('click', () => {
+loadingOverlayStopButton.addEventListener('click', async () => {
     GDV.loading.cancelLoading();
-    GDV.loading.hideLoading();
+    await GDV.loading.hideLoading();
 });
 
 })();

@@ -58,7 +58,7 @@ GDV.utils.requestUserConfirmation = function(label, description, context = null)
 }
 
 GDV.utils.yieldToBrowser = async function() {
-    await new Promise(r => setTimeout(r, 0));
+    await new Promise(r => setTimeout(r, 50));
     // if (!document.hidden) await new Promise(r => setTimeout(r, 0));
 }
 

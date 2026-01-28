@@ -112,8 +112,8 @@ searchButton.addEventListener('click', async () => {
 });
 
 // Reset filters button
-resetFiltersButton.addEventListener('click', () => {
-    GDV.datatable.resetAllFilters();
+resetFiltersButton.addEventListener('click', async () => {
+    await GDV.datatable.resetAllFilters();
 });
 
 // Discussion button

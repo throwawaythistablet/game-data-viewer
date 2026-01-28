@@ -11,18 +11,18 @@ let lastMouseEvent = null;
 
 
 GDV.datatable.loadTable = async function(parsedData) {
-    GDV.loading.showLoading();
+    await GDV.loading.showLoading();
     
     determineColumnDetailsFromDataIfNeeded(parsedData)
     const columns = createTableColumns(parsedData);
     await renderCsvTable(parsedData, columns);
 
     await GDV.loading.updateLoadingDirectUpdate("Game Data Table Loaded.", 100);
-    GDV.loading.hideLoading();
+    await GDV.loading.hideLoading();
 }
 
 GDV.datatable.resetAllFilters = async function() {
-    GDV.loading.startLoading();
+    await GDV.loading.startLoading();
     await GDV.loading.updateLoadingDirectUpdate("Resetting filters...", 0);
 
     if (!$.fn.DataTable.isDataTable(csvTableElement)) {
@@ -245,17 +245,6 @@ function buildCsvColumns(keys, columnDetails, searchedPrefilters) {
         render: (data) => renderCellValue(data, key),
         highlight: prefilterColumns.includes(key) // only prefilters highlighted
     }));
-}
-
-
-function buildCsvColumns_OLD(keys, columnDetails, searchedPrefilters) {
-    return keys
-        .filter(key => shouldIncludeColumn(key, columnDetails, searchedPrefilters))
-        .map(key => ({
-            title: key,
-            data: key,
-            render: (data) => renderCellValue(data, key)
-        }));
 }
 
 function buildViewImagesColumn(keys) {

@@ -27,14 +27,14 @@ GDV.csvHandler.executeCsvSearch = async function(file) {
 }
 
 async function startCsvSearchUi() {
-    GDV.loading.startLoading();
+    await GDV.loading.startLoading();
     await GDV.loading.updateLoadingDirectUpdate("Starting Data Search...", 0);
     GDV.dom.hideMainPrefiltersPanelSection();
 }
 
 async function finishCsvSearchUi() {
     GDV.dom.showMainPrefiltersPanelSection();
-    GDV.loading.finishLoading();
+    await GDV.loading.finishLoading();
 }
 
 async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
