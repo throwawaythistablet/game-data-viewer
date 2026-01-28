@@ -122,6 +122,7 @@ function createTableColumns(parsedData) {
 async function renderCsvTable(data, columns) {
     csvTableElement.hide();
     destroyExistingTable();
+    $.fn.dataTable.ext.search = []; // Clear all old range filters / custom search functions
     
     createTableHeader(columns);
     const tbody = createTableBody();
