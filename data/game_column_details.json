@@ -317,15 +317,6 @@
     "min": 0,
     "max": 1
   },
-  "bdsm": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "japanese theme": {
     "type": "tag",
     "choices": [
@@ -650,15 +641,6 @@
     "min": 0,
     "max": 1
   },
-  "rape": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "mom": {
     "type": "tag",
     "choices": [
@@ -686,6 +668,15 @@
     "min": 0,
     "max": 1
   },
+  "rape": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "dark fantasy": {
     "type": "tag",
     "choices": [
@@ -705,15 +696,6 @@
     "max": 1
   },
   "beautiful woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "ntr": {
     "type": "tag",
     "choices": [
       0,
@@ -821,6 +803,15 @@
     "min": 0,
     "max": 1
   },
+  "neto genres": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "party": {
     "type": "tag",
     "choices": [
@@ -867,15 +858,6 @@
     "max": 1
   },
   "student": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "humiliation": {
     "type": "tag",
     "choices": [
       0,
@@ -947,15 +929,6 @@
     "min": 0,
     "max": 1
   },
-  "mystery": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "maps": {
     "type": "tag",
     "choices": [
@@ -975,6 +948,15 @@
     "max": 1
   },
   "pregnancy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "mystery": {
     "type": "tag",
     "choices": [
       0,
@@ -1029,6 +1011,15 @@
     "max": 1
   },
   "male domination": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "bdsm": {
     "type": "tag",
     "choices": [
       0,
@@ -1163,6 +1154,15 @@
     "min": 0,
     "max": 1
   },
+  "netorare": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "emotional": {
     "type": "tag",
     "choices": [
@@ -1227,15 +1227,6 @@
     "max": 1
   },
   "virtuous": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "hardcore elements": {
     "type": "tag",
     "choices": [
       0,
@@ -1325,7 +1316,25 @@
     "min": 0,
     "max": 1
   },
+  "slut": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "beach": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "hardcore elements": {
     "type": "tag",
     "choices": [
       0,
@@ -1343,7 +1352,7 @@
     "min": 0,
     "max": 1
   },
-  "slut": {
+  "masochism": {
     "type": "tag",
     "choices": [
       0,
@@ -1370,7 +1379,16 @@
     "min": 0,
     "max": 1
   },
-  "masochism": {
+  "humiliation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "sadism": {
     "type": "tag",
     "choices": [
       0,
@@ -1415,7 +1433,7 @@
     "min": 0,
     "max": 1
   },
-  "sadism": {
+  "spanking": {
     "type": "tag",
     "choices": [
       0,
@@ -1424,7 +1442,7 @@
     "min": 0,
     "max": 1
   },
-  "spanking": {
+  "lactation": {
     "type": "tag",
     "choices": [
       0,
@@ -1452,15 +1470,6 @@
     "max": 1
   },
   "android character": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "coercion": {
     "type": "tag",
     "choices": [
       0,
@@ -1586,7 +1595,7 @@
     "min": 0,
     "max": 1
   },
-  "racial": {
+  "master": {
     "type": "tag",
     "choices": [
       0,
@@ -1595,7 +1604,7 @@
     "min": 0,
     "max": 1
   },
-  "master": {
+  "racial": {
     "type": "tag",
     "choices": [
       0,
@@ -1613,7 +1622,7 @@
     "min": 0,
     "max": 1
   },
-  "hypnosis": {
+  "trans": {
     "type": "tag",
     "choices": [
       0,
@@ -1622,7 +1631,7 @@
     "min": 0,
     "max": 1
   },
-  "trans": {
+  "coercion": {
     "type": "tag",
     "choices": [
       0,
@@ -1667,7 +1676,7 @@
     "min": 0,
     "max": 1
   },
-  "footjob": {
+  "waifu": {
     "type": "tag",
     "choices": [
       0,
@@ -1676,7 +1685,7 @@
     "min": 0,
     "max": 1
   },
-  "waifu": {
+  "footjob": {
     "type": "tag",
     "choices": [
       0,
@@ -1695,15 +1704,6 @@
     "max": 1
   },
   "drugs": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "lactation": {
     "type": "tag",
     "choices": [
       0,
@@ -1865,15 +1865,6 @@
     "min": 0,
     "max": 1
   },
-  "netorare": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "foot": {
     "type": "tag",
     "choices": [
@@ -1928,6 +1919,15 @@
     "min": 0,
     "max": 1
   },
+  "wife": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "bitch": {
     "type": "tag",
     "choices": [
@@ -1947,6 +1947,15 @@
     "max": 1
   },
   "childhood": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "dubious consent": {
     "type": "tag",
     "choices": [
       0,
@@ -1992,15 +2001,6 @@
     "max": 1
   },
   "ai cg": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "sharing": {
     "type": "tag",
     "choices": [
       0,
@@ -2162,15 +2162,6 @@
     "min": 0,
     "max": 1
   },
-  "dubious consent": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "sexpionage": {
     "type": "tag",
     "choices": [
@@ -2244,6 +2235,15 @@
     "max": 1
   },
   "teen": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "exploitative sex": {
     "type": "tag",
     "choices": [
       0,
@@ -2369,15 +2369,6 @@
     "min": 0,
     "max": 1
   },
-  "bestiality": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "wholesome": {
     "type": "tag",
     "choices": [
@@ -2397,6 +2388,24 @@
     "max": 1
   },
   "html": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "husband": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "bestiality": {
     "type": "tag",
     "choices": [
       0,
@@ -2459,15 +2468,6 @@
     "min": 0,
     "max": 1
   },
-  "bondage": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "curse": {
     "type": "tag",
     "choices": [
@@ -2514,15 +2514,6 @@
     "max": 1
   },
   "non sexual elements": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
-  "sleep sex": {
     "type": "tag",
     "choices": [
       0,
@@ -2666,7 +2657,25 @@
     "min": 0,
     "max": 1
   },
+  "bondage": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "possessed": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "multiple partners": {
     "type": "tag",
     "choices": [
       0,
@@ -2694,6 +2703,15 @@
     "max": 1
   },
   "retro style": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "sleep sex": {
     "type": "tag",
     "choices": [
       0,
@@ -2756,6 +2774,15 @@
     "min": 0,
     "max": 1
   },
+  "partner sharing": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "creepy": {
     "type": "tag",
     "choices": [
@@ -2766,6 +2793,15 @@
     "max": 1
   },
   "ghost": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "gangbang": {
     "type": "tag",
     "choices": [
       0,
@@ -2810,15 +2846,6 @@
     "min": 0,
     "max": 1
   },
-  "gangbang": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "forgotten": {
     "type": "tag",
     "choices": [
@@ -2855,7 +2882,7 @@
     "min": 0,
     "max": 1
   },
-  "multiple partners": {
+  "betrayal": {
     "type": "tag",
     "choices": [
       0,
@@ -2874,6 +2901,15 @@
     "max": 1
   },
   "cumming outside": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "hypnosis": {
     "type": "tag",
     "choices": [
       0,
@@ -3017,6 +3053,15 @@
     "min": 0,
     "max": 1
   },
+  "age play": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "tattoos": {
     "type": "tag",
     "choices": [
@@ -3036,6 +3081,15 @@
     "max": 1
   },
   "cunnilingus": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "pain play": {
     "type": "tag",
     "choices": [
       0,
@@ -3107,7 +3161,7 @@
     "min": 0,
     "max": 1
   },
-  "vore": {
+  "vampire": {
     "type": "tag",
     "choices": [
       0,
@@ -3116,7 +3170,7 @@
     "min": 0,
     "max": 1
   },
-  "vampire": {
+  "vore": {
     "type": "tag",
     "choices": [
       0,
@@ -3143,7 +3197,7 @@
     "min": 0,
     "max": 1
   },
-  "sissification": {
+  "bi": {
     "type": "tag",
     "choices": [
       0,
@@ -3152,7 +3206,7 @@
     "min": 0,
     "max": 1
   },
-  "bi": {
+  "sissification": {
     "type": "tag",
     "choices": [
       0,
@@ -3188,15 +3242,6 @@
     "min": 0,
     "max": 1
   },
-  "pain play": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "masochism word": {
     "type": "tag",
     "choices": [
@@ -3207,6 +3252,15 @@
     "max": 1
   },
   "old and young": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "netorase": {
     "type": "tag",
     "choices": [
       0,
@@ -3287,15 +3341,6 @@
     "min": 0,
     "max": 1
   },
-  "age play": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "playboy": {
     "type": "tag",
     "choices": [
@@ -3314,7 +3359,7 @@
     "min": 0,
     "max": 1
   },
-  "power dynamics": {
+  "worms": {
     "type": "tag",
     "choices": [
       0,
@@ -3323,7 +3368,7 @@
     "min": 0,
     "max": 1
   },
-  "worms": {
+  "coercive sex": {
     "type": "tag",
     "choices": [
       0,
@@ -3386,7 +3431,7 @@
     "min": 0,
     "max": 1
   },
-  "netorase": {
+  "power dynamics": {
     "type": "tag",
     "choices": [
       0,
@@ -3441,6 +3486,15 @@
     "max": 1
   },
   "femboy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "violent sex": {
     "type": "tag",
     "choices": [
       0,
@@ -3620,7 +3674,25 @@
     "min": 0,
     "max": 1
   },
+  "partner is stolen": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "enema play": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "secret affair": {
     "type": "tag",
     "choices": [
       0,
@@ -3962,7 +4034,7 @@
     "min": 0,
     "max": 1
   },
-  "necrophilia": {
+  "gacha": {
     "type": "tag",
     "choices": [
       0,
@@ -3971,7 +4043,7 @@
     "min": 0,
     "max": 1
   },
-  "gacha": {
+  "necrophilia": {
     "type": "tag",
     "choices": [
       0,
@@ -4007,7 +4079,25 @@
     "min": 0,
     "max": 1
   },
+  "open relationship": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
   "fisting": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "manipulative sex": {
     "type": "tag",
     "choices": [
       0,
@@ -4125,6 +4215,15 @@
     "max": 1
   },
   "yaoi": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1
+  },
+  "swap partners": {
     "type": "tag",
     "choices": [
       0,
@@ -4439,15 +4538,6 @@
     "min": 0,
     "max": 1
   },
-  "swap partners": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1
-  },
   "only one naked": {
     "type": "tag",
     "choices": [
@@ -4519,6 +4609,14 @@
     ],
     "min": 0,
     "max": 1
+  },
+  "insomnia": {
+    "type": "tag",
+    "choices": [
+      0
+    ],
+    "min": 0,
+    "max": 0
   },
   "joi": {
     "type": "tag",
