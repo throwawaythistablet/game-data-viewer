@@ -31,7 +31,7 @@ GDV.controller.updateThumbnails = function(thumbnails, fileName) {
 
 GDV.controller.updateGameFolder = async function(gamesFolderHandle) {
     GDV.state.setGamesFolderHandle(gamesFolderHandle)
-    const extraFolder = await gamesFolderHandle.getDirectoryHandle('ZZZ_EXTRA_FILES');
+    const extraFolder = await gamesFolderHandle.getDirectoryHandle('ZZZ_TOOL_FILES');
     const localWebFolder = await extraFolder.getDirectoryHandle('game-data-viewer');
     dataFolderHandle = await localWebFolder.getDirectoryHandle('data');
 
