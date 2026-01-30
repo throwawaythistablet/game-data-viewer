@@ -2207,7 +2207,7 @@
     "min": 0,
     "max": 1
   },
-  "alcohol use": {
+  "furry": {
     "type": "tag",
     "choices": [
       0,
@@ -2216,7 +2216,7 @@
     "min": 0,
     "max": 1
   },
-  "furry": {
+  "alcohol use": {
     "type": "tag",
     "choices": [
       0,
