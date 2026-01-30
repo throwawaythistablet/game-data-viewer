@@ -41,7 +41,7 @@ async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
     const parsedData = await parseAndFilterCsv(file, totalSize, preFilters);
 
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
-        GDV.utils.reportHardWarning('No rows loaded', 'The search did not produce any rows after applying the prefilters.', context = { file, preFilters } );
+        GDV.utils.reportHardWarning('No results were found.', 'The search did not produce any rows after applying the prefilters.', context = { file, preFilters } );
         return;
     }
 
