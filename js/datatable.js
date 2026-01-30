@@ -264,7 +264,7 @@ function buildThumbnailColumn() {
     if (!activeThumbnails) return null;
 
     return {
-        title: 'Image',
+        title: 'preview_images',
         data: '__thumbnail__',
         orderable: false,
         searchable: false,
@@ -362,6 +362,11 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
             }
             else if (col.data === '__thumbnail__') {
                 td.innerHTML = col.render(null, 'display', rowData);
+            }
+            else if (col.data === 'site_std_version') {
+                const rd = rowData[col.data];
+                const trimmed =  typeof rd === 'string' && rd.length > 19 ? rd.slice(0, 19) + '…' : rd;
+                td.innerHTML = renderCellValue(trimmed, col.data);
             }
             else {
                 td.innerHTML = renderCellValue(rowData[col.data], col.data);

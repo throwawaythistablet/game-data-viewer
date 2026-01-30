@@ -40,6 +40,13 @@
     "max": 1743,
     "description": "Number of ratings submitted on the site."
   },
+  "play_time_hours": {
+    "type": "float",
+    "choices": [],
+    "min": 0.0,
+    "max": 240.0,
+    "description": "Estimated time to play the game, in hours."
+  },
   "engine": {
     "type": "str",
     "choices": [
@@ -71,13 +78,6 @@
     "type": "str",
     "choices": [],
     "description": "The version string as listed on the site."
-  },
-  "play_time_hours": {
-    "type": "float",
-    "choices": [],
-    "min": 0.0,
-    "max": 240.0,
-    "description": "Estimated time to play the game, in hours."
   },
   "site_last_update_date": {
     "type": "str",
