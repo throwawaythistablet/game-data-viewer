@@ -76,7 +76,7 @@
     "type": "float",
     "choices": [],
     "min": 0.0,
-    "max": 1000000001.0,
+    "max": 240.0,
     "description": "Estimated time to play the game, in hours."
   },
   "site_last_update_date": {
