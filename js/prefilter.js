@@ -377,11 +377,10 @@ function resetPrefilters(form) {
 function filterPrefilterSections(searchText) {
     searchText = searchText.trim();
     const sections = document.querySelectorAll('#prefilterOverlay .prefilter-section');
-    const patterns = GDV.state.getTagFullPatterns();
 
     sections.forEach(section => {
         const colName = section.querySelector('h3')?.textContent || '';
-        section.style.display = sectionMatchesSearch(colName, searchText, patterns) ? '' : 'none';
+        section.style.display = sectionMatchesSearch(colName, searchText) ? '' : 'none';
     });
 }
 
@@ -514,29 +513,29 @@ function bindActivePrefilterRemoveButtons(form) {
     });
 }
 
-function sectionMatchesSearch(colName, searchText, patterns) {
-    if (!searchText) return true; // empty search shows everything
+function sectionMatchesSearch(colName, searchText) {
+    if (!searchText) return true;
 
     const lowerSearch = searchText.toLowerCase();
 
-    // 1. Fastest check: does the column title include the search text?
+    // Match column name
     if (colName.toLowerCase().includes(lowerSearch)) return true;
 
-    const regexStr = patterns[colName];
-    if (!regexStr) return false; // no regex to check
+    // Match description if available
+    const description = GDV.state.getActiveColumnDetails()?.[colName]?.description;
+    if (description && description.toLowerCase().includes(lowerSearch)) return true;
 
-    // 2. Check if the regex string itself contains the search text
+    // Match regex patterns
+    const regexStr = GDV.state.getTagFullPatterns()?.[colName];
+    if (!regexStr) return false;
     if (regexStr.toLowerCase().includes(lowerSearch)) return true;
 
-    // 3. Only now apply the actual regex to the search text
     try {
-        const regex = new RegExp(regexStr, 'i'); // case-insensitive
-        if (regex.test(searchText)) return true;
+        if (new RegExp(regexStr, 'i').test(searchText)) return true;
     } catch (err) {
         GDV.utils.reportSilentWarning('Invalid Regex', `Column: "${colName}" contains an invalid regex pattern.`, err, { regexStr });
     }
 
-    // 4. No match
     return false;
 }
 
