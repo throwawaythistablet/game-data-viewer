@@ -168,6 +168,7 @@ function createPrefilterGridFromColumnDetails(columnDetails, prefill = {}) {
 function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
     const section = document.createElement('section');
     section.className = 'prefilter-section';
+    section.title = createToolTipText(col);
 
     const title = document.createElement('h3');
     title.textContent = col;
@@ -190,7 +191,6 @@ function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
 function createTagFilter(name, prefill = null) {
     const container = document.createElement('div');
     container.className = 'prefilter-tag-group';
-    container.title = createTagToolTipText(name);
     
     const checkedValues = prefill?.choices || [];
 
@@ -410,10 +410,10 @@ function updateActivePrefiltersSummary(form) {
 
         const span = document.createElement('span');
         span.className = 'prefilter-active-item';
+        span.title = createToolTipText(col);
         span.dataset.col = col;
         span.dataset.type = type;
         span.innerHTML = `${text} <button type="button" class="prefilter-remove-btn">×</button>`;
-        appendToolTipText(span, col, val);
         items.push(span);
     }
 
@@ -453,8 +453,8 @@ function renderMainPagePrefiltersPanel() {
 
         const span = document.createElement('span');
         span.className = 'prefilter-active-item';
+        span.title = createToolTipText(col);
         span.textContent = text;
-        appendToolTipText(span, col, val);
         container.appendChild(span);
     }
 }
@@ -611,15 +611,14 @@ function processTextPrefilters(form, preFilter) {
     }
 }
 
-function appendToolTipText(span, col, val) {
-    if (val.type === 'tag') {
-        span.title = createTagToolTipText(col)
-    }
-}
+function createToolTipText(colName) {
+    const description = GDV.state.getActiveColumnDetails()?.[colName]?.description || '';
+    const regex = GDV.state.getTagFullPatterns()?.[colName];
+    const regexDesc = regex ? `Regex pattern:\n${regex}` : ''
 
-function createTagToolTipText(tagName) {
-    const regex = GDV.state.getTagFullPatterns()?.[tagName];
-    return regex ? `Regex pattern:\n${regex}` : "";
+    return [description, regexDesc]
+        .filter(Boolean)
+        .join('\n');
 }
 
 })();
