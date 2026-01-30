@@ -96,6 +96,16 @@ GDV.datatable.resetAllFilters = async function() {
     await GDV.loading.finishLoading();
 }
 
+GDV.datatable.createToolTipText = function(colName) {
+    const description = GDV.state.getActiveColumnDetails()?.[colName]?.description || '';
+    const regex = GDV.state.getTagFullPatterns()?.[colName];
+    const regexDesc = regex ? `Regex pattern:\n${regex}` : ''
+
+    return [description, regexDesc]
+        .filter(Boolean)
+        .join('\n');
+}
+
 function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
@@ -252,7 +262,7 @@ function buildViewImagesColumn(keys) {
     if (!keys.includes('location')) return null;
 
     return {
-        title: 'View Images',
+        title: '',
         data: '__view_images__',
         orderable: false,
         searchable: false,
@@ -264,7 +274,7 @@ function buildThumbnailColumn() {
     if (!activeThumbnails) return null;
 
     return {
-        title: 'preview_images',
+        title: '',
         data: '__thumbnail__',
         orderable: false,
         searchable: false,
@@ -642,6 +652,8 @@ function addRangeFilter(th, column, colDef) {
 async function addSortingControls(api, dt) {
     csvTableElement.find('thead tr:first-child th').each(async function (index) {
         const th = $(this);
+
+        if (keyColumnIndex && index < keyColumnIndex) return;
 
         // Only add buttons once
         if (!th.find('.sort-asc').length) {

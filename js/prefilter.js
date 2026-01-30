@@ -168,7 +168,7 @@ function createPrefilterGridFromColumnDetails(columnDetails, prefill = {}) {
 function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
     const section = document.createElement('section');
     section.className = 'prefilter-section';
-    section.title = createToolTipText(col);
+    section.title = GDV.datatable.createToolTipText(col);
 
     const title = document.createElement('h3');
     title.textContent = col;
@@ -410,7 +410,7 @@ function updateActivePrefiltersSummary(form) {
 
         const span = document.createElement('span');
         span.className = 'prefilter-active-item';
-        span.title = createToolTipText(col);
+        span.title = GDV.datatable.createToolTipText(col);
         span.dataset.col = col;
         span.dataset.type = type;
         span.innerHTML = `${text} <button type="button" class="prefilter-remove-btn">×</button>`;
@@ -453,7 +453,7 @@ function renderMainPagePrefiltersPanel() {
 
         const span = document.createElement('span');
         span.className = 'prefilter-active-item';
-        span.title = createToolTipText(col);
+        span.title = GDV.datatable.createToolTipText(col);
         span.textContent = text;
         container.appendChild(span);
     }
@@ -609,16 +609,6 @@ function processTextPrefilters(form, preFilter) {
         if (!val) continue;
         preFilter[input.name] = { text: [val] };
     }
-}
-
-function createToolTipText(colName) {
-    const description = GDV.state.getActiveColumnDetails()?.[colName]?.description || '';
-    const regex = GDV.state.getTagFullPatterns()?.[colName];
-    const regexDesc = regex ? `Regex pattern:\n${regex}` : ''
-
-    return [description, regexDesc]
-        .filter(Boolean)
-        .join('\n');
 }
 
 })();

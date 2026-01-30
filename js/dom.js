@@ -38,6 +38,7 @@ GDV.dom.setControPanelGridAsInvisible = function() {
 GDV.dom.getCsvTableElement = function() {
     return csvTableElement;
 }
+
 GDV.dom.bindTableSortingButtons = function(dt) {
     // Attach click handlers (if not already attached)
     if (!csvTableElement.data('sortingButtonsBound')) {
