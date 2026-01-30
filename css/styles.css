@@ -10,6 +10,7 @@
 
     --text-main: #e0e0e0;
     --text-muted: #a0a0a0;
+    --text-subtle: #555555;
 
     --border-subtle: #333;
     --border-strong: #444;
@@ -33,6 +34,7 @@ body.light-theme {
 
     --text-main: #212529;
     --text-muted: #6c757d;
+    --text-subtle: #c0c0c0;
 
     --border-subtle: #ced4da;
     --border-strong: #adb5bd;
@@ -797,6 +799,13 @@ th .sort-desc:hover {
     box-sizing: border-box;
 }
 
+.prefilter-footer {
+    margin-top: auto;
+    align-self: flex-end;
+    font-size: 12px;
+    color: var(--text-subtle);
+}
+
 .prefilter-values {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -810,7 +819,6 @@ th .sort-desc:hover {
 .prefilter-box {
     background: var(--bg-elevated);
     color: var(--text-main);
-    border: 1px solid var(--border-subtle);
     max-height: 180px;
     overflow-y: auto;
     padding: 4px;

@@ -96,7 +96,7 @@ GDV.datatable.resetAllFilters = async function() {
     await GDV.loading.finishLoading();
 }
 
-GDV.datatable.createToolTipText = function(colName) {
+GDV.datatable.getColumnDescription = function(colName) {
     const description = GDV.state.getActiveColumnDetails()?.[colName]?.description || '';
     const regex = GDV.state.getTagFullPatterns()?.[colName];
     const regexDesc = regex ? `Regex pattern:\n${regex}` : ''
@@ -104,6 +104,10 @@ GDV.datatable.createToolTipText = function(colName) {
     return [description, regexDesc]
         .filter(Boolean)
         .join('\n');
+}
+
+GDV.datatable.getColumnTagCount = function(colName) {
+    return GDV.state.getActiveColumnDetails()?.[colName]?.tag_count ?? null; 
 }
 
 function createTableColumns(parsedData) {
