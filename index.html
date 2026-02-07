@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Game Data Viewer</title>
+
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon.png">
+    <meta name="msapplication-TileImage" content="assets/images/favicon.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VBDXSGTNQZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-VBDXSGTNQZ');
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.6.2/css/colReorder.dataTables.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+
+<body>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.6.2/js/dataTables.colReorder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <script>
+
+        window.GDV = {
+            utils: {},
+            controller: {},
+            state: {},
+            helpNotice: {},
+            loading: {},
+            csvHandler: {},
+            datatable: {},
+            prefilter: {},
+            localImageViewer: {},
+            dom: {},
+        };
+
+    </script>
+
+
+    <div class="controls">
+        <div class="controls-header">
+            <h2 class="controls-title">
+                <img src="assets/images/favicon.png" alt="Game Data Viewer Icon" class="controls-title-icon">
+                Game Data Viewer
+            </h2>
+            <div class="btn-group" id="controlsButtonGroup">
+                <button id="themeToggleButton" class="btn btn-secondary" title="Toggle between light and dark theme"
+                    aria-label="Toggle theme between light and dark mode">🌙 Dark</button>
+
+                <button id="discussionButton" class="btn btn-secondary" title="Join the discussion about the tool"
+                    aria-label="Join the discussion about this tool">👥 Discussion</button>
+
+                <button id="feedbackButton" class="btn btn-secondary"
+                    title="Provide feedback or suggestions about the tool"
+                    aria-label="Provide feedback or suggestions about this tool">💬 Feedback</button>
+
+                <button id="tagPatternsButton" class="btn btn-secondary" title="View the full tag regex patterns"
+                    aria-label="View the full tag regex patterns">📄 Tag Patterns</button>
+
+                <button id="resetFiltersButton" class="btn btn-secondary"
+                    title="Reset all filters and sorting to their default state"
+                    aria-label="Reset all filters and sorting to default">🔄 Reset Column Filters</button>
+
+                <button id="searchButton" class="btn" title="Search the game data" aria-label="Search the game data">🔍
+                    Search</button>
+            </div>
+        </div>
+
+        <div class="controls-main-grid">
+            <div class="status-card">
+                <div class="btn-group">
+                    <input type="file" id="csvFile" accept=".csv" aria-hidden="true">
+                    <input type="file" id="columnDetailsFileInput" accept=".json" style="display:none"
+                        aria-hidden="true">
+
+                    <button id="fileButton" class="btn btn-secondary" style="flex:1"
+                        title="Select a CSV file to load into the table"
+                        aria-label="Select a CSV file to load into the table">📂 Select CSV</button>
+
+                    <button id="columnDetailsFileButton" class="btn btn-secondary" style="flex:1"
+                        title="Select a JSON file containing column details"
+                        aria-label="Select a JSON file containing column details">📑 Load Column Details</button>
+
+                    <button id="selectGamesFolderButton" class="btn" style="flex:1"
+                        title="Select the games folder containing your data files"
+                        aria-label="Select the games folder containing your data files">📁 Set Games Folder</button>
+
+                    <button id="controlsPinButton" class="btn btn-secondary" title="Pin the controls panel to stay open"
+                        aria-label="Pin the controls panel to stay open">📌</button>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded CSV:</span>
+                    <span id="csvFileDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded Column Details:</span>
+                    <span id="columnDetailsDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded tag patterns:</span>
+                    <span id="tagPatternsDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded column categories:</span>
+                    <span id="columnCategories" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded thumbnails:</span>
+                    <span id="thumbnailsDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Games Folder Path:</span>
+                    <span id="gamesFolderDisplay" class="controls-value">(Not Set)</span>
+                </div>
+            </div>
+
+            <div id="csvDropZone">
+                <span>Drop <strong>Analysis CSV</strong> here</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="mainPrefiltersPanelSection"></div>
+
+    <table id="csvTable" class="display"></table>
+
+    <div id="loadingOverlayElement" role="alertdialog" aria-labelledby="loadingOverlayLabel"
+        aria-describedby="loadingOverlayProgressText" aria-modal="true" style="display: none;">
+        <div id="loadingOverlayLabel">Loading Data...</div>
+        <div class="spinner" role="status" aria-live="polite" aria-label="Loading spinner"></div>
+        <div id="loadingOverlayProgressContainer" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+            aria-valuenow="0" aria-label="Loading progress">
+            <div id="loadingOverlayProgressBar"></div>
+            <span id="loadingOverlayProgressText">0%</span>
+        </div>
+        <button id="loadingOverlayStopButton" aria-label="Stop loading process">⏹ Stop</button>
+    </div>
+
+    <div id="previewOverlay">
+        <img id="previewImage" alt="preview">
+    </div>
+
+    <div id="localImagesModal" role="dialog" aria-labelledby="localImagesModalTitle" aria-modal="true"
+        aria-hidden="true" style="display: none;">
+        <div id="localImagesModalHeader">
+            <span id="localImagesModalTitle">Images</span>
+            <button class="btn" id="closeImageModal" aria-label="Close Images Modal">✕</button>
+        </div>
+        <div id="localImagesModalGrid" role="region" aria-label="Image gallery"></div>
+    </div>
+
+    <div id="localImagesOverlay" role="dialog" aria-modal="true" aria-hidden="true" style="display: none;">
+        <img id="localImagesOverlayImg" alt="Preview of selected image">
+    </div>
+
+
+    <script src="js/utils.js"></script>
+    <script src="js/helpNotice.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/dom.js"></script>
+    <script src="js/loading.js"></script>
+    <script src="js/csv-handler.js"></script>
+    <script src="js/datatable.js"></script>
+    <script src="js/prefilter/prefilter-utils.js"></script>
+    <script src="js/prefilter/prefilter-ui.js"></script>
+    <script src="js/prefilter/prefilter-inputs.js"></script>
+    <script src="js/local-image-viewer.js"></script>
+
+
+
+    <script>
+        GDV.controller.initialize()
+    </script>
+
+
+</body>
+
+</html>
