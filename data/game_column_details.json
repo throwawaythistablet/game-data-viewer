@@ -4,13 +4,6 @@
     "choices": [],
     "description": "Unique identifier for the game, includes the title and developer in brackets."
   },
-  "similarity_score": {
-    "type": "float",
-    "choices": [],
-    "min": 0,
-    "max": 100,
-    "description": "Numeric score representing the similarity of this game to the selected reference game, where 0 means no similarity and 100 means identical."
-  },
   "status": {
     "type": "str",
     "choices": [
@@ -51,7 +44,7 @@
     "type": "float",
     "choices": [],
     "min": 0.0,
-    "max": 240.0,
+    "max": 277.0,
     "description": "Estimated time to play the game, in hours."
   },
   "overall_sentiment": {
@@ -132,6 +125,25 @@
     ],
     "description": "Human-readable label for the content sentiment score."
   },
+  "gameplay_sentiment": {
+    "type": "float",
+    "choices": [],
+    "min": -100,
+    "max": 100,
+    "description": "Sentiment score reflecting opinions on the game’s mechanics, controls, level design, difficulty, and overall gameplay experience."
+  },
+  "gameplay_sentiment_label": {
+    "type": "str",
+    "choices": [
+      "2. Positive",
+      "3. Mildly Positive",
+      "4. Neutral",
+      "5. Mixed",
+      "6. No Data",
+      "7. Mildly Negative"
+    ],
+    "description": "Human-readable label for the gameplay sentiment score."
+  },
   "engine": {
     "type": "str",
     "choices": [
@@ -205,6 +217,26 @@
     ],
     "description": "Boolean flag indicating whether the game is censored (True/False)."
   },
+  "english": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 24262
+  },
+  "locations": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 19691
+  },
   "ass": {
     "type": "tag",
     "choices": [
@@ -213,7 +245,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 19484
+    "tag_count": 19499
+  },
+  "completed": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 18916
   },
   "gameplay": {
     "type": "tag",
@@ -223,7 +265,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 18748
+    "tag_count": 18751
   },
   "vagina": {
     "type": "tag",
@@ -233,7 +275,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 17293
+    "tag_count": 17304
   },
   "visual novel": {
     "type": "tag",
@@ -243,7 +285,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 17186
+    "tag_count": 17267
   },
   "tits": {
     "type": "tag",
@@ -253,7 +295,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 16891
+    "tag_count": 16906
   },
   "male protagonist": {
     "type": "tag",
@@ -263,7 +305,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 16824
+    "tag_count": 16823
+  },
+  "customization": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 16570
   },
   "site tag: male protagonist": {
     "type": "tag",
@@ -287,6 +339,16 @@
     "tag_count": 16341,
     "description": "Site tag from f95zone: 'vaginal sex'"
   },
+  "beautiful": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 16057
+  },
   "romance": {
     "type": "tag",
     "choices": [
@@ -295,7 +357,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 16026
+    "tag_count": 16047
   },
   "oral": {
     "type": "tag",
@@ -305,7 +367,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 15855
+    "tag_count": 15910
+  },
+  "fantasy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 15819
   },
   "animations": {
     "type": "tag",
@@ -315,7 +387,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 15803
+    "tag_count": 15806
   },
   "characters": {
     "type": "tag",
@@ -325,7 +397,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 15342
+    "tag_count": 15343
   },
   "oral sex": {
     "type": "tag",
@@ -345,7 +417,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 14860
+    "tag_count": 14861
   },
   "site tag: oral sex": {
     "type": "tag",
@@ -377,7 +449,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 12986
+    "tag_count": 13001
   },
   "multiple routes": {
     "type": "tag",
@@ -387,7 +459,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 12854
+    "tag_count": 12932
   },
   "site tag: 2dcg": {
     "type": "tag",
@@ -408,7 +480,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 12171
+    "tag_count": 12367
   },
   "family": {
     "type": "tag",
@@ -418,7 +490,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 12027
+    "tag_count": 12201
   },
   "cum": {
     "type": "tag",
@@ -428,7 +500,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 11729
+    "tag_count": 11735
   },
   "big ass": {
     "type": "tag",
@@ -438,7 +510,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 11472
+    "tag_count": 11474
   },
   "site tag: big ass": {
     "type": "tag",
@@ -470,17 +542,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 11074
-  },
-  "cumming inside": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 10273
+    "tag_count": 11078
   },
   "stylish": {
     "type": "tag",
@@ -490,7 +552,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10163
+    "tag_count": 10362
+  },
+  "cumming inside": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 10282
+  },
+  "character selection": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 10183
   },
   "simple": {
     "type": "tag",
@@ -500,9 +582,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10131
+    "tag_count": 10133
   },
-  "creampie": {
+  "skippable": {
     "type": "tag",
     "choices": [
       0,
@@ -510,17 +592,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10030
-  },
-  "renpy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 10006
+    "tag_count": 10092
   },
   "monster": {
     "type": "tag",
@@ -530,7 +602,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9966
+    "tag_count": 10037
+  },
+  "creampie": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 10036
+  },
+  "renpy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 10007
   },
   "money": {
     "type": "tag",
@@ -540,7 +632,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9808
+    "tag_count": 9919
   },
   "japanese themes": {
     "type": "tag",
@@ -550,7 +642,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9702
+    "tag_count": 9812
   },
   "anal": {
     "type": "tag",
@@ -560,7 +652,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9577
+    "tag_count": 9582
   },
   "adventure": {
     "type": "tag",
@@ -570,7 +662,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9533
+    "tag_count": 9544
   },
   "3d cg": {
     "type": "tag",
@@ -580,7 +672,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9439
+    "tag_count": 9444
   },
   "audio": {
     "type": "tag",
@@ -590,17 +682,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9412
-  },
-  "sensual": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 9392
+    "tag_count": 9415
   },
   "lore": {
     "type": "tag",
@@ -610,7 +692,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9356
+    "tag_count": 9385
+  },
+  "endings": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 9358
   },
   "site tag: creampie": {
     "type": "tag",
@@ -631,7 +723,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8876
+    "tag_count": 8902
   },
   "site tag: 3dcg": {
     "type": "tag",
@@ -644,6 +736,16 @@
     "tag_count": 8859,
     "description": "Site tag from f95zone: '3dcg'"
   },
+  "dick": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 8774
+  },
   "buggy": {
     "type": "tag",
     "choices": [
@@ -652,7 +754,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8754
+    "tag_count": 8759
   },
   "lgbt": {
     "type": "tag",
@@ -662,17 +764,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8699
-  },
-  "sci fi": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 8673
+    "tag_count": 8693
   },
   "abandoned": {
     "type": "tag",
@@ -682,9 +774,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8641
+    "tag_count": 8643
   },
-  "fantasy": {
+  "sensual": {
     "type": "tag",
     "choices": [
       0,
@@ -692,7 +784,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8532
+    "tag_count": 8565
   },
   "female protagonist": {
     "type": "tag",
@@ -702,17 +794,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8468
-  },
-  "porn": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 8331
+    "tag_count": 8503
   },
   "old person": {
     "type": "tag",
@@ -722,9 +804,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8298
+    "tag_count": 8379
   },
-  "masturbation": {
+  "porn": {
     "type": "tag",
     "choices": [
       0,
@@ -732,7 +814,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8262
+    "tag_count": 8329
   },
   "domination": {
     "type": "tag",
@@ -742,7 +824,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8249
+    "tag_count": 8314
+  },
+  "sci fi": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 8306
+  },
+  "masturbation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 8271
   },
   "music": {
     "type": "tag",
@@ -752,17 +854,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8111
-  },
-  "japanese game": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 8075
+    "tag_count": 8118
   },
   "weird": {
     "type": "tag",
@@ -772,7 +864,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8037
+    "tag_count": 8092
+  },
+  "japanese game": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 8082
   },
   "high quality": {
     "type": "tag",
@@ -782,7 +884,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8021
+    "tag_count": 8025
   },
   "combat": {
     "type": "tag",
@@ -792,7 +894,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7969
+    "tag_count": 7988
   },
   "school": {
     "type": "tag",
@@ -802,7 +904,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7926
+    "tag_count": 7986
+  },
+  "stalker": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7911
   },
   "teasing": {
     "type": "tag",
@@ -812,7 +924,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7901
+    "tag_count": 7907
   },
   "site tag: anal sex": {
     "type": "tag",
@@ -825,7 +937,7 @@
     "tag_count": 7899,
     "description": "Site tag from f95zone: 'anal sex'"
   },
-  "stalker": {
+  "bdsm": {
     "type": "tag",
     "choices": [
       0,
@@ -833,7 +945,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7862
+    "tag_count": 7869
   },
   "handjob": {
     "type": "tag",
@@ -845,7 +957,7 @@
     "max": 1,
     "tag_count": 7780
   },
-  "bdsm": {
+  "dark fantasy": {
     "type": "tag",
     "choices": [
       0,
@@ -853,7 +965,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7703
+    "tag_count": 7665
   },
   "corruption": {
     "type": "tag",
@@ -863,7 +975,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7652
+    "tag_count": 7658
   },
   "groping": {
     "type": "tag",
@@ -873,7 +985,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7590
+    "tag_count": 7596
+  },
+  "face": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7587
   },
   "2d": {
     "type": "tag",
@@ -885,16 +1007,6 @@
     "max": 1,
     "tag_count": 7583
   },
-  "face": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7581
-  },
   "rpg": {
     "type": "tag",
     "choices": [
@@ -903,17 +1015,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7569
-  },
-  "mom": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7399
+    "tag_count": 7573
   },
   "voiced": {
     "type": "tag",
@@ -923,7 +1025,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7399
+    "tag_count": 7509
+  },
+  "mom": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7441
   },
   "grindy": {
     "type": "tag",
@@ -933,7 +1045,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7364
+    "tag_count": 7407
   },
   "site tag: female protagonist": {
     "type": "tag",
@@ -954,27 +1066,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7354
-  },
-  "dark fantasy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7279
-  },
-  "rape": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7269
+    "tag_count": 7355
   },
   "religion": {
     "type": "tag",
@@ -984,37 +1076,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7209
-  },
-  "magic": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7193
-  },
-  "beautiful woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7122
-  },
-  "housing": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7118
+    "tag_count": 7342
   },
   "character archetypes": {
     "type": "tag",
@@ -1024,9 +1086,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7068
+    "tag_count": 7292
   },
-  "young": {
+  "rape": {
     "type": "tag",
     "choices": [
       0,
@@ -1034,9 +1096,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7041
+    "tag_count": 7270
   },
-  "neto genres": {
+  "magic": {
     "type": "tag",
     "choices": [
       0,
@@ -1044,9 +1106,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6966
+    "tag_count": 7268
   },
-  "model": {
+  "housing": {
     "type": "tag",
     "choices": [
       0,
@@ -1054,7 +1116,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6948
+    "tag_count": 7253
   },
   "occult": {
     "type": "tag",
@@ -1064,9 +1126,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6945
+    "tag_count": 7205
   },
-  "humor": {
+  "beautiful woman": {
     "type": "tag",
     "choices": [
       0,
@@ -1074,7 +1136,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6931
+    "tag_count": 7196
+  },
+  "young": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7130
   },
   "story focused": {
     "type": "tag",
@@ -1084,7 +1156,37 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6919
+    "tag_count": 7125
+  },
+  "neto genres": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6974
+  },
+  "model": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6949
+  },
+  "humor": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6943
   },
   "cartoon": {
     "type": "tag",
@@ -1094,17 +1196,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6890
-  },
-  "rape word": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 6879
+    "tag_count": 6938
   },
   "fetish": {
     "type": "tag",
@@ -1114,7 +1206,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6875
+    "tag_count": 6884
+  },
+  "rape word": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6880
   },
   "sandbox": {
     "type": "tag",
@@ -1124,7 +1226,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6846
+    "tag_count": 6847
   },
   "site tag: groping": {
     "type": "tag",
@@ -1148,16 +1250,6 @@
     "tag_count": 6827,
     "description": "Site tag from f95zone: 'handjob'"
   },
-  "simulator": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 6708
-  },
   "stripping": {
     "type": "tag",
     "choices": [
@@ -1166,7 +1258,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6672
+    "tag_count": 6715
+  },
+  "simulator": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6714
   },
   "drugs": {
     "type": "tag",
@@ -1176,17 +1278,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6611
-  },
-  "group sex": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 6555
+    "tag_count": 6658
   },
   "student": {
     "type": "tag",
@@ -1196,9 +1288,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6545
+    "tag_count": 6592
   },
-  "innocent": {
+  "group sex": {
     "type": "tag",
     "choices": [
       0,
@@ -1206,7 +1298,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6401
+    "tag_count": 6556
   },
   "erotic": {
     "type": "tag",
@@ -1216,7 +1308,37 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6370
+    "tag_count": 6455
+  },
+  "animals": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6454
+  },
+  "innocent": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6436
+  },
+  "translation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6411
   },
   "2d game": {
     "type": "tag",
@@ -1236,17 +1358,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6314
-  },
-  "animals": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 6259
+    "tag_count": 6320
   },
   "site tag: fantasy": {
     "type": "tag",
@@ -1258,6 +1370,56 @@
     "max": 1,
     "tag_count": 6224,
     "description": "Site tag from f95zone: 'fantasy'"
+  },
+  "night": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6156
+  },
+  "burning": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6128
+  },
+  "relationship focused": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6067
+  },
+  "background": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6065
+  },
+  "character focused": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6063
   },
   "site tag: teasing": {
     "type": "tag",
@@ -1289,7 +1451,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6024
+    "tag_count": 6001
+  },
+  "technological": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5893
   },
   "site tag: 2d game": {
     "type": "tag",
@@ -1302,6 +1474,16 @@
     "tag_count": 5886,
     "description": "Site tag from f95zone: '2d game'"
   },
+  "male and female": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5866
+  },
   "lesbian": {
     "type": "tag",
     "choices": [
@@ -1310,17 +1492,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5878
-  },
-  "technological": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 5875
+    "tag_count": 5828
   },
   "maps": {
     "type": "tag",
@@ -1330,7 +1502,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5729
+    "tag_count": 5632
   },
   "pregnancy": {
     "type": "tag",
@@ -1340,17 +1512,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5609
-  },
-  "background": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 5590
+    "tag_count": 5630
   },
   "site tag: japanese game": {
     "type": "tag",
@@ -1363,7 +1525,7 @@
     "tag_count": 5580,
     "description": "Site tag from f95zone: 'japanese game'"
   },
-  "male and female": {
+  "female and female": {
     "type": "tag",
     "choices": [
       0,
@@ -1371,7 +1533,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5527
+    "tag_count": 5573
+  },
+  "character design": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5561
   },
   "mystery": {
     "type": "tag",
@@ -1381,7 +1553,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5507
+    "tag_count": 5513
   },
   "site tag: group sex": {
     "type": "tag",
@@ -1402,27 +1574,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5421
-  },
-  "sex toys": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 5383
-  },
-  "multiple endings": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 5366
+    "tag_count": 5434
   },
   "god": {
     "type": "tag",
@@ -1432,9 +1584,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5366
+    "tag_count": 5430
   },
-  "porn game": {
+  "sex toys": {
     "type": "tag",
     "choices": [
       0,
@@ -1442,9 +1594,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5364
+    "tag_count": 5399
   },
-  "character design": {
+  "multiple endings": {
     "type": "tag",
     "choices": [
       0,
@@ -1452,7 +1604,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5344
+    "tag_count": 5388
   },
   "anime": {
     "type": "tag",
@@ -1462,7 +1614,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5342
+    "tag_count": 5375
+  },
+  "porn game": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5363
   },
   "male domination": {
     "type": "tag",
@@ -1472,7 +1634,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5334
+    "tag_count": 5336
   },
   "site tag: adventure": {
     "type": "tag",
@@ -1496,6 +1658,16 @@
     "tag_count": 5257,
     "description": "Site tag from f95zone: 'rape'"
   },
+  "toys": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5238
+  },
   "site tag: romance": {
     "type": "tag",
     "choices": [
@@ -1507,16 +1679,6 @@
     "tag_count": 5233,
     "description": "Site tag from f95zone: 'romance'"
   },
-  "toys": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 5174
-  },
   "voyeurism": {
     "type": "tag",
     "choices": [
@@ -1525,7 +1687,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5167
+    "tag_count": 5190
   },
   "rpg maker": {
     "type": "tag",
@@ -1535,7 +1697,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5085
+    "tag_count": 5084
+  },
+  "cute": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5059
   },
   "management": {
     "type": "tag",
@@ -1545,7 +1717,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5036
+    "tag_count": 5043
+  },
+  "thicc": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4980
+  },
+  "monster girl": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4931
   },
   "site tag: titfuck": {
     "type": "tag",
@@ -1558,16 +1750,6 @@
     "tag_count": 4924,
     "description": "Site tag from f95zone: 'titfuck'"
   },
-  "monster girl": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4921
-  },
   "harem": {
     "type": "tag",
     "choices": [
@@ -1576,17 +1758,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4905
-  },
-  "healthcare": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4876
+    "tag_count": 4906
   },
   "site tag: milf": {
     "type": "tag",
@@ -1599,6 +1771,26 @@
     "tag_count": 4875,
     "description": "Site tag from f95zone: 'milf'"
   },
+  "bondage": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4849
+  },
+  "point of view": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4835
+  },
   "penetration": {
     "type": "tag",
     "choices": [
@@ -1607,7 +1799,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4787
+    "tag_count": 4796
   },
   "linear storytelling": {
     "type": "tag",
@@ -1617,7 +1809,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4758
+    "tag_count": 4768
   },
   "demo": {
     "type": "tag",
@@ -1627,7 +1819,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4683
+    "tag_count": 4685
   },
   "mobile game": {
     "type": "tag",
@@ -1639,16 +1831,6 @@
     "max": 1,
     "tag_count": 4671
   },
-  "bondage": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4656
-  },
   "cosmic": {
     "type": "tag",
     "choices": [
@@ -1657,7 +1839,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4652
+    "tag_count": 4661
   },
   "collection": {
     "type": "tag",
@@ -1667,17 +1849,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4643
-  },
-  "humiliation": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4572
+    "tag_count": 4649
   },
   "virgin": {
     "type": "tag",
@@ -1687,7 +1859,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4570
+    "tag_count": 4585
+  },
+  "humiliation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4585
+  },
+  "emotional": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4566
   },
   "netorare": {
     "type": "tag",
@@ -1699,16 +1891,6 @@
     "max": 1,
     "tag_count": 4554
   },
-  "emotional": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4549
-  },
   "3d": {
     "type": "tag",
     "choices": [
@@ -1719,7 +1901,7 @@
     "max": 1,
     "tag_count": 4529
   },
-  "point of view": {
+  "bar": {
     "type": "tag",
     "choices": [
       0,
@@ -1727,7 +1909,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4521
+    "tag_count": 4491
   },
   "sound effects": {
     "type": "tag",
@@ -1737,7 +1919,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4513
+    "tag_count": 4482
   },
   "cheating": {
     "type": "tag",
@@ -1747,7 +1929,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4476
+    "tag_count": 4481
+  },
+  "female domination": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4481
   },
   "site tag: corruption": {
     "type": "tag",
@@ -1782,7 +1974,7 @@
     "tag_count": 4423,
     "description": "Site tag from f95zone: 'lesbian'"
   },
-  "bar": {
+  "dark themes": {
     "type": "tag",
     "choices": [
       0,
@@ -1790,7 +1982,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4400
+    "tag_count": 4408
   },
   "exhibitionism": {
     "type": "tag",
@@ -1800,7 +1992,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4390
+    "tag_count": 4397
   },
   "site tag: mobile game": {
     "type": "tag",
@@ -1834,6 +2026,16 @@
     "tag_count": 4368,
     "description": "Site tag from f95zone: 'sandbox'"
   },
+  "death": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4357
+  },
   "virtuous": {
     "type": "tag",
     "choices": [
@@ -1842,7 +2044,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4321
+    "tag_count": 4342
+  },
+  "slut": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4298
   },
   "shocking": {
     "type": "tag",
@@ -1854,6 +2066,26 @@
     "max": 1,
     "tag_count": 4261
   },
+  "dress up": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4255
+  },
+  "npc": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4247
+  },
   "multiple protagonist": {
     "type": "tag",
     "choices": [
@@ -1862,7 +2094,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4236
+    "tag_count": 4240
   },
   "incest": {
     "type": "tag",
@@ -1872,7 +2104,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4222
+    "tag_count": 4238
+  },
+  "submission": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4225
   },
   "site tag: voyeurism": {
     "type": "tag",
@@ -1895,26 +2137,6 @@
     "max": 1,
     "tag_count": 4192
   },
-  "npc": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4192
-  },
-  "dress up": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4177
-  },
   "site tag: censored": {
     "type": "tag",
     "choices": [
@@ -1926,16 +2148,6 @@
     "tag_count": 4176,
     "description": "Site tag from f95zone: 'censored'"
   },
-  "submission": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4163
-  },
   "mini games": {
     "type": "tag",
     "choices": [
@@ -1944,47 +2156,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4162
-  },
-  "corny": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4087
-  },
-  "city": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4079
-  },
-  "female domination": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4077
-  },
-  "big beautiful woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4038
+    "tag_count": 4164
   },
   "black people": {
     "type": "tag",
@@ -1994,9 +2166,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4029
+    "tag_count": 4158
   },
-  "slut": {
+  "corny": {
     "type": "tag",
     "choices": [
       0,
@@ -2004,7 +2176,107 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3979
+    "tag_count": 4134
+  },
+  "royalty": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4097
+  },
+  "beach": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4093
+  },
+  "city": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4089
+  },
+  "big beautiful woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4080
+  },
+  "insanity": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4079
+  },
+  "blowjob": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4021
+  },
+  "chapters": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3970
+  },
+  "colorful": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3969
+  },
+  "hardcore elements": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3967
+  },
+  "character creation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3950
   },
   "ugly": {
     "type": "tag",
@@ -2014,7 +2286,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3935
+    "tag_count": 3938
+  },
+  "softcore elements": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3930
+  },
+  "hair": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3930
   },
   "site tag: sex toys": {
     "type": "tag",
@@ -2027,26 +2319,6 @@
     "tag_count": 3921,
     "description": "Site tag from f95zone: 'sex toys'"
   },
-  "softcore elements": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3907
-  },
-  "hardcore elements": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3890
-  },
   "prostitution": {
     "type": "tag",
     "choices": [
@@ -2055,17 +2327,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3889
-  },
-  "hair": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3887
+    "tag_count": 3902
   },
   "site tag: male domination": {
     "type": "tag",
@@ -2078,7 +2340,7 @@
     "tag_count": 3880,
     "description": "Site tag from f95zone: 'male domination'"
   },
-  "repetitive": {
+  "dream": {
     "type": "tag",
     "choices": [
       0,
@@ -2086,7 +2348,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3854
+    "tag_count": 3869
   },
   "masochism": {
     "type": "tag",
@@ -2096,7 +2358,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3811
+    "tag_count": 3866
+  },
+  "repetitive": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3858
   },
   "site tag: monster": {
     "type": "tag",
@@ -2117,9 +2389,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3780
+    "tag_count": 3803
   },
-  "insanity": {
+  "camming": {
     "type": "tag",
     "choices": [
       0,
@@ -2127,37 +2399,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3773
-  },
-  "town": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3767
-  },
-  "atmospheric": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3758
-  },
-  "blowjob": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3748
+    "tag_count": 3790
   },
   "sadism": {
     "type": "tag",
@@ -2167,9 +2409,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3729
+    "tag_count": 3786
   },
-  "beach": {
+  "town": {
     "type": "tag",
     "choices": [
       0,
@@ -2177,7 +2419,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3709
+    "tag_count": 3769
+  },
+  "atmospheric": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3761
+  },
+  "life simulator": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3731
   },
   "spanking": {
     "type": "tag",
@@ -2187,9 +2449,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3664
+    "tag_count": 3702
   },
-  "lactation": {
+  "psychological": {
     "type": "tag",
     "choices": [
       0,
@@ -2197,17 +2459,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3635
-  },
-  "jealousy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3615
+    "tag_count": 3690
   },
   "sister": {
     "type": "tag",
@@ -2217,9 +2469,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3610
+    "tag_count": 3651
   },
-  "android character": {
+  "lactation": {
     "type": "tag",
     "choices": [
       0,
@@ -2227,7 +2479,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3593
+    "tag_count": 3649
+  },
+  "jealousy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3623
+  },
+  "demon": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3590
   },
   "site tag: rpg": {
     "type": "tag",
@@ -2240,7 +2512,7 @@
     "tag_count": 3589,
     "description": "Site tag from f95zone: 'rpg'"
   },
-  "life simulator": {
+  "healthcare": {
     "type": "tag",
     "choices": [
       0,
@@ -2248,7 +2520,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3486
+    "tag_count": 3485
+  },
+  "dad": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3485
   },
   "site tag: exhibitionism": {
     "type": "tag",
@@ -2261,16 +2543,6 @@
     "tag_count": 3482,
     "description": "Site tag from f95zone: 'exhibitionism'"
   },
-  "demon": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3479
-  },
   "flirting": {
     "type": "tag",
     "choices": [
@@ -2279,17 +2551,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3476
-  },
-  "sneak peek": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3413
+    "tag_count": 3480
   },
   "pervert character": {
     "type": "tag",
@@ -2299,9 +2561,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3400
+    "tag_count": 3462
   },
-  "dad": {
+  "sneak peek": {
     "type": "tag",
     "choices": [
       0,
@@ -2309,7 +2571,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3352
+    "tag_count": 3435
+  },
+  "android character": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3424
+  },
+  "gambling": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3383
   },
   "stereotypes": {
     "type": "tag",
@@ -2319,7 +2601,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3350
+    "tag_count": 3363
   },
   "myth": {
     "type": "tag",
@@ -2329,7 +2611,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3349
+    "tag_count": 3360
   },
   "hentai": {
     "type": "tag",
@@ -2339,7 +2621,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3336
+    "tag_count": 3347
   },
   "futa": {
     "type": "tag",
@@ -2349,7 +2631,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3297
+    "tag_count": 3299
+  },
+  "manipulative": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3289
   },
   "site tag: incest": {
     "type": "tag",
@@ -2370,7 +2662,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3255
+    "tag_count": 3261
   },
   "puzzle": {
     "type": "tag",
@@ -2380,27 +2672,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3242
-  },
-  "character customization": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3230
-  },
-  "psychological": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3213
+    "tag_count": 3243
   },
   "site tag: bdsm": {
     "type": "tag",
@@ -2421,7 +2693,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3177
+    "tag_count": 3182
   },
   "ahegao": {
     "type": "tag",
@@ -2431,7 +2703,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3143
+    "tag_count": 3169
   },
   "master": {
     "type": "tag",
@@ -2441,7 +2713,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3106
+    "tag_count": 3129
   },
   "site tag: virgin": {
     "type": "tag",
@@ -2473,7 +2745,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3060
+    "tag_count": 3073
   },
   "racial": {
     "type": "tag",
@@ -2483,7 +2755,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3055
+    "tag_count": 3054
   },
   "site tag: female domination": {
     "type": "tag",
@@ -2496,7 +2768,7 @@
     "tag_count": 3038,
     "description": "Site tag from f95zone: 'female domination'"
   },
-  "office": {
+  "trainer": {
     "type": "tag",
     "choices": [
       0,
@@ -2504,7 +2776,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2975
+    "tag_count": 3012
   },
   "coercion": {
     "type": "tag",
@@ -2514,7 +2786,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2975
+    "tag_count": 3000
+  },
+  "trans": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2966
   },
   "site tag: voiced": {
     "type": "tag",
@@ -2526,16 +2808,6 @@
     "max": 1,
     "tag_count": 2963,
     "description": "Site tag from f95zone: 'voiced'"
-  },
-  "trans": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2959
   },
   "multiple penetration": {
     "type": "tag",
@@ -2555,7 +2827,27 @@
     ],
     "min": 0,
     "max": 1,
+    "tag_count": 2918
+  },
+  "office": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
     "tag_count": 2916
+  },
+  "dating sim": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2908
   },
   "site tag: harem": {
     "type": "tag",
@@ -2567,16 +2859,6 @@
     "max": 1,
     "tag_count": 2908,
     "description": "Site tag from f95zone: 'harem'"
-  },
-  "dating sim": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2908
   },
   "footjob": {
     "type": "tag",
@@ -2596,7 +2878,37 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2845
+    "tag_count": 2869
+  },
+  "rage": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2839
+  },
+  "urination": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2820
+  },
+  "athletic": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2816
   },
   "site tag: ahegao": {
     "type": "tag",
@@ -2609,7 +2921,7 @@
     "tag_count": 2803,
     "description": "Site tag from f95zone: 'ahegao'"
   },
-  "athletic": {
+  "paranormal": {
     "type": "tag",
     "choices": [
       0,
@@ -2617,17 +2929,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2795
-  },
-  "urination": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2765
+    "tag_count": 2737
   },
   "turn based combat": {
     "type": "tag",
@@ -2638,16 +2940,6 @@
     "min": 0,
     "max": 1,
     "tag_count": 2732
-  },
-  "paranormal": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2719
   },
   "futa trans": {
     "type": "tag",
@@ -2677,17 +2969,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2653
-  },
-  "tentacles": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2624
+    "tag_count": 2655
   },
   "college": {
     "type": "tag",
@@ -2697,7 +2979,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2622
+    "tag_count": 2638
+  },
+  "tentacles": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2625
+  },
+  "drawing": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2612
   },
   "site tag: humiliation": {
     "type": "tag",
@@ -2718,17 +3020,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2580
-  },
-  "interracial": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2575
+    "tag_count": 2584
   },
   "site tag: school setting": {
     "type": "tag",
@@ -2741,6 +3033,16 @@
     "tag_count": 2574,
     "description": "Site tag from f95zone: 'school setting'"
   },
+  "interracial": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2574
+  },
   "sexual harassment": {
     "type": "tag",
     "choices": [
@@ -2749,7 +3051,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2568
+    "tag_count": 2573
+  },
+  "heroic": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2564
+  },
+  "kissing": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2555
   },
   "cosplay": {
     "type": "tag",
@@ -2759,7 +3081,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2551
+    "tag_count": 2550
   },
   "site tag: multiple penetration": {
     "type": "tag",
@@ -2772,6 +3094,16 @@
     "tag_count": 2544,
     "description": "Site tag from f95zone: 'multiple penetration'"
   },
+  "female creation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2536
+  },
   "threesome": {
     "type": "tag",
     "choices": [
@@ -2780,29 +3112,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2530
-  },
-  "kissing": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2528
+    "tag_count": 2531
   },
   "kinetic novel": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2520
-  },
-  "heroic": {
     "type": "tag",
     "choices": [
       0,
@@ -2823,6 +3135,16 @@
     "tag_count": 2503,
     "description": "Site tag from f95zone: 'pregnancy'"
   },
+  "female only": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2490
+  },
   "plot twist": {
     "type": "tag",
     "choices": [
@@ -2831,7 +3153,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2477
+    "tag_count": 2481
+  },
+  "dog": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2479
   },
   "survival": {
     "type": "tag",
@@ -2841,7 +3173,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2475
+    "tag_count": 2476
+  },
+  "feet": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2457
   },
   "site tag: cheating": {
     "type": "tag",
@@ -2854,26 +3196,6 @@
     "tag_count": 2454,
     "description": "Site tag from f95zone: 'cheating'"
   },
-  "dark themes": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2449
-  },
-  "foot": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2445
-  },
   "point and click": {
     "type": "tag",
     "choices": [
@@ -2882,17 +3204,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2382
-  },
-  "3d game": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2382
+    "tag_count": 2440
   },
   "harassment": {
     "type": "tag",
@@ -2902,7 +3214,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2379
+    "tag_count": 2386
+  },
+  "3d game": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2381
   },
   "blood": {
     "type": "tag",
@@ -2912,7 +3234,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2366
+    "tag_count": 2371
   },
   "modern": {
     "type": "tag",
@@ -2922,9 +3244,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2363
+    "tag_count": 2366
   },
-  "wife": {
+  "coming of age": {
     "type": "tag",
     "choices": [
       0,
@@ -2932,7 +3254,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2355
+    "tag_count": 2359
+  },
+  "shooter": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2358
+  },
+  "bitch": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2350
   },
   "nsfw": {
     "type": "tag",
@@ -2944,7 +3286,7 @@
     "max": 1,
     "tag_count": 2350
   },
-  "bitch": {
+  "cards": {
     "type": "tag",
     "choices": [
       0,
@@ -2952,7 +3294,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2318
+    "tag_count": 2346
+  },
+  "wife": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2345
+  },
+  "caught": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2337
   },
   "bath": {
     "type": "tag",
@@ -2962,7 +3324,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2317
+    "tag_count": 2321
+  },
+  "gay": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2316
   },
   "site tag: futa/trans": {
     "type": "tag",
@@ -2983,17 +3355,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2302
-  },
-  "childhood": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2267
+    "tag_count": 2303
   },
   "site tag: interracial": {
     "type": "tag",
@@ -3014,9 +3376,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2257
+    "tag_count": 2259
   },
-  "gay": {
+  "fashion": {
     "type": "tag",
     "choices": [
       0,
@@ -3024,7 +3386,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2249
+    "tag_count": 2239
   },
   "ai cg": {
     "type": "tag",
@@ -3034,7 +3396,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2221
+    "tag_count": 2227
   },
   "medieval": {
     "type": "tag",
@@ -3044,7 +3406,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2219
+    "tag_count": 2224
+  },
+  "cum on face": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2208
   },
   "site tag: parody": {
     "type": "tag",
@@ -3068,7 +3440,7 @@
     "tag_count": 2202,
     "description": "Site tag from f95zone: 'turn based combat'"
   },
-  "cum on face": {
+  "dungeon": {
     "type": "tag",
     "choices": [
       0,
@@ -3076,9 +3448,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2198
+    "tag_count": 2196
   },
-  "tutorial": {
+  "undead": {
     "type": "tag",
     "choices": [
       0,
@@ -3086,7 +3458,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2189
+    "tag_count": 2195
+  },
+  "power fantasy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2192
   },
   "site tag: combat": {
     "type": "tag",
@@ -3099,6 +3481,36 @@
     "tag_count": 2188,
     "description": "Site tag from f95zone: 'combat'"
   },
+  "cooking": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2187
+  },
+  "morning": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2186
+  },
+  "tutorial": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2184
+  },
   "cuckold": {
     "type": "tag",
     "choices": [
@@ -3107,7 +3519,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2177
+    "tag_count": 2175
   },
   "slow burn": {
     "type": "tag",
@@ -3127,7 +3539,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2164
+    "tag_count": 2169
   },
   "site tag: humor": {
     "type": "tag",
@@ -3140,7 +3552,7 @@
     "tag_count": 2161,
     "description": "Site tag from f95zone: 'humor'"
   },
-  "fashion": {
+  "teacher": {
     "type": "tag",
     "choices": [
       0,
@@ -3148,17 +3560,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2154
-  },
-  "undead": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2131
+    "tag_count": 2144
   },
   "site tag: tentacles": {
     "type": "tag",
@@ -3171,7 +3573,7 @@
     "tag_count": 2131,
     "description": "Site tag from f95zone: 'tentacles'"
   },
-  "teacher": {
+  "horror": {
     "type": "tag",
     "choices": [
       0,
@@ -3181,7 +3583,7 @@
     "max": 1,
     "tag_count": 2128
   },
-  "horror": {
+  "forest": {
     "type": "tag",
     "choices": [
       0,
@@ -3189,7 +3591,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2125
+    "tag_count": 2122
+  },
+  "exploitative sex": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2117
+  },
+  "enhancements": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2116
   },
   "site tag: dating sim": {
     "type": "tag",
@@ -3202,16 +3624,6 @@
     "tag_count": 2116,
     "description": "Site tag from f95zone: 'dating sim'"
   },
-  "exploitative sex": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2115
-  },
   "accident": {
     "type": "tag",
     "choices": [
@@ -3222,6 +3634,16 @@
     "max": 1,
     "tag_count": 2114
   },
+  "sexpionage": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2096
+  },
   "twins": {
     "type": "tag",
     "choices": [
@@ -3230,7 +3652,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2087
+    "tag_count": 2095
   },
   "mind control": {
     "type": "tag",
@@ -3250,7 +3672,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2071
+    "tag_count": 2073
+  },
+  "police": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2063
+  },
+  "alpha": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2045
   },
   "site tag: footjob": {
     "type": "tag",
@@ -3263,16 +3705,6 @@
     "tag_count": 2038,
     "description": "Site tag from f95zone: 'footjob'"
   },
-  "alpha": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2015
-  },
   "site tag: netorare": {
     "type": "tag",
     "choices": [
@@ -3284,16 +3716,6 @@
     "tag_count": 2013,
     "description": "Site tag from f95zone: 'netorare'"
   },
-  "forest": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1993
-  },
   "superpowers": {
     "type": "tag",
     "choices": [
@@ -3302,7 +3724,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1989
+    "tag_count": 1990
   },
   "daughter": {
     "type": "tag",
@@ -3312,7 +3734,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1968
+    "tag_count": 1981
+  },
+  "episodes": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1954
   },
   "site tag: 3d game": {
     "type": "tag",
@@ -3324,6 +3756,26 @@
     "max": 1,
     "tag_count": 1949,
     "description": "Site tag from f95zone: '3d game'"
+  },
+  "doll": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1941
+  },
+  "childhood": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1940
   },
   "site tag: simulator": {
     "type": "tag",
@@ -3344,7 +3796,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1924
+    "tag_count": 1926
   },
   "abduction": {
     "type": "tag",
@@ -3354,7 +3806,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1918
+    "tag_count": 1925
   },
   "site tag: spanking": {
     "type": "tag",
@@ -3367,7 +3819,7 @@
     "tag_count": 1909,
     "description": "Site tag from f95zone: 'spanking'"
   },
-  "sexpionage": {
+  "nerd": {
     "type": "tag",
     "choices": [
       0,
@@ -3375,17 +3827,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1870
-  },
-  "furry": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1870
+    "tag_count": 1900
   },
   "son": {
     "type": "tag",
@@ -3395,9 +3837,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1863
+    "tag_count": 1885
   },
-  "power fantasy": {
+  "furry": {
     "type": "tag",
     "choices": [
       0,
@@ -3405,7 +3847,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1842
+    "tag_count": 1875
   },
   "loli": {
     "type": "tag",
@@ -3417,6 +3859,16 @@
     "max": 1,
     "tag_count": 1842
   },
+  "alcohol use": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1817
+  },
   "bad ending": {
     "type": "tag",
     "choices": [
@@ -3427,7 +3879,7 @@
     "max": 1,
     "tag_count": 1812
   },
-  "high resolution": {
+  "teen": {
     "type": "tag",
     "choices": [
       0,
@@ -3435,7 +3887,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1790
+    "tag_count": 1799
+  },
+  "maid": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1794
+  },
+  "beta": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1788
   },
   "site tag: stripping": {
     "type": "tag",
@@ -3448,7 +3920,7 @@
     "tag_count": 1787,
     "description": "Site tag from f95zone: 'stripping'"
   },
-  "beta": {
+  "experiments": {
     "type": "tag",
     "choices": [
       0,
@@ -3458,7 +3930,7 @@
     "max": 1,
     "tag_count": 1783
   },
-  "alcohol use": {
+  "exclusive": {
     "type": "tag",
     "choices": [
       0,
@@ -3466,19 +3938,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1780
+    "tag_count": 1778
   },
-  "teen": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1775
-  },
-  "maid": {
+  "succubus": {
     "type": "tag",
     "choices": [
       0,
@@ -3499,6 +3961,16 @@
     "tag_count": 1768,
     "description": "Site tag from f95zone: 'ai cg'"
   },
+  "drink": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1760
+  },
   "mature man": {
     "type": "tag",
     "choices": [
@@ -3507,17 +3979,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1766
-  },
-  "succubus": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1755
+    "tag_count": 1759
   },
   "pagan": {
     "type": "tag",
@@ -3527,7 +3989,57 @@
     ],
     "min": 0,
     "max": 1,
+    "tag_count": 1756
+  },
+  "fan game": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
     "tag_count": 1750
+  },
+  "club": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1747
+  },
+  "only one female": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1728
+  },
+  "farm": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1723
+  },
+  "aunt": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1716
   },
   "trap": {
     "type": "tag",
@@ -3537,9 +4049,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1705
+    "tag_count": 1706
   },
-  "nerd": {
+  "business": {
     "type": "tag",
     "choices": [
       0,
@@ -3547,7 +4059,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1691
+    "tag_count": 1677
+  },
+  "village": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1676
   },
   "site tag: prostitution": {
     "type": "tag",
@@ -3560,16 +4082,6 @@
     "tag_count": 1671,
     "description": "Site tag from f95zone: 'prostitution'"
   },
-  "village": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1665
-  },
   "shower": {
     "type": "tag",
     "choices": [
@@ -3578,9 +4090,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1664
+    "tag_count": 1670
   },
-  "aunt": {
+  "nympho": {
     "type": "tag",
     "choices": [
       0,
@@ -3588,7 +4100,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1659
+    "tag_count": 1667
   },
   "site tag: sexual harassment": {
     "type": "tag",
@@ -3601,16 +4113,6 @@
     "tag_count": 1659,
     "description": "Site tag from f95zone: 'sexual harassment'"
   },
-  "nympho": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1655
-  },
   "bukkake": {
     "type": "tag",
     "choices": [
@@ -3619,7 +4121,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1628
+    "tag_count": 1629
+  },
+  "impregnation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1618
   },
   "site tag: point & click": {
     "type": "tag",
@@ -3632,16 +4144,6 @@
     "tag_count": 1609,
     "description": "Site tag from f95zone: 'point & click'"
   },
-  "forbidden": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1582
-  },
   "rich character": {
     "type": "tag",
     "choices": [
@@ -3650,9 +4152,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1577
+    "tag_count": 1607
   },
-  "impregnation": {
+  "forbidden": {
     "type": "tag",
     "choices": [
       0,
@@ -3660,37 +4162,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1575
-  },
-  "graphic violence": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1549
-  },
-  "wholesome": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1547
-  },
-  "shooter": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1542
+    "tag_count": 1586
   },
   "gift": {
     "type": "tag",
@@ -3700,9 +4172,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1535
+    "tag_count": 1577
   },
-  "html": {
+  "graphic violence": {
     "type": "tag",
     "choices": [
       0,
@@ -3710,9 +4182,29 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1527
+    "tag_count": 1564
   },
   "bestiality": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1559
+  },
+  "wholesome": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1546
+  },
+  "html": {
     "type": "tag",
     "choices": [
       0,
@@ -3740,7 +4232,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1510
+    "tag_count": 1511
+  },
+  "brothel": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1506
   },
   "site tag: gay": {
     "type": "tag",
@@ -3753,16 +4255,6 @@
     "tag_count": 1502,
     "description": "Site tag from f95zone: 'gay'"
   },
-  "brothel": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1499
-  },
   "site tag: sci-fi": {
     "type": "tag",
     "choices": [
@@ -3774,7 +4266,7 @@
     "tag_count": 1490,
     "description": "Site tag from f95zone: 'sci-fi'"
   },
-  "gambling": {
+  "nipples": {
     "type": "tag",
     "choices": [
       0,
@@ -3782,9 +4274,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1481
+    "tag_count": 1489
   },
-  "avoidable": {
+  "body modifications": {
     "type": "tag",
     "choices": [
       0,
@@ -3792,7 +4284,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1472
+    "tag_count": 1473
+  },
+  "multiple partners": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1470
   },
   "site tag: urination": {
     "type": "tag",
@@ -3823,7 +4325,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1442
+    "tag_count": 1443
   },
   "site tag: slave": {
     "type": "tag",
@@ -3844,7 +4346,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1434
+    "tag_count": 1433
   },
   "site tag: graphic violence": {
     "type": "tag",
@@ -3857,17 +4359,6 @@
     "tag_count": 1427,
     "description": "Site tag from f95zone: 'graphic violence'"
   },
-  "site tag: mind control": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1424,
-    "description": "Site tag from f95zone: 'mind control'"
-  },
   "site tag: furry": {
     "type": "tag",
     "choices": [
@@ -3879,7 +4370,28 @@
     "tag_count": 1424,
     "description": "Site tag from f95zone: 'furry'"
   },
+  "site tag: mind control": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1424,
+    "description": "Site tag from f95zone: 'mind control'"
+  },
   "big dick": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1408
+  },
+  "cult": {
     "type": "tag",
     "choices": [
       0,
@@ -3899,7 +4411,7 @@
     "max": 1,
     "tag_count": 1403
   },
-  "body modifications": {
+  "political": {
     "type": "tag",
     "choices": [
       0,
@@ -3907,7 +4419,37 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1388
+    "tag_count": 1399
+  },
+  "chat": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1395
+  },
+  "whipping": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1389
+  },
+  "existential": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1385
   },
   "slapping": {
     "type": "tag",
@@ -3917,17 +4459,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1377
-  },
-  "political": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1374
+    "tag_count": 1384
   },
   "gym": {
     "type": "tag",
@@ -3937,17 +4469,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1372
-  },
-  "creatures": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1372
+    "tag_count": 1379
   },
   "curse": {
     "type": "tag",
@@ -3957,7 +4479,47 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1364
+    "tag_count": 1377
+  },
+  "consensual": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1373
+  },
+  "creatures": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1373
+  },
+  "high resolution": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1363
+  },
+  "company": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1362
   },
   "site tag: transformation": {
     "type": "tag",
@@ -3981,26 +4543,6 @@
     "tag_count": 1353,
     "description": "Site tag from f95zone: 'bukkake'"
   },
-  "whipping": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1344
-  },
-  "childhood word": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1343
-  },
   "princess": {
     "type": "tag",
     "choices": [
@@ -4009,7 +4551,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1338
+    "tag_count": 1339
   },
   "site tag: puzzle": {
     "type": "tag",
@@ -4022,16 +4564,6 @@
     "tag_count": 1338,
     "description": "Site tag from f95zone: 'puzzle'"
   },
-  "dystopian": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1334
-  },
   "submissive": {
     "type": "tag",
     "choices": [
@@ -4041,6 +4573,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 1333
+  },
+  "dancing": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1322
   },
   "site tag: internal view": {
     "type": "tag",
@@ -4053,16 +4595,6 @@
     "tag_count": 1302,
     "description": "Site tag from f95zone: 'internal view'"
   },
-  "build a character": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1291
-  },
   "boyfriend": {
     "type": "tag",
     "choices": [
@@ -4072,6 +4604,26 @@
     "min": 0,
     "max": 1,
     "tag_count": 1288
+  },
+  "birth": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1288
+  },
+  "oviposition": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1286
   },
   "site tag: lactation": {
     "type": "tag",
@@ -4094,7 +4646,7 @@
     "max": 1,
     "tag_count": 1267
   },
-  "trainer": {
+  "disability": {
     "type": "tag",
     "choices": [
       0,
@@ -4102,17 +4654,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1265
-  },
-  "birth": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1252
+    "tag_count": 1243
   },
   "daz 3d": {
     "type": "tag",
@@ -4135,6 +4677,26 @@
     "tag_count": 1232,
     "description": "Site tag from f95zone: 'blackmail'"
   },
+  "mystic": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1230
+  },
+  "panties": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1230
+  },
   "blonde": {
     "type": "tag",
     "choices": [
@@ -4143,7 +4705,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1220
+    "tag_count": 1221
+  },
+  "island": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1205
   },
   "site tag: multiple protagonist": {
     "type": "tag",
@@ -4156,46 +4728,6 @@
     "tag_count": 1204,
     "description": "Site tag from f95zone: 'multiple protagonist'"
   },
-  "mystic": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1203
-  },
-  "island": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1197
-  },
-  "panties": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1196
-  },
-  "nipples": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1190
-  },
   "site tag: kinetic novel": {
     "type": "tag",
     "choices": [
@@ -4207,7 +4739,7 @@
     "tag_count": 1177,
     "description": "Site tag from f95zone: 'kinetic novel'"
   },
-  "aliens": {
+  "angel": {
     "type": "tag",
     "choices": [
       0,
@@ -4215,7 +4747,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1172
+    "tag_count": 1176
+  },
+  "aura": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1169
+  },
+  "ancestry": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1160
   },
   "dominant": {
     "type": "tag",
@@ -4225,7 +4777,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1154
+    "tag_count": 1156
   },
   "site tag: pov": {
     "type": "tag",
@@ -4238,6 +4790,16 @@
     "tag_count": 1147,
     "description": "Site tag from f95zone: 'pov'"
   },
+  "fan art": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1145
+  },
   "site tag: management": {
     "type": "tag",
     "choices": [
@@ -4249,6 +4811,46 @@
     "tag_count": 1145,
     "description": "Site tag from f95zone: 'management'"
   },
+  "aliens": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1143
+  },
+  "retro style": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1143
+  },
+  "bimbo": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1138
+  },
+  "cafe": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1133
+  },
   "possessed": {
     "type": "tag",
     "choices": [
@@ -4259,7 +4861,7 @@
     "max": 1,
     "tag_count": 1128
   },
-  "multiple partners": {
+  "addons": {
     "type": "tag",
     "choices": [
       0,
@@ -4267,47 +4869,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1127
-  },
-  "bimbo": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1125
-  },
-  "angel": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1120
-  },
-  "ancestry": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1119
-  },
-  "retro style": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1119
+    "tag_count": 1126
   },
   "sleep sex": {
     "type": "tag",
@@ -4318,6 +4880,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 1119
+  },
+  "props": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1117
   },
   "site tag: real porn": {
     "type": "tag",
@@ -4330,7 +4902,7 @@
     "tag_count": 1116,
     "description": "Site tag from f95zone: 'real porn'"
   },
-  "props": {
+  "punishment": {
     "type": "tag",
     "choices": [
       0,
@@ -4338,7 +4910,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1112
+    "tag_count": 1113
   },
   "site tag: drugs": {
     "type": "tag",
@@ -4350,6 +4922,16 @@
     "max": 1,
     "tag_count": 1109,
     "description": "Site tag from f95zone: 'drugs'"
+  },
+  "school girl": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1107
   },
   "achievements": {
     "type": "tag",
@@ -4372,36 +4954,6 @@
     "tag_count": 1103,
     "description": "Site tag from f95zone: 'text based'"
   },
-  "punishment": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1101
-  },
-  "school girl": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1100
-  },
-  "oviposition": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1098
-  },
   "light hearted": {
     "type": "tag",
     "choices": [
@@ -4410,7 +4962,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1095
+    "tag_count": 1099
   },
   "partner sharing": {
     "type": "tag",
@@ -4420,27 +4972,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1089
-  },
-  "addons": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1081
-  },
-  "cafe": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1079
+    "tag_count": 1096
   },
   "pet play": {
     "type": "tag",
@@ -4450,7 +4982,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1073
+    "tag_count": 1077
   },
   "creepy": {
     "type": "tag",
@@ -4460,7 +4992,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1066
+    "tag_count": 1074
   },
   "ghost": {
     "type": "tag",
@@ -4470,7 +5002,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1054
+    "tag_count": 1068
+  },
+  "pixel art": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1061
+  },
+  "huge tits": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1053
   },
   "platformer": {
     "type": "tag",
@@ -4482,7 +5034,7 @@
     "max": 1,
     "tag_count": 1053
   },
-  "huge tits": {
+  "shota": {
     "type": "tag",
     "choices": [
       0,
@@ -4490,7 +5042,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1048
+    "tag_count": 1039
   },
   "site tag: cosplay": {
     "type": "tag",
@@ -4503,7 +5055,7 @@
     "tag_count": 1036,
     "description": "Site tag from f95zone: 'cosplay'"
   },
-  "pixel art": {
+  "fan fiction": {
     "type": "tag",
     "choices": [
       0,
@@ -4511,7 +5063,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1026
+    "tag_count": 1029
   },
   "swinging": {
     "type": "tag",
@@ -4523,16 +5075,6 @@
     "max": 1,
     "tag_count": 1021
   },
-  "shota": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1019
-  },
   "gangbang": {
     "type": "tag",
     "choices": [
@@ -4541,7 +5083,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1006
+    "tag_count": 1009
   },
   "forgotten": {
     "type": "tag",
@@ -4552,6 +5094,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 999
+  },
+  "redhead": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 993
   },
   "site tag: horror": {
     "type": "tag",
@@ -4564,7 +5116,7 @@
     "tag_count": 992,
     "description": "Site tag from f95zone: 'horror'"
   },
-  "redhead": {
+  "goblin": {
     "type": "tag",
     "choices": [
       0,
@@ -4584,16 +5136,6 @@
     "max": 1,
     "tag_count": 985
   },
-  "goblin": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 985
-  },
   "hypnosis": {
     "type": "tag",
     "choices": [
@@ -4602,9 +5144,29 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 979
+    "tag_count": 983
   },
   "narcissism": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 973
+  },
+  "gore": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 970
+  },
+  "noon": {
     "type": "tag",
     "choices": [
       0,
@@ -4622,7 +5184,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 942
+    "tag_count": 949
+  },
+  "mistress": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 945
   },
   "good ending": {
     "type": "tag",
@@ -4632,7 +5204,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 937
+    "tag_count": 941
+  },
+  "ear play": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 938
+  },
+  "electric play": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 938
   },
   "single protagonist": {
     "type": "tag",
@@ -4642,17 +5234,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 925
-  },
-  "mods": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 922
+    "tag_count": 929
   },
   "breeding": {
     "type": "tag",
@@ -4662,7 +5244,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 920
+    "tag_count": 924
   },
   "ancient": {
     "type": "tag",
@@ -4674,16 +5256,6 @@
     "max": 1,
     "tag_count": 909
   },
-  "feminization": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 881
-  },
   "amateur": {
     "type": "tag",
     "choices": [
@@ -4692,9 +5264,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 874
+    "tag_count": 899
   },
-  "cumming outside": {
+  "tattoos": {
     "type": "tag",
     "choices": [
       0,
@@ -4702,9 +5274,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 867
+    "tag_count": 884
   },
-  "drug use": {
+  "feminization": {
     "type": "tag",
     "choices": [
       0,
@@ -4712,7 +5284,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 862
+    "tag_count": 882
   },
   "race": {
     "type": "tag",
@@ -4722,7 +5294,37 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 856
+    "tag_count": 878
+  },
+  "photography": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 874
+  },
+  "mods": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 873
+  },
+  "cumming outside": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 870
   },
   "bullying": {
     "type": "tag",
@@ -4732,7 +5334,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 855
+    "tag_count": 869
+  },
+  "cam girl": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 861
+  },
+  "engrish": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 861
   },
   "casual sex": {
     "type": "tag",
@@ -4742,7 +5364,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 854
+    "tag_count": 855
+  },
+  "drug use": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 851
   },
   "site tag: bestiality": {
     "type": "tag",
@@ -4765,16 +5397,6 @@
     "max": 1,
     "tag_count": 850
   },
-  "gore": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 850
-  },
   "site tag: sleep sex": {
     "type": "tag",
     "choices": [
@@ -4786,16 +5408,6 @@
     "tag_count": 849,
     "description": "Site tag from f95zone: 'sleep sex'"
   },
-  "photography": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 848
-  },
   "dildos": {
     "type": "tag",
     "choices": [
@@ -4804,17 +5416,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 845
-  },
-  "mistress": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 843
+    "tag_count": 846
   },
   "side scroller": {
     "type": "tag",
@@ -4834,7 +5436,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 832
+    "tag_count": 834
   },
   "molestation": {
     "type": "tag",
@@ -4844,9 +5446,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 817
+    "tag_count": 822
   },
-  "tattoos": {
+  "belly": {
     "type": "tag",
     "choices": [
       0,
@@ -4854,7 +5456,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 793
+    "tag_count": 817
+  },
+  "cloning": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 806
+  },
+  "defloration": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 796
   },
   "trans protagonist": {
     "type": "tag",
@@ -4865,6 +5487,36 @@
     "min": 0,
     "max": 1,
     "tag_count": 792
+  },
+  "charisma": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 774
+  },
+  "embarrassment": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 774
+  },
+  "curvy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 767
   },
   "site tag: futa/trans protagonist": {
     "type": "tag",
@@ -4877,6 +5529,16 @@
     "tag_count": 758,
     "description": "Site tag from f95zone: 'futa/trans protagonist'"
   },
+  "age play": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 753
+  },
   "site tag: superpowers": {
     "type": "tag",
     "choices": [
@@ -4888,26 +5550,6 @@
     "tag_count": 751,
     "description": "Site tag from f95zone: 'superpowers'"
   },
-  "virtual reality": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 743
-  },
-  "age play": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 738
-  },
   "cunnilingus": {
     "type": "tag",
     "choices": [
@@ -4916,7 +5558,47 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 736
+    "tag_count": 747
+  },
+  "cowgirl": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 746
+  },
+  "virtual reality": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 744
+  },
+  "vore": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 744
+  },
+  "spitting": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 739
   },
   "bi": {
     "type": "tag",
@@ -4926,9 +5608,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 730
+    "tag_count": 731
   },
-  "defloration": {
+  "brainrot": {
     "type": "tag",
     "choices": [
       0,
@@ -4936,17 +5618,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 727
-  },
-  "electric play": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 717
+    "tag_count": 716
   },
   "supernatural": {
     "type": "tag",
@@ -4958,7 +5630,7 @@
     "max": 1,
     "tag_count": 716
   },
-  "brainrot": {
+  "suffocation": {
     "type": "tag",
     "choices": [
       0,
@@ -4966,7 +5638,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 713
+    "tag_count": 709
+  },
+  "retarded": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 706
   },
   "site tag: side-scroller": {
     "type": "tag",
@@ -4979,16 +5661,6 @@
     "tag_count": 701,
     "description": "Site tag from f95zone: 'side-scroller'"
   },
-  "spitting": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 699
-  },
   "dirty talk": {
     "type": "tag",
     "choices": [
@@ -4997,7 +5669,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 695
+    "tag_count": 698
   },
   "sacrifice": {
     "type": "tag",
@@ -5017,7 +5689,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 691
+    "tag_count": 692
   },
   "night club": {
     "type": "tag",
@@ -5027,7 +5699,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 689
+    "tag_count": 690
   },
   "vampire": {
     "type": "tag",
@@ -5039,7 +5711,7 @@
     "max": 1,
     "tag_count": 684
   },
-  "vore": {
+  "pain play": {
     "type": "tag",
     "choices": [
       0,
@@ -5047,19 +5719,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 678
-  },
-  "belly": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 674
+    "tag_count": 676
   },
   "power dynamics": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 661
+  },
+  "army": {
     "type": "tag",
     "choices": [
       0,
@@ -5079,7 +5751,7 @@
     "max": 1,
     "tag_count": 656
   },
-  "army": {
+  "scat": {
     "type": "tag",
     "choices": [
       0,
@@ -5087,17 +5759,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 652
-  },
-  "accessories": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 648
+    "tag_count": 651
   },
   "avatar": {
     "type": "tag",
@@ -5107,7 +5769,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 647
+    "tag_count": 650
+  },
+  "accessories": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 649
   },
   "sissification": {
     "type": "tag",
@@ -5118,26 +5790,6 @@
     "min": 0,
     "max": 1,
     "tag_count": 636
-  },
-  "scat": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 631
-  },
-  "pain play": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 630
   },
   "site tag: loli": {
     "type": "tag",
@@ -5170,6 +5822,26 @@
     "max": 1,
     "tag_count": 620
   },
+  "invasion": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 620
+  },
+  "glasses": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 620
+  },
   "site tag: strategy": {
     "type": "tag",
     "choices": [
@@ -5181,7 +5853,7 @@
     "tag_count": 618,
     "description": "Site tag from f95zone: 'strategy'"
   },
-  "glasses": {
+  "playboy": {
     "type": "tag",
     "choices": [
       0,
@@ -5189,7 +5861,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 614
+    "tag_count": 617
   },
   "site tag: character creation": {
     "type": "tag",
@@ -5202,7 +5874,7 @@
     "tag_count": 608,
     "description": "Site tag from f95zone: 'character creation'"
   },
-  "asia": {
+  "shaving": {
     "type": "tag",
     "choices": [
       0,
@@ -5210,9 +5882,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 607
+    "tag_count": 606
   },
-  "invasion": {
+  "bush": {
     "type": "tag",
     "choices": [
       0,
@@ -5220,7 +5892,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 605
+    "tag_count": 602
   },
   "masochism word": {
     "type": "tag",
@@ -5230,7 +5902,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 600
+    "tag_count": 602
+  },
+  "libertine": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 601
   },
   "netorase": {
     "type": "tag",
@@ -5241,26 +5923,6 @@
     "min": 0,
     "max": 1,
     "tag_count": 600
-  },
-  "libertine": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 592
-  },
-  "shaving": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 592
   },
   "site tag: paranormal": {
     "type": "tag",
@@ -5283,7 +5945,7 @@
     "max": 1,
     "tag_count": 588
   },
-  "site tag: swinging": {
+  "asia": {
     "type": "tag",
     "choices": [
       0,
@@ -5291,8 +5953,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 578,
-    "description": "Site tag from f95zone: 'swinging'"
+    "tag_count": 581
   },
   "futa and female": {
     "type": "tag",
@@ -5304,6 +5965,17 @@
     "max": 1,
     "tag_count": 578
   },
+  "site tag: swinging": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 578,
+    "description": "Site tag from f95zone: 'swinging'"
+  },
   "immoral": {
     "type": "tag",
     "choices": [
@@ -5312,9 +5984,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 572
+    "tag_count": 577
   },
-  "asian": {
+  "worms": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 565
+  },
+  "incubus": {
     "type": "tag",
     "choices": [
       0,
@@ -5324,7 +6006,7 @@
     "max": 1,
     "tag_count": 564
   },
-  "bush": {
+  "farting": {
     "type": "tag",
     "choices": [
       0,
@@ -5335,16 +6017,6 @@
     "tag_count": 563
   },
   "fingering": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 557
-  },
-  "incubus": {
     "type": "tag",
     "choices": [
       0,
@@ -5365,7 +6037,7 @@
     "tag_count": 553,
     "description": "Site tag from f95zone: 'trainer'"
   },
-  "build a female": {
+  "break up": {
     "type": "tag",
     "choices": [
       0,
@@ -5375,7 +6047,7 @@
     "max": 1,
     "tag_count": 549
   },
-  "break up": {
+  "clothing damage": {
     "type": "tag",
     "choices": [
       0,
@@ -5384,6 +6056,26 @@
     "min": 0,
     "max": 1,
     "tag_count": 548
+  },
+  "bras": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 543
+  },
+  "tsundere": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 543
   },
   "playful": {
     "type": "tag",
@@ -5406,16 +6098,6 @@
     "tag_count": 542,
     "description": "Site tag from f95zone: 'trap'"
   },
-  "playboy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 541
-  },
   "site tag: no sexual content": {
     "type": "tag",
     "choices": [
@@ -5427,6 +6109,16 @@
     "tag_count": 541,
     "description": "Site tag from f95zone: 'no sexual content'"
   },
+  "asian": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 538
+  },
   "yuri": {
     "type": "tag",
     "choices": [
@@ -5436,6 +6128,26 @@
     "min": 0,
     "max": 1,
     "tag_count": 532
+  },
+  "rimjob": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 530
+  },
+  "bikini": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 529
   },
   "bull": {
     "type": "tag",
@@ -5447,16 +6159,6 @@
     "max": 1,
     "tag_count": 529
   },
-  "bikini": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 524
-  },
   "old and young": {
     "type": "tag",
     "choices": [
@@ -5465,9 +6167,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 516
+    "tag_count": 517
   },
-  "worms": {
+  "contraception": {
     "type": "tag",
     "choices": [
       0,
@@ -5485,29 +6187,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 511
-  },
-  "bras": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 507
-  },
-  "contraception": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 505
+    "tag_count": 512
   },
   "sadism word": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 503
+  },
+  "celebrities": {
     "type": "tag",
     "choices": [
       0,
@@ -5525,9 +6217,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 496
+    "tag_count": 498
   },
-  "tsundere": {
+  "goth": {
     "type": "tag",
     "choices": [
       0,
@@ -5535,7 +6227,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 490
+    "tag_count": 496
+  },
+  "insects": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 491
+  },
+  "cheat codes": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 491
   },
   "site tag: dilf": {
     "type": "tag",
@@ -5559,36 +6271,6 @@
     "tag_count": 487,
     "description": "Site tag from f95zone: 'shota'"
   },
-  "goth": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 480
-  },
-  "insects": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 477
-  },
-  "grandma": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 477
-  },
   "gloryhole": {
     "type": "tag",
     "choices": [
@@ -5609,6 +6291,16 @@
     "max": 1,
     "tag_count": 474,
     "description": "Site tag from f95zone: 'religion'"
+  },
+  "grandma": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 457
   },
   "photoshoot": {
     "type": "tag",
@@ -5638,7 +6330,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 449
+    "tag_count": 450
   },
   "ugly bastard": {
     "type": "tag",
@@ -5658,7 +6350,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 428
+    "tag_count": 434
+  },
+  "brown": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 434
+  },
+  "dice": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 431
   },
   "swallow": {
     "type": "tag",
@@ -5680,6 +6392,16 @@
     "max": 1,
     "tag_count": 425
   },
+  "arcade": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 423
+  },
   "violent sex": {
     "type": "tag",
     "choices": [
@@ -5688,9 +6410,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 421
+    "tag_count": 422
   },
-  "suffocation": {
+  "werewolf": {
     "type": "tag",
     "choices": [
       0,
@@ -5698,7 +6420,37 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 413
+    "tag_count": 418
+  },
+  "doggy style": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 416
+  },
+  "school boy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 415
+  },
+  "drowning": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 414
   },
   "vibrators": {
     "type": "tag",
@@ -5708,7 +6460,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 413
+    "tag_count": 414
   },
   "site tag: platformer": {
     "type": "tag",
@@ -5721,7 +6473,7 @@
     "tag_count": 410,
     "description": "Site tag from f95zone: 'platformer'"
   },
-  "arcade": {
+  "domme": {
     "type": "tag",
     "choices": [
       0,
@@ -5729,17 +6481,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 408
-  },
-  "werewolf": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 402
+    "tag_count": 409
   },
   "collar": {
     "type": "tag",
@@ -5749,7 +6491,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 399
+    "tag_count": 406
+  },
+  "small dick": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 406
+  },
+  "necrophilia": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 400
   },
   "site tag: shooter": {
     "type": "tag",
@@ -5772,7 +6534,7 @@
     "max": 1,
     "tag_count": 396
   },
-  "brown": {
+  "cock and ball torture": {
     "type": "tag",
     "choices": [
       0,
@@ -5780,17 +6542,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 391
-  },
-  "pegging": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 387
+    "tag_count": 395
   },
   "handholding": {
     "type": "tag",
@@ -5800,27 +6552,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 386
-  },
-  "school boy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 383
-  },
-  "cock and ball torture": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 383
+    "tag_count": 388
   },
   "punk genres": {
     "type": "tag",
@@ -5830,7 +6562,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 378
+    "tag_count": 379
+  },
+  "pegging": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 379
+  },
+  "plugs": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 376
   },
   "site tag: dystopian setting": {
     "type": "tag",
@@ -5843,7 +6595,27 @@
     "tag_count": 365,
     "description": "Site tag from f95zone: 'dystopian setting'"
   },
-  "rimjob": {
+  "abortion": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 364
+  },
+  "bald": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 364
+  },
+  "sounding": {
     "type": "tag",
     "choices": [
       0,
@@ -5853,26 +6625,6 @@
     "max": 1,
     "tag_count": 361
   },
-  "abortion": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 360
-  },
-  "plugs": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 358
-  },
   "tickling": {
     "type": "tag",
     "choices": [
@@ -5881,7 +6633,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 353
+    "tag_count": 357
+  },
+  "conquest": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 354
   },
   "site tag: vore": {
     "type": "tag",
@@ -5912,7 +6674,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 350
+    "tag_count": 352
   },
   "shemale": {
     "type": "tag",
@@ -5924,7 +6686,7 @@
     "max": 1,
     "tag_count": 349
   },
-  "sounding": {
+  "black and white": {
     "type": "tag",
     "choices": [
       0,
@@ -5932,7 +6694,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 348
+    "tag_count": 347
   },
   "site tag: twins": {
     "type": "tag",
@@ -5945,7 +6707,7 @@
     "tag_count": 346,
     "description": "Site tag from f95zone: 'twins'"
   },
-  "double penetration": {
+  "anus worship": {
     "type": "tag",
     "choices": [
       0,
@@ -5953,9 +6715,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 341
+    "tag_count": 344
   },
-  "small dick": {
+  "secret affair": {
     "type": "tag",
     "choices": [
       0,
@@ -5963,9 +6725,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 341
+    "tag_count": 337
   },
-  "bald": {
+  "choose your own adventure": {
     "type": "tag",
     "choices": [
       0,
@@ -5973,9 +6735,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 334
+    "tag_count": 331
   },
-  "domme": {
+  "divorce": {
     "type": "tag",
     "choices": [
       0,
@@ -5983,17 +6745,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 334
-  },
-  "black and white": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 333
+    "tag_count": 330
   },
   "bbc": {
     "type": "tag",
@@ -6005,6 +6757,16 @@
     "max": 1,
     "tag_count": 326
   },
+  "one male two females": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 322
+  },
   "site tag: sissification": {
     "type": "tag",
     "choices": [
@@ -6015,6 +6777,16 @@
     "max": 1,
     "tag_count": 320,
     "description": "Site tag from f95zone: 'sissification'"
+  },
+  "drone": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 319
   },
   "minimap": {
     "type": "tag",
@@ -6036,6 +6808,16 @@
     "max": 1,
     "tag_count": 313
   },
+  "casting": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 312
+  },
   "addiction": {
     "type": "tag",
     "choices": [
@@ -6044,9 +6826,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 309
+    "tag_count": 310
   },
-  "secret affair": {
+  "boy and girl": {
     "type": "tag",
     "choices": [
       0,
@@ -6054,9 +6836,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 309
+    "tag_count": 310
   },
-  "aura": {
+  "amazon": {
     "type": "tag",
     "choices": [
       0,
@@ -6064,7 +6846,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 307
+    "tag_count": 308
   },
   "site tag: scat": {
     "type": "tag",
@@ -6077,17 +6859,7 @@
     "tag_count": 307,
     "description": "Site tag from f95zone: 'scat'"
   },
-  "brunette": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 305
-  },
-  "amazon": {
+  "fan service": {
     "type": "tag",
     "choices": [
       0,
@@ -6096,6 +6868,26 @@
     "min": 0,
     "max": 1,
     "tag_count": 298
+  },
+  "humanoid": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 298
+  },
+  "satire": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 295
   },
   "douchebag": {
     "type": "tag",
@@ -6107,7 +6899,7 @@
     "max": 1,
     "tag_count": 294
   },
-  "boy and girl": {
+  "crotch": {
     "type": "tag",
     "choices": [
       0,
@@ -6115,7 +6907,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 293
+    "tag_count": 288
+  },
+  "nobility": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 284
   },
   "grotesque": {
     "type": "tag",
@@ -6127,6 +6929,16 @@
     "max": 1,
     "tag_count": 282
   },
+  "cuddling": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 279
+  },
   "ai slop": {
     "type": "tag",
     "choices": [
@@ -6135,9 +6947,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 280
+    "tag_count": 279
   },
-  "strap on": {
+  "cum on mouth": {
     "type": "tag",
     "choices": [
       0,
@@ -6145,7 +6957,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 268
+    "tag_count": 274
   },
   "bunny girl": {
     "type": "tag",
@@ -6155,9 +6967,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 268
+    "tag_count": 273
   },
-  "one male two females": {
+  "strap on": {
     "type": "tag",
     "choices": [
       0,
@@ -6166,6 +6978,26 @@
     "min": 0,
     "max": 1,
     "tag_count": 267
+  },
+  "drama_queen": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 264
+  },
+  "cannibalism": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 263
   },
   "no ai": {
     "type": "tag",
@@ -6176,6 +7008,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 260
+  },
+  "haunted place": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 259
   },
   "brother and sister": {
     "type": "tag",
@@ -6197,16 +7039,6 @@
     "max": 1,
     "tag_count": 258
   },
-  "haunted place": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 257
-  },
   "trampling": {
     "type": "tag",
     "choices": [
@@ -6217,7 +7049,7 @@
     "max": 1,
     "tag_count": 256
   },
-  "drama_queen": {
+  "brunette": {
     "type": "tag",
     "choices": [
       0,
@@ -6225,9 +7057,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 256
+    "tag_count": 254
   },
-  "cum on mouth": {
+  "condom": {
     "type": "tag",
     "choices": [
       0,
@@ -6235,7 +7067,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 255
+    "tag_count": 253
+  },
+  "prank": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 252
+  },
+  "baddie": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 250
   },
   "yandere": {
     "type": "tag",
@@ -6257,7 +7109,7 @@
     "max": 1,
     "tag_count": 250
   },
-  "condom": {
+  "choking": {
     "type": "tag",
     "choices": [
       0,
@@ -6265,9 +7117,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 249
+    "tag_count": 247
   },
-  "baddie": {
+  "cum eating": {
     "type": "tag",
     "choices": [
       0,
@@ -6275,9 +7127,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 249
+    "tag_count": 246
   },
-  "nobility": {
+  "brazil": {
     "type": "tag",
     "choices": [
       0,
@@ -6285,9 +7137,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 249
+    "tag_count": 245
   },
-  "prank": {
+  "pony girl": {
     "type": "tag",
     "choices": [
       0,
@@ -6295,7 +7147,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 248
+    "tag_count": 243
+  },
+  "claws": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 243
   },
   "site tag: virtual reality": {
     "type": "tag",
@@ -6308,7 +7170,7 @@
     "tag_count": 243,
     "description": "Site tag from f95zone: 'virtual reality'"
   },
-  "cum eating": {
+  "armpit": {
     "type": "tag",
     "choices": [
       0,
@@ -6316,7 +7178,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 242
+    "tag_count": 243
   },
   "parasites": {
     "type": "tag",
@@ -6326,9 +7188,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 240
+    "tag_count": 242
   },
-  "armpit": {
+  "face fuck": {
     "type": "tag",
     "choices": [
       0,
@@ -6336,7 +7198,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 240
+    "tag_count": 238
   },
   "body changes": {
     "type": "tag",
@@ -6348,7 +7210,7 @@
     "max": 1,
     "tag_count": 237
   },
-  "face fuck": {
+  "board game": {
     "type": "tag",
     "choices": [
       0,
@@ -6357,6 +7219,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 237
+  },
+  "clowns": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 235
   },
   "edging": {
     "type": "tag",
@@ -6368,16 +7240,6 @@
     "max": 1,
     "tag_count": 235
   },
-  "brazil": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 234
-  },
   "menstruation": {
     "type": "tag",
     "choices": [
@@ -6386,7 +7248,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 226
+    "tag_count": 232
+  },
+  "shapeshifter": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 231
+  },
+  "fellatio": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 230
   },
   "futa protagonist": {
     "type": "tag",
@@ -6398,17 +7280,7 @@
     "max": 1,
     "tag_count": 223
   },
-  "pony girl": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 223
-  },
-  "shapeshifter": {
+  "lovecraft": {
     "type": "tag",
     "choices": [
       0,
@@ -6418,17 +7290,7 @@
     "max": 1,
     "tag_count": 222
   },
-  "fellatio": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 220
-  },
-  "lovecraft": {
+  "blender": {
     "type": "tag",
     "choices": [
       0,
@@ -6448,7 +7310,17 @@
     "max": 1,
     "tag_count": 217
   },
-  "choking": {
+  "enema play": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 217
+  },
+  "dick changes": {
     "type": "tag",
     "choices": [
       0,
@@ -6458,7 +7330,7 @@
     "max": 1,
     "tag_count": 215
   },
-  "saggy tits": {
+  "domestic violence": {
     "type": "tag",
     "choices": [
       0,
@@ -6466,9 +7338,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 200
+    "tag_count": 212
   },
-  "satire": {
+  "crossover": {
     "type": "tag",
     "choices": [
       0,
@@ -6476,37 +7348,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 199
-  },
-  "loss of humanity": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 197
-  },
-  "cheerleader": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 197
-  },
-  "in laws": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 195
+    "tag_count": 211
   },
   "two males one female": {
     "type": "tag",
@@ -6516,7 +7358,87 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 194
+    "tag_count": 205
+  },
+  "double anal penetration": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 205
+  },
+  "saggy tits": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 205
+  },
+  "partner is stolen": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 202
+  },
+  "coach": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 202
+  },
+  "swap partners": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 201
+  },
+  "loss of humanity": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 200
+  },
+  "cheerleader": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 198
+  },
+  "in laws": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 197
   },
   "black haired": {
     "type": "tag",
@@ -6536,9 +7458,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 192
+    "tag_count": 193
   },
-  "partner is stolen": {
+  "dark lord": {
     "type": "tag",
     "choices": [
       0,
@@ -6546,7 +7468,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 191
+    "tag_count": 187
   },
   "gacha": {
     "type": "tag",
@@ -6558,7 +7480,7 @@
     "max": 1,
     "tag_count": 184
   },
-  "enema play": {
+  "dark humor": {
     "type": "tag",
     "choices": [
       0,
@@ -6566,17 +7488,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 181
-  },
-  "necrophilia": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 179
+    "tag_count": 184
   },
   "site tag: possession": {
     "type": "tag",
@@ -6597,7 +7509,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 176
+    "tag_count": 177
   },
   "archery": {
     "type": "tag",
@@ -6607,7 +7519,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 175
+    "tag_count": 176
   },
   "pink haired": {
     "type": "tag",
@@ -6649,7 +7561,7 @@
     "max": 1,
     "tag_count": 168
   },
-  "manipulative sex": {
+  "pony boy": {
     "type": "tag",
     "choices": [
       0,
@@ -6659,6 +7571,16 @@
     "max": 1,
     "tag_count": 167
   },
+  "manipulative sex": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 166
+  },
   "fisting": {
     "type": "tag",
     "choices": [
@@ -6667,7 +7589,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 167
+    "tag_count": 166
+  },
+  "double penetration": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 166
   },
   "striptease": {
     "type": "tag",
@@ -6678,16 +7610,6 @@
     "min": 0,
     "max": 1,
     "tag_count": 164
-  },
-  "pony boy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 163
   },
   "infested": {
     "type": "tag",
@@ -6707,7 +7629,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 160
+    "tag_count": 161
   },
   "headpats": {
     "type": "tag",
@@ -6717,7 +7639,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 159
+    "tag_count": 160
   },
   "gender bender": {
     "type": "tag",
@@ -6729,6 +7651,16 @@
     "max": 1,
     "tag_count": 159
   },
+  "christmas": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 155
+  },
   "hellscape": {
     "type": "tag",
     "choices": [
@@ -6738,6 +7670,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 150
+  },
+  "bend over": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 149
   },
   "cross dressing": {
     "type": "tag",
@@ -6759,7 +7701,7 @@
     "max": 1,
     "tag_count": 148
   },
-  "bend over": {
+  "gothic": {
     "type": "tag",
     "choices": [
       0,
@@ -6767,19 +7709,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 148
+    "tag_count": 142
   },
   "white haired": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 141
-  },
-  "gothic": {
     "type": "tag",
     "choices": [
       0,
@@ -6799,7 +7731,7 @@
     "max": 1,
     "tag_count": 138
   },
-  "swap partners": {
+  "cuff": {
     "type": "tag",
     "choices": [
       0,
@@ -6809,7 +7741,7 @@
     "max": 1,
     "tag_count": 134
   },
-  "cuckquean": {
+  "dna": {
     "type": "tag",
     "choices": [
       0,
@@ -6817,9 +7749,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 131
+    "tag_count": 132
   },
-  "dark humor": {
+  "cuckquean": {
     "type": "tag",
     "choices": [
       0,
@@ -6837,7 +7769,27 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 121
+    "tag_count": 129
+  },
+  "cock worship": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 124
+  },
+  "eldritch": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 122
   },
   "body art": {
     "type": "tag",
@@ -6849,16 +7801,6 @@
     "max": 1,
     "tag_count": 121
   },
-  "eldritch": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 119
-  },
   "first kiss": {
     "type": "tag",
     "choices": [
@@ -6869,6 +7811,16 @@
     "max": 1,
     "tag_count": 118
   },
+  "old europe": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 117
+  },
   "small ass": {
     "type": "tag",
     "choices": [
@@ -6877,19 +7829,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 112
+    "tag_count": 115
   },
   "one night stand": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 112
-  },
-  "old europe": {
     "type": "tag",
     "choices": [
       0,
@@ -6907,9 +7849,39 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 109
+    "tag_count": 110
   },
   "omega": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 109
+  },
+  "gamma": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 108
+  },
+  "leash": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 107
+  },
+  "chinese": {
     "type": "tag",
     "choices": [
       0,
@@ -6929,26 +7901,6 @@
     "max": 1,
     "tag_count": 106
   },
-  "leash": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 102
-  },
-  "dark lord": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 102
-  },
   "cum on body": {
     "type": "tag",
     "choices": [
@@ -6957,7 +7909,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 102
+    "tag_count": 104
   },
   "big hands": {
     "type": "tag",
@@ -6967,7 +7919,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 99
+    "tag_count": 101
   },
   "brothel management": {
     "type": "tag",
@@ -6989,6 +7941,16 @@
     "max": 1,
     "tag_count": 96
   },
+  "blasphemy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 95
+  },
   "tower defense": {
     "type": "tag",
     "choices": [
@@ -6999,6 +7961,26 @@
     "max": 1,
     "tag_count": 95
   },
+  "male protagonist fucks": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 94
+  },
+  "escape room": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 94
+  },
   "beads": {
     "type": "tag",
     "choices": [
@@ -7007,7 +7989,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 95
+    "tag_count": 94
+  },
+  "fallen angel": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 94
   },
   "small penis humiliation": {
     "type": "tag",
@@ -7019,7 +8011,17 @@
     "max": 1,
     "tag_count": 92
   },
-  "fallen angel": {
+  "buttslut": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 92
+  },
+  "only one naked": {
     "type": "tag",
     "choices": [
       0,
@@ -7029,27 +8031,7 @@
     "max": 1,
     "tag_count": 91
   },
-  "blasphemy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 90
-  },
   "body fluids": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 90
-  },
-  "board game": {
     "type": "tag",
     "choices": [
       0,
@@ -7089,16 +8071,6 @@
     "max": 1,
     "tag_count": 88
   },
-  "cuff": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 86
-  },
   "nipple play": {
     "type": "tag",
     "choices": [
@@ -7107,17 +8079,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 84
-  },
-  "buttslut": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 84
+    "tag_count": 86
   },
   "hairy bush": {
     "type": "tag",
@@ -7139,16 +8101,6 @@
     "max": 1,
     "tag_count": 83
   },
-  "skinsuit": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 82
-  },
   "otome": {
     "type": "tag",
     "choices": [
@@ -7159,7 +8111,7 @@
     "max": 1,
     "tag_count": 82
   },
-  "gamma": {
+  "skinsuit": {
     "type": "tag",
     "choices": [
       0,
@@ -7167,7 +8119,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 77
+    "tag_count": 82
+  },
+  "delta": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 80
   },
   "balls suck": {
     "type": "tag",
@@ -7179,7 +8141,7 @@
     "max": 1,
     "tag_count": 75
   },
-  "delta": {
+  "queer": {
     "type": "tag",
     "choices": [
       0,
@@ -7188,6 +8150,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 73
+  },
+  "carnival": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 72
   },
   "piss drinking": {
     "type": "tag",
@@ -7198,16 +8170,6 @@
     "min": 0,
     "max": 1,
     "tag_count": 72
-  },
-  "queer": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 71
   },
   "site tag: necrophilia": {
     "type": "tag",
@@ -7230,7 +8192,27 @@
     "max": 1,
     "tag_count": 71
   },
-  "cock worship": {
+  "sigma": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 67
+  },
+  "emasculation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 66
+  },
+  "big nipples": {
     "type": "tag",
     "choices": [
       0,
@@ -7250,16 +8232,6 @@
     "max": 1,
     "tag_count": 65
   },
-  "big nipples": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 65
-  },
   "diaper play": {
     "type": "tag",
     "choices": [
@@ -7269,6 +8241,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 65
+  },
+  "dirty photo": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 63
   },
   "koikatu": {
     "type": "tag",
@@ -7280,7 +8262,7 @@
     "max": 1,
     "tag_count": 61
   },
-  "sigma": {
+  "driving simulator": {
     "type": "tag",
     "choices": [
       0,
@@ -7300,7 +8282,7 @@
     "max": 1,
     "tag_count": 59
   },
-  "emasculation": {
+  "deforce": {
     "type": "tag",
     "choices": [
       0,
@@ -7308,9 +8290,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 59
+    "tag_count": 55
   },
-  "driving simulator": {
+  "body attachments": {
     "type": "tag",
     "choices": [
       0,
@@ -7318,17 +8300,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 58
-  },
-  "only one naked": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 57
+    "tag_count": 54
   },
   "hairy pussy": {
     "type": "tag",
@@ -7360,6 +8332,36 @@
     "max": 1,
     "tag_count": 51
   },
+  "bubblegum": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 51
+  },
+  "castration": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 51
+  },
+  "cervix": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 50
+  },
   "breath play": {
     "type": "tag",
     "choices": [
@@ -7369,6 +8371,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 50
+  },
+  "body worship": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 49
   },
   "chikan": {
     "type": "tag",
@@ -7390,26 +8402,6 @@
     "max": 1,
     "tag_count": 45
   },
-  "castration": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 45
-  },
-  "cervix": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 45
-  },
   "smegma": {
     "type": "tag",
     "choices": [
@@ -7418,7 +8410,27 @@
     ],
     "min": 0,
     "max": 1,
+    "tag_count": 45
+  },
+  "zeta": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
     "tag_count": 44
+  },
+  "insomnia ": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 43
   },
   "non binary": {
     "type": "tag",
@@ -7430,7 +8442,7 @@
     "max": 1,
     "tag_count": 43
   },
-  "insomnia ": {
+  "kuudere": {
     "type": "tag",
     "choices": [
       0,
@@ -7438,7 +8450,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 39
+    "tag_count": 41
   },
   "branding": {
     "type": "tag",
@@ -7448,7 +8460,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 38
+    "tag_count": 40
   },
   "adrift": {
     "type": "tag",
@@ -7458,7 +8470,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 38
+    "tag_count": 39
   },
   "joi": {
     "type": "tag",
@@ -7470,7 +8482,7 @@
     "max": 1,
     "tag_count": 37
   },
-  "kuudere": {
+  "cult classic": {
     "type": "tag",
     "choices": [
       0,
@@ -7480,7 +8492,37 @@
     "max": 1,
     "tag_count": 36
   },
-  "armpit sex": {
+  "energy drain": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 35
+  },
+  "painslut": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 33
+  },
+  "dimensional travel": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 31
+  },
+  "bromance": {
     "type": "tag",
     "choices": [
       0,
@@ -7490,7 +8532,17 @@
     "max": 1,
     "tag_count": 29
   },
-  "bromance": {
+  "creampie cleanup": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 29
+  },
+  "armpit sex": {
     "type": "tag",
     "choices": [
       0,
@@ -7510,7 +8562,7 @@
     "max": 1,
     "tag_count": 28
   },
-  "creampie cleanup": {
+  "denial play": {
     "type": "tag",
     "choices": [
       0,
@@ -7518,37 +8570,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 28
-  },
-  "body worship": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 28
-  },
-  "zeta": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 27
-  },
-  "painslut": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 24
+    "tag_count": 25
   },
   "amazon position": {
     "type": "tag",
@@ -7560,6 +8582,26 @@
     "max": 1,
     "tag_count": 22
   },
+  "deep fake": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 22
+  },
+  "big clit": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 21
+  },
   "identity_theft": {
     "type": "tag",
     "choices": [
@@ -7570,7 +8612,7 @@
     "max": 1,
     "tag_count": 21
   },
-  "big clit": {
+  "ball worship": {
     "type": "tag",
     "choices": [
       0,
@@ -7579,6 +8621,16 @@
     "min": 0,
     "max": 1,
     "tag_count": 20
+  },
+  "deredere": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 19
   },
   "ai shoujo": {
     "type": "tag",
@@ -7590,7 +8642,7 @@
     "max": 1,
     "tag_count": 18
   },
-  "camel toe": {
+  "av idol": {
     "type": "tag",
     "choices": [
       0,
@@ -7600,7 +8652,17 @@
     "max": 1,
     "tag_count": 17
   },
-  "av idol": {
+  "entertainer": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 17
+  },
+  "camel toe": {
     "type": "tag",
     "choices": [
       0,
@@ -7620,7 +8682,7 @@
     "max": 1,
     "tag_count": 15
   },
-  "age regression": {
+  "hairy ass": {
     "type": "tag",
     "choices": [
       0,
@@ -7640,7 +8702,7 @@
     "max": 1,
     "tag_count": 14
   },
-  "double anal penetration": {
+  "age regression": {
     "type": "tag",
     "choices": [
       0,
@@ -7650,16 +8712,6 @@
     "max": 1,
     "tag_count": 14
   },
-  "hairy ass": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 13
-  },
   "body odor": {
     "type": "tag",
     "choices": [
@@ -7668,9 +8720,9 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 13
+    "tag_count": 14
   },
-  "small clit": {
+  "clit play": {
     "type": "tag",
     "choices": [
       0,
@@ -7678,7 +8730,17 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10
+    "tag_count": 12
+  },
+  "cock warming": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 11
   },
   "double vaginal penetration": {
     "type": "tag",
@@ -7700,7 +8762,7 @@
     "max": 1,
     "tag_count": 10
   },
-  "ball worship": {
+  "clit changes": {
     "type": "tag",
     "choices": [
       0,
@@ -7708,19 +8770,29 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10
-  },
-  "big labia": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 8
+    "tag_count": 9
   },
   "small nipples": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 9
+  },
+  "small clit": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 9
+  },
+  "big labia": {
     "type": "tag",
     "choices": [
       0,
@@ -7740,6 +8812,26 @@
     "max": 1,
     "tag_count": 7
   },
+  "chloroform": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7
+  },
+  "clothed male naked female": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6
+  },
   "bodily harm": {
     "type": "tag",
     "choices": [
@@ -7750,7 +8842,7 @@
     "max": 1,
     "tag_count": 6
   },
-  "clothed male naked female": {
+  "drop the soap": {
     "type": "tag",
     "choices": [
       0,
@@ -7770,6 +8862,26 @@
     "max": 1,
     "tag_count": 6
   },
+  "donkan": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6
+  },
+  "flight simulator": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5
+  },
   "hairy anus": {
     "type": "tag",
     "choices": [
@@ -7780,7 +8892,7 @@
     "max": 1,
     "tag_count": 5
   },
-  "flight simulator": {
+  "dojikko": {
     "type": "tag",
     "choices": [
       0,
@@ -7800,6 +8912,16 @@
     "max": 1,
     "tag_count": 4
   },
+  "body size disparity": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3
+  },
   "embarrassed naked male": {
     "type": "tag",
     "choices": [
@@ -7810,7 +8932,7 @@
     "max": 1,
     "tag_count": 3
   },
-  "body size disparity": {
+  "disney": {
     "type": "tag",
     "choices": [
       0,
@@ -7818,7 +8940,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3
+    "tag_count": 2
   },
   "ball cupping": {
     "type": "tag",
@@ -7830,7 +8952,7 @@
     "max": 1,
     "tag_count": 2
   },
-  "clothed female naked female": {
+  "small labia": {
     "type": "tag",
     "choices": [
       0,
@@ -7850,7 +8972,7 @@
     "max": 1,
     "tag_count": 1
   },
-  "small labia": {
+  "ddsm": {
     "type": "tag",
     "choices": [
       0,
@@ -7859,5 +8981,22 @@
     "min": 0,
     "max": 1,
     "tag_count": 1
+  },
+  "clothed female naked female": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1
+  },
+  "similarity_score": {
+    "type": "float",
+    "choices": [],
+    "min": 0,
+    "max": 100,
+    "description": "Numeric score representing the similarity of this game to the selected reference game, where 0 means no similarity and 100 means identical."
   }
 }
