@@ -122,13 +122,11 @@ function createTableColumns(parsedData) {
 }
 
 function populateSimilarityColumn(data) {
-    if(similarGameRow === null) {
-        const referenceKey = GDV.state.getSimilarityGame();
-        if (!referenceKey) return;
-
+    const referenceKey = GDV.state.getSimilarityGame();
+    if (referenceKey) {
         similarGameRow = structuredClone(data.find(r => String(r.key) === referenceKey));
-        if (!similarGameRow) return;
     }
+    if (!similarGameRow) return;
 
     if (data.length > 0 && !('similarity_score' in data[0])) {
         data[0].similarity_score = 0; // placeholder
