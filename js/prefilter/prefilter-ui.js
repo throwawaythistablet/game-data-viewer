@@ -409,17 +409,17 @@ function collectPrefilterFromForm(form) {
 function waitForPrefilterFormSubmission(form, resolve, overlay) {
     form.addEventListener('submit', async e => {
         e.preventDefault();
-        const preFilter = collectPrefilterFromForm(form);
+        const prefilter = collectPrefilterFromForm(form);
 
-        if (Object.keys(preFilter).length === 0) {
+        if (Object.keys(prefilter).length === 0) {
             const proceed = await confirmNoPrefiltersWarning();
             if (!proceed) return;
         }
 
-        GDV.state.setLastSearchedPrefilters(preFilter);
+        GDV.state.setLastSearchedPrefilters(prefilter);
         GDV.dom.renderMainPagePrefiltersPanel();
         overlay.remove();
-        resolve(preFilter);
+        resolve(prefilter);
     });
 }
 

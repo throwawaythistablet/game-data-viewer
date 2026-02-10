@@ -8,6 +8,7 @@ let gamesFolderHandle = null;
 let dataFolderHandle = null;
 let prefilterFileName = null;
 let lastSearchedPrefilters = {};
+let similarityGame = null;
 
 
 GDV.state.getActiveCsvFile = function() {
@@ -77,6 +78,18 @@ GDV.state.getLastSearchedPrefilters = function() {
 
 GDV.state.setLastSearchedPrefilters = function(prefilters) {
     lastSearchedPrefilters = prefilters;
+}
+
+GDV.state.getSimilarityGame = function() {
+    return similarityGame;
+}
+
+GDV.state.setSimilarityGame = function(gameName) {
+    similarityGame = gameName;
+}
+
+GDV.state.resetSimilarityGame = function() {
+    similarityGame = null;
 }
 
 })();

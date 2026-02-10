@@ -133,6 +133,7 @@ GDV.dom.renderMainPagePrefiltersPanel = function() {
     while (marker.firstChild) marker.removeChild(marker.firstChild);
 
     const lastSearchedPrefilters = GDV.state.getLastSearchedPrefilters();
+    const similarityGame = GDV.state.getSimilarityGame();
     if (!lastSearchedPrefilters || Object.keys(lastSearchedPrefilters).length === 0) return;
 
     const container = document.createElement('div');
@@ -140,10 +141,23 @@ GDV.dom.renderMainPagePrefiltersPanel = function() {
     container.className = 'prefilter-main-panel';
     marker.appendChild(container);
 
-    const label = document.createElement('span');
-    label.className = 'prefilter-main-panel-label';
-    label.textContent = 'Last Searched Prefilters:';
-    container.appendChild(label);
+    if (similarityGame){
+        const similarGamelabel = document.createElement('span');
+        similarGamelabel.className = 'prefilter-main-panel-label';
+        similarGamelabel.textContent = 'Similarity Score compared with:';
+        container.appendChild(similarGamelabel);
+
+        const similarGameValue = document.createElement('span');
+        similarGameValue.className = 'prefilter-active-item';
+        similarGameValue.title = similarityGame;
+        similarGameValue.textContent = similarityGame;
+        container.appendChild(similarGameValue);
+    }
+
+    const prefilterlabel = document.createElement('span');
+    prefilterlabel.className = 'prefilter-main-panel-label';
+    prefilterlabel.textContent = 'Last Searched Prefilters:';
+    container.appendChild(prefilterlabel);
 
     for (const [col, val] of Object.entries(lastSearchedPrefilters)) {
         const text = GDV.prefilter.getPrefilterDisplayText(col, val);
@@ -258,7 +272,7 @@ searchButton.addEventListener('click', async () => {
         return;
     }
 
-    await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+    await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(GDV.state.getActiveCsvFile());
 });
 
 // Reset filters button

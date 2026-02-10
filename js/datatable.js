@@ -5,11 +5,13 @@ let previewTimer = null;
 let currentPreviewIndex = 0;
 let overlayMoveScheduled = false;
 let lastMouseEvent = null;
+let similarGameRow = null;
 
 
 GDV.datatable.loadTable = async function(parsedData) {
     await GDV.loading.showLoading();
     
+    populateSimilarityColumn(parsedData)
     const columns = createTableColumns(parsedData);
     await renderCsvTable(parsedData, columns);
 
@@ -28,7 +30,7 @@ GDV.datatable.resetAllFilters = async function() {
     const dt = csvTableElement.DataTable();
 
     // Count total steps for progress
-    const checkboxFilters = $('tr.filters .filter-box');
+    const checkboxFilters = $('tr.filters .filter-checkbox');
     const textFilters = $('tr.filters .filter-text');
     const rangeFilters = $('tr.filters .filter-range');
 
@@ -100,24 +102,85 @@ GDV.datatable.getColumnTagCount = function(colName) {
 function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
-    const keys = Object.keys(parsedData[0]);
+    const columnNames = Object.keys(parsedData[0]);
     const searchedPrefilters = GDV.state.getLastSearchedPrefilters() || {};
     const columnDetails = GDV.state.getActiveColumnDetails();
 
-    const columns = buildColumns(keys, columnDetails, searchedPrefilters);
+    const columns = buildColumns(columnNames, columnDetails, searchedPrefilters);
 
     const thumbnailColumn = buildThumbnailColumn();
     if (thumbnailColumn) {
         columns.unshift(thumbnailColumn);
     }
 
-    const viewImagesColumn = buildViewImagesColumn(keys);
+    const viewImagesColumn = buildViewImagesColumn(columnNames);
     if (viewImagesColumn) {
         columns.unshift(viewImagesColumn);
     }
 
     return columns;
 }
+
+function populateSimilarityColumn(data) {
+    if(similarGameRow === null) {
+        const referenceKey = GDV.state.getSimilarityGame();
+        if (!referenceKey) return;
+
+        similarGameRow = structuredClone(data.find(r => String(r.key) === referenceKey));
+        if (!similarGameRow) return;
+    }
+
+    if (data.length > 0 && !('similarity_score' in data[0])) {
+        data[0].similarity_score = 0; // placeholder
+    }
+
+    data.forEach((row, index) => {
+        const similarity = computeRowSimilarityPercent(similarGameRow, row);
+        row.similarity_score = similarity;
+    });
+}
+
+function computeRowSimilarityPercent(similarGameRow, row) {
+    const IGNORE_COLS = new Set([
+        'key',
+        'url',
+        'similarity_score',
+        '__thumbnail__',
+        '__view_images__'
+    ]);
+
+    const compareKeys = Object.keys(similarGameRow).filter(k => !IGNORE_COLS.has(k));
+
+    let matches = 0;
+    let total = 0;
+
+    compareKeys.forEach(col => {
+        const a = similarGameRow[col];
+        const b = row[col];
+
+        if (a == null || b == null) return;
+
+        let isMatch = false;
+
+        // Numeric compare (exact)
+        const na = parseFloat(a);
+        const nb = parseFloat(b);
+        if (!isNaN(na) && !isNaN(nb)) {
+            isMatch = na === nb;
+        } else {
+            // String compare (case-insensitive, trimmed)
+            const sa = String(a).trim().toLowerCase();
+            const sb = String(b).trim().toLowerCase();
+            isMatch = sa === sb;
+        }
+
+        total++;
+        if (isMatch) matches++;
+    });
+
+    return total === 0 ? '0.00' : ((matches / total) * 100).toFixed(2);
+}
+
 
 async function renderCsvTable(data, columns) {
     csvTableElement.hide();
@@ -131,54 +194,37 @@ async function renderCsvTable(data, columns) {
     csvTableElement.show();
 }
 
-function buildColumns(keys, columnDetails, searchedPrefilters) {
+function buildColumns(columnNamesInTable, columnDetails, searchedPrefilters) {
+    const specialKeys = ['key', 'similarity_score'];
     const prefilterKeys = Object.keys(searchedPrefilters).filter(k => k !== 'key');
 
-    // Normal columns: only include if shouldIncludeColumn returns true
-    const nonPrefilterColumns = keys.filter(k => !prefilterKeys.includes(k) && shouldIncludeColumn(k, columnDetails, searchedPrefilters));
+    const normalColumns = columnNamesInTable.filter(k => shouldIncludeColumn(k, columnDetails, searchedPrefilters));
+    const prefilterColumns = columnNamesInTable.filter(col => prefilterKeys.includes(col));
+    const specialColumns  = columnNamesInTable.filter(col => specialKeys.includes(col));
 
-    // Prefilter columns: only include if they exist in the data
-    const prefilterColumns = prefilterKeys.filter(k => keys.includes(k));
-
-    // Combine: first normal column, then prefilter columns, then remaining normal columns
     const resultKeys = [
-        ...nonPrefilterColumns.slice(0, 1),      // first normal column
-        ...prefilterColumns,                     // prefilter columns in the middle
-        ...nonPrefilterColumns.slice(1)          // remaining normal columns
+        ...specialColumns,
+        ...prefilterColumns,
+        ...normalColumns.filter(col => !specialColumns.includes(col) && !prefilterColumns.includes(col))
     ];
 
-    // Build column definitions with highlight only for prefilters
-    return resultKeys.map(key => ({
-        title: key,
-        data: key,
+    return resultKeys.map(columnName => ({
+        title: columnName,
+        data: columnName,
         createdCell: (td, cellData) => {
             td.textContent = '';
-            td.appendChild(renderCellValueNode(cellData, key));
+            td.appendChild(renderCellValueNode(cellData, columnName));
         },
-        highlight: prefilterColumns.includes(key)
+        white_highlight: prefilterColumns.includes(columnName),
+        yellow_highlight: specialColumns.includes(columnName),
     }));
-}
-
-function buildViewImagesColumn(keys) {
-    if (!keys.includes('location')) return null;
-    
-    return {
-        title: '',
-        data: '__view_images__',
-        orderable: false,
-        searchable: false,
-        createdCell: (td) => {
-            td.textContent = '';
-            td.appendChild(renderViewButton());
-        }
-    };
 }
 
 function buildThumbnailColumn() {
     if (!GDV.state.getThumbnails()) return null;
 
     return {
-        title: '',
+        title: 'thumbnails',
         data: '__thumbnail__',
         orderable: false,
         searchable: false,
@@ -188,6 +234,21 @@ function buildThumbnailColumn() {
             const image_url = getThumbnailImageForKey(key)
             const game_url = stripHtmlToString(row['url']);
             return renderThumbnail(image_url, game_url);
+        }
+    };
+}
+
+function buildViewImagesColumn(columnNames) {
+    if (!columnNames.includes('location')) return null;
+    
+    return {
+        title: 'View Images',
+        data: '__view_images__',
+        orderable: false,
+        searchable: false,
+        createdCell: (td) => {
+            td.textContent = '';
+            td.appendChild(renderViewButton());
         }
     };
 }
@@ -222,12 +283,14 @@ function createTableHeader(columns) {
     columns.forEach(col => {
         // Header cell
         const th = $('<th>').text(col.title);
-        if (col.highlight) th.addClass('highlight-column');
+        if (col.white_highlight) th.addClass('white-highlight');
+        else if (col.yellow_highlight) th.addClass('yellow-highlight');
         headerRow.append(th);
 
         // Filter cell
         const filterTh = $('<th>');
-        if (col.highlight) filterTh.addClass('highlight-column');
+        if (col.white_highlight) filterTh.addClass('white-highlight');
+        else if (col.yellow_highlight) filterTh.addClass('yellow-highlight');
         filterRow.append(filterTh);
     });
 
@@ -257,9 +320,10 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
                 if (col.data === '__view_images__') {
                     td.appendChild(renderViewButton());
                 } else if (col.data === '__thumbnail__') {
-                    const image_url = getThumbnailImageForKey(rowData['key']);
+                    const key = rowData['key']
+                    const image_url = getThumbnailImageForKey(key);
                     const game_url = stripHtmlToString(rowData['url']);
-                    td.appendChild(renderThumbnail(image_url, game_url));
+                    td.appendChild(renderThumbnail(key, image_url, game_url));
                 } else if (col.data === 'site_std_version') {
                     const rd = rowData[col.data];
                     const trimmed = typeof rd === 'string' && rd.length > 19 ? rd.slice(0, 19) + '…' : rd;
@@ -268,7 +332,8 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
                     td.appendChild(renderCellValueNode(rowData[col.data], col.data));
                 }
 
-                if (col.highlight) td.classList.add('highlight-column');
+                if (col.white_highlight) td.classList.add('white-highlight');
+                else if (col.yellow_highlight) td.classList.add('yellow-highlight');
                 tr.appendChild(td);
             });
             fragment.appendChild(tr);
@@ -283,16 +348,18 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
 }
 
 function initializeDataTableWithOptions(columns) {
-    const bayesianColumnIndex = findIndexOfColumnByNameInColumns(columns, 'bayesian_rating');
-    if (isInvalidColumnIndex(bayesianColumnIndex)) {
-        GDV.utils.reportSilentWarning('Invalid Column Index', 'Cannot sort by Bayesian rating: the column index is missing or invalid.');
+    sortColumnName = getDefaultSortColumnName()
+    let sortColumnIndex = findIndexOfColumnByNameInColumns(columns, sortColumnName);
+    if (isInvalidColumnIndex(sortColumnIndex)) {
+        GDV.utils.reportSilentWarning('Invalid Column Index', `Cannot sort by "${sortColumnName}": the column index is missing or invalid.`);
+        sortColumnIndex = 0
     }
     
     return new Promise(resolve => {
         const dt = csvTableElement.DataTable({
             paging: true,
             pageLength: 100,
-            order: [[bayesianColumnIndex, 'desc']],
+            order: [[sortColumnIndex, 'desc']],
             lengthMenu: [
                 [50, 100, 200, 500, 1000],
                 [50, 100, 200, 500, 1000]
@@ -325,28 +392,29 @@ function addHeaderTooltips(api) {
 
 async function addColumnFilters(api) {
     const colCount = api.columns().count();
+    const colDefs = GDV.state.getActiveColumnDetails() || {};
+    const ths = document.querySelectorAll('.filters th');
 
     for (let colIdx = 0; colIdx < colCount; colIdx++) {
         if (GDV.loading.isLoadingCancelled()) throw new Error('Loading cancelled by user.');
-
         const column = api.column(colIdx);
-        const th = $('.filters th').eq(colIdx);
-        if (th.find('.filter-container').length) continue;
+        const th = ths[colIdx];
+        if (!th) continue;
+        if (th.querySelector('.filter-container')) continue;
+
+        const container = document.createElement('div');
+        container.className = 'filter-container';
+        th.appendChild(container);
+
         const colName = column.header().textContent.trim();
-        const colDef = GDV.state.getActiveColumnDetails()[colName];
+        const colDef = colDefs[colName];
 
-        if (!colDef) continue;
-
-        // Create filter container
-        const container = $('<div class="filter-container"></div>').appendTo(th);
-        addSortingControls(container, colIdx);
-        if (colDef.choices && colDef.choices.length > 0) {
-            addCheckboxFilter(container, column, colDef);
-        } else if (colDef.type === 'int' || colDef.type === 'float') {
-            addRangeFilter(container, column, colDef);
-        } else {
-            addTextFilter(container, column);
+        if (colName === "thumbnails") {
+            addGameSimilaritySearch(container, column);
+            continue;
         }
+        if (!colDef) continue;
+        addColumnFilterItems(container, column, colDef, colIdx);
 
         await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
         await GDV.utils.yieldToBrowser();
@@ -356,89 +424,165 @@ async function addColumnFilters(api) {
     setupFiltersExpandCollapse();
 }
 
-function setupFiltersExpandCollapse() {
-    const table = document.querySelector('#csvTable');
-    if (!table) return;
+function addGameSimilaritySearch(container, column) {
+    const similarityWrapper = document.createElement('div');
+    similarityWrapper.className = 'filters-similarity';
 
-    const headerRow = table.querySelector('thead tr:first-child'); // column headers
-    const filtersRow = table.querySelector('tr.filters');           // filters row
+    // Title
+    const titleLabel = document.createElement('label');
+    titleLabel.className = 'title-label';
+    titleLabel.textContent = 'Find Similar Games Here (By Similarity Score)';
+    similarityWrapper.appendChild(titleLabel);
 
-    if (!headerRow || !filtersRow) return;
+    // Input
+    const similarityInput = document.createElement('input');
+    similarityInput.type = 'text';
+    similarityInput.className = 'filter-text';
+    similarityInput.placeholder = 'Find a game...';
+    similarityWrapper.appendChild(similarityInput);
 
-    let isHoverHeader = false;
-    let isHoverFilters = false;
-    let isFocusInside = false;
+    // Nearest match display
+    const nearestMatchWrapper = document.createElement('div');
+    nearestMatchWrapper.className = 'filters-line-wrapper';
+    const nearestMatchLabel = document.createElement('label');
+    nearestMatchLabel.className = 'nearest-match-label';
+    nearestMatchLabel.textContent = 'Nearest game match: ';
+    const nearestMatchValue = document.createElement('span');
+    nearestMatchValue.className = 'nearest-match-value';
+    nearestMatchValue.textContent = '—';
+    nearestMatchValue.dataset.gameKey = '';
+    nearestMatchWrapper.appendChild(nearestMatchLabel);
+    nearestMatchWrapper.appendChild(nearestMatchValue);
+    similarityWrapper.appendChild(nearestMatchWrapper);
 
-    function updateFiltersState() {
-        const shouldExpand = isHoverHeader || isHoverFilters || isFocusInside;
-        filtersRow.classList.toggle('is-expanded', shouldExpand);
-        filtersRow.classList.toggle('is-collapsed', !shouldExpand);
-    }
+    // Buttons
+    const btnWrapper = document.createElement('div');
+    btnWrapper.className = 'filters-line-wrapper';
+    const similarityButton = document.createElement('button');
+    similarityButton.type = 'button';
+    similarityButton.className = 'similarity-btn';
+    similarityButton.textContent = 'Update Similarity Scores';
+    const resetButton = document.createElement('button');
+    resetButton.type = 'button';
+    resetButton.className = 'similarity-btn';
+    resetButton.textContent = 'Reset';
+    btnWrapper.appendChild(similarityButton);
+    btnWrapper.appendChild(resetButton);
+    similarityWrapper.appendChild(btnWrapper);
+    container.appendChild(similarityWrapper);
 
-    // Hover on headers
-    headerRow.addEventListener('mouseenter', () => {
-        isHoverHeader = true;
-        updateFiltersState();
-    });
-    headerRow.addEventListener('mouseleave', () => {
-        isHoverHeader = false;
-        updateFiltersState();
-    });
+    // Cache key column once
+    const keyColumn = getKeyColumnFromTable(column);
 
-    // Hover on filters row itself (hover buffer)
-    filtersRow.addEventListener('mouseenter', () => {
-        isHoverFilters = true;
-        updateFiltersState();
-    });
-    filtersRow.addEventListener('mouseleave', () => {
-        isHoverFilters = false;
-        updateFiltersState();
-    });
-
-    // Keep open while interacting
-    filtersRow.addEventListener('focusin', () => {
-        isFocusInside = true;
-        updateFiltersState();
-    });
-    filtersRow.addEventListener('focusout', (e) => {
-        const newTarget = e.relatedTarget;
-        if (!filtersRow.contains(newTarget)) {
-            isFocusInside = false;
-            updateFiltersState();
+    // Input handler
+    similarityInput.addEventListener('input', function () {
+        const query = this.value.trim();
+        if (!query || !keyColumn) {
+            nearestMatchValue.textContent = '—';
+            nearestMatchValue.dataset.gameKey = '';
+            return;
+        }
+        const nearest = findNearestGameKey(query, keyColumn);
+        if (nearest) {
+            nearestMatchValue.textContent = nearest;
+            nearestMatchValue.dataset.gameKey = nearest;
+        } else {
+            nearestMatchValue.textContent = '(none)';
+            nearestMatchValue.dataset.gameKey = '';
         }
     });
 
-    // Start collapsed
-    updateFiltersState();
+    // Button click
+    similarityButton.addEventListener('click', async function () {
+        const gameKey = nearestMatchValue.dataset.gameKey;
+        if (!gameKey) {
+            GDV.utils.reportHardWarning('No Game Title Provided', 'Please enter a game title first.');
+            return;
+        }
+        setSimilarityGame(gameKey);
+        await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+    });
+
+    resetButton.addEventListener('click', async function () {
+        resetSimilarityGame();
+        await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+    });
+}
+
+function getKeyColumnFromTable(anyColumnApi) {
+    const tableApi = anyColumnApi.table();
+    const headers = tableApi.columns().header().toArray();
+    const keyIndex = headers.findIndex(h => h.textContent.trim() === 'key');
+
+    if (isInvalidColumnIndex(keyIndex)) return null;
+    return tableApi.column(keyIndex);
+}
+
+function findNearestGameKey(input, keyColumn) {
+    const q = input.toLowerCase();
+    let best = null;
+    let bestScore = Infinity;
+
+    // Pull all keys from the column (raw data)
+    const keys = keyColumn
+        .data()
+        .toArray()
+        .map(k => String(k));
+
+    for (const key of keys) {
+        const k = key.toLowerCase();
+
+        // Fast path: substring match
+        if (k.includes(q)) return key;
+
+        const score = GDV.utils.levenshteinDistance(q, k);
+        if (score < bestScore) {
+            bestScore = score;
+            best = key;
+        }
+    }
+
+    return best;
+}
+
+async function addColumnFilterItems(container, column, colDef, colIdx) {
+    addSortingControls(container, colIdx);
+    if (colDef.choices && colDef.choices.length > 0) {
+        addCheckboxFilter(container, column, colDef);
+    } else if (colDef.type === 'int' || colDef.type === 'float') {
+        addRangeFilter(container, column, colDef);
+    } else {
+        addTextFilter(container, column);
+    }
 }
 
 async function addSortingControls(container, colIdx) {
     // Create a wrapper div for buttons
-    const btnWrapper = document.createElement('div');
-    btnWrapper.className = 'sort-buttons-wrapper'; // just a class, no styling yet
+    const lineWrapper = document.createElement('div');
+    lineWrapper.className = 'filters-line-wrapper';
 
     // Create ascending button
     const asc = document.createElement('button');
     asc.className = 'sort-asc btn';
-    asc.dataset.col = colIdx;
+    asc.dataset.colIdx = colIdx;
     asc.textContent = 'Sort ↑';
 
     // Create descending button
     const desc = document.createElement('button');
     desc.className = 'sort-desc btn';
-    desc.dataset.col = colIdx;
+    desc.dataset.colIdx = colIdx;
     desc.textContent = 'Sort ↓';
 
     // Append buttons to the wrapper
-    btnWrapper.append(asc);
-    btnWrapper.append(desc);
+    lineWrapper.append(asc);
+    lineWrapper.append(desc);
 
     // Append the wrapper to the container
-    container.append(btnWrapper);
+    container.append(lineWrapper);
 }
 
 function addCheckboxFilter(th, column, colDef) {
-    const box = $('<div class="filter-box"></div>').appendTo(th);
+    const box = $('<div class="filter-checkbox"></div>').appendTo(th);
     const toggleAll = $('<label class="toggle-all-label"><input type="checkbox" class="toggle-all" checked> Toggle All</label>');
     box.append(toggleAll);
 
@@ -552,6 +696,79 @@ function addRangeFilter(th, column, colDef) {
     applyRangeFilter();
 }
 
+function bindTableSortingButtons() {
+    if (!csvTableElement.data('sortingButtonsBound')) {
+        csvTableElement.on('click', '.sort-asc', function () {
+            const dt = csvTableElement.DataTable();
+            const colIdx = Number($(this).data('colIdx'));
+            dt.order([colIdx, 'asc']).draw();
+        });
+
+        csvTableElement.on('click', '.sort-desc', function () {
+            const dt = csvTableElement.DataTable();
+            const colIdx = Number($(this).data('colIdx'));
+            dt.order([colIdx, 'desc']).draw();
+        });
+        csvTableElement.data('sortingButtonsBound', true);
+    }
+}
+
+function setupFiltersExpandCollapse() {
+    const table = document.querySelector('#csvTable');
+    if (!table) return;
+
+    const headerRow = table.querySelector('thead tr:first-child'); // column headers
+    const filtersRow = table.querySelector('tr.filters');           // filters row
+
+    if (!headerRow || !filtersRow) return;
+
+    let isHoverHeader = false;
+    let isHoverFilters = false;
+    let isFocusInside = false;
+
+    function updateFiltersState() {
+        const shouldExpand = isHoverHeader || isHoverFilters || isFocusInside;
+        filtersRow.classList.toggle('is-expanded', shouldExpand);
+        filtersRow.classList.toggle('is-collapsed', !shouldExpand);
+    }
+
+    // Hover on headers
+    headerRow.addEventListener('mouseenter', () => {
+        isHoverHeader = true;
+        updateFiltersState();
+    });
+    headerRow.addEventListener('mouseleave', () => {
+        isHoverHeader = false;
+        updateFiltersState();
+    });
+
+    // Hover on filters row itself (hover buffer)
+    filtersRow.addEventListener('mouseenter', () => {
+        isHoverFilters = true;
+        updateFiltersState();
+    });
+    filtersRow.addEventListener('mouseleave', () => {
+        isHoverFilters = false;
+        updateFiltersState();
+    });
+
+    // Keep open while interacting
+    filtersRow.addEventListener('focusin', () => {
+        isFocusInside = true;
+        updateFiltersState();
+    });
+    filtersRow.addEventListener('focusout', (e) => {
+        const newTarget = e.relatedTarget;
+        if (!filtersRow.contains(newTarget)) {
+            isFocusInside = false;
+            updateFiltersState();
+        }
+    });
+
+    // Start collapsed
+    updateFiltersState();
+}
+
 function renderViewButton() {
     const btn = document.createElement('button');
     btn.className = 'btn view-images';
@@ -559,7 +776,7 @@ function renderViewButton() {
     return btn;
 }
 
-function renderThumbnail(image_url, game_url) {
+function renderThumbnail(key, image_url, game_url) {
     if (!image_url || !game_url) return document.createDocumentFragment();
 
     const wrapper = document.createElement('div');
@@ -594,29 +811,43 @@ function renderThumbnail(image_url, game_url) {
     playLink.setAttribute('aria-label', 'Play the game'); // screen reader label
     playLink.setAttribute('role', 'button');       // optional for better semantics
 
-    const write_review = document.createElement('a');
-    write_review.className = 'table-thumbnail-action';
-    write_review.href = getSubUrl(game_url, 'br-rate');
-    write_review.target = '_blank';
-    write_review.rel = 'noopener noreferrer';
-    write_review.title = 'Write a review for the game';
-    write_review.textContent = 'Write A Review 📝';
-    write_review.setAttribute('aria-label', 'Write a review for the game');
-    write_review.setAttribute('role', 'button');
+    const writeReview = document.createElement('a');
+    writeReview.className = 'table-thumbnail-action';
+    writeReview.href = getSubUrl(game_url, 'br-rate');
+    writeReview.target = '_blank';
+    writeReview.rel = 'noopener noreferrer';
+    writeReview.title = 'Write a review for the game';
+    writeReview.textContent = 'Write A Review 📝';
+    writeReview.setAttribute('aria-label', 'Write a review for the game');
+    writeReview.setAttribute('role', 'button');
 
-    const read_reviews = document.createElement('a');
-    read_reviews.className = 'table-thumbnail-action';
-    read_reviews.href = getSubUrl(game_url, 'br-reviews');
-    read_reviews.target = '_blank';
-    read_reviews.rel = 'noopener noreferrer';
-    read_reviews.title = 'Read reviews for the game';
-    read_reviews.textContent = 'Read Reviews 📖';
-    read_reviews.setAttribute('aria-label', 'Read reviews for the game');
-    read_reviews.setAttribute('role', 'button');
+    const readReviews = document.createElement('a');
+    readReviews.className = 'table-thumbnail-action';
+    readReviews.href = getSubUrl(game_url, 'br-reviews');
+    readReviews.target = '_blank';
+    readReviews.rel = 'noopener noreferrer';
+    readReviews.title = 'Read reviews for the game';
+    readReviews.textContent = 'Read Reviews 📖';
+    readReviews.setAttribute('aria-label', 'Read reviews for the game');
+    readReviews.setAttribute('role', 'button');
+
+    const findSimilarGames = document.createElement('a');
+    findSimilarGames.className = 'table-thumbnail-action';
+    findSimilarGames.href = '#';
+    findSimilarGames.title = 'Find similar games and add a similarity column with matching score details for this game';
+    findSimilarGames.textContent = 'Find Similar Games 🔍';
+    findSimilarGames.setAttribute('aria-label', 'Find similar games and add a similarity column for this game');
+    findSimilarGames.setAttribute('role', 'button');
+    findSimilarGames.addEventListener('click', async (e) => {
+        e.preventDefault();
+        setSimilarityGame(key);
+        await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+    });
 
     overlay.appendChild(playLink);
-    overlay.appendChild(write_review);
-    overlay.appendChild(read_reviews);
+    overlay.appendChild(writeReview);
+    overlay.appendChild(readReviews);
+    overlay.appendChild(findSimilarGames);
     wrapper.appendChild(overlay);
 
     return wrapper;
@@ -654,18 +885,24 @@ function renderCellValueNode(val, colName = null) {
 }
 
 function sortTable() {
-    sortByBayesianRating()
+    sortTableByColumn(getDefaultSortColumnName(), 'desc');
 }
 
-function sortByBayesianRating() {
-    const bayesianColumnIndex = findIndexOfColumnByNameInTable('bayesian_rating');
-    if (isInvalidColumnIndex(bayesianColumnIndex)) {
-        GDV.utils.reportSilentWarning('Invalid Column Index', 'Cannot sort by Bayesian rating: the column index is missing or invalid.');
+function sortTableByColumn(columnName, order) {
+    const columnIndex = findIndexOfColumnByNameInTable(columnName);
+    if (isInvalidColumnIndex(columnIndex)) {
+        GDV.utils.reportSilentWarning('Invalid Column Index', `Cannot sort by "${columnName}": the column index is missing or invalid.`);
         return;
     }
 
     const dt = csvTableElement.DataTable();
-    dt.order([[bayesianColumnIndex, 'desc']]).draw();
+    dt.order([[columnIndex, order]]).draw();
+}
+
+function getDefaultSortColumnName() {
+    return GDV.state.getSimilarityGame()
+        ? 'similarity_score'
+        : 'bayesian_rating';
 }
 
 // Small helper for hyperlink nodes
@@ -846,21 +1083,15 @@ function stripHtmlToString(text) {
     return text.replace(/<[^>]*>/g, '').trim();
 }
 
-function bindTableSortingButtons() {
-    if (!csvTableElement.data('sortingButtonsBound')) {
-        csvTableElement.on('click', '.sort-asc', function () {
-            const dt = csvTableElement.DataTable();
-            const colIdx = Number($(this).data('col'));
-            dt.order([colIdx, 'asc']).draw();
-        });
+function setSimilarityGame(gameName) {
+    GDV.state.setSimilarityGame(gameName);
+    GDV.dom.renderMainPagePrefiltersPanel();
+}
 
-        csvTableElement.on('click', '.sort-desc', function () {
-            const dt = csvTableElement.DataTable();
-            const colIdx = Number($(this).data('col'));
-            dt.order([colIdx, 'desc']).draw();
-        });
-        csvTableElement.data('sortingButtonsBound', true);
-    }
+function resetSimilarityGame() {
+    similarGameRow = null;
+    GDV.state.resetSimilarityGame();
+    GDV.dom.renderMainPagePrefiltersPanel();
 }
 
 // Delegated event listeners for thumbnails

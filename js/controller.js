@@ -66,7 +66,7 @@ GDV.controller.loadAndSearchCsv = async function(file) {
     }
 
     setActiveCsvFile(file);
-    await GDV.csvHandler.executeCsvSearch(file);
+    await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(file);
 }
 
 GDV.controller.loadColumnDetailsFile = async function(file) {
@@ -119,7 +119,7 @@ async function initializeHostedMode() {
     await loadDefaultThumbnailsJson();
     await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
     await GDV.loading.hideLoading();
-    await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+    await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(GDV.state.getActiveCsvFile());
 }
 
 async function loadDefaultCsv() {
@@ -236,7 +236,7 @@ async function loadFilesFromDataFolder() {
         await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
 
         await GDV.loading.hideLoading();
-        await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+        await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(GDV.state.getActiveCsvFile());
 
     } catch (err) {
         GDV.utils.reportHardError('Data Folder Load Failed', 'An unexpected error occurred while loading files from the data folder.', err, { dataFolderHandle });

@@ -1,22 +1,29 @@
 (function() {
 
-GDV.csvHandler.executeCsvSearch = async function(file) {
+GDV.csvHandler.showPrefiltersAndExecuteCsvSearch = async function(file) {
     if (!file) return false;
-
     try {
         const collectedPrefilters =
             GDV.state.hasValidColumnDetails()
                 ? await GDV.prefilter.showPrefilterOverlayAndCollectFilters()
                 : {};
-
-        // User clicked Cancel in overlay
         if (collectedPrefilters === null) {
             return false;
         }
+    } catch (err) {
+        GDV.utils.reportHardError('Prefilters selection failure', 'An error occurred while selecting prefilters.', err, { file } );
+        return false;
+    }
 
+    return await executeCsvSearch(file);
+}
+
+GDV.csvHandler.executeCsvSearch = executeCsvSearch;
+async function executeCsvSearch(file) {
+    if (!file) return false;
+    try {
         await startCsvSearchUi();
-        await loadCsvAndBuildTable({ file, totalSize: file.size, preFilters: collectedPrefilters });
-        
+        await loadCsvAndBuildTable({ file, totalSize: file.size });
         return true;
     } catch (err) {
         GDV.utils.reportHardError('CSV Search Failed', 'An error occurred while executing the CSV search.', err, { file } );
@@ -37,18 +44,17 @@ async function finishCsvSearchUi() {
     await GDV.loading.finishLoading();
 }
 
-async function loadCsvAndBuildTable({ file, totalSize, preFilters }) {
-    const parsedData = await parseAndFilterCsv(file, totalSize, preFilters);
-
+async function loadCsvAndBuildTable({ file, totalSize }) {
+    prefilters = GDV.state.getLastSearchedPrefilters();
+    const parsedData = await parseAndFilterCsv(file, totalSize, prefilters);
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
-        GDV.utils.reportHardWarning('No results were found.', 'The search did not produce any rows after applying the prefilters.', context = { file, preFilters } );
+        GDV.utils.reportHardWarning('No results were found.', 'The search did not produce any rows after applying the prefilters.', context = { file, prefilters } );
         return;
     }
-
     await GDV.datatable.loadTable(parsedData)
 }
 
-async function parseAndFilterCsv(file, totalSize, preFilters) {
+async function parseAndFilterCsv(file, totalSize, prefilters) {
     const parsedData = [];
     let rowsProcessed = 0;
     let bytesProcessed = 0;
@@ -66,8 +72,8 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
                     return;
                 }
                 
-                // Add row if passes preFilters
-                if (!preFilters || Object.keys(preFilters).length === 0 || isRowAllowedByPrefilter(row.data, preFilters)) {
+                // Add row if passes prefilters
+                if (!prefilters || Object.keys(prefilters).length === 0 || isRowAllowedByPrefilter(row.data, prefilters)) {
                     parsedData.push(row.data);
                 }
 
@@ -90,12 +96,12 @@ async function parseAndFilterCsv(file, totalSize, preFilters) {
     });
 }
 
-function isRowAllowedByPrefilter(row, preFilter) {
-    if (!preFilter || Object.keys(preFilter).length === 0) return true;
+function isRowAllowedByPrefilter(row, prefilter) {
+    if (!prefilter || Object.keys(prefilter).length === 0) return true;
 
     const normalize = v => (v == null ? '' : typeof v === 'string' ? v.trim() : v);
 
-    return Object.entries(preFilter).every(([col, criterion]) => {
+    return Object.entries(prefilter).every(([col, criterion]) => {
         const colDef = GDV.state.getActiveColumnDetails()[col];
         if (!colDef) return true;
 

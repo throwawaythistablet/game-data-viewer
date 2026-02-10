@@ -4,6 +4,13 @@
     "choices": [],
     "description": "Unique identifier for the game, includes the title and developer in brackets."
   },
+  "similarity_score": {
+    "type": "float",
+    "choices": [],
+    "min": 0,
+    "max": 100,
+    "description": "Numeric score representing the similarity of this game to the selected reference game, where 0 means no similarity and 100 means identical."
+  },
   "status": {
     "type": "str",
     "choices": [
