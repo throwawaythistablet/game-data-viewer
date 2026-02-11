@@ -918,13 +918,14 @@ function createHighlightedNode(text, colName) {
 
     const colDef = GDV.state.getActiveColumnDetails()?.[colName];
     if (!colDef) return null;
+    const colNameLower = colName.toLowerCase();
 
     if (colDef.type === 'int' || colDef.type === 'float') {
         return GDV.dom.createHighlightFromValue(text, colName);
-    }
-
-    if (colName.toLowerCase().includes('sentiment_label')) {
+    } else if (colNameLower.includes('sentiment_label')) {
         return GDV.dom.createHighlightFromSentiment(text);
+    } else if (colNameLower === 'status') {
+        return GDV.dom.createHighlightFromStatus(text);
     }
     return null;
 }

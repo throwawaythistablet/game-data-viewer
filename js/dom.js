@@ -208,7 +208,8 @@ GDV.dom.createHighlightFromSentiment = function(text) {
     if (!text) return document.createTextNode('');
 
     const span = document.createElement('span');
-    span.className = 'highlight-cell sentiment';
+    const weightClass = (text === '1. Very Positive') ? 'high' : (text === '9. Very Negative') ? 'low' : 'medium';
+    span.className = `highlight-cell ${weightClass}`;
 
     const isLightMode = document.body.classList.contains('light-theme');
 
@@ -242,8 +243,39 @@ GDV.dom.createHighlightFromSentiment = function(text) {
     if (color) {
         span.style.color = color;
     }
-    if (text === '1. Very Positive' || text === '9. Very Negative') {
-        span.style.fontWeight = '600';
+    span.textContent = text;
+
+    return span;
+}
+
+GDV.dom.createHighlightFromStatus = function(text) {
+    if (!text) return document.createTextNode('');
+
+    const span = document.createElement('span');
+    const weightClass = (text === 'Completed') ? 'high' : (text === 'Abandoned') ? 'low' : 'medium';
+    span.className = `highlight-cell ${weightClass}`;
+
+    const isLightMode = document.body.classList.contains('light-theme');
+
+    const lightMap = {
+        'Completed': '#006400',
+        'Onhold':    '#808080',
+        'Ongoing':   '#B8860B',
+        'Abandoned': '#8B0000'
+    };
+
+    const darkMap = {
+        'Completed': '#66FF66',
+        'Onhold':    '#aaaaaa',
+        'Ongoing':   '#FFD166',
+        'Abandoned': '#FF3333'
+    };
+
+    const map = isLightMode ? lightMap : darkMap;
+    const color = map[text];
+
+    if (color) {
+        span.style.color = color;
     }
     span.textContent = text;
 
