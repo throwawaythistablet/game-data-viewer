@@ -343,31 +343,46 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
     let loaded = 0;
     const reader = response.body.getReader();
 
+    // Throttle logging: only log every N bytes or if end reached
+    const LOG_THROTTLE_BYTES = Math.max(65536, Math.floor(total / 100)); // log roughly 100 times max
+
+    let lastLog = 0;
+
     const stream = new ReadableStream({
         async start(controller) {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) {
-                    console.log(`[fetchWithProgress] Stream finished`);
+                    if (loaded < total) {
+                        console.log(`[fetchWithProgress] Stream finished, total loaded: ${loaded}`);
+                    } else {
+                        console.log(`[fetchWithProgress] Stream finished`);
+                    }
                     break;
                 }
 
                 loaded += value.byteLength;
-                console.log(`[fetchWithProgress] Chunk received: ${value.byteLength} bytes, total loaded: ${loaded}`);
+
+                // Only log if enough bytes have been loaded since last log
+                if (loaded - lastLog >= LOG_THROTTLE_BYTES || loaded >= total) {
+                    console.log(`[fetchWithProgress] Chunk received: ${value.byteLength} bytes, total loaded: ${loaded}`);
+                    lastLog = loaded;
+                }
 
                 // Compute progress only if total is known
-                let progress = total ? (loaded / total) : 0;
+                let progress = total ? loaded / total : 0;
                 progress = Math.min(Math.max(progress, 0), 1); // clamp 0–1
-                console.log(`[fetchWithProgress] Raw progress: ${(loaded/total).toFixed(3)}, clamped: ${progress.toFixed(3)}`);
+
+                if (loaded > total) {
+                    console.warn(`[fetchWithProgress] loaded (${loaded}) > total (${total}) — Content-Length might be missing or wrong`);
+                }
 
                 // Map to startPercent → endPercent range
                 const mappedProgress = startPercent + progress * (endPercent - startPercent);
-                console.log(`[fetchWithProgress] Mapped progress: ${mappedProgress.toFixed(2)}%`);
 
                 GDV.loading.updateLoadingStepProgress(label, mappedProgress);
-
-                controller.enqueue(value);
             }
+
             controller.close();
         }
     });
@@ -378,7 +393,6 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
         statusText: response.statusText
     });
 }
-
 
 function loadAndUpdateTheme() {
     // Load saved theme
