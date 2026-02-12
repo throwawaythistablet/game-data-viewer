@@ -328,24 +328,19 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
     console.log(`[fetchWithProgress] Response status: ${response.status} ${response.statusText}`);
     if (!response.ok) return response;
 
-    const contentLength = response.headers.get('Content-Length');
-    console.log(`[fetchWithProgress] Content-Length header: ${contentLength}`);
+    const contentLengthHeader = response.headers.get('Content-Length');
+    const total = contentLengthHeader ? parseInt(contentLengthHeader, 10) : undefined;
+    console.log(`[fetchWithProgress] Content-Length header: ${contentLengthHeader}`);
+    if (total !== undefined) console.log(`[fetchWithProgress] Total bytes to load: ${total}`);
 
-    // If no length header or no body, cannot track progress
-    if (!contentLength || !response.body) {
-        console.warn(`[fetchWithProgress] No Content-Length or response.body, progress cannot be tracked`);
+    const reader = response.body?.getReader();
+    if (!reader) {
+        console.warn(`[fetchWithProgress] response.body not readable, progress cannot be tracked`);
         return response;
     }
 
-    const total = parseInt(contentLength, 10);
-    console.log(`[fetchWithProgress] Total bytes to load: ${total}`);
-
     let loaded = 0;
-    const reader = response.body.getReader();
-
-    // Throttle logging: only log every N bytes or if end reached
-    const LOG_THROTTLE_BYTES = Math.max(65536, Math.floor(total / 100)); // log roughly 100 times max
-
+    const LOG_THROTTLE_BYTES = total ? Math.max(65536, Math.floor(total / 100)) : 65536;
     let lastLog = 0;
 
     const stream = new ReadableStream({
@@ -353,34 +348,29 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) {
-                    if (loaded < total) {
-                        console.log(`[fetchWithProgress] Stream finished, total loaded: ${loaded}`);
-                    } else {
-                        console.log(`[fetchWithProgress] Stream finished`);
-                    }
+                    console.log(`[fetchWithProgress] Stream finished, total loaded: ${loaded}`);
                     break;
                 }
 
                 loaded += value.byteLength;
 
-                // Only log if enough bytes have been loaded since last log
-                if (loaded - lastLog >= LOG_THROTTLE_BYTES || loaded >= total) {
+                // Throttle logs
+                if (loaded - lastLog >= LOG_THROTTLE_BYTES) {
                     console.log(`[fetchWithProgress] Chunk received: ${value.byteLength} bytes, total loaded: ${loaded}`);
                     lastLog = loaded;
                 }
 
-                // Compute progress only if total is known
+                // Calculate progress
                 let progress = total ? loaded / total : 0;
-                progress = Math.min(Math.max(progress, 0), 1); // clamp 0–1
-
-                if (loaded > total) {
-                    console.warn(`[fetchWithProgress] loaded (${loaded}) > total (${total}) — Content-Length might be missing or wrong`);
+                if (progress > 1) {
+                    console.warn(`[fetchWithProgress] loaded (${loaded}) > total (${total}) — Content-Length might be wrong`);
+                    progress = 1; // map to 100%
                 }
 
-                // Map to startPercent → endPercent range
                 const mappedProgress = startPercent + progress * (endPercent - startPercent);
-
                 GDV.loading.updateLoadingStepProgress(label, mappedProgress);
+
+                controller.enqueue(value);
             }
 
             controller.close();
