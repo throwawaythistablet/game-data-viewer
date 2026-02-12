@@ -108,7 +108,7 @@ async function initializeHostedMode() {
     initializeCommonSteps();
     await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
     await GDV.loading.showLoading();
-    await loadDefaultColumnDetailsJson("Preparing table structure…", 0, 30);
+    await loadDefaultColumnDetailsJson("Preparing table structure…", 5, 30);
     await loadDefaultTagFullPatternsJson("Loading tag definitions…", 30, 40);
     await loadDefaultColumnCategoriesJson("Loading column categories…", 40, 50);
     await loadDefaultCsv("Loading database records…", 50, 80);
@@ -321,27 +321,51 @@ async function loadThumbnailsFromLocalDataFolder() {
 }
 
 async function fetchWithProgress(url, label, startPercent, endPercent) {
+    console.log(`[fetchWithProgress] Start fetching: ${url}`);
+    await GDV.loading.updateLoadingDirectUpdate(label, startPercent);
+
     const response = await fetch(url);
+    console.log(`[fetchWithProgress] Response status: ${response.status} ${response.statusText}`);
     if (!response.ok) return response;
 
     const contentLength = response.headers.get('Content-Length');
+    console.log(`[fetchWithProgress] Content-Length header: ${contentLength}`);
 
     // If no length header or no body, cannot track progress
     if (!contentLength || !response.body) {
+        console.warn(`[fetchWithProgress] No Content-Length or response.body, progress cannot be tracked`);
         return response;
     }
 
     const total = parseInt(contentLength, 10);
-    let loaded = 0;
+    console.log(`[fetchWithProgress] Total bytes to load: ${total}`);
 
+    let loaded = 0;
     const reader = response.body.getReader();
+
     const stream = new ReadableStream({
         async start(controller) {
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) break;
-                loaded += value.byteLength; // <-- use byteLength, NOT length
-                GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, total);
+                if (done) {
+                    console.log(`[fetchWithProgress] Stream finished`);
+                    break;
+                }
+
+                loaded += value.byteLength;
+                console.log(`[fetchWithProgress] Chunk received: ${value.byteLength} bytes, total loaded: ${loaded}`);
+
+                // Compute progress only if total is known
+                let progress = total ? (loaded / total) : 0;
+                progress = Math.min(Math.max(progress, 0), 1); // clamp 0–1
+                console.log(`[fetchWithProgress] Raw progress: ${(loaded/total).toFixed(3)}, clamped: ${progress.toFixed(3)}`);
+
+                // Map to startPercent → endPercent range
+                const mappedProgress = startPercent + progress * (endPercent - startPercent);
+                console.log(`[fetchWithProgress] Mapped progress: ${mappedProgress.toFixed(2)}%`);
+
+                GDV.loading.updateLoadingStepProgress(label, mappedProgress);
+
                 controller.enqueue(value);
             }
             controller.close();
@@ -354,6 +378,7 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
         statusText: response.statusText
     });
 }
+
 
 function loadAndUpdateTheme() {
     // Load saved theme
