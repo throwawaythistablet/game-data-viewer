@@ -124,7 +124,7 @@ async function loadDefaultCsv(label, startPercent, endPercent) {
     }
 
     try {
-        const response = await fetchWithProgress('data/game_data.csv', label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_data.csv', 56785024, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('CSV Load Failed', 'Failed to fetch the default CSV file from "data/game_data.csv".', new Error(`HTTP status: ${response.status}`) );
             return;
@@ -144,7 +144,7 @@ async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
     }
 
     try {
-        const response = await fetchWithProgress('data/game_column_details.json', label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_column_details.json', 155056, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Column Details Load Failed', 'Failed to fetch the default column details JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_details.json' });
             return;
@@ -159,7 +159,7 @@ async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
 
 async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
     try {
-        const response = await fetchWithProgress('data/tag_full_patterns.json', label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/tag_full_patterns.json', 320028, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Tag Patterns Load Failed', 'Failed to fetch the default tag full patterns JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/tag_full_patterns.json' });
             return;
@@ -175,7 +175,7 @@ async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
 
 async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) {
     try {
-        const response = await fetchWithProgress('data/game_column_categories.json', label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_column_categories.json', 11896, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Column Categories Load Failed', 'Failed to fetch the default column categories JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_categories.json' });
             return;
@@ -191,7 +191,7 @@ async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) 
 
 async function loadDefaultThumbnailsJson(label, startPercent, endPercent) {
     try {
-        const response = await fetchWithProgress('data/game_thumbnails.json', label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_thumbnails.json', 17949755, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Thumbnails Load Failed', 'Failed to fetch the default thumbnails JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_thumbnails.json' });
             return;
@@ -320,18 +320,13 @@ async function loadThumbnailsFromLocalDataFolder() {
     }
 }
 
-async function fetchWithProgress(url, label, startPercent, endPercent) {
+async function fetchWithProgress(url, estimatedFileSize, label, startPercent, endPercent) {
     console.log(`[fetchWithProgress] Start fetching: ${url}`);
     await GDV.loading.updateLoadingDirectUpdate(label, startPercent);
 
     const response = await fetch(url);
     console.log(`[fetchWithProgress] Response status: ${response.status} ${response.statusText}`);
     if (!response.ok) return response;
-
-    const contentLengthHeader = response.headers.get('Content-Length');
-    const total = contentLengthHeader ? parseInt(contentLengthHeader, 10) : undefined;
-    console.log(`[fetchWithProgress] Content-Length header: ${contentLengthHeader}`);
-    if (total !== undefined) console.log(`[fetchWithProgress] Total bytes to load: ${total}`);
 
     const reader = response.body?.getReader();
     if (!reader) {
@@ -342,44 +337,33 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
     let loaded = 0;
 
     // Throttle logs: aim for ~100 logs max
-    const LOG_THROTTLE_BYTES = total ? Math.max(65536, Math.floor(total / 100)) : 65536;
+    const LOG_THROTTLE_BYTES = 65536;
     let lastLog = 0;
 
     const stream = new ReadableStream({
         async start(controller) {
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) {
-                    // Always log at the end
-                    if (loaded !== lastLog) {
-                        console.log(`[fetchWithProgress] Chunk received: 0 bytes, total loaded: ${loaded}`);
-                    }
-                    console.log(`[fetchWithProgress] Stream finished, total loaded: ${loaded}`);
-                    break;
-                }
-
+                if (done) break;
                 loaded += value.byteLength;
 
-                // Throttle logs properly
+                // Throttle logs
                 if (loaded - lastLog >= LOG_THROTTLE_BYTES) {
                     console.log(`[fetchWithProgress] Chunk received: ${value.byteLength} bytes, total loaded: ${loaded}`);
                     lastLog = loaded;
                 }
-
-                // Calculate progress
-                let progress = total ? loaded / total : 0;
-
-                // Clamp progress to [0, 1]
-                if (progress > 1) {
-                    console.warn(`[fetchWithProgress] loaded (${loaded}) > total (${total}) — Content-Length might be wrong`);
-                    progress = 1;
-                }
-
-                const mappedProgress = startPercent + progress * (endPercent - startPercent);
-                GDV.loading.updateLoadingStepProgress(label, mappedProgress);
-
+                await GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, estimatedFileSize);
                 controller.enqueue(value);
             }
+
+            // Final log (one-line, copy-paste friendly)
+            if (estimatedFileSize !== undefined && loaded !== estimatedFileSize) {
+                console.warn(`[fetchWithProgress] File size mismatch for ${url} | actualLoaded=${loaded} | currentEstimate=${estimatedFileSize} | UPDATE_ESTIMATE_TO=${loaded}`);
+            }
+
+            console.log(`[fetchWithProgress] File size confirmed for ${url} | actualLoaded=${loaded}`);
+            await GDV.loading.updateLoadingDirectUpdate(label, endPercent);
+
             controller.close();
         }
     });
@@ -390,6 +374,7 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
         statusText: response.statusText
     });
 }
+
 
 function loadAndUpdateTheme() {
     // Load saved theme
