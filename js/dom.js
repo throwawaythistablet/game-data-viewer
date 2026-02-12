@@ -304,7 +304,7 @@ searchButton.addEventListener('click', async () => {
         return;
     }
 
-    await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(GDV.state.getActiveCsvFile());
+    await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
 });
 
 // Reset filters button

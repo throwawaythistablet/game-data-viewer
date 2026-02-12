@@ -1,6 +1,6 @@
 (function() {
 
-GDV.csvHandler.showPrefiltersAndExecuteCsvSearch = async function(file) {
+GDV.csvHandler.showPrefiltersForCsvSearch = async function(file) {
     if (!file) return false;
     try {
         const collectedPrefilters =

@@ -66,7 +66,7 @@ GDV.controller.loadAndSearchCsv = async function(file) {
     }
 
     setActiveCsvFile(file);
-    await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(file);
+    await GDV.csvHandler.showPrefiltersForCsvSearch(file);
 }
 
 GDV.controller.loadColumnDetailsFile = async function(file) {
@@ -106,29 +106,25 @@ async function initializeStandaloneMode() {
 
 async function initializeHostedMode() {
     initializeCommonSteps();
-    await GDV.loading.updateLoadingDirectUpdate("Preparing table structure…", 10);
+    await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
     await GDV.loading.showLoading();
-    await loadDefaultColumnDetailsJson();
-    await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 30);
-    await loadDefaultTagFullPatternsJson();
-    await GDV.loading.updateLoadingDirectUpdate("Loading column categories…", 40);
-    await loadDefaultColumnCategoriesJson();
-    await GDV.loading.updateLoadingDirectUpdate("Loading database records…", 50);
-    await loadDefaultCsv();
-    await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 80);
-    await loadDefaultThumbnailsJson();
+    await loadDefaultColumnDetailsJson("Preparing table structure…", 0, 30);
+    await loadDefaultTagFullPatternsJson("Loading tag definitions…", 30, 40);
+    await loadDefaultColumnCategoriesJson("Loading column categories…", 40, 50);
+    await loadDefaultCsv("Loading database records…", 50, 80);
+    await loadDefaultThumbnailsJson("Linking thumbnails…", 80, 99);
     await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
     await GDV.loading.hideLoading();
-    await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(GDV.state.getActiveCsvFile());
+    await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
 }
 
-async function loadDefaultCsv() {
+async function loadDefaultCsv(label, startPercent, endPercent) {
     if (GDV.state.getActiveCsvFile()) {
         return; // already loaded
     }
 
     try {
-        const response = await fetch('data/game_data.csv');
+        const response = await fetchWithProgress('data/game_data.csv', label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('CSV Load Failed', 'Failed to fetch the default CSV file from "data/game_data.csv".', new Error(`HTTP status: ${response.status}`) );
             return;
@@ -142,13 +138,13 @@ async function loadDefaultCsv() {
     }
 }
 
-async function loadDefaultColumnDetailsJson() {
+async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
     if (GDV.state.hasValidColumnDetails()) {
         return; // already loaded
     }
 
     try {
-        const response = await fetch('data/game_column_details.json');
+        const response = await fetchWithProgress('data/game_column_details.json', label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Column Details Load Failed', 'Failed to fetch the default column details JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_details.json' });
             return;
@@ -161,9 +157,9 @@ async function loadDefaultColumnDetailsJson() {
     }
 }
 
-async function loadDefaultTagFullPatternsJson() {
+async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
     try {
-        const response = await fetch('data/tag_full_patterns.json');
+        const response = await fetchWithProgress('data/tag_full_patterns.json', label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Tag Patterns Load Failed', 'Failed to fetch the default tag full patterns JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/tag_full_patterns.json' });
             return;
@@ -177,9 +173,9 @@ async function loadDefaultTagFullPatternsJson() {
     }
 }
 
-async function loadDefaultColumnCategoriesJson() {
+async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) {
     try {
-        const response = await fetch('data/game_column_categories.json');
+        const response = await fetchWithProgress('data/game_column_categories.json', label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Column Categories Load Failed', 'Failed to fetch the default column categories JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_categories.json' });
             return;
@@ -193,9 +189,9 @@ async function loadDefaultColumnCategoriesJson() {
     }
 }
 
-async function loadDefaultThumbnailsJson() {
+async function loadDefaultThumbnailsJson(label, startPercent, endPercent) {
     try {
-        const response = await fetch('data/game_thumbnails.json');
+        const response = await fetchWithProgress('data/game_thumbnails.json', label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Thumbnails Load Failed', 'Failed to fetch the default thumbnails JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_thumbnails.json' });
             return;
@@ -236,7 +232,7 @@ async function loadFilesFromDataFolder() {
         await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
 
         await GDV.loading.hideLoading();
-        await GDV.csvHandler.showPrefiltersAndExecuteCsvSearch(GDV.state.getActiveCsvFile());
+        await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
 
     } catch (err) {
         GDV.utils.reportHardError('Data Folder Load Failed', 'An unexpected error occurred while loading files from the data folder.', err, { dataFolderHandle });
@@ -323,6 +319,47 @@ async function loadThumbnailsFromLocalDataFolder() {
         GDV.utils.reportHardError('Failed to Load Thumbnails', `An error occurred while reading or parsing "${fileHandle.name}".`, err);
     }
 }
+
+async function fetchWithProgress(url, label, startPercent, endPercent) {
+    const response = await fetch(url);
+    if (!response.ok) return response;
+
+    const contentLength = response.headers.get('Content-Length');
+
+    // If no length header, no progress possible – return original response
+    if (!contentLength || !response.body) {
+        return response;
+    }
+
+    const total = parseInt(contentLength, 10);
+    let loaded = 0;
+
+    const reader = response.body.getReader();
+    const stream = new ReadableStream({
+        start(controller) {
+            function pump() {
+                reader.read().then(({ done, value }) => {
+                    if (done) {
+                        controller.close();
+                        return;
+                    }
+                    loaded += value.length;
+                    GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, total);
+                    controller.enqueue(value);
+                    pump();
+                });
+            }
+            pump();
+        }
+    });
+
+    return new Response(stream, {
+        headers: response.headers,
+        status: response.status,
+        statusText: response.statusText
+    });
+}
+
 
 function loadAndUpdateTheme() {
     // Load saved theme
