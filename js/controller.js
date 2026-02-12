@@ -326,7 +326,7 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
 
     const contentLength = response.headers.get('Content-Length');
 
-    // If no length header, no progress possible – return original response
+    // If no length header or no body, cannot track progress
     if (!contentLength || !response.body) {
         return response;
     }
@@ -336,20 +336,15 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
 
     const reader = response.body.getReader();
     const stream = new ReadableStream({
-        start(controller) {
-            function pump() {
-                reader.read().then(({ done, value }) => {
-                    if (done) {
-                        controller.close();
-                        return;
-                    }
-                    loaded += value.length;
-                    GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, total);
-                    controller.enqueue(value);
-                    pump();
-                });
+        async start(controller) {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                loaded += value.byteLength; // <-- use byteLength, NOT length
+                GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, total);
+                controller.enqueue(value);
             }
-            pump();
+            controller.close();
         }
     });
 
@@ -359,7 +354,6 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
         statusText: response.statusText
     });
 }
-
 
 function loadAndUpdateTheme() {
     // Load saved theme
