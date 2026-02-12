@@ -108,14 +108,44 @@ async function initializeHostedMode() {
     initializeCommonSteps();
     await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
     await GDV.loading.showLoading();
-    await loadDefaultColumnDetailsJson("Preparing table structure…", 5, 30);
-    await loadDefaultTagFullPatternsJson("Loading tag definitions…", 30, 40);
-    await loadDefaultColumnCategoriesJson("Loading column categories…", 40, 50);
-    await loadDefaultCsv("Loading database records…", 50, 80);
-    await loadDefaultThumbnailsJson("Linking thumbnails…", 80, 99);
+    await loadDefaultColumnDetailsJson("Loading column details…", 5, 10);
+    await loadDefaultTagFullPatternsJson("Loading tag definitions…", 10, 15);
+    await loadDefaultColumnCategoriesJson("Loading column categories…", 15, 20);
+    await loadDefaultCsv("Loading database records…", 20, 75);
+    await loadDefaultThumbnailsJson("Linking thumbnails…", 75, 99);
     await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
     await GDV.loading.hideLoading();
     await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
+}
+
+
+async function loadFilesFromDataFolder() {
+    if (!dataFolderHandle) {
+        GDV.utils.reportSilentWarning('No Games Folder', 'No games folder selected. Cannot load files.');
+        return;
+    }
+
+    try {
+        await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
+        await GDV.loading.showLoading();
+        await GDV.loading.updateLoadingDirectUpdate("Loading column details…", 5);
+        await loadColumnDetailsFromLocalDataFolder();
+        await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 10);
+        await loadTagFullPatternsFromLocalDataFolder();
+        await GDV.loading.updateLoadingDirectUpdate("Loading column categories…", 15);
+        await loadColumnCategoriesFromLocalDataFolder();
+        await GDV.loading.updateLoadingDirectUpdate("Loading database records…", 20);
+        await loadCsvFromLocalDataFolder();
+        await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 75);
+        await loadThumbnailsFromLocalDataFolder();
+        await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
+        await GDV.loading.hideLoading();
+        await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
+
+    } catch (err) {
+        GDV.utils.reportHardError('Data Folder Load Failed', 'An unexpected error occurred while loading files from the data folder.', err, { dataFolderHandle });
+        await GDV.loading.hideLoading();
+    }
 }
 
 async function loadDefaultCsv(label, startPercent, endPercent) {
@@ -124,7 +154,7 @@ async function loadDefaultCsv(label, startPercent, endPercent) {
     }
 
     try {
-        const response = await fetchWithProgress('data/game_data.csv', 56785024, label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_data.csv', 56760610, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('CSV Load Failed', 'Failed to fetch the default CSV file from "data/game_data.csv".', new Error(`HTTP status: ${response.status}`) );
             return;
@@ -144,7 +174,7 @@ async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
     }
 
     try {
-        const response = await fetchWithProgress('data/game_column_details.json', 155056, label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_column_details.json', 144735, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Column Details Load Failed', 'Failed to fetch the default column details JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_details.json' });
             return;
@@ -159,7 +189,7 @@ async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
 
 async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
     try {
-        const response = await fetchWithProgress('data/tag_full_patterns.json', 320028, label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/tag_full_patterns.json', 319134, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Tag Patterns Load Failed', 'Failed to fetch the default tag full patterns JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/tag_full_patterns.json' });
             return;
@@ -175,7 +205,7 @@ async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
 
 async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) {
     try {
-        const response = await fetchWithProgress('data/game_column_categories.json', 11896, label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_column_categories.json', 11241, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Column Categories Load Failed', 'Failed to fetch the default column categories JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_column_categories.json' });
             return;
@@ -191,7 +221,7 @@ async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) 
 
 async function loadDefaultThumbnailsJson(label, startPercent, endPercent) {
     try {
-        const response = await fetchWithProgress('data/game_thumbnails.json', 17949755, label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_thumbnails.json', 17634141, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Thumbnails Load Failed', 'Failed to fetch the default thumbnails JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_thumbnails.json' });
             return;
@@ -202,41 +232,6 @@ async function loadDefaultThumbnailsJson(label, startPercent, endPercent) {
 
     } catch (err) {
         GDV.utils.reportHardError('Thumbnails Load Failed', 'An unexpected error occurred while loading the default thumbnails JSON.', err);
-    }
-}
-
-
-async function loadFilesFromDataFolder() {
-    if (!dataFolderHandle) {
-        GDV.utils.reportSilentWarning('No Games Folder', 'No games folder selected. Cannot load files.');
-        return;
-    }
-
-    try {
-        await GDV.loading.updateLoadingDirectUpdate("Preparing table structure…", 10);
-        await GDV.loading.showLoading();
-
-        await loadColumnDetailsFromLocalDataFolder();
-        await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 30);
-
-        await loadTagFullPatternsFromLocalDataFolder();
-        await GDV.loading.updateLoadingDirectUpdate("Loading database records…", 40);
-
-        await loadColumnCategoriesFromLocalDataFolder();
-        await GDV.loading.updateLoadingDirectUpdate("Loading column categories…", 50);
-
-        await loadCsvFromLocalDataFolder();
-        await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 80);
-
-        await loadThumbnailsFromLocalDataFolder();
-        await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
-
-        await GDV.loading.hideLoading();
-        await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
-
-    } catch (err) {
-        GDV.utils.reportHardError('Data Folder Load Failed', 'An unexpected error occurred while loading files from the data folder.', err, { dataFolderHandle });
-        await GDV.loading.hideLoading();
     }
 }
 
