@@ -335,7 +335,8 @@ async function fetchWithProgress(url, estimatedFileSize, label, startPercent, en
                 const { done, value } = await reader.read();
                 if (done) break;
                 loaded += value.byteLength;
-                await GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, estimatedFileSize);
+                const total = loaded < estimatedFileSize ? estimatedFileSize : loaded;
+                await GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, total);
                 controller.enqueue(value);
             }
 
