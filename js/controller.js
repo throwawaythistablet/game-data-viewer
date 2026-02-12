@@ -321,49 +321,30 @@ async function loadThumbnailsFromLocalDataFolder() {
 }
 
 async function fetchWithProgress(url, estimatedFileSize, label, startPercent, endPercent) {
-    console.log(`[fetchWithProgress] Start fetching: ${url}`);
     await GDV.loading.updateLoadingDirectUpdate(label, startPercent);
 
     const response = await fetch(url);
-    console.log(`[fetchWithProgress] Response status: ${response.status} ${response.statusText}`);
     if (!response.ok) return response;
-
     const reader = response.body?.getReader();
-    if (!reader) {
-        console.warn(`[fetchWithProgress] response.body not readable, progress cannot be tracked`);
-        return response;
-    }
+    if (!reader) return response;
 
     let loaded = 0;
-
-    // Throttle logs: aim for ~100 logs max
-    const LOG_THROTTLE_BYTES = 65536;
-    let lastLog = 0;
-
     const stream = new ReadableStream({
         async start(controller) {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
                 loaded += value.byteLength;
-
-                // Throttle logs
-                if (loaded - lastLog >= LOG_THROTTLE_BYTES) {
-                    console.log(`[fetchWithProgress] Chunk received: ${value.byteLength} bytes, total loaded: ${loaded}`);
-                    lastLog = loaded;
-                }
                 await GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, estimatedFileSize);
                 controller.enqueue(value);
             }
 
-            // Final log (one-line, copy-paste friendly)
+            // Final log (one-line, for updating estimates)
             if (estimatedFileSize !== undefined && loaded !== estimatedFileSize) {
                 console.warn(`[fetchWithProgress] File size mismatch for ${url} | actualLoaded=${loaded} | currentEstimate=${estimatedFileSize} | UPDATE_ESTIMATE_TO=${loaded}`);
             }
 
-            console.log(`[fetchWithProgress] File size confirmed for ${url} | actualLoaded=${loaded}`);
             await GDV.loading.updateLoadingDirectUpdate(label, endPercent);
-
             controller.close();
         }
     });
@@ -374,6 +355,7 @@ async function fetchWithProgress(url, estimatedFileSize, label, startPercent, en
         statusText: response.statusText
     });
 }
+
 
 
 function loadAndUpdateTheme() {
