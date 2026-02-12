@@ -340,6 +340,8 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
     }
 
     let loaded = 0;
+
+    // Throttle logs: aim for ~100 logs max
     const LOG_THROTTLE_BYTES = total ? Math.max(65536, Math.floor(total / 100)) : 65536;
     let lastLog = 0;
 
@@ -348,13 +350,17 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) {
+                    // Always log at the end
+                    if (loaded !== lastLog) {
+                        console.log(`[fetchWithProgress] Chunk received: 0 bytes, total loaded: ${loaded}`);
+                    }
                     console.log(`[fetchWithProgress] Stream finished, total loaded: ${loaded}`);
                     break;
                 }
 
                 loaded += value.byteLength;
 
-                // Throttle logs
+                // Throttle logs properly
                 if (loaded - lastLog >= LOG_THROTTLE_BYTES) {
                     console.log(`[fetchWithProgress] Chunk received: ${value.byteLength} bytes, total loaded: ${loaded}`);
                     lastLog = loaded;
@@ -362,9 +368,11 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
 
                 // Calculate progress
                 let progress = total ? loaded / total : 0;
+
+                // Clamp progress to [0, 1]
                 if (progress > 1) {
                     console.warn(`[fetchWithProgress] loaded (${loaded}) > total (${total}) — Content-Length might be wrong`);
-                    progress = 1; // map to 100%
+                    progress = 1;
                 }
 
                 const mappedProgress = startPercent + progress * (endPercent - startPercent);
@@ -372,7 +380,6 @@ async function fetchWithProgress(url, label, startPercent, endPercent) {
 
                 controller.enqueue(value);
             }
-
             controller.close();
         }
     });
