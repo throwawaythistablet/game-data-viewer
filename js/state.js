@@ -7,6 +7,7 @@ let activeColumnCategories = {};
 let gamesFolderHandle = null;
 let dataFolderHandle = null;
 let prefilterFileName = null;
+let gameKeys = null;
 let lastSearchedPrefilters = {};
 let similarityGame = null;
 
@@ -70,6 +71,14 @@ GDV.state.getDataFolderHandle = function() {
 
 GDV.state.setDataFolderHandle = function(dataFolderHandle_) {
     dataFolderHandle = dataFolderHandle_;
+}
+
+GDV.state.getGameKeys = function() {
+    return gameKeys;
+}
+
+GDV.state.setGameKeys = function(gameKeys_) {
+    gameKeys = gameKeys_;
 }
 
 GDV.state.getLastSearchedPrefilters = function() {

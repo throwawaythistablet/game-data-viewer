@@ -23,7 +23,7 @@ async function executeCsvSearch(file) {
     if (!file) return false;
     try {
         await startCsvSearchUi();
-        await loadCsvAndBuildTable({ file, totalSize: file.size });
+        await loadCsvAndBuildTable(file);
         return true;
     } catch (err) {
         GDV.utils.reportHardError('CSV Search Failed', 'An error occurred while executing the CSV search.', err, { file } );
@@ -31,6 +31,44 @@ async function executeCsvSearch(file) {
     } finally {
         await finishCsvSearchUi();
     }
+}
+
+GDV.csvHandler.extractKeysFromCsv = extractKeysFromCsv;
+async function extractKeysFromCsv(file, label, startPercent, endPercent) {
+    if (!file) return [];
+    const totalSize = file.size;
+    let rowsProcessed = 0;
+    let bytesProcessed = 0;
+    const THROTTLE = 100;
+
+    const collectedKeys = [];
+    return new Promise((resolve, reject) => {
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            worker: true,
+            step: function (row) {
+                const keyValue = row.data?.key;
+                if (typeof keyValue === 'string' && keyValue.trim() !== '') {
+                    collectedKeys.push(keyValue.trim());
+                }
+                rowsProcessed++;
+                bytesProcessed += new TextEncoder().encode(Object.values(row.data).join(',') + '\n').length;
+
+                // Throttle progress updates
+                if (rowsProcessed % THROTTLE === 0) {
+                    GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, bytesProcessed, totalSize);
+                }
+            },
+            complete: function () {
+                GDV.loading.updateLoadingDirectUpdate(label, endPercent);
+                resolve(collectedKeys);
+            },
+            error: function (err) {
+                reject(err);
+            }
+        });
+    });
 }
 
 async function startCsvSearchUi() {
@@ -44,9 +82,9 @@ async function finishCsvSearchUi() {
     await GDV.loading.finishLoading();
 }
 
-async function loadCsvAndBuildTable({ file, totalSize }) {
+async function loadCsvAndBuildTable(file) {
     prefilters = GDV.state.getLastSearchedPrefilters();
-    const parsedData = await parseAndFilterCsv(file, totalSize, prefilters);
+    const parsedData = await parseAndFilterCsv(file, prefilters);
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
         GDV.utils.reportHardWarning('No results were found.', 'The search did not produce any rows after applying the prefilters.', context = { file, prefilters } );
         return;
@@ -54,8 +92,9 @@ async function loadCsvAndBuildTable({ file, totalSize }) {
     await GDV.datatable.loadTable(parsedData)
 }
 
-async function parseAndFilterCsv(file, totalSize, prefilters) {
+async function parseAndFilterCsv(file, prefilters) {
     const parsedData = [];
+    const totalSize = file.size;
     let rowsProcessed = 0;
     let bytesProcessed = 0;
     const THROTTLE = 100;
@@ -73,7 +112,7 @@ async function parseAndFilterCsv(file, totalSize, prefilters) {
                 }
                 
                 // Add row if passes prefilters
-                if (!prefilters || Object.keys(prefilters).length === 0 || isRowAllowedByPrefilter(row.data, prefilters)) {
+                if (!prefilters || Object.keys(prefilters).length === 0 || isRowIncluded(row.data, prefilters)) {
                     parsedData.push(row.data);
                 }
 
@@ -96,16 +135,24 @@ async function parseAndFilterCsv(file, totalSize, prefilters) {
     });
 }
 
-function isRowAllowedByPrefilter(row, prefilter) {
-    if (!prefilter || Object.keys(prefilter).length === 0) return true;
+function isRowIncluded(row, prefilter) {
+    return isRowIncludedBySimilarityGame(row) || isRowIncludedBasedFromPrefilters(row, prefilter);
+}
 
+function isRowIncludedBySimilarityGame(rowData) {
+    const keyValue = rowData?.key;
+    return keyValue === GDV.state.getSimilarityGame();
+}
+
+function isRowIncludedBasedFromPrefilters(rowData, prefilter) {
+    if (!prefilter || Object.keys(prefilter).length === 0) return true;
     const normalize = v => (v == null ? '' : typeof v === 'string' ? v.trim() : v);
 
     return Object.entries(prefilter).every(([col, criterion]) => {
         const colDef = GDV.state.getActiveColumnDetails()[col];
         if (!colDef) return true;
 
-        const rawVal = row[col];
+        const rawVal = rowData[col];
         const val = normalize(rawVal);
 
         // Numeric

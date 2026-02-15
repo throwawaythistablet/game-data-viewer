@@ -111,13 +111,13 @@ async function initializeHostedMode() {
     await loadDefaultColumnDetailsJson("Loading column details…", 5, 10);
     await loadDefaultTagFullPatternsJson("Loading tag definitions…", 10, 15);
     await loadDefaultColumnCategoriesJson("Loading column categories…", 15, 20);
-    await loadDefaultCsv("Loading database records…", 20, 75);
-    await loadDefaultThumbnailsJson("Linking thumbnails…", 75, 99);
+    await loadDefaultCsv("Loading database records…", 20, 70);
+    await loadKeysFromCsv("Loading keys from records…", 70, 80);
+    await loadDefaultThumbnailsJson("Linking thumbnails…", 80, 99);
     await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
     await GDV.loading.hideLoading();
     await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
 }
-
 
 async function loadFilesFromDataFolder() {
     if (!dataFolderHandle) {
@@ -136,7 +136,8 @@ async function loadFilesFromDataFolder() {
         await loadColumnCategoriesFromLocalDataFolder();
         await GDV.loading.updateLoadingDirectUpdate("Loading database records…", 20);
         await loadCsvFromLocalDataFolder();
-        await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 75);
+        await loadKeysFromCsv("Loading keys from records…", 70, 80);
+        await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 80);
         await loadThumbnailsFromLocalDataFolder();
         await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
         await GDV.loading.hideLoading();
@@ -146,6 +147,11 @@ async function loadFilesFromDataFolder() {
         GDV.utils.reportHardError('Data Folder Load Failed', 'An unexpected error occurred while loading files from the data folder.', err, { dataFolderHandle });
         await GDV.loading.hideLoading();
     }
+}
+
+async function loadKeysFromCsv(label, startPercent, endPercent) {
+    const file = GDV.state.getActiveCsvFile();
+    GDV.state.setGameKeys(await GDV.csvHandler.extractKeysFromCsv(file, label, startPercent, endPercent));
 }
 
 async function loadDefaultCsv(label, startPercent, endPercent) {

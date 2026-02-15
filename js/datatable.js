@@ -504,18 +504,15 @@ function addGameSimilaritySearch(container, column) {
     similarityWrapper.appendChild(btnWrapper);
     container.appendChild(similarityWrapper);
 
-    // Cache key column once
-    const keyColumn = getKeyColumnFromTable(column);
-
     // Input handler
     similarityInput.addEventListener('input', function () {
         const query = this.value.trim();
-        if (!query || !keyColumn) {
+        if (!query) {
             nearestMatchValue.textContent = '—';
             nearestMatchValue.dataset.gameKey = '';
             return;
         }
-        const nearest = findNearestGameKey(query, keyColumn);
+        const nearest = findNearestGameKey(query);
         if (nearest) {
             nearestMatchValue.textContent = nearest;
             nearestMatchValue.dataset.gameKey = nearest;
@@ -542,28 +539,12 @@ function addGameSimilaritySearch(container, column) {
     });
 }
 
-
-function getKeyColumnFromTable(anyColumnApi) {
-    const tableApi = anyColumnApi.table();
-    const headers = tableApi.columns().header().toArray();
-    const keyIndex = headers.findIndex(h => h.textContent.trim() === 'key');
-
-    if (isInvalidColumnIndex(keyIndex)) return null;
-    return tableApi.column(keyIndex);
-}
-
-function findNearestGameKey(input, keyColumn) {
+function findNearestGameKey(input) {
     const q = input.toLowerCase();
     let best = null;
     let bestScore = Infinity;
 
-    // Pull all keys from the column (raw data)
-    const keys = keyColumn
-        .data()
-        .toArray()
-        .map(k => String(k));
-
-    for (const key of keys) {
+    for (const key of GDV.state.getGameKeys()) {
         const k = key.toLowerCase();
 
         // Fast path: substring match
@@ -575,7 +556,6 @@ function findNearestGameKey(input, keyColumn) {
             best = key;
         }
     }
-
     return best;
 }
 
