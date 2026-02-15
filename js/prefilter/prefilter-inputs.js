@@ -32,7 +32,7 @@ GDV.prefilter.bindPrefilterInputs = function(form) {
         if (!input || input.classList?.contains('prefilter-search-input') || !input.name) return;
 
         // Only text/textarea/range inputs
-        if (input.type === 'text' || input.tagName.toLowerCase() === 'textarea' || input.classList.contains('range-min') || input.classList.contains('range-max')) {
+        if (input.type === 'text' || input.tagName.toLowerCase() === 'textarea' || input.classList.contains('range-input-min') || input.classList.contains('range-input-max')) {
             const col = input.name.replace(/__(min|max)$/, '');
             updateLivePrefilterForColumn(form, col);
 
@@ -74,7 +74,7 @@ function updateLivePrefilterForColumn(form, col) {
 
 GDV.prefilter.updateSinglePrefilterSummary = updateSinglePrefilterSummary;
 function updateSinglePrefilterSummary(form, col) {
-    const summary = form.querySelector('#prefilter-active-summary');
+    const summary = form.querySelector('#prefilter-active-items');
     if (!summary) return;
 
     const val = prefilterLiveState[col];

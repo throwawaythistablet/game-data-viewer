@@ -31,7 +31,7 @@ GDV.datatable.resetAllFilters = async function () {
 
     // Native DOM queries
     const checkboxFilters = document.querySelectorAll('tr.filters .filter-checkbox');
-    const textFilters = document.querySelectorAll('tr.filters .filter-text-input');
+    const textFilters = document.querySelectorAll('tr.filters .text-input-input');
     const rangeFilters = document.querySelectorAll('tr.filters .filter-range');
 
     // Reset column searches
@@ -78,8 +78,8 @@ GDV.datatable.resetAllFilters = async function () {
     for (let i = 0; i < rangeFilters.length; i++) {
         const range = rangeFilters[i];
 
-        const minInput = range.querySelector('.range-min');
-        const maxInput = range.querySelector('.range-max');
+        const minInput = range.querySelector('.range-input-min');
+        const maxInput = range.querySelector('.range-input-max');
 
         if (minInput) {
             minInput.value = range.dataset.originalMin || '';
@@ -466,7 +466,7 @@ function addGameSimilaritySearch(container, column) {
 
     const similarityInput = document.createElement('input');
     similarityInput.type = 'text';
-    similarityInput.className = 'filter-text-input';
+    similarityInput.className = 'text-input-input';
     similarityInput.placeholder = 'Find a game...';
     similarityInput.name = 'similaritySearch';
 
@@ -698,16 +698,16 @@ function addRangeFilter(th, column, colName, colDef) {
     minWrapper.className = 'range-input-wrapper';
     box.appendChild(minWrapper);
 
-    const minId = `range-min-${sanitizedName}`;
+    const minId = `range-input-min-${sanitizedName}`;
     const minLabel = document.createElement('label');
-    minLabel.className = 'range-label';
+    minLabel.className = 'range-input-label';
     minLabel.setAttribute('for', minId);
     minLabel.textContent = 'Min';
     minWrapper.appendChild(minLabel);
 
     const minInput = document.createElement('input');
     minInput.type = 'number';
-    minInput.className = 'range-min';
+    minInput.className = 'range-input-min';
     minInput.placeholder = 'Min';
     minInput.id = minId;
     minInput.name = minId;
@@ -719,16 +719,16 @@ function addRangeFilter(th, column, colName, colDef) {
     maxWrapper.className = 'range-input-wrapper';
     box.appendChild(maxWrapper);
 
-    const maxId = `range-max-${sanitizedName}`;
+    const maxId = `range-input-max-${sanitizedName}`;
     const maxLabel = document.createElement('label');
-    maxLabel.className = 'range-label';
+    maxLabel.className = 'range-input-label';
     maxLabel.setAttribute('for', maxId);
     maxLabel.textContent = 'Max';
     maxWrapper.appendChild(maxLabel);
 
     const maxInput = document.createElement('input');
     maxInput.type = 'number';
-    maxInput.className = 'range-max';
+    maxInput.className = 'range-input-max';
     maxInput.placeholder = 'Max';
     maxInput.id = maxId;
     maxInput.name = maxId;
@@ -792,12 +792,12 @@ function addRangeFilter(th, column, colName, colDef) {
 function addTextFilter(th, column, colName) {
     // Wrapper div
     const wrapper = document.createElement('div');
-    wrapper.className = 'filter-text-wrapper';
+    wrapper.className = 'text-input-wrapper';
     th.appendChild(wrapper);
 
     // Create label for accessibility
     const label = document.createElement('label');
-    label.className = 'filter-text-label';
+    label.className = 'text-input-label';
 
     // Ensure colName is a string
     const sanitizedName = String(colName || 'text-filter')
@@ -812,7 +812,7 @@ function addTextFilter(th, column, colName) {
     // Create input
     const input = document.createElement('input');
     input.type = 'text';
-    input.className = 'filter-text-input';
+    input.className = 'text-input-input';
     input.placeholder = 'Filter...';
     input.id = inputId;
     input.name = inputId;

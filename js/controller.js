@@ -227,7 +227,7 @@ async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) 
 
 async function loadDefaultThumbnailsJson(label, startPercent, endPercent) {
     try {
-        const response = await fetchWithProgress('data/game_thumbnails.json', 17949755, label, startPercent, endPercent);
+        const response = await fetchWithProgress('data/game_thumbnails.json', 17634141, label, startPercent, endPercent);
         if (!response.ok) {
             GDV.utils.reportHardError('Thumbnails Load Failed', 'Failed to fetch the default thumbnails JSON file.', new Error(`HTTP status: ${response.status}`), { url: 'data/game_thumbnails.json' });
             return;

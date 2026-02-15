@@ -16,7 +16,7 @@ GDV.prefilter.showPrefilterOverlayAndCollectFilters = async function() {
             form.appendChild(createPrefilterWarning());
             form.appendChild(createPrefilterActions(form, resolve, overlay, cleanupFocus));
             form.appendChild(createPrefilterSearchAndCategoryGroup());
-            form.appendChild(createActivePrefiltersSummary());
+            form.appendChild(createPrefiltersSummary());
             form.appendChild(createPrefilterGrid(GDV.state.getLastSearchedPrefilters()));
 
             GDV.prefilter.initializeLiveStateFromForm(form);
@@ -138,29 +138,24 @@ function createPrefilterCategoryDropdown() {
     const container = document.createElement('div');
     container.className = 'prefilter-search-box';
 
-    // Sanitize and create unique ID for accessibility
     const selectId = 'prefilter-category-select';
 
-    // Label for accessibility
     const label = document.createElement('label');
     label.setAttribute('for', selectId);
     label.className = 'prefilter-search-label';
     label.textContent = 'Categories:';
     container.appendChild(label);
 
-    // Select element
     const select = document.createElement('select');
     select.className = 'prefilter-category-select';
     select.id = selectId;
     container.appendChild(select);
 
-    // First option: All
     const allOption = document.createElement('option');
     allOption.value = '__all__';
     allOption.textContent = 'All Categories';
     select.appendChild(allOption);
 
-    // Populate categories dynamically
     const categories = GDV.state.getColumnCategories() || {};
     Object.keys(categories).forEach(cat => {
         const opt = document.createElement('option');
@@ -169,11 +164,18 @@ function createPrefilterCategoryDropdown() {
         select.appendChild(opt);
     });
 
-    // Update prefilter sections on change
+    // Update prefilter sections and summary chip on change
     select.addEventListener('change', () => {
         const searchInput = document.querySelector('.prefilter-search-input');
         const searchText = searchInput?.value || '';
         filterPrefilterSections(searchText, select.value);
+
+        // Update summary chip
+        const summaryChip = document.getElementById('prefilter-selected-category');
+        if (summaryChip) {
+            summaryChip.dataset.value = select.value;
+            summaryChip.textContent = select.selectedOptions[0].textContent;
+        }
     });
 
     return container;
@@ -216,20 +218,34 @@ function createPrefilterSearchBox() {
 }
 
 // Active summary
-function createActivePrefiltersSummary() {
+function createPrefiltersSummary() {
     const container = document.createElement('div');
-    container.className = 'prefilter-active-summary-container';
+    container.className = 'prefilter-summary-container';
 
     // Label stays constant
-    const label = document.createElement('span');
-    label.className = 'prefilter-active-summary-label';
-    label.textContent = 'Active Prefilters:';
-    container.appendChild(label);
+    const categoryLabel = document.createElement('span');
+    categoryLabel.className = 'prefilter-summary-label';
+    categoryLabel.textContent = 'Category:';
+    container.appendChild(categoryLabel);
 
-    // Chips container, always empty initially
+    // Selected category chip (initially "All Categories")
+    const categoryChip = document.createElement('span');
+    categoryChip.id = 'prefilter-selected-category';
+    categoryChip.className = 'prefilter-active-item';
+    categoryChip.dataset.value = '__all__'; // store value
+    categoryChip.textContent = 'All Categories';
+    container.appendChild(categoryChip);
+
+    // Label stays constant
+    const prefilterLabel = document.createElement('span');
+    prefilterLabel.className = 'prefilter-summary-label';
+    prefilterLabel.textContent = 'Active Prefilters:';
+    container.appendChild(prefilterLabel);
+
+    // Chips container for prefilters
     const chips = document.createElement('div');
-    chips.id = 'prefilter-active-summary';
-    chips.className = 'prefilter-active-summary';
+    chips.id = 'prefilter-active-items';
+    chips.className = 'prefilter-active-items';
     container.appendChild(chips);
 
     return container;
@@ -396,11 +412,11 @@ function createRangeFilter(name, min = null, max = null, prefill = null) {
 
     const minWrap = document.createElement('div');
     minWrap.className = 'range-input-wrapper';
-    minWrap.appendChild(createNumberInput(`${name}__min`, minVal, 'Min', 'range-min', String(min ?? '')));
+    minWrap.appendChild(createNumberInput(`${name}__min`, minVal, 'Min', 'range-input-min', String(min ?? '')));
 
     const maxWrap = document.createElement('div');
     maxWrap.className = 'range-input-wrapper';
-    maxWrap.appendChild(createNumberInput(`${name}__max`, maxVal, 'Max', 'range-max', String(max ?? '')));
+    maxWrap.appendChild(createNumberInput(`${name}__max`, maxVal, 'Max', 'range-input-max', String(max ?? '')));
 
     wrapper.appendChild(minWrap);
     wrapper.appendChild(maxWrap);
@@ -418,7 +434,7 @@ function createNumberInput(name, value = null, labelText = '', inputClass = '', 
 
     // Label
     const label = document.createElement('label');
-    label.className = 'range-label';
+    label.className = 'range-input-label';
     label.setAttribute('for', inputId);
     label.textContent = labelText;
     container.appendChild(label);
@@ -449,7 +465,7 @@ function createNumberInput(name, value = null, labelText = '', inputClass = '', 
 // Text input prefilter (fallback)
 function createTextFilterInput(name, prefill = null) {
     const container = document.createElement('div');
-    container.className = 'filter-text-wrapper';
+    container.className = 'text-input-wrapper';
 
     // Sanitize name for ID
     const sanitizedName = String(name).replace(/\s+/g, '-').replace(/[^\w-]/g, '');
@@ -458,7 +474,7 @@ function createTextFilterInput(name, prefill = null) {
     // Label for accessibility
     const label = document.createElement('label');
     label.setAttribute('for', inputId);
-    label.className = 'filter-text-label';
+    label.className = 'text-input-label';
     label.textContent = `Filter:`;
     container.appendChild(label);
 
@@ -467,7 +483,7 @@ function createTextFilterInput(name, prefill = null) {
     input.type = 'text';
     input.id = inputId;
     input.name = name;
-    input.className = 'filter-text-input';
+    input.className = 'text-input-input';
     input.placeholder = `Prefilter ${name}…`;
 
     if (prefill?.text?.[0] !== undefined) {
@@ -550,7 +566,7 @@ function showModalAccessibility(form, overlay) {
 }
 
 function renderFullActivePrefiltersSummary(form) {
-    const summary = form.querySelector('#prefilter-active-summary');
+    const summary = form.querySelector('#prefilter-active-items');
     if (!summary) return;
 
     // clear existing chips
@@ -630,7 +646,7 @@ function sectionMatchesTokens(colName, tokens) {
 }
 
 function bindActivePrefiltersSummaryRemoval(form) {
-    const summaryEl = form.querySelector('#prefilter-active-summary');
+    const summaryEl = form.querySelector('#prefilter-active-items');
     if (!summaryEl) return;
 
     // Delegated click handler for remove buttons
