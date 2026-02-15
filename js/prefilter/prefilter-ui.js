@@ -569,14 +569,19 @@ function renderFullActivePrefiltersSummary(form) {
 }
 
 function filterPrefilterSections(searchText = '', category = '__all__') {
-    searchText = searchText.trim().toLowerCase();
-
     const colCategories = GDV.state.getColumnCategories() || {};
     const sections = document.querySelectorAll('#prefilterOverlay .prefilter-section');
 
+    // Tokenize search input: lowercase, split by spaces, remove empty tokens
+    const tokens = searchText
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(t => t.length > 0);
+
     sections.forEach(section => {
         const colName = section.dataset.col;
-        const matchesSearch = !searchText || sectionMatchesSearch(colName, searchText);
+        const matchesSearch = tokens.length === 0 || sectionMatchesTokens(colName, tokens);
 
         // Category check
         let matchesCategory = true;
@@ -589,26 +594,39 @@ function filterPrefilterSections(searchText = '', category = '__all__') {
     });
 }
 
-function sectionMatchesSearch(colName, searchText) {
-    if (!searchText) return true;
-
-    const lowerSearch = searchText.toLowerCase();
-
-    if (colName.toLowerCase().includes(lowerSearch)) return true;
-
-    const description = GDV.state.getActiveColumnDetails()?.[colName]?.description;
-    if (description && description.toLowerCase().includes(lowerSearch)) return true;
-
+function sectionMatchesTokens(colName, tokens) {
+    const lowerColName = colName.toLowerCase();
+    const description = GDV.state.getActiveColumnDetails()?.[colName]?.description?.toLowerCase() || '';
     const regexStr = GDV.state.getTagFullPatterns()?.[colName];
+    const regexStrLower = regexStr?.toLowerCase() || '';
+
+    let regexExp = null;
     if (regexStr) {
-        if (regexStr.toLowerCase().includes(lowerSearch)) return true;
         try {
-            if (new RegExp(regexStr, 'i').test(searchText)) return true;
+            regexExp = new RegExp(regexStr, 'i');
         } catch (err) {
             GDV.utils.reportSilentWarning('Invalid Regex', `Column: "${colName}" contains an invalid regex pattern.`, err, { regexStr });
+            regexExp = null; // fallback: don't break token checking
         }
     }
-    return false;
+
+    return tokens.every(token => {
+        const lowerToken = token.toLowerCase();
+
+        // Match token in column name
+        if (lowerColName.includes(lowerToken)) return true;
+
+        // Match token in description
+        if (description.includes(lowerToken)) return true;
+
+        // Match token in regex string (as string)
+        if (regexStrLower && regexStrLower.includes(lowerToken)) return true;
+
+        // Try actual regex test
+        if (regexExp && regexExp.test(token)) return true;
+
+        return false;
+    });
 }
 
 function bindActivePrefiltersSummaryRemoval(form) {
