@@ -23,7 +23,7 @@ function openImagesForRow(rowElement) {
     }
 
     const dt = csvTableElement.DataTable();
-    const rowData = dt.row($(rowElement).closest('tr')).data();
+    const rowData = dt.row(rowElement.closest('tr')).data();
     const folderPath = extractFolderPathFromRow(rowData);
 
     if (!folderPath) {
