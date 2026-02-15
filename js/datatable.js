@@ -689,7 +689,7 @@ function addCheckboxFilter(th, column, colName, colDef) {
             let searchRegex;
 
             if (checkedVals.length === 0) {
-                searchRegex = ''; // match everthing
+                searchRegex = ''; // match everything
             } else if (checkedVals.length === colDef.choices.length) {
                 searchRegex = '';
             } else {
