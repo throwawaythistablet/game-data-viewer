@@ -1130,7 +1130,7 @@ function getSubUrl(gameUrl, path) {
 function findIndexOfColumnByNameInTable(colName) {
     const dt = csvTableElement.DataTable();
     const colIdx = dt.columns().indexes().toArray().find(i => {
-        const headerText = $(dt.column(i).header()).text().trim().toLowerCase();
+        const headerText = dt.column(i).header().textContent.trim().toLowerCase();
         return headerText === colName;
     });
     return colIdx;
@@ -1149,7 +1149,10 @@ function findIndexOfColumnByNameInColumns(columns, colName) {
 
 function getValueOfColumnFromRowElement(el, colName) {
     const dt = csvTableElement.DataTable();
-    const rowData = dt.row($(el).closest('tr')).data();
+    const tr = el.closest('tr'); // native DOM closest
+    if (!tr) return null;
+
+    const rowData = dt.row(tr).data();
     if (!rowData) return null;
 
     const colIdx = findIndexOfColumnByNameInTable(colName);
