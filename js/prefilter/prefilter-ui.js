@@ -139,7 +139,6 @@ function createPrefilterCategoryDropdown() {
     container.className = 'prefilter-search-box';
 
     const selectId = 'prefilter-category-select';
-
     const label = document.createElement('label');
     label.setAttribute('for', selectId);
     label.className = 'prefilter-search-label';
