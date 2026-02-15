@@ -17,9 +17,9 @@ GDV.datatable.loadTable = async function(parsedData) {
 
     await GDV.loading.updateLoadingDirectUpdate("Game Data Table Loaded.", 100);
     await GDV.loading.hideLoading();
-}
+};
 
-GDV.datatable.resetAllFilters = async function() {
+GDV.datatable.resetAllFilters = async function () {
     await GDV.loading.startLoading();
     await GDV.loading.updateLoadingDirectUpdate("Resetting filters...", 0);
 
@@ -29,44 +29,70 @@ GDV.datatable.resetAllFilters = async function() {
     }
     const dt = csvTableElement.DataTable();
 
-    // Count total steps for progress
-    const checkboxFilters = $('tr.filters .filter-checkbox');
-    const textFilters = $('tr.filters .filter-text');
-    const rangeFilters = $('tr.filters .filter-range');
+    // Native DOM queries
+    const checkboxFilters = document.querySelectorAll('tr.filters .filter-checkbox');
+    const textFilters = document.querySelectorAll('tr.filters .filter-text');
+    const rangeFilters = document.querySelectorAll('tr.filters .filter-range');
 
     // Reset column searches
     await GDV.loading.updateLoadingDirectUpdate("Resetting column searches...", 0);
     const colCount = dt.columns().count();
+
     for (let i = 0; i < colCount; i++) {
         dt.column(i).search('');
+        
         await GDV.loading.updateLoadingStepProgress("Resetting column searches...", 0, 20, i + 1, colCount);
         if (GDV.loading.isLoadingCancelled()) break;
     }
 
     // Reset checkboxes
     for (let i = 0; i < checkboxFilters.length; i++) {
-        const $box = $(checkboxFilters[i]);
-        $box.find('input[type="checkbox"]').prop('checked', true);
-        $box.find('input[type="checkbox"]').not('.toggle-all').trigger('change');
+        const box = checkboxFilters[i];
+        const checkboxes = box.querySelectorAll('input[type="checkbox"]');
+
+        checkboxes.forEach(cb => {
+            cb.checked = true;
+        });
+
+        checkboxes.forEach(cb => {
+            if (!cb.classList.contains('toggle-all')) {
+                cb.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
         await GDV.loading.updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, i + 1, checkboxFilters.length);
         if (GDV.loading.isLoadingCancelled()) break;
     }
 
     // Reset text filters
     for (let i = 0; i < textFilters.length; i++) {
-        const $input = $(textFilters[i]);
-        $input.val('');
-        $input.trigger('keyup');
+        const input = textFilters[i];
+        input.value = '';
+        input.dispatchEvent(new Event('keyup', { bubbles: true }));
+        
         await GDV.loading.updateLoadingStepProgress("Resetting text filters...", 40, 60, i + 1, textFilters.length);
         if (GDV.loading.isLoadingCancelled()) break;
     }
 
     // Reset numeric range filters
     for (let i = 0; i < rangeFilters.length; i++) {
-        const $range = $(rangeFilters[i]);
-        $range.find('.range-min').val($range.data('original-min'));
-        $range.find('.range-max').val($range.data('original-max'));
-        $range.find('input').trigger('input');
+        const range = rangeFilters[i];
+
+        const minInput = range.querySelector('.range-min');
+        const maxInput = range.querySelector('.range-max');
+
+        if (minInput) {
+            minInput.value = range.dataset.originalMin || '';
+        }
+        if (maxInput) {
+            maxInput.value = range.dataset.originalMax || '';
+        }
+
+        const inputs = range.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        
         await GDV.loading.updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, i + 1, rangeFilters.length);
         if (GDV.loading.isLoadingCancelled()) break;
     }
@@ -82,7 +108,7 @@ GDV.datatable.resetAllFilters = async function() {
     await GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
 
     await GDV.loading.finishLoading();
-}
+};
 
 GDV.datatable.getColumnDescription = getColumnDescription;
 function getColumnDescription(colName) {
@@ -93,11 +119,11 @@ function getColumnDescription(colName) {
     return [description, regexDesc]
         .filter(Boolean)
         .join('\n');
-}
+};
 
 GDV.datatable.getColumnTagCount = function(colName) {
     return GDV.state.getActiveColumnDetails()?.[colName]?.tag_count ?? null; 
-}
+};
 
 function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
@@ -179,7 +205,6 @@ function computeRowSimilarityPercent(similarGameRow, row) {
     return total === 0 ? '0.00' : ((matches / total) * 100).toFixed(2);
 }
 
-
 async function renderCsvTable(data, columns) {
     csvTableElement.hide();
     destroyExistingTable();
@@ -188,7 +213,6 @@ async function renderCsvTable(data, columns) {
     const tbody = createTableBody();
     await appendRowsToTableInChunks(data, columns, tbody);
     await initializeDataTableWithOptions(columns);
-    
     csvTableElement.show();
 }
 
@@ -269,35 +293,44 @@ function destroyExistingTable() {
         GDV.utils.reportSilentWarning('Destroy DataTable Failed', 'Failed to destroy existing DataTable.', err, { csvTableElement });
     } finally {
         clearTableRangeFilters();
-        csvTableElement.empty(); // safely clear old header/body
+        csvTableElement.empty();
     }
 }
 
 function createTableHeader(columns) {
-    const thead = $('<thead>');
-    const headerRow = $('<tr>');
-    const filterRow = $('<tr class="filters">');
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    const filterRow = document.createElement('tr');
+    filterRow.classList.add('filters');
 
     columns.forEach(col => {
         // Header cell
-        const th = $('<th>').text(col.title);
-        if (col.white_highlight) th.addClass('white-highlight');
-        else if (col.yellow_highlight) th.addClass('yellow-highlight');
-        headerRow.append(th);
+        const th = document.createElement('th');
+        th.textContent = col.title;
+        if (col.white_highlight) {
+            th.classList.add('white-highlight');
+        } else if (col.yellow_highlight) {
+            th.classList.add('yellow-highlight');
+        }
+        headerRow.appendChild(th);
 
         // Filter cell
-        const filterTh = $('<th>');
-        if (col.white_highlight) filterTh.addClass('white-highlight');
-        else if (col.yellow_highlight) filterTh.addClass('yellow-highlight');
-        filterRow.append(filterTh);
+        const filterTh = document.createElement('th');
+        if (col.white_highlight) {
+            filterTh.classList.add('white-highlight');
+        } else if (col.yellow_highlight) {
+            filterTh.classList.add('yellow-highlight');
+        }
+        filterRow.appendChild(filterTh);
     });
 
-    thead.append(headerRow).append(filterRow);
+    thead.appendChild(headerRow);
+    thead.appendChild(filterRow);
     csvTableElement.append(thead);
 }
 
 function createTableBody() {
-    const tbody = $('<tbody>');
+    const tbody = document.createElement('tbody');
     csvTableElement.append(tbody);
     return tbody;
 }
@@ -318,7 +351,7 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
                 if (col.data === '__view_images__') {
                     td.appendChild(renderViewButton());
                 } else if (col.data === '__thumbnail__') {
-                    const key = rowData['key']
+                    const key = rowData['key'];
                     const image_url = getThumbnailImageForKey(key);
                     const game_url = stripHtmlToString(rowData['url']);
                     td.appendChild(renderThumbnail(key, image_url, game_url));
@@ -336,7 +369,7 @@ async function appendRowsToTableInChunks(data, columns, tbody) {
             });
             fragment.appendChild(tr);
         });
-        tbody[0].appendChild(fragment);
+        tbody.appendChild(fragment);
 
         // Actual rows processed so far
         const rowsProcessed = Math.min(start + chunk.length, totalRows);
@@ -580,95 +613,154 @@ async function addSortingControls(container, colIdx) {
 }
 
 function addCheckboxFilter(th, column, colDef) {
-    const box = $('<div class="filter-checkbox"></div>').appendTo(th);
-    const toggleAll = $('<label class="toggle-all-label"><input type="checkbox" class="toggle-all" checked> Toggle All</label>');
-    box.append(toggleAll);
+    const box = document.createElement('div');
+    box.className = 'filter-checkbox';
+    th.appendChild(box);
 
+    // Toggle All
+    const toggleLabel = document.createElement('label');
+    toggleLabel.className = 'toggle-all-label';
+
+    const toggleInput = document.createElement('input');
+    toggleInput.type = 'checkbox';
+    toggleInput.className = 'toggle-all';
+    toggleInput.checked = true;
+
+    toggleLabel.appendChild(toggleInput);
+    toggleLabel.append(' Toggle All');
+    box.appendChild(toggleLabel);
+
+    // Individual checkboxes
     colDef.choices.forEach(v => {
-        box.append(`
-            <label>
-                <input type="checkbox" value="${v}" checked>
-                ${v}
-            </label>
-        `);
+        const label = document.createElement('label');
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.value = v;
+        input.checked = true;
+
+        label.appendChild(input);
+        label.append(' ' + v);
+
+        box.appendChild(label);
     });
 
-    // Toggle all
-    box.on('change', '.toggle-all', function () {
-        const checked = $(this).is(':checked');
-        box.find('input[type="checkbox"]').not(this).prop('checked', checked).trigger('change');
-    });
+    // Event delegation (single listener)
+    box.addEventListener('change', function (e) {
+        const target = e.target;
 
-    // Individual checkbox filtering
-    box.on('change', 'input:not(.toggle-all)', function () {
-        const checkedVals = box.find('input[type="checkbox"]:not(.toggle-all):checked')
-            .map((_, el) => $(el).val())
-            .get();
-
-        toggleAll.find('input').prop('checked', checkedVals.length === colDef.choices.length);
-
-        let searchRegex;
-        if (checkedVals.length === 0) {
-            // No checkboxes checked → match nothing
-            searchRegex = 'a^'; // regex that never matches
-        } else if (checkedVals.length === colDef.choices.length) {
-            // All checked → remove filter
-            searchRegex = '';
-        } else {
-            // Some checked → match only selected values
-            searchRegex = '^(' + checkedVals.map(v => $.fn.dataTable.util.escapeRegex(v)).join('|') + ')$';
+        // Toggle all handler
+        if (target.classList.contains('toggle-all')) {
+            const checked = target.checked;
+            const allCheckboxes = box.querySelectorAll('input[type="checkbox"]:not(.toggle-all)');
+            allCheckboxes.forEach(cb => {
+                cb.checked = checked;
+                cb.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            return;
         }
 
-        column.search(searchRegex, true, false).draw();
+        // Individual checkbox handler
+        if (target.matches('input[type="checkbox"]:not(.toggle-all)')) {
+            const checkedInputs = box.querySelectorAll('input[type="checkbox"]:not(.toggle-all):checked');
+            const checkedVals = Array.from(checkedInputs).map(el => el.value);
+
+            toggleInput.checked = checkedVals.length === colDef.choices.length;
+
+            let searchRegex;
+
+            if (checkedVals.length === 0) {
+                searchRegex = 'a^'; // match nothing
+            } else if (checkedVals.length === colDef.choices.length) {
+                searchRegex = '';
+            } else {
+                const escaped = checkedVals.map(v => $.fn.dataTable.util.escapeRegex(v));
+                searchRegex = '^(' + escaped.join('|') + ')$';
+            }
+
+            column.search(searchRegex, true, false).draw();
+        }
     });
 }
 
 function addTextFilter(th, column) {
-    $('<input type="text" class="filter-text" placeholder="Filter..." />')
-        .appendTo(th)
-        .on('keyup change clear', function () {
-            column.search(this.value).draw();
-        });
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'filter-text';
+    input.placeholder = 'Filter...';
+
+    th.appendChild(input);
+
+    const handler = function () {
+        column.search(this.value).draw();
+    };
+
+    input.addEventListener('keyup', handler);
+    input.addEventListener('change', handler);
+    input.addEventListener('input', handler);
 }
 
 function addRangeFilter(th, column, colDef) {
     // container
-    const box = $('<div class="filter-range"></div>').appendTo(th);
+    const box = document.createElement('div');
+    box.className = 'filter-range';
+    th.appendChild(box);
 
     // labeled inputs
-    const minWrapper = $('<div class="range-input-wrapper"></div>').appendTo(box);
-    $('<label class="range-label">Min</label>').appendTo(minWrapper);
-    const minInput = $('<input type="number" class="range-min" placeholder="Min" />')
-        .val(colDef.min ?? '')
-        .appendTo(minWrapper);
+    const minWrapper = document.createElement('div');
+    minWrapper.className = 'range-input-wrapper';
+    box.appendChild(minWrapper);
 
-    const maxWrapper = $('<div class="range-input-wrapper"></div>').appendTo(box);
-    $('<label class="range-label">Max</label>').appendTo(maxWrapper);
-    const maxInput = $('<input type="number" class="range-max" placeholder="Max" />')
-        .val(colDef.max ?? '')
-        .appendTo(maxWrapper);
+    const minLabel = document.createElement('label');
+    minLabel.className = 'range-label';
+    minLabel.textContent = 'Min';
+    minWrapper.appendChild(minLabel);
 
-    box.data('original-min', colDef.min ?? '');
-    box.data('original-max', colDef.max ?? '');
+    const minInput = document.createElement('input');
+    minInput.type = 'number';
+    minInput.className = 'range-min';
+    minInput.placeholder = 'Min';
+    minInput.value = colDef.min ?? '';
+    minWrapper.appendChild(minInput);
+
+    const maxWrapper = document.createElement('div');
+    maxWrapper.className = 'range-input-wrapper';
+    box.appendChild(maxWrapper);
+
+    const maxLabel = document.createElement('label');
+    maxLabel.className = 'range-label';
+    maxLabel.textContent = 'Max';
+    maxWrapper.appendChild(maxLabel);
+
+    const maxInput = document.createElement('input');
+    maxInput.type = 'number';
+    maxInput.className = 'range-max';
+    maxInput.placeholder = 'Max';
+    maxInput.value = colDef.max ?? '';
+    maxWrapper.appendChild(maxInput);
+
+    // Store original values (dataset replaces jQuery .data)
+    box.dataset.originalMin = colDef.min ?? '';
+    box.dataset.originalMax = colDef.max ?? '';
 
     const colIdx = column.index();
     const dataKey = column.dataSrc();
     const table = column.table();
 
-    // These will be updated on input change
     let minVal;
     let maxVal;
 
     // ✅ ONE filter function, pushed ONCE
     const rangeFilter = function (settings, data) {
         let rawVal;
+
         if (data == null) rawVal = undefined;
         else if (typeof data === 'object' && !Array.isArray(data)) rawVal = data[dataKey];
         else if (Array.isArray(data)) rawVal = data[colIdx];
         else rawVal = data;
 
         const num = stripHtmlAndConvertToNumber(rawVal);
-        if (isNaN(num)) return true; // keep non-numeric rows
+        if (isNaN(num)) return true;
 
         if (minVal !== undefined && num < minVal) return false;
         if (maxVal !== undefined && num > maxVal) return false;
@@ -676,37 +768,46 @@ function addRangeFilter(th, column, colDef) {
         return true;
     };
 
-    // Push filter once
-    const tableId = csvTableElement.attr('id') || 'csvTable';
+    const tableId = csvTableElement.id || 'csvTable';
     rangeFilter._rangeFilterKey = `rangeFilter_${tableId}_${colIdx}`;
+
     $.fn.dataTable.ext.search.push(rangeFilter);
 
     function applyRangeFilter() {
-        const minValRaw = parseFloat(minInput.val());
-        const maxValRaw = parseFloat(maxInput.val());
+        const minValRaw = parseFloat(minInput.value);
+        const maxValRaw = parseFloat(maxInput.value);
 
         minVal = !isNaN(minValRaw) ? minValRaw : undefined;
         maxVal = !isNaN(maxValRaw) ? maxValRaw : undefined;
+
         table.draw();
     }
 
-    box.on('input change', 'input', applyRangeFilter);
+    minInput.addEventListener('input', applyRangeFilter);
+    minInput.addEventListener('change', applyRangeFilter);
+    maxInput.addEventListener('input', applyRangeFilter);
+    maxInput.addEventListener('change', applyRangeFilter);
+
     applyRangeFilter();
 }
 
 function bindTableSortingButtons() {
     if (!csvTableElement.data('sortingButtonsBound')) {
+        // Ascending sort buttons
         csvTableElement.on('click', '.sort-asc', function () {
             const dt = csvTableElement.DataTable();
             const colIdx = Number($(this).data('colIdx'));
             dt.order([colIdx, 'asc']).draw();
         });
 
+        // Descending sort buttons
         csvTableElement.on('click', '.sort-desc', function () {
             const dt = csvTableElement.DataTable();
             const colIdx = Number($(this).data('colIdx'));
             dt.order([colIdx, 'desc']).draw();
         });
+
+        // Mark as bound
         csvTableElement.data('sortingButtonsBound', true);
     }
 }
@@ -987,10 +1088,15 @@ function stopPreviewSlideshow() {
 }
 
 function clearTableRangeFilters() {
-    const tableId = csvTableElement.attr('id') || 'csvTable';
+    // Get table ID using native DOM
+    const tableId = csvTableElement.id || 'csvTable';
+
+    // Filter out any existing range filters
     $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn =>
         typeof fn._rangeFilterKey !== 'string' || !fn._rangeFilterKey.startsWith(`rangeFilter_${tableId}_`)
     );
+
+    // Redraw table if it exists
     if ($.fn.DataTable.isDataTable(csvTableElement)) {
         csvTableElement.DataTable().draw(false);
     }
