@@ -31,7 +31,7 @@ GDV.datatable.resetAllFilters = async function () {
 
     // Native DOM queries
     const checkboxFilters = document.querySelectorAll('tr.filters .filter-checkbox');
-    const textFilters = document.querySelectorAll('tr.filters .filter-text');
+    const textFilters = document.querySelectorAll('tr.filters .filter-text-input');
     const rangeFilters = document.querySelectorAll('tr.filters .filter-range');
 
     // Reset column searches
@@ -445,7 +445,7 @@ async function addColumnFilters(api) {
             continue;
         }
         if (!colDef) continue;
-        addColumnFilterItems(container, column, colDef, colIdx);
+        addColumnFilterItems(container, column, colName, colDef, colIdx);
 
         await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
         await GDV.utils.yieldToBrowser();
@@ -459,23 +459,25 @@ function addGameSimilaritySearch(container, column) {
     const similarityWrapper = document.createElement('div');
     similarityWrapper.className = 'filters-similarity';
 
-    // Title
+    // Input + label (nest input inside label)
     const titleLabel = document.createElement('label');
     titleLabel.className = 'title-label';
-    titleLabel.textContent = 'Find Similar Games Here (By Similarity Score)';
-    similarityWrapper.appendChild(titleLabel);
+    titleLabel.textContent = 'Find Similar Games Here (By Similarity Score) ';
 
-    // Input
     const similarityInput = document.createElement('input');
     similarityInput.type = 'text';
-    similarityInput.className = 'filter-text';
+    similarityInput.className = 'filter-text-input';
     similarityInput.placeholder = 'Find a game...';
-    similarityWrapper.appendChild(similarityInput);
+    similarityInput.name = 'similaritySearch';
+
+    // Nest input inside label to associate correctly
+    titleLabel.appendChild(similarityInput);
+    similarityWrapper.appendChild(titleLabel);
 
     // Nearest match display
     const nearestMatchWrapper = document.createElement('div');
     nearestMatchWrapper.className = 'filters-line-wrapper';
-    const nearestMatchLabel = document.createElement('label');
+    const nearestMatchLabel = document.createElement('span');
     nearestMatchLabel.className = 'nearest-match-label';
     nearestMatchLabel.textContent = 'Nearest game match: ';
     const nearestMatchValue = document.createElement('span');
@@ -540,6 +542,7 @@ function addGameSimilaritySearch(container, column) {
     });
 }
 
+
 function getKeyColumnFromTable(anyColumnApi) {
     const tableApi = anyColumnApi.table();
     const headers = tableApi.columns().header().toArray();
@@ -576,14 +579,14 @@ function findNearestGameKey(input, keyColumn) {
     return best;
 }
 
-async function addColumnFilterItems(container, column, colDef, colIdx) {
+async function addColumnFilterItems(container, column, colName, colDef, colIdx) {
     addSortingControls(container, colIdx);
     if (colDef.choices && colDef.choices.length > 0) {
-        addCheckboxFilter(container, column, colDef);
+        addCheckboxFilter(container, column, colName, colDef);
     } else if (colDef.type === 'int' || colDef.type === 'float') {
-        addRangeFilter(container, column, colDef);
+        addRangeFilter(container, column, colName, colDef);
     } else {
-        addTextFilter(container, column);
+        addTextFilter(container, column, colName);
     }
 }
 
@@ -612,10 +615,15 @@ async function addSortingControls(container, colIdx) {
     container.append(lineWrapper);
 }
 
-function addCheckboxFilter(th, column, colDef) {
+function addCheckboxFilter(th, column, colName, colDef) {
     const box = document.createElement('div');
     box.className = 'filter-checkbox';
     th.appendChild(box);
+
+    // Sanitize column name for IDs
+    const sanitizedColName = String(colName || 'checkbox-filter')
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '');
 
     // Toggle All
     const toggleLabel = document.createElement('label');
@@ -625,13 +633,16 @@ function addCheckboxFilter(th, column, colDef) {
     toggleInput.type = 'checkbox';
     toggleInput.className = 'toggle-all';
     toggleInput.checked = true;
+    toggleInput.id = `toggle-all-${sanitizedColName}`;
+    toggleInput.name = `toggleAll-${sanitizedColName}`;
 
+    toggleLabel.setAttribute('for', toggleInput.id);
     toggleLabel.appendChild(toggleInput);
     toggleLabel.append(' Toggle All');
     box.appendChild(toggleLabel);
 
     // Individual checkboxes
-    colDef.choices.forEach(v => {
+    colDef.choices.forEach((v, idx) => {
         const label = document.createElement('label');
 
         const input = document.createElement('input');
@@ -639,6 +650,14 @@ function addCheckboxFilter(th, column, colDef) {
         input.value = v;
         input.checked = true;
 
+        // Assign unique id and name for accessibility
+        const sanitizedValue = String(v)
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]/g, '');
+        input.id = `chk-${sanitizedColName}-${sanitizedValue}-${idx}`;
+        input.name = `chk-${sanitizedColName}`;
+
+        label.setAttribute('for', input.id);
         label.appendChild(input);
         label.append(' ' + v);
 
@@ -683,36 +702,26 @@ function addCheckboxFilter(th, column, colDef) {
     });
 }
 
-function addTextFilter(th, column) {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'filter-text';
-    input.placeholder = 'Filter...';
-
-    th.appendChild(input);
-
-    const handler = function () {
-        column.search(this.value).draw();
-    };
-
-    input.addEventListener('keyup', handler);
-    input.addEventListener('change', handler);
-    input.addEventListener('input', handler);
-}
-
-function addRangeFilter(th, column, colDef) {
-    // container
+function addRangeFilter(th, column, colName, colDef) {
+    // Container
     const box = document.createElement('div');
     box.className = 'filter-range';
     th.appendChild(box);
 
-    // labeled inputs
+    // Helper to sanitize column name for IDs
+    const sanitizedName = String(colName || 'range-filter')
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '');
+
+    // Min input wrapper and label
     const minWrapper = document.createElement('div');
     minWrapper.className = 'range-input-wrapper';
     box.appendChild(minWrapper);
 
+    const minId = `range-min-${sanitizedName}`;
     const minLabel = document.createElement('label');
     minLabel.className = 'range-label';
+    minLabel.setAttribute('for', minId);
     minLabel.textContent = 'Min';
     minWrapper.appendChild(minLabel);
 
@@ -720,15 +729,20 @@ function addRangeFilter(th, column, colDef) {
     minInput.type = 'number';
     minInput.className = 'range-min';
     minInput.placeholder = 'Min';
+    minInput.id = minId;
+    minInput.name = minId;
     minInput.value = colDef.min ?? '';
     minWrapper.appendChild(minInput);
 
+    // Max input wrapper and label
     const maxWrapper = document.createElement('div');
     maxWrapper.className = 'range-input-wrapper';
     box.appendChild(maxWrapper);
 
+    const maxId = `range-max-${sanitizedName}`;
     const maxLabel = document.createElement('label');
     maxLabel.className = 'range-label';
+    maxLabel.setAttribute('for', maxId);
     maxLabel.textContent = 'Max';
     maxWrapper.appendChild(maxLabel);
 
@@ -736,10 +750,12 @@ function addRangeFilter(th, column, colDef) {
     maxInput.type = 'number';
     maxInput.className = 'range-max';
     maxInput.placeholder = 'Max';
+    maxInput.id = maxId;
+    maxInput.name = maxId;
     maxInput.value = colDef.max ?? '';
     maxWrapper.appendChild(maxInput);
 
-    // Store original values (dataset replaces jQuery .data)
+    // Store original values in dataset
     box.dataset.originalMin = colDef.min ?? '';
     box.dataset.originalMax = colDef.max ?? '';
 
@@ -750,7 +766,7 @@ function addRangeFilter(th, column, colDef) {
     let minVal;
     let maxVal;
 
-    // ✅ ONE filter function, pushed ONCE
+    // Single DataTables filter function
     const rangeFilter = function (settings, data) {
         let rawVal;
 
@@ -783,12 +799,53 @@ function addRangeFilter(th, column, colDef) {
         table.draw();
     }
 
-    minInput.addEventListener('input', applyRangeFilter);
-    minInput.addEventListener('change', applyRangeFilter);
-    maxInput.addEventListener('input', applyRangeFilter);
-    maxInput.addEventListener('change', applyRangeFilter);
+    // Event listeners for min/max inputs
+    [minInput, maxInput].forEach(input => {
+        input.addEventListener('input', applyRangeFilter);
+        input.addEventListener('change', applyRangeFilter);
+    });
 
+    // Apply filter initially
     applyRangeFilter();
+}
+
+function addTextFilter(th, column, colName) {
+    // Wrapper div
+    const wrapper = document.createElement('div');
+    wrapper.className = 'filter-text-wrapper';
+    th.appendChild(wrapper);
+
+    // Create label for accessibility
+    const label = document.createElement('label');
+    label.className = 'filter-text-label';
+
+    // Ensure colName is a string
+    const sanitizedName = String(colName || 'text-filter')
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '');
+    const inputId = `filter-${sanitizedName}`;
+
+    label.setAttribute('for', inputId);
+    label.textContent = 'Filter: '; // visible label for screen readers
+    wrapper.appendChild(label);
+
+    // Create input
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'filter-text-input';
+    input.placeholder = 'Filter...';
+    input.id = inputId;
+    input.name = inputId;
+    wrapper.appendChild(input);
+
+    // Event handler
+    const handler = function () {
+        column.search(this.value).draw();
+    };
+
+    input.addEventListener('keyup', handler);
+    input.addEventListener('change', handler);
+    input.addEventListener('input', handler);
 }
 
 function bindTableSortingButtons() {

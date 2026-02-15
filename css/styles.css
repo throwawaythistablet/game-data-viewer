@@ -561,7 +561,22 @@ td {
     display: block;
 }
 
-.filter-text {
+.filter-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 80px;
+    min-width: 80px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.filter-text-label {
+    font-size: 10px;
+    color: var(--text-subtle);
+    margin-bottom: 2px;
+}
+
+.filter-text-input {
     display: block;
     background: var(--bg-elevated);
     color: var(--text-main);
@@ -950,6 +965,11 @@ td {
     align-items: stretch;
     gap: 6px;
     margin: 0;
+}
+
+.prefilter-search-label {
+    font-weight: 600;
+    margin-right: 8px;
 }
 
 .prefilter-search-input {

@@ -136,10 +136,23 @@ function createPrefilterSearchAndCategoryGroup() {
 // Category drop down
 function createPrefilterCategoryDropdown() {
     const container = document.createElement('div');
-    container.className = 'prefilter-category-dropdown';
+    container.className = 'prefilter-search-box';
 
+    // Sanitize and create unique ID for accessibility
+    const selectId = 'prefilter-category-select';
+
+    // Label for accessibility
+    const label = document.createElement('label');
+    label.setAttribute('for', selectId);
+    label.className = 'prefilter-search-label';
+    label.textContent = 'Categories:';
+    container.appendChild(label);
+
+    // Select element
     const select = document.createElement('select');
     select.className = 'prefilter-category-select';
+    select.id = selectId;
+    container.appendChild(select);
 
     // First option: All
     const allOption = document.createElement('option');
@@ -147,7 +160,7 @@ function createPrefilterCategoryDropdown() {
     allOption.textContent = 'All Categories';
     select.appendChild(allOption);
 
-    // Populate categories
+    // Populate categories dynamically
     const categories = GDV.state.getColumnCategories() || {};
     Object.keys(categories).forEach(cat => {
         const opt = document.createElement('option');
@@ -156,31 +169,47 @@ function createPrefilterCategoryDropdown() {
         select.appendChild(opt);
     });
 
+    // Update prefilter sections on change
     select.addEventListener('change', () => {
         const searchInput = document.querySelector('.prefilter-search-input');
         const searchText = searchInput?.value || '';
         filterPrefilterSections(searchText, select.value);
     });
 
-    container.appendChild(select);
     return container;
 }
 
 // Search box
 function createPrefilterSearchBox() {
+    // Container wrapper
     const container = document.createElement('div');
     container.className = 'prefilter-search-box';
 
+    // Label for accessibility
+    const label = document.createElement('label');
+    label.className = 'prefilter-search-label';
+    const inputId = 'prefilter-search-input';
+    label.setAttribute('for', inputId);
+    label.textContent = 'Search Prefilters: ';
+    container.appendChild(label);
+
+    // Input field
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Search prefilters to change…';
     input.className = 'prefilter-search-input';
+    input.id = inputId;
+    input.name = inputId;
 
-    input.addEventListener('input', () => {
+    // Input event handler
+    const handler = () => {
         const select = document.querySelector('.prefilter-category-select');
         const category = select?.value || '__all__';
         filterPrefilterSections(input.value, category);
-    });
+    };
+
+    input.addEventListener('input', handler);
+    input.addEventListener('change', handler);
 
     container.appendChild(input);
     return container;
@@ -248,94 +277,114 @@ function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
     return section;
 }
 
-
 // Tag checkboxes
 function createTagFilter(name, prefill = null) {
     const container = document.createElement('div');
     container.className = 'prefilter-tag-group';
-
     const checkedValues = Array.isArray(prefill?.choices) ? prefill.choices : [];
 
-    const lbl0 = document.createElement('label');
-    lbl0.className = 'prefilter-checkbox';
-    const inp0 = document.createElement('input');
-    inp0.type = 'checkbox';
-    inp0.name = name;
-    inp0.value = '0';
-    inp0.checked = checkedValues.includes(0) || checkedValues.includes('0');
-    lbl0.appendChild(inp0);
-    lbl0.appendChild(document.createTextNode(' No (0)'));
+    // Helper to create individual checkboxes
+    function createCheckbox(value, labelText) {
+        const label = document.createElement('label');
+        label.className = 'prefilter-checkbox';
 
-    const lbl1 = document.createElement('label');
-    lbl1.className = 'prefilter-checkbox';
-    const inp1 = document.createElement('input');
-    inp1.type = 'checkbox';
-    inp1.name = name;
-    inp1.value = '1';
-    inp1.checked = checkedValues.includes(1) || checkedValues.includes('1');
-    lbl1.appendChild(inp1);
-    lbl1.appendChild(document.createTextNode(' Yes (1)'));
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = name;
+        input.value = String(value);
 
-    container.appendChild(lbl0);
-    container.appendChild(lbl1);
+        // Generate a unique id for accessibility
+        const sanitizedName = name.replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+        input.id = `prefilter-${sanitizedName}-${value}`;
+
+        // Check if this value should be pre-checked
+        input.checked = checkedValues.includes(value) || checkedValues.includes(String(value));
+
+        label.setAttribute('for', input.id);
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(` ${labelText}`));
+
+        return label;
+    }
+
+    // Create No (0) and Yes (1) checkboxes
+    const checkboxNo = createCheckbox(0, 'No (0)');
+    const checkboxYes = createCheckbox(1, 'Yes (1)');
+    container.appendChild(checkboxNo);
+    container.appendChild(checkboxYes);
 
     return container;
 }
 
-
 // Choice checkbox group with toggle-all
 function createChoiceFilter(name, choices, prefill = null) {
-    const box = document.createElement('div');
-    box.className = 'prefilter-box';
+    const container = document.createElement('div');
+    container.className = 'prefilter-box';
 
     const checkedValues = Array.isArray(prefill?.choices) ? prefill.choices : choices.slice();
 
+    // Helper to sanitize names/ids
+    const sanitizedName = String(name).replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+
+    // Create toggle-all checkbox
     const toggleLabel = document.createElement('label');
     toggleLabel.className = 'toggle-all-label';
 
     const toggleInput = document.createElement('input');
     toggleInput.type = 'checkbox';
     toggleInput.className = 'toggle-all';
-    toggleInput.dataset.col = String(name);
-    toggleInput.checked = choices.every(choice => checkedValues.includes(choice) || checkedValues.includes(String(choice)));
+    toggleInput.id = `toggle-all-${sanitizedName}`;
+    toggleInput.name = `toggleAll-${sanitizedName}`;
 
+    toggleInput.checked = choices.every(choice =>
+        checkedValues.includes(choice) || checkedValues.includes(String(choice))
+    );
+
+    toggleLabel.setAttribute('for', toggleInput.id);
     toggleLabel.appendChild(toggleInput);
     toggleLabel.appendChild(document.createTextNode(' Toggle All'));
-    box.appendChild(toggleLabel);
+    container.appendChild(toggleLabel);
 
-    choices.forEach(choice => {
-        const lbl = document.createElement('label');
-        lbl.className = 'prefilter-checkbox';
-        const inp = document.createElement('input');
-        inp.type = 'checkbox';
-        inp.name = name;
-        inp.value = String(choice);
-        inp.checked = checkedValues.includes(choice) || checkedValues.includes(String(choice));
-        lbl.appendChild(inp);
-        lbl.appendChild(document.createTextNode(' ' + String(choice)));
-        box.appendChild(lbl);
+    // Create individual choice checkboxes
+    choices.forEach((choice, idx) => {
+        const label = document.createElement('label');
+        label.className = 'prefilter-checkbox';
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = name;
+        input.value = String(choice);
+        input.checked = checkedValues.includes(choice) || checkedValues.includes(String(choice));
+
+        // Unique ID for accessibility
+        const choiceId = `chk-${sanitizedName}-${idx}`;
+        input.id = choiceId;
+        label.setAttribute('for', choiceId);
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + String(choice)));
+
+        container.appendChild(label);
     });
 
-    const childCheckboxes = box.querySelectorAll(`input[name="${name}"]`);
+    const childCheckboxes = container.querySelectorAll(`input[name="${name}"]`);
 
-    // Update toggle input when children change (keeps toggle state accurate)
+    // Keep toggle-all state updated when children change
     childCheckboxes.forEach(cb => cb.addEventListener('change', () => {
         toggleInput.checked = Array.from(childCheckboxes).every(i => i.checked);
     }));
 
-    // When toggle-all is clicked, set children and dispatch a single change event on first child
+    // Toggle-all handler sets all children
     toggleInput.addEventListener('change', () => {
         childCheckboxes.forEach(cb => cb.checked = toggleInput.checked);
         if (childCheckboxes.length > 0) {
-            // dispatch one change event so delegated handler updates liveState once
             const evt = new Event('change', { bubbles: true });
             childCheckboxes[0].dispatchEvent(evt);
         }
     });
 
-    return box;
+    return container;
 }
-
 
 // Range prefilter (min / max inputs)
 function createRangeFilter(name, min = null, max = null, prefill = null) {
@@ -361,15 +410,28 @@ function createRangeFilter(name, min = null, max = null, prefill = null) {
 // Create labeled number input with optional class for styling
 function createNumberInput(name, value = null, labelText = '', inputClass = '', placeholder = '') {
     const container = document.createElement('div');
+    container.className = 'number-input-wrapper';
 
+    // Sanitize name for id
+    const sanitizedName = String(name).replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+    const inputId = `number-${sanitizedName}`;
+
+    // Label
     const label = document.createElement('label');
     label.className = 'range-label';
+    label.setAttribute('for', inputId);
     label.textContent = labelText;
     container.appendChild(label);
 
+    // Input
     const input = document.createElement('input');
     input.type = 'number';
+    input.id = inputId;
     input.name = name;
+    input.step = 'any';
+    input.min = '';
+    input.max = '';
+    if (inputClass) input.className = inputClass;
 
     if (value !== null && value !== undefined && value !== '') {
         input.value = value;
@@ -377,12 +439,7 @@ function createNumberInput(name, value = null, labelText = '', inputClass = '', 
         input.placeholder = placeholder;
     }
 
-    if (inputClass) input.className = inputClass;
-
-    input.step = 'any';
-    input.min = '';
-    input.max = '';
-
+    // Prevent default invalid behavior
     input.addEventListener('invalid', e => e.preventDefault());
 
     container.appendChild(input);
@@ -391,12 +448,34 @@ function createNumberInput(name, value = null, labelText = '', inputClass = '', 
 
 // Text input prefilter (fallback)
 function createTextFilterInput(name, prefill = null) {
+    const container = document.createElement('div');
+    container.className = 'filter-text-wrapper';
+
+    // Sanitize name for ID
+    const sanitizedName = String(name).replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+    const inputId = `text-filter-${sanitizedName}`;
+
+    // Label for accessibility
+    const label = document.createElement('label');
+    label.setAttribute('for', inputId);
+    label.className = 'filter-text-label';
+    label.textContent = `Filter:`;
+    container.appendChild(label);
+
+    // Input element
     const input = document.createElement('input');
     input.type = 'text';
+    input.id = inputId;
     input.name = name;
+    input.className = 'filter-text-input';
     input.placeholder = `Prefilter ${name}…`;
-    if (prefill?.text?.[0]) input.value = prefill.text[0];
-    return input;
+
+    if (prefill?.text?.[0] !== undefined) {
+        input.value = prefill.text[0];
+    }
+
+    container.appendChild(input);
+    return container;
 }
 
 // collectPrefilterFromForm now returns a shallow clone of the liveState (very cheap)
