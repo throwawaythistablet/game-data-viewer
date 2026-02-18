@@ -1,18 +1,31 @@
 (function() {
 
 let prefilterLiveState = {};
+let sortMode = 'usage'; 
 
 
-GDV.state.getPrefilterLiveState = function() {
+GDV.prefilter.getPrefilterLiveState = function() {
     return prefilterLiveState;
 }
 
-GDV.state.setPrefilterLiveState = function(data) {
+GDV.prefilter.setPrefilterLiveState = function(data) {
     prefilterLiveState = data;
 }
 
-GDV.state.resetPrefilterLiveState = function() {
+GDV.prefilter.resetPrefilterLiveState= function() {
     prefilterLiveState = {};
+}
+
+GDV.prefilter.toggleSortMode = function() {
+    sortMode = sortMode === 'usage' ? 'alpha' : 'usage';
+}
+
+GDV.prefilter.getSortButtonDisplayText = function() {
+    return sortMode === 'usage' ? 'Sort: Most Used' : 'Sort: A–Z';
+}
+
+GDV.prefilter.getSortMode = function() {
+    return sortMode;
 }
 
 // Initialize liveState by scanning the form once (cheap)
@@ -95,6 +108,16 @@ function updatePrefilterWarningFromLiveState(form) {
     warningEl.style.display = hasFilters ? 'none' : 'block';
 }
 
+GDV.prefilter.sortPrefilterChips = sortPrefilterChips;
+function sortPrefilterChips(summary) {
+    if (!summary) { return; }
+    if (sortMode === 'alpha') {
+        sortPrefilterChipsAlphabetically(summary);
+    } else {
+        sortPrefilterChipsByUsage(summary);
+    }
+}
+
 function updateNumericPrefilter(form, col, def) {
     const [minEl] = getFormElementsByName(form, `${col}__min`);
     const [maxEl] = getFormElementsByName(form, `${col}__max`);
@@ -164,7 +187,7 @@ function updateChipContent(chip, col, val) {
     chip.appendChild(GDV.prefilter.renderRemoveButton(col));
 }
 
-function sortPrefilterChips(summary) {
+function sortPrefilterChipsByUsage(summary) {
     const colDefs = GDV.state.getActiveColumnDetails() || {};
     const columnOrder = Object.keys(colDefs);
 
@@ -174,6 +197,18 @@ function sortPrefilterChips(summary) {
         const idxB = columnOrder.indexOf(b.dataset.col);
         return idxA - idxB;
     });
+
+    chipsArray.forEach(c => summary.appendChild(c));
+}
+
+function sortPrefilterChipsAlphabetically(summary) {
+    const chipsArray = Array.from(
+        summary.querySelectorAll('.prefilter-active-item')
+    );
+
+    chipsArray.sort((a, b) =>
+        a.textContent.trim().localeCompare(b.textContent.trim())
+    );
 
     chipsArray.forEach(c => summary.appendChild(c));
 }

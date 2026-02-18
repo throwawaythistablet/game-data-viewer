@@ -215,6 +215,7 @@ function createPrefiltersSummaryRight(form, resolve, overlay, cleanupFocus) {
     categoryChip.dataset.value = '__all__';
     categoryChip.textContent = 'All Categories';
     categoryWrapper.appendChild(categoryChip);
+    categoryWrapper.appendChild(createPrefilterSortButton(form));
     rightGroup.appendChild(categoryWrapper);
 
     return rightGroup;
@@ -250,11 +251,22 @@ function createPrefiltersCancelButton(resolve, overlay, cleanupFocus) {
     return btn;
 }
 
-function createPrefilterGridOrderButton() {
+function createPrefilterSortButton(form) {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = 'Order: Alphabetical';
-    btn.className = 'btn btn-reset';
+    btn.className = 'btn';
+    btn.textContent = GDV.prefilter.getSortButtonDisplayText();
+
+    btn.addEventListener('click', () => {
+        GDV.prefilter.toggleSortMode();
+        btn.textContent = GDV.prefilter.getSortButtonDisplayText();
+
+        const summary = form.querySelector('#prefilter-active-items');
+        GDV.prefilter.sortPrefilterChips(summary);
+
+        sortPrefilterSections();
+    });
+
     return btn;
 }
 
@@ -504,8 +516,8 @@ function createTextFilterInput(name, prefill = null) {
 // collectPrefilterFromForm now returns a shallow clone of the liveState (very cheap)
 function collectPrefilterFromForm(form) {
     // structuredClone may not be available in all environments; fallback to JSON
-    if (typeof structuredClone === 'function') return structuredClone(GDV.state.getPrefilterLiveState());
-    return JSON.parse(JSON.stringify(GDV.state.getPrefilterLiveState()));
+    if (typeof structuredClone === 'function') return structuredClone(GDV.prefilter.getPrefilterLiveState());
+    return JSON.parse(JSON.stringify(GDV.prefilter.getPrefilterLiveState()));
 }
 
 function waitForPrefilterFormSubmission(form, resolve, overlay) {
@@ -579,7 +591,7 @@ function renderFullActivePrefiltersSummary(form) {
     // clear existing chips
     summary.textContent = '';
 
-    for (const [col, val] of Object.entries(GDV.state.getPrefilterLiveState())) {
+    for (const [col, val] of Object.entries(GDV.prefilter.getPrefilterLiveState())) {
         const span = document.createElement('span');
         span.className = 'prefilter-active-item';
         span.dataset.col = col;
@@ -615,6 +627,31 @@ function filterPrefilterSections(searchText = '', category = '__all__') {
 
         section.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
     });
+}
+
+function sortPrefilterSections() {
+    const grid = document.querySelector('#prefilterOverlay .prefilter-form');
+    if (!grid) return;
+
+    const sections = Array.from(grid.querySelectorAll('.prefilter-section'));
+    if (GDV.prefilter.getSortMode() === 'alpha') {
+        sortPrefilterSectionsAlphabetically(sections);
+    } else {
+        sortPrefilterSectionsByUsage(sections);
+    }
+
+    // Re-append in sorted order (only visible sections)
+    sections.forEach(section => grid.appendChild(section));
+}
+
+function sortPrefilterSectionsByUsage(sections) {
+    const colDefs = GDV.state.getActiveColumnDetails() || {};
+    const colOrder = Object.keys(colDefs);
+    sections.sort((a, b) => colOrder.indexOf(a.dataset.col) - colOrder.indexOf(b.dataset.col));
+}
+
+function sortPrefilterSectionsAlphabetically(sections) {
+    sections.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
 }
 
 function sectionMatchesTokens(colName, tokens) {
