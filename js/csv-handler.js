@@ -83,7 +83,7 @@ async function finishCsvSearchUi() {
 }
 
 async function loadCsvAndBuildTable(file) {
-    prefilters = GDV.state.getLastSearchedPrefilters();
+    prefilters = GDV.state.getPrefiltersToUse();
     const parsedData = await parseAndFilterCsv(file, prefilters);
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
         GDV.utils.reportHardWarning('No results were found.', 'The search did not produce any rows after applying the prefilters.', context = { file, prefilters } );

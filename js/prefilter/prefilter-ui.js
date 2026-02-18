@@ -16,7 +16,7 @@ GDV.prefilter.showPrefilterOverlayAndCollectFilters = async function() {
             form.appendChild(createPrefilterWarning());
             form.appendChild(createPrefilterSearchAndCategoryGroup());
             form.appendChild(createPrefiltersSummary(form, resolve, overlay, cleanupFocus));
-            form.appendChild(createPrefilterGrid(GDV.state.getLastSearchedPrefilters()));
+            form.appendChild(createPrefilterGrid(GDV.state.getPrefiltersToUse()));
 
             GDV.prefilter.initializeLiveStateFromForm(form);
             GDV.prefilter.updatePrefilterWarningFromLiveState(form);
@@ -530,7 +530,7 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
             if (!proceed) return;
         }
 
-        GDV.state.setLastSearchedPrefilters(prefilter);
+        GDV.state.setPrefiltersToUse(prefilter);
         GDV.dom.renderMainPagePrefiltersPanel();
         overlay.remove();
         resolve(prefilter);

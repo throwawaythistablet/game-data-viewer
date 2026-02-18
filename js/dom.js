@@ -128,7 +128,7 @@ GDV.dom.renderMainPagePrefiltersPanel = function() {
 
     while (marker.firstChild) marker.removeChild(marker.firstChild);
 
-    const lastSearchedPrefilters = GDV.state.getLastSearchedPrefilters();
+    const lastSearchedPrefilters = GDV.state.getPrefiltersToUse();
     const similarityGame = GDV.state.getSimilarityGame();
     if (!lastSearchedPrefilters || Object.keys(lastSearchedPrefilters).length === 0) return;
 

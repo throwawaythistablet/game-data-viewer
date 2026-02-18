@@ -8,7 +8,7 @@ let gamesFolderHandle = null;
 let dataFolderHandle = null;
 let prefilterFileName = null;
 let gameKeys = null;
-let lastSearchedPrefilters = {};
+let prefiltersToUse = {};
 let similarityGame = null;
 
 
@@ -81,12 +81,13 @@ GDV.state.setGameKeys = function(gameKeys_) {
     gameKeys = gameKeys_;
 }
 
-GDV.state.getLastSearchedPrefilters = function() {
-    return lastSearchedPrefilters;
+GDV.state.getPrefiltersToUse = function() {
+    return prefiltersToUse;
 }
 
-GDV.state.setLastSearchedPrefilters = function(prefilters) {
-    lastSearchedPrefilters = prefilters;
+GDV.state.setPrefiltersToUse = function(prefilters) {
+    prefiltersToUse = prefilters;
+    console.log(prefiltersToUse)
 }
 
 GDV.state.getSimilarityGame = function() {

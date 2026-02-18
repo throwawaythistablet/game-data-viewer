@@ -129,7 +129,7 @@ function createTableColumns(parsedData) {
     if (!parsedData || !parsedData.length) return [];
 
     const columnNames = Object.keys(parsedData[0]);
-    const searchedPrefilters = GDV.state.getLastSearchedPrefilters() || {};
+    const searchedPrefilters = GDV.state.getPrefiltersToUse() || {};
     const columnDetails = GDV.state.getActiveColumnDetails();
 
     const columns = buildColumns(columnNames, columnDetails, searchedPrefilters);
