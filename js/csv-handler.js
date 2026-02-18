@@ -72,7 +72,7 @@ async function extractKeysFromCsv(file, label, startPercent, endPercent) {
 }
 
 async function startCsvSearchUi() {
-    await GDV.loading.startLoading();
+    await GDV.loading.startLoading("var(--accent)");
     await GDV.loading.updateLoadingDirectUpdate("Starting Data Search...", 0);
     GDV.dom.hideMainPrefiltersPanelSection();
 }

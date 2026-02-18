@@ -107,7 +107,7 @@ async function initializeStandaloneMode() {
 async function initializeHostedMode() {
     initializeCommonSteps();
     await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
-    await GDV.loading.showLoading();
+    await GDV.loading.startLoading("var(--green)");
     await loadDefaultColumnDetailsJson("Loading column details…", 5, 10);
     await loadDefaultTagFullPatternsJson("Loading tag definitions…", 10, 15);
     await loadDefaultColumnCategoriesJson("Loading column categories…", 15, 20);
@@ -115,8 +115,8 @@ async function initializeHostedMode() {
     await loadKeysFromCsv("Loading keys from records…", 70, 80);
     await loadDefaultThumbnailsJson("Linking thumbnails…", 80, 99);
     await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
-    await GDV.loading.hideLoading();
-    await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
+    await GDV.loading.finishLoading();
+    await applyUrlPrefiltersOrPrompt();
 }
 
 async function loadFilesFromDataFolder() {
@@ -126,8 +126,8 @@ async function loadFilesFromDataFolder() {
     }
 
     try {
+        await GDV.loading.startLoading("var(--green)");
         await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
-        await GDV.loading.showLoading();
         await GDV.loading.updateLoadingDirectUpdate("Loading column details…", 5);
         await loadColumnDetailsFromLocalDataFolder();
         await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 10);
@@ -140,12 +140,22 @@ async function loadFilesFromDataFolder() {
         await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 80);
         await loadThumbnailsFromLocalDataFolder();
         await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
-        await GDV.loading.hideLoading();
-        await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
-
+        await GDV.loading.finishLoading();
+        await applyUrlPrefiltersOrPrompt();
     } catch (err) {
         GDV.utils.reportHardError('Data Folder Load Failed', 'An unexpected error occurred while loading files from the data folder.', err, { dataFolderHandle });
-        await GDV.loading.hideLoading();
+        await GDV.loading.finishLoading();
+    }
+}
+
+async function applyUrlPrefiltersOrPrompt() {
+    prefiltersFromUrl = GDV.prefilter.getPrefiltersInUrl();
+    if (prefiltersFromUrl && Object.keys(prefiltersFromUrl).length) {
+        GDV.state.setPrefiltersToUse(prefiltersFromUrl);
+        GDV.utils.showInfoBanner("URL Prefilters Detected", "Prefilters were found in the URL. Applying them now and performing the database search automatically.");
+        await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+    } else {
+        await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
     }
 }
 

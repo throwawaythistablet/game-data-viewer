@@ -2,29 +2,18 @@
 
 const loadingOverlayElement = document.getElementById('loadingOverlayElement');
 const loadingOverlayLabel = document.getElementById('loadingOverlayLabel');
+const loadingOverlaySpinner = document.getElementById('loadingOverlaySpinner');
 const loadingOverlayProgressBar = document.getElementById('loadingOverlayProgressBar');
 const loadingOverlayProgressText = document.getElementById('loadingOverlayProgressText');
 const loadingOverlayStopButton = document.getElementById('loadingOverlayStopButton');
 
 let loadingCancelled = false;
 
-GDV.loading.showLoading = showLoading;
-async function showLoading(){ 
-    loadingOverlayElement.style.display = 'flex'; 
-    await GDV.utils.yieldToBrowser();
-}
-
-GDV.loading.hideLoading = hideLoading;
-async function hideLoading() { 
-    loadingOverlayElement.style.display = 'none'; 
-    await GDV.utils.yieldToBrowser();
-}
-
 GDV.loading.startLoading = startLoading;
-async function startLoading() {
+async function startLoading(color) {
     await updateLoadingDirectUpdate("Loading...", 0);
     resetLoadingCancellation();
-    await showLoading();
+    await showLoading(color);
 }
 
 GDV.loading.finishLoading = finishLoading;
@@ -68,6 +57,26 @@ async function updateLoadingStepProgress(label, startPercent, endPercent, curren
     // GDV.utils.reportInformation(`Loading Step Progress: ${totalPercent.toFixed(2)}%`, `Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`, {'startPercent': startPercent, 'endPercent': endPercent, 'currentStep': currentStep, 'totalSteps': totalSteps});
 
     await GDV.utils.yieldToBrowser();
+}
+
+async function showLoading(color){ 
+    if (color) {
+        changeColor(color);
+    }
+    loadingOverlayElement.style.display = 'flex'; 
+    await GDV.utils.yieldToBrowser();
+}
+
+async function hideLoading() { 
+    loadingOverlayElement.style.display = 'none'; 
+    await GDV.utils.yieldToBrowser();
+}
+
+function changeColor(color){ 
+    loadingOverlayElement.style.color = color;
+    loadingOverlaySpinner.style.borderTop = `6px solid ${color}`;
+    loadingOverlayLabel.style.color = color;
+    loadingOverlayProgressBar.style.background = color;
 }
 
 // Stop loading button

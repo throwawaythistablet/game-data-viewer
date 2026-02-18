@@ -9,18 +9,13 @@ let similarGameRow = null;
 
 
 GDV.datatable.loadTable = async function(parsedData) {
-    await GDV.loading.showLoading();
-    
     populateSimilarityColumn(parsedData)
     const columns = createTableColumns(parsedData);
     await renderCsvTable(parsedData, columns);
-
-    await GDV.loading.updateLoadingDirectUpdate("Game Data Table Loaded.", 100);
-    await GDV.loading.hideLoading();
 };
 
 GDV.datatable.resetAllFilters = async function () {
-    await GDV.loading.startLoading();
+    await GDV.loading.startLoading("var(--yellow)");
     await GDV.loading.updateLoadingDirectUpdate("Resetting filters...", 0);
 
     if (!$.fn.DataTable.isDataTable(csvTableElement)) {
