@@ -76,18 +76,18 @@ function createPrefilterActions(form, resolve, overlay, cleanupFocus) {
     actions.className = 'prefilter-actions sticky-top';
 
     const applyBtn = createPrefilterSubmitButton('Apply Prefilters & Search');
-    applyBtn.classList.add('btn-apply');
+    applyBtn.classList.add('btn', 'btn-main');
     actions.appendChild(applyBtn);
 
     const row = document.createElement('div');
     row.className = 'btn-row';
 
     const resetBtn = createPrefiltersResetButton(form);
-    resetBtn.classList.add('btn-regular');
+    resetBtn.classList.add('btn');
     row.appendChild(resetBtn);
 
     const cancelBtn = createPrefiltersCancelButton(resolve, overlay, cleanupFocus);
-    cancelBtn.classList.add('btn-regular');
+    cancelBtn.classList.add('btn');
     row.appendChild(cancelBtn);
 
     actions.appendChild(row);
@@ -220,34 +220,53 @@ function createPrefilterSearchBox() {
 function createPrefiltersSummary() {
     const container = document.createElement('div');
     container.className = 'prefilter-summary-container';
+    container.appendChild(createPrefiltersSummaryLeft());
+    container.appendChild(createPrefiltersSummaryRight());
+    return container;
+}
 
-    // Label stays constant
-    const categoryLabel = document.createElement('span');
-    categoryLabel.className = 'prefilter-summary-label';
-    categoryLabel.textContent = 'Category:';
-    container.appendChild(categoryLabel);
+function createPrefiltersSummaryLeft() {
+    const leftGroup = document.createElement('div');
+    leftGroup.className = 'prefilter-summary-left';
 
-    // Selected category chip (initially "All Categories")
-    const categoryChip = document.createElement('span');
-    categoryChip.id = 'prefilter-selected-category';
-    categoryChip.className = 'prefilter-active-item';
-    categoryChip.dataset.value = '__all__'; // store value
-    categoryChip.textContent = 'All Categories';
-    container.appendChild(categoryChip);
-
-    // Label stays constant
     const prefilterLabel = document.createElement('span');
     prefilterLabel.className = 'prefilter-summary-label';
     prefilterLabel.textContent = 'Active Prefilters:';
-    container.appendChild(prefilterLabel);
+    leftGroup.appendChild(prefilterLabel);
 
-    // Chips container for prefilters
     const chips = document.createElement('div');
     chips.id = 'prefilter-active-items';
     chips.className = 'prefilter-active-items';
-    container.appendChild(chips);
+    leftGroup.appendChild(chips);
+    return leftGroup;
+}
 
-    return container;
+function createPrefiltersSummaryRight() {
+    const rightGroup = document.createElement('div');
+    rightGroup.className = 'prefilter-summary-right';
+
+    const categoryLabel = document.createElement('span');
+    categoryLabel.className = 'prefilter-summary-label';
+    categoryLabel.textContent = 'Category:';
+    rightGroup.appendChild(categoryLabel);
+
+    const categoryChip = document.createElement('span');
+    categoryChip.id = 'prefilter-selected-category';
+    categoryChip.className = 'prefilter-active-item';
+    categoryChip.dataset.value = '__all__';
+    categoryChip.textContent = 'All Categories';
+    rightGroup.appendChild(categoryChip);
+
+    // rightGroup.appendChild(createPrefilterGridOrderButton());
+    return rightGroup;
+}
+
+function createPrefilterGridOrderButton() {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Order: Alphabetical';
+    btn.className = 'btn btn-reset';
+    return btn;
 }
 
 // Grid

@@ -44,10 +44,6 @@ GDV.dom.getCsvTableElement = function() {
     return csvTableElement;
 }
 
-GDV.dom.updateThemeButton = function(isLight) {
-    themeToggleButton.textContent = isLight ? '🌞 Light' : '🌙 Dark';
-}
-
 GDV.dom.setActiveCsvFile = function(file) {
     csvFileDisplay.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
     csvFileDisplay.title = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
@@ -282,6 +278,11 @@ GDV.dom.createHighlightFromStatus = function(text) {
     return span;
 }
 
+GDV.dom.updateThemeButton = updateThemeButton;
+function updateThemeButton(isLight) {
+    themeToggleButton.textContent = isLight ? '🌞 Light' : '🌙 Dark';
+}
+
 function setControPanelGridState(expanded) {
     if (expanded) {
         controlsPanelGrid.classList.add('is-expanded');
@@ -332,7 +333,7 @@ themeToggleButton.addEventListener('click', () => {
     document.body.classList.toggle('light-theme');
     const isLight = document.body.classList.contains('light-theme');
     localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    updateThemeButton();
+    updateThemeButton(isLight);
 });
 
 controlsPanelGrid.parentElement.addEventListener('mouseenter', () => setControPanelGridState(true));

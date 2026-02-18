@@ -460,19 +460,18 @@ function addGameSimilaritySearch(container, column) {
     similarityWrapper.className = 'filters-similarity';
 
     // Input + label (nest input inside label)
-    const titleLabel = document.createElement('label');
-    titleLabel.className = 'title-label';
-    titleLabel.textContent = 'Find Similar Games Here (By Similarity Score) ';
-
+    const similarityLabelInput = document.createElement('label');
+    similarityLabelInput.className = 'label-input';
+    similarityLabelInput.textContent = 'Find Similar Games To:';
+    const br = document.createElement('br');
+    similarityLabelInput.appendChild(br);
     const similarityInput = document.createElement('input');
     similarityInput.type = 'text';
     similarityInput.className = 'text-input-input';
     similarityInput.placeholder = 'Find a game...';
     similarityInput.name = 'similaritySearch';
-
-    // Nest input inside label to associate correctly
-    titleLabel.appendChild(similarityInput);
-    similarityWrapper.appendChild(titleLabel);
+    similarityLabelInput.appendChild(similarityInput);
+    similarityWrapper.appendChild(similarityLabelInput);
 
     // Nearest match display
     const nearestMatchWrapper = document.createElement('div');
@@ -493,11 +492,11 @@ function addGameSimilaritySearch(container, column) {
     btnWrapper.className = 'filters-line-wrapper';
     const similarityButton = document.createElement('button');
     similarityButton.type = 'button';
-    similarityButton.className = 'similarity-btn';
+    similarityButton.className = 'btn btn-secondary';
     similarityButton.textContent = 'Update Similarity Scores';
     const resetButton = document.createElement('button');
     resetButton.type = 'button';
-    resetButton.className = 'similarity-btn';
+    resetButton.className = 'btn btn-secondary';
     resetButton.textContent = 'Reset';
     btnWrapper.appendChild(similarityButton);
     btnWrapper.appendChild(resetButton);
