@@ -747,7 +747,7 @@ function resetPrefilters(form) {
     resetPrefilterCategory(form);
 
     // Reset liveState and UI
-    GDV.state.resetPrefilterLiveState();
+    GDV.prefilter.resetPrefilterLiveState();
     renderFullActivePrefiltersSummary(form);
     GDV.prefilter.updatePrefilterWarningFromLiveState(form);
 }
