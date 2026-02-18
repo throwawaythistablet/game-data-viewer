@@ -87,7 +87,6 @@ GDV.state.getPrefiltersToUse = function() {
 
 GDV.state.setPrefiltersToUse = function(prefilters) {
     prefiltersToUse = prefilters;
-    console.log(prefiltersToUse)
 }
 
 GDV.state.getSimilarityGame = function() {
