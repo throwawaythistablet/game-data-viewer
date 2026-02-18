@@ -14,9 +14,8 @@ GDV.prefilter.showPrefilterOverlayAndCollectFilters = async function() {
 
         return new Promise(resolve => {
             form.appendChild(createPrefilterWarning());
-            form.appendChild(createPrefilterActions(form, resolve, overlay, cleanupFocus));
             form.appendChild(createPrefilterSearchAndCategoryGroup());
-            form.appendChild(createPrefiltersSummary());
+            form.appendChild(createPrefiltersSummary(form, resolve, overlay, cleanupFocus));
             form.appendChild(createPrefilterGrid(GDV.state.getLastSearchedPrefilters()));
 
             GDV.prefilter.initializeLiveStateFromForm(form);
@@ -68,60 +67,6 @@ function createPrefilterWarning() {
     warningEl.className = 'prefilter-warning';
     warningEl.textContent = '⚠ No prefilters applied! Searching the full dataset may be heavy.';
     return warningEl;
-}
-
-// Actions
-function createPrefilterActions(form, resolve, overlay, cleanupFocus) {
-    const actions = document.createElement('div');
-    actions.className = 'prefilter-actions sticky-top';
-
-    const applyBtn = createPrefilterSubmitButton('Apply Prefilters & Search');
-    applyBtn.classList.add('btn', 'btn-main');
-    actions.appendChild(applyBtn);
-
-    const row = document.createElement('div');
-    row.className = 'btn-row';
-
-    const resetBtn = createPrefiltersResetButton(form);
-    resetBtn.classList.add('btn');
-    row.appendChild(resetBtn);
-
-    const cancelBtn = createPrefiltersCancelButton(resolve, overlay, cleanupFocus);
-    cancelBtn.classList.add('btn');
-    row.appendChild(cancelBtn);
-
-    actions.appendChild(row);
-    return actions;
-}
-
-function createPrefilterSubmitButton(label='Submit') {
-    const btn = document.createElement('button');
-    btn.type = 'submit';
-    btn.textContent = label;
-    btn.className = 'btn';
-    return btn;
-}
-
-function createPrefiltersResetButton(form) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = 'Reset Prefilters';
-    btn.className = 'btn btn-reset';
-    btn.addEventListener('click', () => resetPrefilters(form));
-    return btn;
-}
-
-function createPrefiltersCancelButton(resolve, overlay, cleanupFocus) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = 'Cancel';
-    btn.className = 'btn btn-cancel';
-    btn.addEventListener('click', () => {
-        if (overlay) overlay.remove();
-        if (cleanupFocus) cleanupFocus();
-        resolve(null);
-    });
-    return btn;
 }
 
 // Category drop down and search box
@@ -217,11 +162,13 @@ function createPrefilterSearchBox() {
 }
 
 // Active summary
-function createPrefiltersSummary() {
+function createPrefiltersSummary(form, resolve, overlay, cleanupFocus) {
     const container = document.createElement('div');
     container.className = 'prefilter-summary-container';
+
     container.appendChild(createPrefiltersSummaryLeft());
-    container.appendChild(createPrefiltersSummaryRight());
+    container.appendChild(createPrefiltersSummaryRight(form, resolve, overlay, cleanupFocus));
+
     return container;
 }
 
@@ -238,27 +185,69 @@ function createPrefiltersSummaryLeft() {
     chips.id = 'prefilter-active-items';
     chips.className = 'prefilter-active-items';
     leftGroup.appendChild(chips);
+
     return leftGroup;
 }
 
-function createPrefiltersSummaryRight() {
+function createPrefiltersSummaryRight(form, resolve, overlay, cleanupFocus) {
     const rightGroup = document.createElement('div');
     rightGroup.className = 'prefilter-summary-right';
 
+    // Buttons row
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.className = 'prefilter-summary-buttons';
+    buttonWrapper.appendChild(createPrefiltersResetButton(form));
+    buttonWrapper.appendChild(createPrefiltersCancelButton(resolve, overlay, cleanupFocus));
+    buttonWrapper.appendChild(createPrefilterSubmitButton('Apply Prefilters & Search'));
+    rightGroup.appendChild(buttonWrapper);
+
+    // Category row
+    const categoryWrapper = document.createElement('div');
+    categoryWrapper.className = 'prefilter-summary-category';
     const categoryLabel = document.createElement('span');
     categoryLabel.className = 'prefilter-summary-label';
     categoryLabel.textContent = 'Category:';
-    rightGroup.appendChild(categoryLabel);
+    categoryWrapper.appendChild(categoryLabel);
 
     const categoryChip = document.createElement('span');
     categoryChip.id = 'prefilter-selected-category';
-    categoryChip.className = 'prefilter-active-item';
+    categoryChip.className = 'prefilter-summary-category-value';
     categoryChip.dataset.value = '__all__';
     categoryChip.textContent = 'All Categories';
-    rightGroup.appendChild(categoryChip);
+    categoryWrapper.appendChild(categoryChip);
+    rightGroup.appendChild(categoryWrapper);
 
-    // rightGroup.appendChild(createPrefilterGridOrderButton());
     return rightGroup;
+}
+
+function createPrefilterSubmitButton(label='Submit') {
+    const btn = document.createElement('button');
+    btn.type = 'submit';
+    btn.textContent = label;
+    btn.className = 'btn btn-main';
+    return btn;
+}
+
+function createPrefiltersResetButton(form) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Reset Prefilters';
+    btn.className = 'btn btn-reset';
+    btn.addEventListener('click', () => resetPrefilters(form));
+    return btn;
+}
+
+function createPrefiltersCancelButton(resolve, overlay, cleanupFocus) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Close';
+    btn.className = 'btn btn-danger btn-cancel';
+    btn.addEventListener('click', () => {
+        if (overlay) overlay.remove();
+        if (cleanupFocus) cleanupFocus();
+        resolve(null);
+    });
+    return btn;
 }
 
 function createPrefilterGridOrderButton() {

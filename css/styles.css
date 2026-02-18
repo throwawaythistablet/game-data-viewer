@@ -1037,22 +1037,57 @@ td {
 
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
 }
 
-.prefilter-summary-left,
-.prefilter-summary-right {
+.prefilter-summary-left {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: flex-start;
     flex-wrap: wrap;
+    gap: 8px;
+    text-align: left;
+}
+
+.prefilter-summary-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 12px;
 }
 
 .prefilter-summary-label {
     font-weight: bold;
     margin-right: 8px;
     white-space: nowrap;
+}
+
+.prefilter-summary-category {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.prefilter-summary-category-value {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    border: 2px solid var(--border-strong);
+    box-shadow: 0 0 8px var(--border-subtle);
+}
+
+.prefilter-summary-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
 }
 
 .prefilter-active-items {
