@@ -628,8 +628,8 @@ function addCheckboxFilter(th, column, colName, colDef) {
         const sanitizedValue = String(v)
             .replace(/\s+/g, '-')
             .replace(/[^\w-]/g, '');
-        input.id = `chk-${sanitizedColName}-${sanitizedValue}-${idx}`;
-        input.name = `chk-${sanitizedColName}`;
+        input.id = `chk-filter-${sanitizedColName}-${sanitizedValue}-${idx}`;
+        input.name = `chk-filter-${sanitizedColName}`;
 
         label.setAttribute('for', input.id);
         label.appendChild(input);

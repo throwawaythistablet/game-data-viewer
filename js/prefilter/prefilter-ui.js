@@ -392,7 +392,7 @@ function createChoiceFilter(name, choices, prefill = null) {
         input.checked = checkedValues.includes(choice) || checkedValues.includes(String(choice));
 
         // Unique ID for accessibility
-        const choiceId = `chk-${sanitizedName}-${idx}`;
+        const choiceId = `chk-prefilter-${sanitizedName}-${idx}`;
         input.id = choiceId;
         label.setAttribute('for', choiceId);
 
