@@ -78,6 +78,7 @@ async function startCsvSearchUi() {
 }
 
 async function finishCsvSearchUi() {
+    GDV.dom.renderMainPagePrefiltersPanel();
     GDV.dom.showMainPrefiltersPanelSection();
     await GDV.loading.finishLoading();
 }

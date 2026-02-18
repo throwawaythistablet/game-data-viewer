@@ -4,7 +4,7 @@
 
 :root {
     --bg-main: rgba(16, 16, 16, 1);
-    --bg-overlay: rgba(16, 16, 16, 0.8);
+    --bg-overlay: rgba(16, 16, 16, 0.9);
     --bg-panel: rgba(32, 32, 32, 1);
     --bg-elevated: rgba(40, 40, 40, 1);
     --bg-surface: rgba(48, 48, 48, 1);
@@ -47,7 +47,7 @@
 
 body.light-theme {
     --bg-main: rgba(240, 240, 240, 1);
-    --bg-overlay: rgba(240, 240, 240, 0.8);
+    --bg-overlay: rgba(240, 240, 240, 0.9);
     --bg-panel: rgba(224, 224, 224, 1);
     --bg-elevated: rgba(216, 216, 216, 1);
     --bg-surface: rgba(208, 208, 208, 1);
