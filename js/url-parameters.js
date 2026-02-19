@@ -1,39 +1,72 @@
 
 (function() {
 
-GDV.urlParameters.getPrefiltersInUrl = getPrefiltersInUrl;
-function getPrefiltersInUrl() {
+GDV.urlParameters.getDataFromUrlParameters = getDataFromUrlParameters;
+function getDataFromUrlParameters() {
     const params = parseQueryString();
+    return {
+        prefilters: extractPrefilters(params),
+        similarityGame: extractSimilarityGame(params)
+    };
+}
+
+GDV.urlParameters.encodeDataAsUrlParameters = encodeDataAsUrlParameters;
+function encodeDataAsUrlParameters(prefilters, similarityGame) {
+    const parts = [];
+    const pfPart = encodePrefilters(prefilters);
+    if (pfPart) {
+        parts.push(pfPart);
+    }
+    const sgPart = encodeSimilarityGame(similarityGame);
+    if (sgPart) {
+        parts.push(sgPart);
+    }
+    return parts.join("&");
+}
+
+function extractPrefilters(params) {
     let pfObj = null;
-    // 1. Compact param 'pf'
     if (params.pf) {
         pfObj = decodeBase64UrlJson(params.pf);
         if (!pfObj) {
             GDV.utils.reportSilentWarning("Invalid URL Prefilter Parameter", "The URL contained an invalid 'pf' parameter and it will be ignored.");
         }
     }
-    // 2. Human-readable overrides
     const humanPrefilters = parseHumanReadable(params);
     pfObj = mergePrefilters(pfObj, humanPrefilters);
-    // 3. Validate
-    if (!validatePrefilters(pfObj)) {
+    if (pfObj && !validatePrefilters(pfObj)){
         GDV.utils.reportSilentWarning("Prefilter Validation Failed", "The prefilters extracted from the URL did not pass validation and will be ignored.");
-        return;
-    }
-    return pfObj;
-}
-
-GDV.urlParameters.encodePrefiltersForUrl = encodePrefiltersForUrl;
-function encodePrefiltersForUrl(prefObj) {
-    try {
-        const jsonStr = JSON.stringify(prefObj);
-        let b64 = btoa(jsonStr);
-        b64 = b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-        return b64;
-    } catch (e) {
-        GDV.utils.reportSilentWarning("Prefilter URL Encoding Failed", "An error occurred while encoding prefilters for the URL.", e);
         return null;
     }
+    return pfObj || null;
+}
+
+function extractSimilarityGame(params) {
+    let sgObj = null;
+    if (params.sg) {
+        sgObj = decodeBase64UrlJson(params.sg);
+        if (sgObj === null) {
+            GDV.utils.reportSilentWarning("Invalid URL Similarity Game Parameter", "The URL contained an invalid 'sg' parameter and it will be ignored.");
+        }
+    }
+    return normalizeSimilarityGame(sgObj);
+}
+
+function encodePrefilters(prefilters) {
+    if (!prefilters || typeof prefilters !== "object" || Object.keys(prefilters).length === 0) {
+        return null;
+    }
+    const encoded = encodeJsonToBase64Url(prefilters);
+    if (!encoded) return null;
+    return "pf=" + encoded;
+}
+
+function encodeSimilarityGame(similarityGame) {
+    const normalized = normalizeSimilarityGame(similarityGame);
+    if (!normalized) return null;
+    const encoded = encodeJsonToBase64Url(normalized);
+    if (!encoded) return null;
+    return "sg=" + encoded;
 }
 
 function parseQueryString() {
@@ -41,28 +74,50 @@ function parseQueryString() {
     const search = window.location.search.substring(1);
     if (!search) return params;
     search.split("&").forEach(pair => {
-        const [key, value] = pair.split("=").map(decodeURIComponent);
-        if (key) params[key] = value || "";
+        const [rawKey, ...rest] = pair.split("=");
+        const key = decodeURIComponent(rawKey);
+        const value = decodeURIComponent(rest.join("="));
+        if (key) {
+            params[key] = value || "";
+        }
     });
     return params;
 }
 
 function decodeBase64UrlJson(str) {
     try {
-        // base64url -> base64
         str = str.replace(/-/g, "+").replace(/_/g, "/");
-        // pad to multiple of 4
         while (str.length % 4) str += "=";
-        const decoded = atob(str);
-        const obj = JSON.parse(decoded);
+        const binary = atob(str);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        const decodedStr = new TextDecoder().decode(bytes);
+        const obj = JSON.parse(decodedStr);
         return obj;
     } catch (e) {
-        GDV.utils.reportSilentWarning("Prefilter URL Decoding Failed", "An error occurred while decoding base64url JSON prefilters from the URL.", e);
+        GDV.utils.reportSilentWarning("URL Parameter Decoding Failed", "An error occurred while decoding base64url JSON prefilters from the URL.", e);
         return null;
     }
 }
 
-function parseHumanReadable(params, columnDefs) {
+function encodeJsonToBase64Url(value) {
+    try {
+        const jsonStr = JSON.stringify(value);
+        const utf8Bytes = new TextEncoder().encode(jsonStr);
+        let b64 = btoa(String.fromCharCode(...utf8Bytes));
+        return b64
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=+$/, "");
+    } catch (e) {
+        GDV.utils.reportSilentWarning("URL Parameter Encoding Failed", "An error occurred while encoding data for URL parameters.", e);
+        return null;
+    }
+}
+
+function parseHumanReadable(params) {
     const prefilters = {};
 
     Object.keys(params).forEach(key => {
@@ -231,6 +286,27 @@ function validatePrefilters(prefilters) {
     }
 
     return true;
+}
+
+function normalizeSimilarityGame(similarityGame) {
+    if (similarityGame == null) {
+        return null;
+    }
+    if (typeof similarityGame !== "string") {
+        GDV.utils.reportSilentWarning("Similarity Game Parameter Ignored", "The similarity game given is not a string and was ignored.");
+        return null;
+    }
+    const normalized = similarityGame.trim();
+    if (normalized.length === 0) {
+        return null;
+    }
+
+    const MAX_LENGTH = 200;
+    if (normalized.length > MAX_LENGTH) {
+        GDV.utils.reportSilentWarning("Similarity Game Parameter Ignored", "The similarity game string was too long and was ignored.");
+        return null;
+    }
+    return normalized;
 }
 
 

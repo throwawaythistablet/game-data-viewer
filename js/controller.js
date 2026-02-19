@@ -149,13 +149,28 @@ async function loadFilesFromDataFolder() {
 }
 
 async function applyUrlPrefiltersOrPrompt() {
-    prefiltersFromUrl = GDV.urlParameters.getPrefiltersInUrl();
-    if (prefiltersFromUrl && Object.keys(prefiltersFromUrl).length) {
-        GDV.state.setPrefiltersToUse(prefiltersFromUrl);
-        GDV.utils.showInfoBanner("URL Prefilters Detected", "Prefilters were found in the URL. Applying them now and performing the database search automatically.");
-        await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+    const { prefilters = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
+    const activeCsv = GDV.state.getActiveCsvFile();
+    let applied = false;
+
+    if (prefilters && Object.keys(prefilters).length) {
+        applied = true;
+        GDV.state.setPrefiltersToUse(prefilters);
+    }
+    if (similarityGame) {
+        applied = true;
+        GDV.state.setSimilarityGame(similarityGame);
+    }
+
+    if (applied) {
+        const appliedList = [
+            prefilters && Object.keys(prefilters).length ? "Prefilters" : null,
+            similarityGame ? "Similarity Game" : null
+        ].filter(Boolean).join(" & ");
+        GDV.utils.showInfoBanner("URL Parameters Detected",  `${appliedList} found in the URL. Applying now and performing automatic search.`);
+        await GDV.csvHandler.executeCsvSearch(activeCsv);
     } else {
-        await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
+        await GDV.csvHandler.showPrefiltersForCsvSearch(activeCsv);
     }
 }
 

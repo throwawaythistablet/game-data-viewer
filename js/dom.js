@@ -301,20 +301,14 @@ function createShareUrlButton() {
 
     shareBtn.addEventListener('click', async () => {
         try {
-            const prefilters = GDV.state.getPrefiltersToUse();
-            if (!prefilters || !Object.keys(prefilters).length) {
-                GDV.utils.reportSilentWarning("No Prefilters Found", "There are no active prefilters to encode into a shareable URL." );
-                return;
-            }
-
-            const encoded = GDV.urlParameters.encodePrefiltersForUrl(prefilters);
+            const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefiltersToUse(), GDV.state.getSimilarityGame());
             if (!encoded) {
                 GDV.utils.reportSilentWarning("URL Encoding Failed", "Unable to encode prefilters for sharing." );
                 return;
             }
 
             const baseUrl = "https://throwawaythistablet.github.io/game-data-viewer/"
-            const shareUrl = `${baseUrl}?pf=${encoded}`;
+            const shareUrl = `${baseUrl}?${encoded}`;
             await navigator.clipboard.writeText(shareUrl);
             GDV.utils.showInfoBanner("Shareable URL Copied", "The encoded prefilter URL has been copied to your clipboard.");
 
