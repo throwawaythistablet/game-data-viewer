@@ -1068,8 +1068,45 @@ td {
 
 .prefilter-summary-label {
 	font-weight: bold;
+	font-size: 14px;
 	margin-right: 8px;
 	white-space: nowrap;
+}
+
+.prefilter-summary-input-wrapper {
+	position: relative;
+	display: inline-block;
+}
+
+.prefilter-summary-input-ghost {
+	position: absolute;
+	left: 8px;
+	transform: translateY(3px);
+	z-index: 3;
+
+	color: var(--text-muted);
+	font-style: italic;
+	opacity: 0.6;
+	pointer-events: none;
+
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 100%;
+}
+
+.prefilter-summary-input {
+	position: relative;
+	z-index: 2;
+	background: transparent;
+
+	border: 1px solid var(--border-subtle);
+	padding: 6px 8px;
+	border-radius: 4px;
+	width: 300px;
+
+	font-weight: bold;
+	font-size: 14px;
+	color: var(--accent);
 }
 
 .prefilter-summary-category {

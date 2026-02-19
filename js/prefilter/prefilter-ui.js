@@ -199,16 +199,79 @@
 	function createPrefiltersSummaryRight(form, resolve, overlay, cleanupFocus) {
 		const rightGroup = document.createElement("div");
 		rightGroup.className = "prefilter-summary-right";
+		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(form, resolve, overlay, cleanupFocus));
+		rightGroup.appendChild(createPrefilterSimilarityRow());
+		rightGroup.appendChild(createPrefiltersSummaryCategoryRow(form));
+		return rightGroup;
+	}
 
-		// Buttons row
+	function createPrefiltersSummaryActionButtonsRow(form, resolve, overlay, cleanupFocus) {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-buttons";
 		buttonWrapper.appendChild(createPrefiltersResetButton(form));
 		buttonWrapper.appendChild(createPrefiltersCancelButton(resolve, overlay, cleanupFocus));
 		buttonWrapper.appendChild(createPrefilterSubmitButton("Apply Prefilters & Search"));
-		rightGroup.appendChild(buttonWrapper);
+		return buttonWrapper;
+	}
 
-		// Category row
+	function createPrefilterSimilarityRow() {
+		const similarityWrapper = document.createElement("div");
+		similarityWrapper.className = "prefilter-summary-similarity";
+
+		const label = document.createElement("span");
+		label.className = "prefilter-summary-label";
+		label.textContent = "Find Similar Games To:";
+		similarityWrapper.appendChild(label);
+
+		const inputWrapper = document.createElement("div");
+		inputWrapper.className = "prefilter-summary-input-wrapper";
+
+		const similarityInput = document.createElement("input");
+		similarityInput.type = "text";
+		similarityInput.name = "similaritySearch";
+		similarityInput.placeholder = "Find a game...";
+		similarityInput.className = "prefilter-summary-input";
+		similarityInput.spellcheck = false;
+		inputWrapper.appendChild(similarityInput);
+
+		const ghostText = document.createElement("div");
+		ghostText.className = "prefilter-summary-input-ghost";
+		inputWrapper.appendChild(ghostText);
+
+		similarityWrapper.appendChild(inputWrapper);
+
+		const existingGame = GDV.state.getSimilarityGame();
+		if (existingGame) {
+			similarityInput.value = existingGame;
+			ghostText.textContent = "";
+		}
+
+		let debounceTimer = null;
+		similarityInput.addEventListener("input", function () {
+			const query = this.value.trim();
+			clearTimeout(debounceTimer);
+			if (!query) {
+				ghostText.textContent = "";
+				GDV.state.resetSimilarityGame();
+				return;
+			}
+			const nearest = GDV.utils.findNearestGameKey(query);
+			if (nearest && nearest.toLowerCase() !== query.toLowerCase()) ghostText.textContent = nearest;
+			else ghostText.textContent = "";
+			debounceTimer = setTimeout(async () => {
+				if (!nearest) return;
+
+				similarityInput.value = nearest;
+				ghostText.textContent = "";
+
+				GDV.state.setSimilarityGame(nearest);
+			}, 1000);
+		});
+
+		return similarityWrapper;
+	}
+
+	function createPrefiltersSummaryCategoryRow(form) {
 		const categoryWrapper = document.createElement("div");
 		categoryWrapper.className = "prefilter-summary-category";
 		const categoryLabel = document.createElement("span");
@@ -223,9 +286,7 @@
 		categoryChip.textContent = "All Categories";
 		categoryWrapper.appendChild(categoryChip);
 		categoryWrapper.appendChild(createPrefilterSortButton(form));
-		rightGroup.appendChild(categoryWrapper);
-
-		return rightGroup;
+		return categoryWrapper;
 	}
 
 	function createPrefilterSubmitButton(label = "Submit") {
@@ -259,6 +320,8 @@
 	}
 
 	function createPrefilterSortButton(form) {
+		GDV.prefilter.resetSortMode();
+
 		const btn = document.createElement("button");
 		btn.type = "button";
 		btn.className = "btn";

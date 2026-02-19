@@ -98,9 +98,29 @@
 		};
 	};
 
-	GDV.utils.levenshteinDistance = (a, b) => {
-		const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+	GDV.utils.findNearestGameKey = (input) => {
+		const q = input.toLowerCase();
+		let best = null;
+		let bestScore = Infinity;
 
+		for (const key of GDV.state.getGameKeys()) {
+			const k = key.toLowerCase();
+
+			// Fast path: substring match
+			if (k.includes(q)) return key;
+
+			const score = levenshteinDistance(q, k);
+			if (score < bestScore) {
+				bestScore = score;
+				best = key;
+			}
+		}
+		return best;
+	};
+
+	GDV.utils.levenshteinDistance = levenshteinDistance;
+	function levenshteinDistance(a, b) {
+		const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
 		for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
 		for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
 
@@ -110,9 +130,8 @@
 				matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
 			}
 		}
-
 		return matrix[a.length][b.length];
-	};
+	}
 
 	GDV.utils.computeNearestMatchDistance = (columnName, searchText) => {
 		if (!searchText) return Infinity;

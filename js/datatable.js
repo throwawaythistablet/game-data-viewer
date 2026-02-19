@@ -486,7 +486,7 @@
 				nearestMatchValue.dataset.gameKey = "";
 				return;
 			}
-			const nearest = findNearestGameKey(query);
+			const nearest = GDV.utils.findNearestGameKey(query);
 			if (nearest) {
 				nearestMatchValue.textContent = nearest;
 				nearestMatchValue.dataset.gameKey = nearest;
@@ -511,26 +511,6 @@
 			resetSimilarityGame();
 			await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
 		});
-	}
-
-	function findNearestGameKey(input) {
-		const q = input.toLowerCase();
-		let best = null;
-		let bestScore = Infinity;
-
-		for (const key of GDV.state.getGameKeys()) {
-			const k = key.toLowerCase();
-
-			// Fast path: substring match
-			if (k.includes(q)) return key;
-
-			const score = GDV.utils.levenshteinDistance(q, k);
-			if (score < bestScore) {
-				bestScore = score;
-				best = key;
-			}
-		}
-		return best;
 	}
 
 	async function addColumnFilterItems(container, column, colName, colDef, colIdx) {
