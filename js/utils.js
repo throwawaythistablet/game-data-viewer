@@ -23,17 +23,27 @@ function logWarnOrError(level, label, description, error, context) {
 
 GDV.utils.showErrorBanner = showErrorBanner;
 function showErrorBanner(label, description, error) {
-    GDV.dom.showErrorBanner(label, description + (error?.message ? `\n${error.message}` : ''));
+    GDV.dom.showErrorBanner(label, description + createErrorMessage(error));
 };
 
 GDV.utils.showWarningBanner = showWarningBanner;
 function showWarningBanner(label, description, error = null) {
-    GDV.dom.showWarningBanner(label, description + (error?.message ? `\n${error.message}` : ''));
+    GDV.dom.showWarningBanner(label, description + createErrorMessage(error));
 };
 
 GDV.utils.showInfoBanner = showInfoBanner;
 function showInfoBanner(label, description) {
     GDV.dom.showInfoBanner(label, description);
+};
+
+GDV.utils.showPermanentWarningBanner = showPermanentWarningBanner;
+function showPermanentWarningBanner(label, description, error = null) {
+    GDV.dom.showPermanentWarningBanner(label, description + createErrorMessage(error));
+};
+
+GDV.utils.hideBannerWithLabel = hideBannerWithLabel;
+function hideBannerWithLabel(label) {
+    GDV.dom.hideBannerWithLabel(label);
 };
 
 GDV.utils.showAlertMessage = showAlertMessage;
@@ -104,6 +114,12 @@ GDV.utils.levenshteinDistance = function(a, b) {
     }
 
     return matrix[a.length][b.length];
+}
+
+function createErrorMessage(error) {
+    if (!error?.message) return '';
+    const msg = error.message.toString().trim();
+    return msg ? `\n${msg}` : '';
 }
 
 })();

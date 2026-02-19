@@ -837,20 +837,6 @@ td {
     overflow-x: hidden;
 }
 
-#prefilter-warning {
-    display: none;
-    color: var(--bg-main);
-    background-color: var(--danger);
-    font-weight: bold;
-    padding: 16px 20px;
-    margin: 20px 0;
-    border: 2px solid var(--bg-main);
-    border-radius: 6px;
-    text-align: center;
-    box-shadow: 0 0 8px var(--danger-soft);
-    line-height: 1.5;
-}
-
 .prefilter-form {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

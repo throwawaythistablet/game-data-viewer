@@ -77,21 +77,24 @@ GDV.dom.showMainPrefiltersPanelSection = function() {
     mainPrefiltersPanelSection.style.display = '';
 }
 
-GDV.dom.showInfoBanner = (label, message, timeout) => GDV.dom.showBanner('info', label, message, timeout);
+GDV.dom.showInfoBanner = (label, message, timeout) => showBanner('info', label, message, timeout);
 
-GDV.dom.showWarningBanner = (label, message, timeout) => GDV.dom.showBanner('warning', label, message, timeout);
+GDV.dom.showWarningBanner = (label, message, timeout) => showBanner('warning', label, message, timeout);
 
-GDV.dom.showErrorBanner = (label, message, timeout) => GDV.dom.showBanner('error', label, message, timeout);
+GDV.dom.showErrorBanner = (label, message, timeout) => showBanner('error', label, message, timeout);
 
-GDV.dom.showBanner = function(type, label, message, timeout = 10000) {
+GDV.dom.showPermanentWarningBanner = (label, message, timeout) => showBanner('warning', label, message, -1);
+
+function showBanner(type, label, message, timeout = 10000) {
     const banner = document.createElement('div');
     banner.className = `log-banner ${type}`;
+    banner.dataset.label = label;
 
     // Close button
     const closeBtn = document.createElement('button');
     closeBtn.className = 'banner-close';
     closeBtn.textContent = '×';
-    closeBtn.addEventListener('click', () => hideBanner(banner));
+    closeBtn.addEventListener('click', () => hideBannerWithElement(banner));
     banner.appendChild(closeBtn);
 
     // Label
@@ -113,14 +116,21 @@ GDV.dom.showBanner = function(type, label, message, timeout = 10000) {
 
     // Auto-hide
     if (timeout > 0) {
-        setTimeout(() => hideBanner(banner), timeout);
-    }
-
-    function hideBanner(el) {
-        el.classList.remove('show');
-        setTimeout(() => el.remove(), 300); // match CSS transition
+        setTimeout(() => hideBannerWithElement(banner), timeout);
     }
 };
+
+GDV.dom.hideBannerWithLabel = hideBannerWithLabel;
+function hideBannerWithLabel(label) {
+    const banners = document.querySelectorAll(`.log-banner[data-label="${label}"]`);
+    banners.forEach(banner => hideBannerWithElement(banner));
+}
+
+function hideBannerWithElement(el) {
+    if (!el) return;
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+}
 
 GDV.dom.renderMainPagePrefiltersPanel = function() {
     const marker = document.getElementById('mainPrefiltersPanelSection');

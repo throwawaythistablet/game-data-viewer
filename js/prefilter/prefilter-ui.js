@@ -1,5 +1,8 @@
 (function() {
 
+const noPrefiltersLabel = "No Prefilters Applied";
+const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
+
 GDV.prefilter.showPrefilterOverlayAndCollectFilters = async function() {
     try {
         const overlay = createPrefilterOverlayContainer('Refine Your Search Using Prefilters');
@@ -13,7 +16,6 @@ GDV.prefilter.showPrefilterOverlayAndCollectFilters = async function() {
         const cleanupFocus = showModalAccessibility(form, overlay);
 
         return new Promise(resolve => {
-            form.appendChild(createPrefilterWarning());
             form.appendChild(createPrefilterSearchAndCategoryGroup());
             form.appendChild(createPrefiltersSummary(form, resolve, overlay, cleanupFocus));
             form.appendChild(createPrefilterGrid(GDV.state.getPrefiltersToUse()));
@@ -43,6 +45,22 @@ GDV.prefilter.renderRemoveButton = function(col) {
     return removeBtn;
 }
 
+GDV.prefilter.hideNoPrefilterWarning = hideNoPrefilterWarning;
+function hideNoPrefilterWarning(){
+    GDV.utils.hideBannerWithLabel(noPrefiltersLabel);
+}
+
+GDV.prefilter.showNoPrefilterWarning = showNoPrefilterWarning;
+function showNoPrefilterWarning(){
+    GDV.utils.hideBannerWithLabel(noPrefiltersLabel);
+    GDV.utils.showPermanentWarningBanner(noPrefiltersLabel, noPrefiltersMessage);
+}
+
+function closePrefilterOverlay(overlay) {
+    hideNoPrefilterWarning();
+    overlay.remove();
+}
+
 // Overlay container
 function createPrefilterOverlayContainer(title) {
     const overlay = document.createElement('div');
@@ -58,15 +76,6 @@ function createPrefilterOverlayContainer(title) {
     overlay.setAttribute('aria-labelledby','prefilterOverlayHeading');
 
     return overlay;
-}
-
-// Warning
-function createPrefilterWarning() {
-    const warningEl = document.createElement('div');
-    warningEl.id = 'prefilter-warning';
-    warningEl.className = 'prefilter-warning';
-    warningEl.textContent = '⚠ No prefilters applied! Searching the full dataset may be heavy.';
-    return warningEl;
 }
 
 // Category drop down and search box
@@ -244,7 +253,7 @@ function createPrefiltersCancelButton(resolve, overlay, cleanupFocus) {
     btn.textContent = 'Close';
     btn.className = 'btn btn-danger btn-cancel';
     btn.addEventListener('click', () => {
-        if (overlay) overlay.remove();
+        if (overlay) closePrefilterOverlay(overlay);
         if (cleanupFocus) cleanupFocus();
         resolve(null);
     });
@@ -532,7 +541,7 @@ function waitForPrefilterFormSubmission(form, resolve, overlay) {
 
         GDV.state.setPrefiltersToUse(prefilter);
         GDV.dom.renderMainPagePrefiltersPanel();
-        overlay.remove();
+        closePrefilterOverlay(overlay);
         resolve(prefilter);
     });
 }
@@ -556,7 +565,7 @@ function showModalAccessibility(form, overlay) {
 
     function onKeydown(e) {
         if (e.key === 'Escape') {
-            overlay.remove();
+            closePrefilterOverlay(overlay);
             if (previousActive?.focus) previousActive.focus();
         }
         if (e.key === 'Tab') {

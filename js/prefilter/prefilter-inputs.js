@@ -102,10 +102,12 @@ function updateSinglePrefilterSummary(form, col) {
 
 GDV.prefilter.updatePrefilterWarningFromLiveState = updatePrefilterWarningFromLiveState;
 function updatePrefilterWarningFromLiveState(form) {
-    const warningEl = form.querySelector('#prefilter-warning');
-    if (!warningEl) return;
     const hasFilters = Object.keys(prefilterLiveState).length > 0;
-    warningEl.style.display = hasFilters ? 'none' : 'block';
+    if (hasFilters){
+        GDV.prefilter.hideNoPrefilterWarning();
+    } else {
+        GDV.prefilter.showNoPrefilterWarning();
+    }
 }
 
 GDV.prefilter.sortPrefilterChips = sortPrefilterChips;
