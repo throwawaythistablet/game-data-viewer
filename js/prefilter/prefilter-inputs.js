@@ -243,6 +243,7 @@
 		if (type === "bool") return val === "true";
 		if (type === "int") return parseInt(val, 10);
 		if (type === "float") return parseFloat(val);
+		if (type === "tag") return parseInt(val, 10);
 		// fallback: auto-detect numeric
 		return Number.isFinite(val) ? (val.includes(".") ? parseFloat(val) : parseInt(val, 10)) : String(val);
 	}
