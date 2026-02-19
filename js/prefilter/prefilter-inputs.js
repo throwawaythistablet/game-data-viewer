@@ -244,8 +244,10 @@
 		if (type === "int") return parseInt(val, 10);
 		if (type === "float") return parseFloat(val);
 		if (type === "tag") return parseInt(val, 10);
+		if (type === "str") return String(val);
 		// fallback: auto-detect numeric
-		return Number.isFinite(val) ? (val.includes(".") ? parseFloat(val) : parseInt(val, 10)) : String(val);
+		const num = Number(val);
+		return Number.isFinite(num) ? (val.includes(".") ? parseFloat(val) : parseInt(val, 10)) : String(val);
 	}
 
 	// Determine column type
