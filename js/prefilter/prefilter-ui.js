@@ -12,7 +12,7 @@
 
 			overlay.appendChild(form);
 			document.body.appendChild(overlay);
-			const cleanupFocus = showModalAccessibility(form, overlay);
+			const cleanupFocus = showModalAccessibility(overlay);
 
 			return new Promise((resolve) => {
 				form.appendChild(createPrefilterSearchAndCategoryGroup());
@@ -403,7 +403,7 @@
 			label.setAttribute("for", choiceId);
 
 			label.appendChild(input);
-			label.appendChild(document.createTextNode(" " + String(choice)));
+			label.appendChild(document.createTextNode(` ${String(choice)}`));
 
 			container.appendChild(label);
 		});
@@ -411,15 +411,17 @@
 		const childCheckboxes = container.querySelectorAll(`input[name="${name}"]`);
 
 		// Keep toggle-all state updated when children change
-		childCheckboxes.forEach((cb) =>
+		childCheckboxes.forEach((cb) => {
 			cb.addEventListener("change", () => {
 				toggleInput.checked = Array.from(childCheckboxes).every((i) => i.checked);
-			}),
-		);
+			});
+		});
 
 		// Toggle-all handler sets all children
 		toggleInput.addEventListener("change", () => {
-			childCheckboxes.forEach((cb) => (cb.checked = toggleInput.checked));
+			childCheckboxes.forEach((cb) => {
+				cb.checked = toggleInput.checked;
+			});
 			if (childCheckboxes.length > 0) {
 				const evt = new Event("change", { bubbles: true });
 				childCheckboxes[0].dispatchEvent(evt);
@@ -526,7 +528,7 @@
 	}
 
 	// collectPrefilterFromForm now returns a shallow clone of the liveState (very cheap)
-	function collectPrefilterFromForm(form) {
+	function collectPrefilterFromForm() {
 		// structuredClone may not be available in all environments; fallback to JSON
 		if (typeof structuredClone === "function") return structuredClone(GDV.prefilter.getPrefilterLiveState());
 		return JSON.parse(JSON.stringify(GDV.prefilter.getPrefilterLiveState()));
@@ -535,7 +537,7 @@
 	function waitForPrefilterFormSubmission(form, resolve, overlay) {
 		form.addEventListener("submit", async (e) => {
 			e.preventDefault();
-			const prefilter = collectPrefilterFromForm(form);
+			const prefilter = collectPrefilterFromForm();
 
 			if (Object.keys(prefilter).length === 0) {
 				const proceed = await confirmNoPrefiltersWarning();
@@ -554,7 +556,7 @@
 	}
 
 	// Accessibility: trap focus inside overlay and restore on close
-	function showModalAccessibility(form, overlay) {
+	function showModalAccessibility(overlay) {
 		const previousActive = document.activeElement;
 
 		// Focus first focusable element
@@ -602,7 +604,7 @@
 			span.dataset.col = col;
 			span.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
 			span.title = GDV.datatable.getColumnDescription(col) || "";
-			span.appendChild(document.createTextNode(GDV.prefilter.getPrefilterDisplayText(col, val) + " "));
+			span.appendChild(document.createTextNode(`${GDV.prefilter.getPrefilterDisplayText(col, val)} `));
 			span.appendChild(GDV.prefilter.renderRemoveButton(col));
 			summary.appendChild(span);
 		}
@@ -653,7 +655,9 @@
 		}
 
 		// Re-append in sorted order (only visible sections)
-		sections.forEach((section) => grid.appendChild(section));
+		sections.forEach((section) => {
+			grid.appendChild(section);
+		});
 	}
 
 	const sortPrefilterSectionsDebounced = GDV.utils.debounce(sortPrefilterSections, 150);
@@ -722,10 +726,10 @@
 			if (description.includes(lowerToken)) return true;
 
 			// Match token in regex string (as string)
-			if (regexStrLower && regexStrLower.includes(lowerToken)) return true;
+			if (regexStrLower?.includes(lowerToken)) return true;
 
 			// Try actual regex test
-			if (regexExp && regexExp.test(token)) return true;
+			if (regexExp?.test(token)) return true;
 
 			return false;
 		});
@@ -749,7 +753,9 @@
 			// Clear inputs for that column
 			const esc = window.CSS && CSS.escape ? CSS.escape(col) : col;
 			if (type === "checkbox") {
-				form.querySelectorAll(`input[name="${esc}"]`).forEach((i) => (i.checked = false));
+				form.querySelectorAll(`input[name="${esc}"]`).forEach((i) => {
+					i.checked = false;
+				});
 			} else if (type === "range") {
 				const min = form.querySelector(`[name="${esc}__min"]`);
 				const max = form.querySelector(`[name="${esc}__max"]`);
@@ -771,19 +777,27 @@
 		if (!form) return;
 
 		// Clear tag checkboxes
-		form.querySelectorAll('.prefilter-tag-group input[type="checkbox"]').forEach((inp) => (inp.checked = false));
+		form.querySelectorAll('.prefilter-tag-group input[type="checkbox"]').forEach((inp) => {
+			inp.checked = false;
+		});
 
 		// Clear choice checkboxes
-		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((inp) => (inp.checked = true));
+		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((inp) => {
+			inp.checked = true;
+		});
 		form.querySelectorAll(".prefilter-box .toggle-all").forEach((toggle) => {
 			toggle.dispatchEvent(new Event("change"));
 		});
 
 		// Clear range inputs
-		form.querySelectorAll('.prefilter-range input[type="number"]').forEach((inp) => (inp.value = ""));
+		form.querySelectorAll('.prefilter-range input[type="number"]').forEach((inp) => {
+			inp.value = "";
+		});
 
 		// Clear text inputs (excluding search box)
-		form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea').forEach((inp) => (inp.value = ""));
+		form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea').forEach((inp) => {
+			inp.value = "";
+		});
 
 		// Reset Prefilter Category
 		resetPrefilterCategory(form);

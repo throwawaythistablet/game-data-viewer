@@ -15,8 +15,8 @@
 	}
 
 	GDV.controller.updateColumnDetails = updateColumnDetails;
-	function updateColumnDetails(columnDetails, fileName, description) {
-		GDV.state.updateColumnDetails(columnDetails, fileName);
+	function updateColumnDetails(columnDetails, description) {
+		GDV.state.updateColumnDetails(columnDetails);
 		GDV.dom.updateColumnDetails(description);
 	}
 
@@ -79,10 +79,10 @@
 		}
 		try {
 			const text = await file.text();
-			updateColumnDetails(JSON.parse(text), file.name, "Loaded from " + file.name);
+			updateColumnDetails(JSON.parse(text), `Loaded from ${file.name}`);
 		} catch (err) {
 			GDV.utils.reportHardError("Column Details Load Failed", "Error loading column details JSON", err, { file });
-			updateColumnDetails({}, null, null);
+			updateColumnDetails({}, null);
 		}
 	};
 
@@ -92,6 +92,15 @@
 
 		await loadFilesFromDataFolder();
 	};
+
+	GDV.controller.loadAndUpdateTheme = loadAndUpdateTheme;
+	function loadAndUpdateTheme() {
+		// Load saved theme
+		if (localStorage.getItem("theme") === "light") {
+			document.body.classList.add("light-theme");
+		}
+		updateThemeButton();
+	}
 
 	async function initializeCommonSteps() {
 		// loadAndUpdateTheme();
@@ -210,7 +219,7 @@
 			}
 
 			const columnDetails = await response.json();
-			updateColumnDetails(columnDetails, "game_column_details.json", "data/game_column_details.json");
+			updateColumnDetails(columnDetails, "data/game_column_details.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Column Details Load Failed", "An unexpected error occurred while loading the default column details JSON.", err);
 		}
@@ -288,7 +297,7 @@
 		try {
 			const file = await fileHandle.getFile();
 			const columnDetails = JSON.parse(await file.text());
-			updateColumnDetails(columnDetails, file.name, "data/game_column_details.json");
+			updateColumnDetails(columnDetails, "data/game_column_details.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Failed to Load Column Details", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
 		}
@@ -380,14 +389,6 @@
 			status: response.status,
 			statusText: response.statusText,
 		});
-	}
-
-	function loadAndUpdateTheme() {
-		// Load saved theme
-		if (localStorage.getItem("theme") === "light") {
-			document.body.classList.add("light-theme");
-		}
-		updateThemeButton();
 	}
 
 	function updateThemeButton() {

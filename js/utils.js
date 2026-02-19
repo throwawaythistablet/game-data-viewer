@@ -47,7 +47,7 @@
 
 	GDV.utils.showAlertMessage = showAlertMessage;
 	function showAlertMessage(label, description, error = null) {
-		alert(`${label}\n\n${description}` + (error?.message ? `\n\n${error.message}` : ""));
+		alert(`${label}\n\n${description}${error?.message ? `\n\n${error.message}` : ""}`);
 	}
 
 	GDV.utils.showConfirmationDialog = showConfirmationDialog;

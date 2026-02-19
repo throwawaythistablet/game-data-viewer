@@ -56,7 +56,7 @@
 		}
 		const encoded = encodeJsonToBase64Url(prefilters);
 		if (!encoded) return null;
-		return "pf=" + encoded;
+		return `pf=${encoded}`;
 	}
 
 	function encodeSimilarityGame(similarityGame) {
@@ -64,7 +64,7 @@
 		if (!normalized) return null;
 		const encoded = encodeJsonToBase64Url(normalized);
 		if (!encoded) return null;
-		return "sg=" + encoded;
+		return `sg=${encoded}`;
 	}
 
 	function parseQueryString() {
@@ -163,7 +163,7 @@
 					const tags = val
 						.split(",")
 						.map(Number)
-						.filter((n) => !isNaN(n));
+						.filter((n) => !Number.isNaN(n));
 
 					// Optional: validate against min/max
 					const validTags = tags.filter((n) => n >= colDef.min && n <= colDef.max);

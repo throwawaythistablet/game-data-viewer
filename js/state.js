@@ -5,7 +5,6 @@
 	let activeColumnCategories = {};
 	let gamesFolderHandle = null;
 	let dataFolderHandle = null;
-	let prefilterFileName = null;
 	let gameKeys = null;
 	let prefiltersToUse = {};
 	let similarityGame = null;
@@ -26,9 +25,8 @@
 
 	GDV.state.getThumbnails = () => activeThumbnails;
 
-	GDV.state.updateColumnDetails = (columnDetails, fileName) => {
+	GDV.state.updateColumnDetails = (columnDetails) => {
 		activeColumnDetails = columnDetails;
-		prefilterFileName = fileName;
 	};
 
 	GDV.state.updateTagFullPatterns = (tagFullPatterns) => {

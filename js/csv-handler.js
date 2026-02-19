@@ -49,7 +49,7 @@
 						collectedKeys.push(keyValue.trim());
 					}
 					rowsProcessed++;
-					bytesProcessed += new TextEncoder().encode(Object.values(row.data).join(",") + "\n").length;
+					bytesProcessed += new TextEncoder().encode(`${Object.values(row.data).join(",")}\n`).length;
 
 					// Throttle progress updates
 					if (rowsProcessed % THROTTLE === 0) {
@@ -82,8 +82,9 @@
 	async function loadCsvAndBuildTable(file) {
 		prefilters = GDV.state.getPrefiltersToUse();
 		const parsedData = await parseAndFilterCsv(file, prefilters);
+		const context = { file, prefilters };
 		if (!Array.isArray(parsedData) || parsedData.length === 0) {
-			GDV.utils.reportHardWarning("No results were found.", "The search did not produce any rows after applying the prefilters.", (context = { file, prefilters }));
+			GDV.utils.reportHardWarning("No results were found.", "The search did not produce any rows after applying the prefilters.", context);
 			return;
 		}
 		await GDV.datatable.loadTable(parsedData);
@@ -114,7 +115,7 @@
 					}
 
 					rowsProcessed++;
-					bytesProcessed += new TextEncoder().encode(Object.values(row.data).join(",") + "\n").length;
+					bytesProcessed += new TextEncoder().encode(`${Object.values(row.data).join(",")}\n`).length;
 
 					// Throttle progress updates
 					if (rowsProcessed % THROTTLE === 0) {

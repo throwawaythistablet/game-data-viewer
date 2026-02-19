@@ -40,8 +40,8 @@
 	GDV.loading.updateLoadingDirectUpdate = updateLoadingDirectUpdate;
 	async function updateLoadingDirectUpdate(label, percent) {
 		loadingOverlayLabel.textContent = label;
-		loadingOverlayProgressBar.style.width = percent + "%";
-		loadingOverlayProgressText.textContent = percent.toFixed(2) + "%";
+		loadingOverlayProgressBar.style.width = `${percent}%`;
+		loadingOverlayProgressText.textContent = `${percent.toFixed(2)}%`;
 
 		// GDV.utils.reportInformation(`Loading Direct Progress: ${percent.toFixed(2)}%`);
 
@@ -56,8 +56,8 @@
 		const totalPercent = startPercent + fractionOfPhase * (endPercent - startPercent);
 
 		loadingOverlayLabel.textContent = label;
-		loadingOverlayProgressBar.style.width = totalPercent + "%";
-		loadingOverlayProgressText.textContent = totalPercent.toFixed(2) + "%";
+		loadingOverlayProgressBar.style.width = `${totalPercent}%`;
+		loadingOverlayProgressText.textContent = `${totalPercent.toFixed(2)}%`;
 
 		// GDV.utils.reportInformation(`Loading Step Progress: ${totalPercent.toFixed(2)}%`, `Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`, {'startPercent': startPercent, 'endPercent': endPercent, 'currentStep': currentStep, 'totalSteps': totalSteps});
 

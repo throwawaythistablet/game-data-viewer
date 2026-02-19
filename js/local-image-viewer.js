@@ -79,7 +79,9 @@
 
 	function showImageModal() {
 		// Cleanup old URLs if modal is reused
-		modalImageUrls.forEach((url) => URL.revokeObjectURL(url));
+		modalImageUrls.forEach((url) => {
+			URL.revokeObjectURL(url);
+		});
 		modalImageUrls = [];
 
 		// Remove all children safely
@@ -150,7 +152,9 @@
 
 	function revokeAllModalUrls() {
 		if (Array.isArray(modalImageUrls)) {
-			modalImageUrls.forEach((url) => URL.revokeObjectURL(url));
+			modalImageUrls.forEach((url) => {
+				URL.revokeObjectURL(url);
+			});
 			modalImageUrls = [];
 		}
 

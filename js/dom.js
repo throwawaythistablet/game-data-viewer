@@ -80,7 +80,7 @@
 
 	GDV.dom.showErrorBanner = (label, message, timeout) => showBanner("error", label, message, timeout);
 
-	GDV.dom.showPermanentWarningBanner = (label, message, timeout) => showBanner("warning", label, message, -1);
+	GDV.dom.showPermanentWarningBanner = (label, message) => showBanner("warning", label, message, -1);
 
 	function showBanner(type, label, message, timeout = 10000) {
 		const banner = document.createElement("div");
@@ -120,7 +120,9 @@
 	GDV.dom.hideBannerWithLabel = hideBannerWithLabel;
 	function hideBannerWithLabel(label) {
 		const banners = document.querySelectorAll(`.log-banner[data-label="${label}"]`);
-		banners.forEach((banner) => hideBannerWithElement(banner));
+		banners.forEach((banner) => {
+			hideBannerWithElement(banner);
+		});
 	}
 
 	function hideBannerWithElement(el) {
@@ -177,7 +179,7 @@
 
 	GDV.dom.createHighlightFromValue = (val, colName) => {
 		const num = parseFloat(val);
-		if (isNaN(num)) return document.createTextNode(val);
+		if (Number.isNaN(num)) return document.createTextNode(val);
 
 		const { min, max } = GDV.state.getActiveColumnDetails()[colName] || {};
 		const intensity = max === min ? 0 : Math.max(0, Math.min(1, (num - min) / (max - min)));
@@ -418,7 +420,7 @@
 		csvDropZone.classList.remove("dragover");
 
 		const file = e.dataTransfer.files[0];
-		if (file && file.name.endsWith(".csv")) {
+		if (file?.name.endsWith(".csv")) {
 			GDV.controller.loadAndSearchCsv(file);
 		} else {
 			GDV.utils.reportHardWarning("Invalid File Drop", "Please drop a valid CSV file.");

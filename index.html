@@ -15,7 +15,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VBDXSGTNQZ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+        function gtag(...args) { dataLayer.push(args); }
         gtag('js', new Date());
 
         gtag('config', 'G-VBDXSGTNQZ');
@@ -61,22 +61,22 @@
                 Game Data Viewer
             </h2>
             <div class="btn-group" id="controlsButtonGroup">
-                <button id="themeToggleButton" class="btn" title="Toggle between light and dark theme"
+                <button type="button" id="themeToggleButton" class="btn" title="Toggle between light and dark theme"
                     aria-label="Toggle theme between light and dark mode">🌙 Dark</button>
 
-                <button id="discussionButton" class="btn" title="Join the discussion about the tool"
+                <button type="button" id="discussionButton" class="btn" title="Join the discussion about the tool"
                     aria-label="Join the discussion about this tool">👥 Discussion</button>
 
-                <button id="feedbackButton" class="btn" title="Provide feedback or suggestions about the tool"
+                <button type="button" id="feedbackButton" class="btn" title="Provide feedback or suggestions about the tool"
                     aria-label="Provide feedback or suggestions about this tool">💬 Feedback</button>
 
-                <button id="tagPatternsButton" class="btn" title="View the full tag regex patterns"
+                <button type="button" id="tagPatternsButton" class="btn" title="View the full tag regex patterns"
                     aria-label="View the full tag regex patterns">📄 Tag Patterns</button>
 
-                <button id="resetFiltersButton" class="btn" title="Reset all filters and sorting to their default state"
+                <button type="button" id="resetFiltersButton" class="btn" title="Reset all filters and sorting to their default state"
                     aria-label="Reset all filters and sorting to default">🔄 Reset Column Filters</button>
 
-                <button id="searchButton" class="btn btn-main" title="Search the game data"
+                <button type="button" id="searchButton" class="btn btn-main" title="Search the game data"
                     aria-label="Search the game data">🔍
                     Search</button>
             </div>
@@ -89,18 +89,18 @@
                     <input type="file" id="columnDetailsFileInput" accept=".json" style="display:none"
                         aria-hidden="true">
 
-                    <button id="fileButton" class="btn" style="flex:1" title="Select a CSV file to load into the table"
+                    <button type="button" id="fileButton" class="btn" style="flex:1" title="Select a CSV file to load into the table"
                         aria-label="Select a CSV file to load into the table">📂 Select CSV</button>
 
-                    <button id="columnDetailsFileButton" class="btn" style="flex:1"
+                    <button type="button" id="columnDetailsFileButton" class="btn" style="flex:1"
                         title="Select a JSON file containing column details"
                         aria-label="Select a JSON file containing column details">📑 Load Column Details</button>
 
-                    <button id="selectGamesFolderButton" class="btn btn-main" style="flex:1"
+                    <button type="button" id="selectGamesFolderButton" class="btn btn-main" style="flex:1"
                         title="Select the games folder containing your data files"
                         aria-label="Select the games folder containing your data files">📁 Set Games Folder</button>
 
-                    <button id="controlsPinButton" class="btn" title="Pin the controls panel to stay open"
+                    <button type="button" id="controlsPinButton" class="btn" title="Pin the controls panel to stay open"
                         aria-label="Pin the controls panel to stay open">📌</button>
                 </div>
                 <div class="controls-status-item">
@@ -150,7 +150,7 @@
             <div id="loadingOverlayProgressBar"></div>
             <span id="loadingOverlayProgressText">0%</span>
         </div>
-        <button id="loadingOverlayStopButton" class="btn btn-danger" aria-label="Stop loading process">⏹ Stop</button>
+        <button type="button" id="loadingOverlayStopButton" class="btn btn-danger" aria-label="Stop loading process">⏹ Stop</button>
     </div>
 
     <div id="previewOverlay">
@@ -161,13 +161,13 @@
         aria-hidden="true" style="display: none;">
         <div id="localImagesModalHeader">
             <span id="localImagesModalTitle">Images</span>
-            <button class="btn" id="closeImageModal" aria-label="Close Images Modal">✕</button>
+            <button type="button" id="closeImageModal" class="btn" aria-label="Close Images Modal">✕</button>
         </div>
         <div id="localImagesModalGrid" role="region" aria-label="Image gallery"></div>
     </div>
 
     <div id="localImagesOverlay" role="dialog" aria-modal="true" aria-hidden="true" style="display: none;">
-        <img id="localImagesOverlayImg" alt="Preview of selected image">
+        <img id="localImagesOverlayImg" alt="Selected game screenshot preview">
     </div>
 
 

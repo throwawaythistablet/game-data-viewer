@@ -147,7 +147,7 @@
 			data[0].similarity_score = 0; // placeholder
 		}
 
-		data.forEach((row, index) => {
+		data.forEach((row, _index) => {
 			const similarity = computeRowSimilarityPercent(similarGameRow, row);
 			row.similarity_score = similarity;
 		});
@@ -172,7 +172,7 @@
 			// Numeric exact compare
 			const na = parseFloat(a);
 			const nb = parseFloat(b);
-			if (!isNaN(na) && !isNaN(nb)) {
+			if (!Number.isNaN(na) && !Number.isNaN(nb)) {
 				isMatch = na === nb;
 			} else {
 				// String compare: case-insensitive, trimmed
@@ -229,11 +229,11 @@
 			data: "__thumbnail__",
 			orderable: false,
 			searchable: false,
-			render: (data, type, row) => {
-				const key = row["key"];
+			render: (_data, _type, row) => {
+				const key = row.key;
 				if (!key) return "";
 				const image_url = getThumbnailImageForKey(key);
-				const game_url = stripHtmlToString(row["url"]);
+				const game_url = stripHtmlToString(row.url);
 				return renderThumbnail(image_url, game_url);
 			},
 		};
@@ -326,13 +326,13 @@
 					if (col.data === "__view_images__") {
 						td.appendChild(renderViewButton());
 					} else if (col.data === "__thumbnail__") {
-						const key = rowData["key"];
+						const key = rowData.key;
 						const image_url = getThumbnailImageForKey(key);
-						const game_url = stripHtmlToString(rowData["url"]);
+						const game_url = stripHtmlToString(rowData.url);
 						td.appendChild(renderThumbnail(key, image_url, game_url));
 					} else if (col.data === "site_std_version") {
 						const rd = rowData[col.data];
-						const trimmed = typeof rd === "string" && rd.length > 19 ? rd.slice(0, 19) + "…" : rd;
+						const trimmed = typeof rd === "string" && rd.length > 19 ? `${rd.slice(0, 19)}…` : rd;
 						td.appendChild(renderCellValueNode(trimmed, col.data));
 					} else {
 						td.appendChild(renderCellValueNode(rowData[col.data], col.data));
@@ -362,7 +362,7 @@
 		}
 
 		return new Promise((resolve) => {
-			const dt = csvTableElement.DataTable({
+			csvTableElement.DataTable({
 				paging: true,
 				pageLength: 100,
 				order: [[sortColumnIndex, "desc"]],
@@ -392,6 +392,7 @@
 			const header = this.header();
 			const colName = header.textContent.trim();
 			header.title = getColumnDescription(colName);
+			return true; // satisfies Biome linter
 		});
 	}
 
@@ -415,7 +416,7 @@
 			const colDef = colDefs[colName];
 
 			if (colName === "thumbnails") {
-				addGameSimilaritySearch(container, column);
+				addGameSimilaritySearch(container);
 				continue;
 			}
 			if (!colDef) continue;
@@ -429,7 +430,7 @@
 		setupFiltersExpandCollapse();
 	}
 
-	function addGameSimilaritySearch(container, column) {
+	function addGameSimilaritySearch(container) {
 		const similarityWrapper = document.createElement("div");
 		similarityWrapper.className = "filters-similarity";
 
@@ -612,7 +613,7 @@
 
 			label.setAttribute("for", input.id);
 			label.appendChild(input);
-			label.append(" " + v);
+			label.append(` ${v}`);
 
 			box.appendChild(label);
 		});
@@ -647,7 +648,7 @@
 					searchRegex = "";
 				} else {
 					const escaped = checkedVals.map((v) => $.fn.dataTable.util.escapeRegex(v));
-					searchRegex = "^(" + escaped.join("|") + ")$";
+					searchRegex = `^(${escaped.join("|")})$`;
 				}
 
 				column.search(searchRegex, true, false).draw();
@@ -720,7 +721,7 @@
 		let maxVal;
 
 		// Single DataTables filter function
-		const rangeFilter = (settings, data) => {
+		const rangeFilter = (_settings, data) => {
 			let rawVal;
 
 			if (data == null) rawVal = undefined;
@@ -729,7 +730,7 @@
 			else rawVal = data;
 
 			const num = stripHtmlAndConvertToNumber(rawVal);
-			if (isNaN(num)) return true;
+			if (Number.isNaN(num)) return true;
 
 			if (minVal !== undefined && num < minVal) return false;
 			if (maxVal !== undefined && num > maxVal) return false;
@@ -746,8 +747,8 @@
 			const minValRaw = parseFloat(minInput.value);
 			const maxValRaw = parseFloat(maxInput.value);
 
-			minVal = !isNaN(minValRaw) ? minValRaw : undefined;
-			maxVal = !isNaN(maxValRaw) ? maxValRaw : undefined;
+			minVal = !Number.isNaN(minValRaw) ? minValRaw : undefined;
+			maxVal = !Number.isNaN(maxValRaw) ? maxValRaw : undefined;
 
 			table.draw();
 		}
@@ -1071,8 +1072,8 @@
 		if (x + rect.width > vw) x = e.pageX - rect.width - offset;
 		if (y + rect.height > vh) y = e.pageY - rect.height - offset;
 
-		overlay.style.left = x + "px";
-		overlay.style.top = y + "px";
+		overlay.style.left = `${x}px`;
+		overlay.style.top = `${y}px`;
 	}
 
 	function startPreviewSlideshow(previewImages, previewImg) {
@@ -1174,8 +1175,8 @@
 	function toFileUrl(path) {
 		if (path.startsWith("http")) return path;
 		let urlPath = path.replace(/\\/g, "/");
-		if (!urlPath.startsWith("/")) urlPath = "/" + urlPath;
-		return "file:///" + urlPath;
+		if (!urlPath.startsWith("/")) urlPath = `/${urlPath}`;
+		return `file:///${urlPath}`;
 	}
 
 	function isInvalidColumnIndex(columnIndex) {

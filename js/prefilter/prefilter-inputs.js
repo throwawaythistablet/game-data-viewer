@@ -48,7 +48,7 @@
 	GDV.prefilter.initializeLiveStateFromForm = (form) => {
 		prefilterLiveState = {};
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		for (const [col, def] of Object.entries(colDefs)) {
+		for (const col of Object.keys(colDefs)) {
 			// Reuse the update logic; this does targeted queries per column
 			updateLivePrefilterForColumn(form, col);
 		}
@@ -65,7 +65,7 @@
 				const col = input.name.replace(/__(min|max)$/, "");
 				updateLivePrefilterForColumn(form, col);
 
-				updatePrefilterWarningFromLiveState(form);
+				updatePrefilterWarningFromLiveState();
 				updateSinglePrefilterSummary(form, col);
 			}
 		});
@@ -78,7 +78,7 @@
 			const col = input.name.replace(/__(min|max)$/, "");
 			updateLivePrefilterForColumn(form, col);
 
-			updatePrefilterWarningFromLiveState(form);
+			updatePrefilterWarningFromLiveState();
 			updateSinglePrefilterSummary(form, col);
 		});
 	};
@@ -117,7 +117,7 @@
 	}
 
 	GDV.prefilter.updatePrefilterWarningFromLiveState = updatePrefilterWarningFromLiveState;
-	function updatePrefilterWarningFromLiveState(form) {
+	function updatePrefilterWarningFromLiveState() {
 		const hasFilters = Object.keys(prefilterLiveState).length > 0;
 		if (hasFilters) {
 			GDV.prefilter.hideNoPrefilterWarning();
@@ -200,7 +200,7 @@
 
 	function updateChipContent(chip, col, val) {
 		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
-		chip.textContent = text + " ";
+		chip.textContent = `${text} `;
 		chip.title = GDV.datatable.getColumnDescription(col) || "";
 		chip.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
 		chip.appendChild(GDV.prefilter.renderRemoveButton(col));
@@ -211,7 +211,9 @@
 
 		chipsArray.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
 
-		chipsArray.forEach((c) => summary.appendChild(c));
+		chipsArray.forEach((c) => {
+			summary.appendChild(c);
+		});
 	}
 
 	function sortPrefilterChipsByUsage(summary) {
@@ -225,7 +227,9 @@
 			return idxA - idxB;
 		});
 
-		chipsArray.forEach((c) => summary.appendChild(c));
+		chipsArray.forEach((c) => {
+			summary.appendChild(c);
+		});
 	}
 
 	function getFormElementsByName(form, name) {
@@ -240,7 +244,7 @@
 		if (type === "int") return parseInt(val, 10);
 		if (type === "float") return parseFloat(val);
 		// fallback: auto-detect numeric
-		return isFinite(val) ? (val.includes(".") ? parseFloat(val) : parseInt(val, 10)) : String(val);
+		return Number.isFinite(val) ? (val.includes(".") ? parseFloat(val) : parseInt(val, 10)) : String(val);
 	}
 
 	// Determine column type
