@@ -90,7 +90,7 @@ async function loadCsvAndBuildTable(file) {
         GDV.utils.reportHardWarning('No results were found.', 'The search did not produce any rows after applying the prefilters.', context = { file, prefilters } );
         return;
     }
-    await GDV.datatable.loadTable(parsedData)
+    await GDV.datatable.loadTable(parsedData);
 }
 
 async function parseAndFilterCsv(file, prefilters) {

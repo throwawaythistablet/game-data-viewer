@@ -41,7 +41,7 @@ function updateThumbnails(thumbnails, fileName) {
 
 GDV.controller.updateGameFolder = updateGameFolder;
 async function updateGameFolder(gamesFolderHandle) {
-    GDV.state.setGamesFolderHandle(gamesFolderHandle)
+    GDV.state.setGamesFolderHandle(gamesFolderHandle);
     const extraFolder = await gamesFolderHandle.getDirectoryHandle('ZZZ_TOOL_FILES');
     const localWebFolder = await extraFolder.getDirectoryHandle('game-data-viewer');
     dataFolderHandle = await localWebFolder.getDirectoryHandle('data');
@@ -50,7 +50,7 @@ async function updateGameFolder(gamesFolderHandle) {
         GDV.utils.reportHardError('Invalid Folder Structure', "The 'data' folder was not found inside the selected folder.", null, { gamesFolderHandle } );
         return false;
     }
-    GDV.state.setDataFolderHandle(gamesFolderHandle)
+    GDV.state.setDataFolderHandle(gamesFolderHandle);
     GDV.dom.updateGameFolder(gamesFolderHandle.name);
 }
 
@@ -96,7 +96,7 @@ GDV.controller.selectGamesFolderAndLoadData = async function() {
 
 async function initializeCommonSteps() {
     // loadAndUpdateTheme();
-    GDV.dom.insertHelpNotice()
+    GDV.dom.insertHelpNotice();
 }
 
 async function initializeStandaloneMode() {
@@ -390,12 +390,12 @@ function loadAndUpdateTheme() {
     if (localStorage.getItem('theme') === 'light') {
         document.body.classList.add('light-theme');
     }
-    updateThemeButton()
+    updateThemeButton();
 }
 
 function updateThemeButton() {
     const isLight = document.body.classList.contains('light-theme');
-    GDV.dom.updateThemeButton(isLight)
+    GDV.dom.updateThemeButton(isLight);
 }
 
 async function selectGamesFolder() {
