@@ -149,7 +149,7 @@ async function loadFilesFromDataFolder() {
 }
 
 async function applyUrlPrefiltersOrPrompt() {
-    prefiltersFromUrl = GDV.prefilter.getPrefiltersInUrl();
+    prefiltersFromUrl = GDV.urlParameters.getPrefiltersInUrl();
     if (prefiltersFromUrl && Object.keys(prefiltersFromUrl).length) {
         GDV.state.setPrefiltersToUse(prefiltersFromUrl);
         GDV.utils.showInfoBanner("URL Prefilters Detected", "Prefilters were found in the URL. Applying them now and performing the database search automatically.");

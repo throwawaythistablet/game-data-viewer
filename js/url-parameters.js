@@ -1,7 +1,7 @@
 
 (function() {
 
-GDV.prefilter.getPrefiltersInUrl = getPrefiltersInUrl;
+GDV.urlParameters.getPrefiltersInUrl = getPrefiltersInUrl;
 function getPrefiltersInUrl() {
     const params = parseQueryString();
     let pfObj = null;
@@ -23,7 +23,7 @@ function getPrefiltersInUrl() {
     return pfObj;
 }
 
-GDV.prefilter.encodePrefiltersForUrl = encodePrefiltersForUrl;
+GDV.urlParameters.encodePrefiltersForUrl = encodePrefiltersForUrl;
 function encodePrefiltersForUrl(prefObj) {
     try {
         const jsonStr = JSON.stringify(prefObj);

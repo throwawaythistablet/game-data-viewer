@@ -307,7 +307,7 @@ function createShareUrlButton() {
                 return;
             }
 
-            const encoded = GDV.prefilter.encodePrefiltersForUrl(prefilters);
+            const encoded = GDV.urlParameters.encodePrefiltersForUrl(prefilters);
             if (!encoded) {
                 GDV.utils.reportSilentWarning("URL Encoding Failed", "Unable to encode prefilters for sharing." );
                 return;
