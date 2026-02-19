@@ -1,8 +1,17 @@
 (function() {
 
+let searchText = null;
 let prefilterLiveState = {};
-let sortMode = 'usage'; 
+let sortMode = 'nearest';
 
+
+GDV.prefilter.getSearchText = function() {
+    return searchText;
+}
+
+GDV.prefilter.setSearchText = function(searchText_) {
+    searchText = searchText_;
+}
 
 GDV.prefilter.getPrefilterLiveState = function() {
     return prefilterLiveState;
@@ -12,16 +21,27 @@ GDV.prefilter.setPrefilterLiveState = function(data) {
     prefilterLiveState = data;
 }
 
-GDV.prefilter.resetPrefilterLiveState= function() {
+GDV.prefilter.resetPrefilterLiveState = function() {
     prefilterLiveState = {};
 }
 
 GDV.prefilter.toggleSortMode = function() {
-    sortMode = sortMode === 'usage' ? 'alpha' : 'usage';
+    if (sortMode === 'usage') sortMode = 'alpha';
+    else if (sortMode === 'alpha') sortMode = 'nearest';
+    else sortMode = 'usage';
+}
+
+GDV.prefilter.resetSortMode = function() {
+    sortMode = 'nearest';
 }
 
 GDV.prefilter.getSortButtonDisplayText = function() {
-    return sortMode === 'usage' ? 'Sort: Most Used' : 'Sort: A–Z';
+    switch (sortMode) {
+        case 'usage': return 'Sort: Most Used';
+        case 'alpha': return 'Sort: A–Z';
+        case 'nearest': return 'Sort: Nearest Match';
+        default: return 'Sort';
+    }
 }
 
 GDV.prefilter.getSortMode = function() {
@@ -189,6 +209,18 @@ function updateChipContent(chip, col, val) {
     chip.appendChild(GDV.prefilter.renderRemoveButton(col));
 }
 
+function sortPrefilterChipsAlphabetically(summary) {
+    const chipsArray = Array.from(
+        summary.querySelectorAll('.prefilter-active-item')
+    );
+
+    chipsArray.sort((a, b) =>
+        a.textContent.trim().localeCompare(b.textContent.trim())
+    );
+
+    chipsArray.forEach(c => summary.appendChild(c));
+}
+
 function sortPrefilterChipsByUsage(summary) {
     const colDefs = GDV.state.getActiveColumnDetails() || {};
     const columnOrder = Object.keys(colDefs);
@@ -199,18 +231,6 @@ function sortPrefilterChipsByUsage(summary) {
         const idxB = columnOrder.indexOf(b.dataset.col);
         return idxA - idxB;
     });
-
-    chipsArray.forEach(c => summary.appendChild(c));
-}
-
-function sortPrefilterChipsAlphabetically(summary) {
-    const chipsArray = Array.from(
-        summary.querySelectorAll('.prefilter-active-item')
-    );
-
-    chipsArray.sort((a, b) =>
-        a.textContent.trim().localeCompare(b.textContent.trim())
-    );
 
     chipsArray.forEach(c => summary.appendChild(c));
 }

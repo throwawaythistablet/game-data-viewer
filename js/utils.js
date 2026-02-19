@@ -94,6 +94,14 @@ GDV.utils.yieldToBrowser = async function() {
     // if (!document.hidden) await new Promise(r => setTimeout(r, 0));
 }
 
+GDV.utils.debounce = function(fn, delay = 150) {
+    let timer = null;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+};
+
 GDV.utils.levenshteinDistance = function(a, b) {
     const matrix = Array.from({ length: a.length + 1 }, () =>
         Array(b.length + 1).fill(0)
@@ -115,6 +123,24 @@ GDV.utils.levenshteinDistance = function(a, b) {
 
     return matrix[a.length][b.length];
 }
+
+GDV.utils.computeNearestMatchDistance = function(columnName, searchText) {
+    if (!searchText) return Infinity;
+
+    const colTokens = columnName.toLowerCase().split(/\s+/);
+    const searchTokens = searchText.toLowerCase().split(/\s+/);
+
+    let minDistance = Infinity;
+
+    for (const colToken of colTokens) {
+        for (const searchToken of searchTokens) {
+            const dist = GDV.utils.levenshteinDistance(colToken, searchToken);
+            if (dist < minDistance) minDistance = dist;
+        }
+    }
+
+    return minDistance;
+};
 
 function createErrorMessage(error) {
     if (!error?.message) return '';

@@ -272,7 +272,6 @@ function createPrefilterSortButton(form) {
 
         const summary = form.querySelector('#prefilter-active-items');
         GDV.prefilter.sortPrefilterChips(summary);
-
         sortPrefilterSections();
     });
 
@@ -636,6 +635,9 @@ function filterPrefilterSections(searchText = '', category = '__all__') {
 
         section.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
     });
+
+    GDV.prefilter.setSearchText(searchText);
+    sortPrefilterSectionsDebounced();
 }
 
 function sortPrefilterSections() {
@@ -643,8 +645,12 @@ function sortPrefilterSections() {
     if (!grid) return;
 
     const sections = Array.from(grid.querySelectorAll('.prefilter-section'));
-    if (GDV.prefilter.getSortMode() === 'alpha') {
+    const sortMode = GDV.prefilter.getSortMode();
+
+    if (sortMode === 'alpha') {
         sortPrefilterSectionsAlphabetically(sections);
+    } else if (sortMode === 'nearest') {
+        sortPrefilterSectionsByNearestMatch(sections);
     } else {
         sortPrefilterSectionsByUsage(sections);
     }
@@ -653,14 +659,44 @@ function sortPrefilterSections() {
     sections.forEach(section => grid.appendChild(section));
 }
 
+const sortPrefilterSectionsDebounced = GDV.utils.debounce(sortPrefilterSections, 150);
+GDV.prefilter.sortPrefilterSectionsDebounced = sortPrefilterSectionsDebounced;
+
+function sortPrefilterSectionsAlphabetically(sections) {
+    sections.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
+}
+
+function sortPrefilterSectionsByNearestMatch(sections) {
+    const searchText = GDV.prefilter.getSearchText();
+    if (!searchText) {
+        sortPrefilterSectionsByUsage(sections);
+        return;
+    }
+
+    const colDefs = GDV.state.getActiveColumnDetails() || {};
+    const colOrder = Object.keys(colDefs);
+
+    const distanceCache = new Map();
+    for (const section of sections) {
+        const colName = section.dataset.col;
+        const dist = GDV.utils.computeNearestMatchDistance(colName, searchText);
+        distanceCache.set(colName, dist);
+    }
+
+    sections.sort((a, b) => {
+        const distA = distanceCache.get(a.dataset.col);
+        const distB = distanceCache.get(b.dataset.col);
+        if (distA !== distB) return distA - distB;
+        const usageA = colOrder.indexOf(a.dataset.col);
+        const usageB = colOrder.indexOf(b.dataset.col);
+        return usageA - usageB;
+    });
+}
+
 function sortPrefilterSectionsByUsage(sections) {
     const colDefs = GDV.state.getActiveColumnDetails() || {};
     const colOrder = Object.keys(colDefs);
     sections.sort((a, b) => colOrder.indexOf(a.dataset.col) - colOrder.indexOf(b.dataset.col));
-}
-
-function sortPrefilterSectionsAlphabetically(sections) {
-    sections.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
 }
 
 function sectionMatchesTokens(colName, tokens) {
