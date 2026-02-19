@@ -368,8 +368,8 @@ function createChoiceFilter(name, choices, prefill = null) {
     const toggleInput = document.createElement('input');
     toggleInput.type = 'checkbox';
     toggleInput.className = 'toggle-all';
-    toggleInput.id = `toggle-all-${sanitizedName}`;
-    toggleInput.name = `toggleAll-${sanitizedName}`;
+    toggleInput.id = `toggle-all-prefilter-${sanitizedName}`;
+    toggleInput.name = `toggleAll-prefilter-${sanitizedName}`;
 
     toggleInput.checked = choices.every(choice =>
         checkedValues.includes(choice) || checkedValues.includes(String(choice))

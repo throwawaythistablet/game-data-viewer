@@ -607,8 +607,8 @@ function addCheckboxFilter(th, column, colName, colDef) {
     toggleInput.type = 'checkbox';
     toggleInput.className = 'toggle-all';
     toggleInput.checked = true;
-    toggleInput.id = `toggle-all-${sanitizedColName}`;
-    toggleInput.name = `toggleAll-${sanitizedColName}`;
+    toggleInput.id = `toggle-all-filter-${sanitizedColName}`;
+    toggleInput.name = `toggleAll-filter-${sanitizedColName}`;
 
     toggleLabel.setAttribute('for', toggleInput.id);
     toggleLabel.appendChild(toggleInput);
