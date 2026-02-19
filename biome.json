@@ -1,0 +1,20 @@
+{
+	"formatter": {
+		"enabled": true,
+		"lineWidth": 320
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"complexity": {
+				"useArrowFunction": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"semicolons": "always"
+		}
+	}
+}

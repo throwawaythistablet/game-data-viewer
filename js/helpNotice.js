@@ -1,21 +1,20 @@
-(function() {
+(() => {
+	GDV.helpNotice.createHelpNotice = () => {
+		const notice = document.createElement("div");
+		notice.className = "help-notice is-collapsed";
 
-GDV.helpNotice.createHelpNotice = function() {
-    const notice = document.createElement('div');
-    notice.className = 'help-notice is-collapsed';
-    
-    // Wrap body + toggle text
-    notice.innerHTML = `
+		// Wrap body + toggle text
+		notice.innerHTML = `
         ${getHelpNoticeContent()}
         <div class="help-notice-toggle-text">Show More ▼</div>
     `;
-    
-    bindHelpNoticeToggle(notice);
-    return notice;
-}
 
-function getHelpNoticeContent() {
-    return `
+		bindHelpNoticeToggle(notice);
+		return notice;
+	};
+
+	function getHelpNoticeContent() {
+		return `
         <div class="help-notice-body">
             <strong>📚 Guide to Prefilters, Search, and Table Navigation</strong>
             <ol style="margin-top: 8px;">
@@ -93,25 +92,24 @@ function getHelpNoticeContent() {
             </div>
         </div>
     `;
-}
+	}
 
-function bindHelpNoticeToggle(notice) {
-    notice.style.cursor = 'pointer'; // user sees it’s clickable
+	function bindHelpNoticeToggle(notice) {
+		notice.style.cursor = "pointer"; // user sees it’s clickable
 
-    const toggleText = notice.querySelector('.help-notice-toggle-text');
+		const toggleText = notice.querySelector(".help-notice-toggle-text");
 
-    function toggleNotice() {
-        const expanded = notice.classList.toggle('is-expanded');
-        notice.classList.toggle('is-collapsed', !expanded);
+		function toggleNotice() {
+			const expanded = notice.classList.toggle("is-expanded");
+			notice.classList.toggle("is-collapsed", !expanded);
 
-        // Update toggle text
-        toggleText.textContent = expanded ? 'Show Less ▲' : 'Show More ▼';
-    }
+			// Update toggle text
+			toggleText.textContent = expanded ? "Show Less ▲" : "Show More ▼";
+		}
 
-    notice.addEventListener('click', toggleNotice);
+		notice.addEventListener("click", toggleNotice);
 
-    // Initial state
-    notice.classList.add('is-collapsed');
-}
-
+		// Initial state
+		notice.classList.add("is-collapsed");
+	}
 })();
