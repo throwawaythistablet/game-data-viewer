@@ -30,18 +30,20 @@
 
     --accent: rgba(96, 192, 255, 1);
     --accent-hover: rgba(128, 216, 255, 1);
-
     --glow: rgba(240, 196, 16, 1);
     --glow-strong: rgba(240, 196, 16, 0.75);
     --glow-soft: rgba(240, 196, 16, 0.5);
+    --danger: rgba(240, 120, 120, 1);
+
+    --info: rgba(0, 40, 160, 1);
+    --warning: rgba(160, 80, 0, 1);
+    --error: rgba(160, 40, 0, 1);
 
     --red: rgba(160, 32, 32, 1);
     --yellow: rgba(240, 196, 16, 1);
     --orange: rgba(240, 120, 16, 1);
     --blue: rgba(40, 80, 160, 1);
     --green: rgba(40, 160, 80, 1);
-
-    --danger: rgba(240, 120, 120, 1);
 }
 
 
@@ -73,10 +75,14 @@ body.light-theme {
 
     --accent: rgba(0, 120, 240, 1);
     --accent-hover: rgba(0, 80, 160, 1);
-
     --glow: rgba(0, 240, 120, 1);
     --glow-strong: rgba(0, 240, 120, 0.75);
     --glow-soft: rgba(0, 240, 120, 0.5);
+    --danger: rgba(240, 120, 120, 1);
+
+    --info: rgba(100, 150, 250, 1);
+    --warning: rgba(250, 150, 100, 1);
+    --error: rgba(250, 100, 100, 1);
 
     --red: rgba(240, 160, 160, 1);
     --yellow: rgba(240, 224, 120, 1);
@@ -244,6 +250,7 @@ td {
     max-width: 320px;
     padding: 12px 16px;
     border-radius: 6px;
+    border: 2px solid var(--text-muted);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     color: var(--text-main);
     font-size: 14px;
@@ -263,18 +270,15 @@ td {
 }
 
 .log-banner.info {
-    background: var(--bg-panel);
-    border: 1px solid var(--accent);
+    background: var(--info);
 }
 
 .log-banner.warning {
-    background: var(--orange);
-    border: 1px solid #aa5500;
+    background: var(--warning);
 }
 
 .log-banner.error {
-    background: var(--red);
-    border: 1px solid #aa2222;
+    background: var(--error);
 }
 
 .log-banner .banner-label {
