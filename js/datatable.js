@@ -145,18 +145,17 @@
 
 	function populateSimilarityColumn(data) {
 		const referenceKey = GDV.state.getSimilarityGame();
-		if (referenceKey) {
-			similarGameRow = structuredClone(data.find((r) => String(r.key) === referenceKey));
-		}
+		if (!referenceKey) return;
+
+		// Find the reference row for similarity
+		similarGameRow = structuredClone(
+			data.find((row) => String(row.key) === referenceKey)
+		);
 		if (!similarGameRow) return;
 
-		if (data.length > 0 && !("similarity_score" in data[0])) {
-			data[0].similarity_score = 0; // placeholder
-		}
-
-		data.forEach((row, _index) => {
-			const similarity = computeRowSimilarityPercent(similarGameRow, row);
-			row.similarity_score = similarity;
+		// Populate similarity scores for all rows
+		data.forEach((row) => {
+			row.similarity_score = computeRowSimilarityPercent(similarGameRow, row);
 		});
 	}
 
