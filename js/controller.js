@@ -184,43 +184,40 @@
 		GDV.state.setGameKeys(await GDV.csvHandler.extractKeysFromCsv(file, label, startPercent, endPercent));
 	}
 
-async function loadDefaultCsv(label, startPercent, endPercent) {
-    if (GDV.state.getActiveCsvFile()) return; // already loaded
+	async function loadDefaultCsv(label, startPercent, endPercent) {
+		if (GDV.state.getActiveCsvFile()) return;
+		const files = [
+			{ url: "data/game_data_part_1.csv", size: 52429478 },
+			{ url: "data/game_data_part_2.csv", size: 52432749 },
+			{ url: "data/game_data_part_3.csv", size: 41358046 }
+		];
 
-    const files = [
-        "data/game_data_part_1.csv",
-        "data/game_data_part_2.csv",
-        "data/game_data_part_3.csv"
-    ];
+		let combinedText = "";
 
-    let combinedText = "";
+		for (let i = 0; i < files.length; i++) {
+			const { url, size } = files[i];
 
-    for (let i = 0; i < files.length; i++) {
-        const fileUrl = files[i];
-        const estimatedSize = 50000000; // adjust per chunk in bytes (~50MB)
+			try {
+				const fileSP = startPercent + (i / files.length) * (endPercent - startPercent);
+				const fileEP = startPercent + ((i + 1) / files.length) * (endPercent - startPercent);
+				const response = await fetchWithProgress(url, size, label, fileSP, fileEP);
+				if (!response.ok) {
+					GDV.utils.reportHardError("CSV Load Failed", "An unexpected error occurred while loading a CSV chunk.", err);
+					return;
+				}
+				const text = await response.text();
+				combinedText += text;
+			} catch (err) {
+				GDV.utils.reportHardError("CSV Load Failed", "An unexpected error occurred while loading a CSV chunk.", err);
+				return;
+			}
+		}
 
-        try {
-			const fileSP = startPercent + (i/files.length)*(endPercent-startPercent)
-			const fileEP = startPercent + ((i+1)/files.length)*(endPercent-startPercent)
-            const response = await fetchWithProgress(fileUrl, estimatedSize, label, fileSP, fileEP);
-            if (!response.ok) {
-                GDV.utils.reportHardError("CSV Load Failed", `Failed to fetch CSV part: "${fileUrl}"`, new Error(`HTTP status: ${response.status}`));
-                return;
-            }
+		const blob = new Blob([combinedText], { type: "text/csv" });
+		const file = new File([blob], "game_data.csv", { type: "text/csv" });
+		setActiveCsvFile(file);
+	}
 
-            const text = await response.text();
-            combinedText += text; // combine all chunks as plain text
-        } catch (err) {
-            GDV.utils.reportHardError("CSV Load Failed", "An unexpected error occurred while loading a CSV chunk.", err);
-            return;
-        }
-    }
-
-    // Create a single File object from the combined CSV
-    const blob = new Blob([combinedText], { type: "text/csv" });
-    const file = new File([blob], "game_data.csv", { type: "text/csv" });
-    setActiveCsvFile(file);
-}
 	async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
 		if (GDV.state.hasValidColumnDetails()) {
 			return; // already loaded
@@ -261,7 +258,7 @@ async function loadDefaultCsv(label, startPercent, endPercent) {
 
 	async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/game_column_categories.json", 201646, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_column_categories.json", 201805, label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Column Categories Load Failed", "Failed to fetch the default column categories JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/game_column_categories.json",
@@ -293,13 +290,25 @@ async function loadDefaultCsv(label, startPercent, endPercent) {
 
 	async function loadCsvFromLocalDataFolder() {
 		if (!dataFolderHandle) return;
-		const fileHandle = await dataFolderHandle.getFileHandle("game_data.csv").catch(() => null);
-		if (!fileHandle) {
-			GDV.utils.reportHardWarning("Missing CSV File", 'The file "game_data.csv" was not found in the selected games folder.');
+
+		let combinedText = "";
+		let partIndex = 1;
+		while (true) {
+			const filename = `game_data_part_${partIndex}.csv`;
+			const fileHandle = await dataFolderHandle.getFileHandle(filename).catch(() => null);
+			if (!fileHandle) break;
+			const file = await fileHandle.getFile();
+			const text = await file.text();
+			combinedText += text;
+			partIndex++;
+		}
+		if (partIndex === 1) {
+			GDV.utils.reportHardWarning("Missing CSV File", 'No "game_data_part_X.csv" files were found in the selected games folder.');
 			return;
 		}
 
-		const file = await fileHandle.getFile();
+		const blob = new Blob([combinedText], { type: "text/csv" });
+		const file = new File([blob], "game_data.csv", { type: "text/csv" });
 		setActiveCsvFile(file);
 	}
 

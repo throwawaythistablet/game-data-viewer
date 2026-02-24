@@ -359,7 +359,7 @@
 
 	// Tag Patterns button
 	tagPatternsButton.addEventListener("click", () => {
-		window.open("tags/tag_patterns.json", "_blank", "noopener,noreferrer");
+		window.open("tags/tag_patterns.txt", "_blank", "noopener,noreferrer");
 	});
 
 	// Theme toggle button
