@@ -189,10 +189,11 @@
 			return; // already loaded
 		}
 
+		const url = "https://github.com/throwawaythistablet/game-data-viewer/releases/download/v1.0/game_data.csv";
 		try {
-			const response = await fetchWithProgress("data/game_data.csv", 146095447, label, startPercent, endPercent);
+			const response = await fetchWithProgress(url, 146095447, label, startPercent, endPercent);
 			if (!response.ok) {
-				GDV.utils.reportHardError("CSV Load Failed", 'Failed to fetch the default CSV file from "data/game_data.csv".', new Error(`HTTP status: ${response.status}`));
+				GDV.utils.reportHardError("CSV Load Failed", 'Failed to fetch the default CSV file from "game_data.csv".', new Error(`HTTP status: ${response.status}`));
 				return;
 			}
 
