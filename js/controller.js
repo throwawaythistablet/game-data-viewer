@@ -184,27 +184,43 @@
 		GDV.state.setGameKeys(await GDV.csvHandler.extractKeysFromCsv(file, label, startPercent, endPercent));
 	}
 
-	async function loadDefaultCsv(label, startPercent, endPercent) {
-		if (GDV.state.getActiveCsvFile()) {
-			return; // already loaded
-		}
+async function loadDefaultCsv(label, startPercent, endPercent) {
+    if (GDV.state.getActiveCsvFile()) return; // already loaded
 
-		const url = "https://github.com/throwawaythistablet/game-data-viewer/releases/download/v1.0/game_data.csv";
-		try {
-			const response = await fetchWithProgress(url, 146095447, label, startPercent, endPercent);
-			if (!response.ok) {
-				GDV.utils.reportHardError("CSV Load Failed", 'Failed to fetch the default CSV file from "game_data.csv".', new Error(`HTTP status: ${response.status}`));
-				return;
-			}
+    const files = [
+        "data/game_data_part_1.csv",
+        "data/game_data_part_2.csv",
+        "data/game_data_part_3.csv"
+    ];
 
-			const blob = await response.blob();
-			const file = new File([blob], "game_data.csv", { type: "text/csv" });
-			setActiveCsvFile(file);
-		} catch (err) {
-			GDV.utils.reportHardError("CSV Load Failed", "An unexpected error occurred while loading the default CSV.", err);
-		}
-	}
+    let combinedText = "";
 
+    for (let i = 0; i < files.length; i++) {
+        const fileUrl = files[i];
+        const estimatedSize = 50000000; // adjust per chunk in bytes (~50MB)
+
+        try {
+			const fileSP = startPercent + (i/files.length)*(endPercent-startPercent)
+			const fileEP = startPercent + ((i+1)/files.length)*(endPercent-startPercent)
+            const response = await fetchWithProgress(fileUrl, estimatedSize, label, fileSP, fileEP);
+            if (!response.ok) {
+                GDV.utils.reportHardError("CSV Load Failed", `Failed to fetch CSV part: "${fileUrl}"`, new Error(`HTTP status: ${response.status}`));
+                return;
+            }
+
+            const text = await response.text();
+            combinedText += text; // combine all chunks as plain text
+        } catch (err) {
+            GDV.utils.reportHardError("CSV Load Failed", "An unexpected error occurred while loading a CSV chunk.", err);
+            return;
+        }
+    }
+
+    // Create a single File object from the combined CSV
+    const blob = new Blob([combinedText], { type: "text/csv" });
+    const file = new File([blob], "game_data.csv", { type: "text/csv" });
+    setActiveCsvFile(file);
+}
 	async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
 		if (GDV.state.hasValidColumnDetails()) {
 			return; // already loaded
