@@ -106,7 +106,14 @@
 	GDV.datatable.getColumnDescription = getColumnDescription;
 	function getColumnDescription(colName) {
 		const description = GDV.state.getActiveColumnDetails()?.[colName]?.description || "";
-		const regex = GDV.state.getTagFullPatterns()?.[colName];
+
+		// If it's a site tag or unprefixed, skip regex completely
+		if (colName.startsWith("site: ") || !colName.includes(": ")) {
+			return description;
+		}
+
+		const baseColName = colName.split(": ")[1];
+		const regex = GDV.state.getTagFullPatterns()?.[baseColName];
 		const regexDesc = regex ? `Regex pattern:\n${regex}` : "";
 
 		return [description, regexDesc].filter(Boolean).join("\n");

@@ -32,11 +32,12 @@
 		}
 		const humanPrefilters = parseHumanReadable(params);
 		pfObj = mergePrefilters(pfObj, humanPrefilters);
-		if (pfObj && !validatePrefilters(pfObj)) {
+		adjustedPrefilters = adjustPrefilterNamesIfNeeded(pfObj);
+		if (adjustedPrefilters && !validatePrefilters(adjustedPrefilters)) {
 			GDV.utils.reportSilentWarning("Prefilter Validation Failed", "The prefilters extracted from the URL did not pass validation and will be ignored.");
 			return null;
 		}
-		return pfObj || null;
+		return adjustedPrefilters || null;
 	}
 
 	function extractSimilarityGame(params) {
@@ -206,6 +207,27 @@
 		if (!override) return base;
 		return { ...base, ...override };
 	}
+
+	function adjustPrefilterNamesIfNeeded(inputPrefilters) {
+		const activeCols = GDV.state.getActiveColumnDetails() || {};
+		const validPrefilters = {};
+
+		for (const [col, criterion] of Object.entries(inputPrefilters)) {
+			if (activeCols[col]) {
+				// Column exists, include as-is
+				validPrefilters[col] = criterion;
+			} else {
+				// Try "text search: " prefix
+				const textSearchCol = `text search: ${col}`;
+				if (activeCols[textSearchCol]) {
+					validPrefilters[textSearchCol] = criterion;
+				} else {
+				    GDV.utils.reportSilentWarning("Prefilter column not found", `Prefilter column not found: "${col}" or "${textSearchCol}", skipping.`);
+				}
+			}
+		}
+    return validPrefilters;
+}
 
 	function validatePrefilters(prefilters) {
 		if (!prefilters || typeof prefilters !== "object") return false;
