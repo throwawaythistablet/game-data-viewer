@@ -369,7 +369,7 @@
 		}
 
 		return new Promise((resolve) => {
-			csvTableElement.DataTable({
+			const dt = csvTableElement.DataTable({
 				paging: true,
 				pageLength: 100,
 				order: [[sortColumnIndex, "desc"]],
@@ -390,6 +390,11 @@
 					await addColumnFilters(api);
 					resolve();
 				},
+			});
+			// ⚡ Scroll to top on page change
+			dt.on("page.dt", () => {
+				const tableTop = csvTableElement.offset().top;
+				window.scrollTo({ top: tableTop, behavior: "smooth" });
 			});
 		});
 	}

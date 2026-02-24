@@ -68,7 +68,7 @@
 	GDV.state.getSimilarityGame = () => similarityGame;
 
 	GDV.state.setSimilarityGame = (gameName) => {
-		similarityGame = gameName;
+		similarityGame = gameName || null;
 	};
 
 	GDV.state.resetSimilarityGame = () => {
