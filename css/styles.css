@@ -350,14 +350,14 @@ td {
 .help-notice-toggle-text {
 	font-size: 13px;
 	font-weight: bold;
-	color: var(--accent);
+	color: var(--glow);
 	margin-top: 8px;
 	text-align: left;
 	transition: color 0.2s;
 }
 
 .help-notice-toggle-text:hover {
-	color: var(--accent-hover);
+	color: var(--glow-strong);
 }
 
 .help-notice strong {
