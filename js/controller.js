@@ -14,28 +14,34 @@
 		GDV.dom.setActiveCsvFile(file);
 	}
 
-	GDV.controller.updateColumnDetails = updateColumnDetails;
-	function updateColumnDetails(columnDetails, description) {
-		GDV.state.updateColumnDetails(columnDetails);
-		GDV.dom.updateColumnDetails(description);
+	GDV.controller.setColumnDetails = setColumnDetails;
+	function setColumnDetails(columnDetails, fileName) {
+		GDV.state.setColumnDetails(columnDetails);
+		GDV.dom.setColumnDetails(fileName);
 	}
 
-	GDV.controller.updateTagFullPatterns = updateTagFullPatterns;
-	function updateTagFullPatterns(tagFullPatterns, fileName) {
-		GDV.state.updateTagFullPatterns(tagFullPatterns);
-		GDV.dom.updateTagFullPatterns(fileName);
+	GDV.controller.setGameKeys = setGameKeys;
+	function setGameKeys(gameKeys, fileName) {
+		GDV.state.setGameKeys(gameKeys);
+		GDV.dom.setGameKeys(fileName);
 	}
 
-	GDV.controller.updateColumnCategories = updateColumnCategories;
-	function updateColumnCategories(tagFullPatterns, fileName) {
-		GDV.state.updateColumnCategories(tagFullPatterns);
-		GDV.dom.updateColumnCategories(fileName);
+	GDV.controller.setColumnCategories = setColumnCategories;
+	function setColumnCategories(columnCategories, fileName) {
+		GDV.state.setColumnCategories(columnCategories);
+		GDV.dom.setColumnCategories(fileName);
 	}
 
-	GDV.controller.updateThumbnails = updateThumbnails;
-	function updateThumbnails(thumbnails, fileName) {
-		GDV.state.updateThumbnails(thumbnails);
-		GDV.dom.updateThumbnails(fileName);
+	GDV.controller.setTagFullPatterns = setTagFullPatterns;
+	function setTagFullPatterns(tagFullPatterns, fileName) {
+		GDV.state.setTagFullPatterns(tagFullPatterns);
+		GDV.dom.setTagFullPatterns(fileName);
+	}
+
+	GDV.controller.setThumbnails = setThumbnails;
+	function setThumbnails(thumbnails, fileName) {
+		GDV.state.setThumbnails(thumbnails);
+		GDV.dom.setThumbnails(fileName);
 	}
 
 	GDV.controller.updateGameFolder = updateGameFolder;
@@ -63,7 +69,6 @@
 			GDV.utils.reportHardWarning("Invalid File Type", "Invalid file. Please provide a CSV file.");
 			return;
 		}
-
 		setActiveCsvFile(file);
 		await GDV.csvHandler.showPrefiltersForCsvSearch(file);
 	};
@@ -79,10 +84,28 @@
 		}
 		try {
 			const text = await file.text();
-			updateColumnDetails(JSON.parse(text), `Loaded from ${file.name}`);
+			setColumnDetails(JSON.parse(text), `${file.name}`);
 		} catch (err) {
 			GDV.utils.reportHardError("Column Details Load Failed", "Error loading column details JSON", err, { file });
-			updateColumnDetails({}, null);
+			setColumnDetails({}, null);
+		}
+	};
+
+	GDV.controller.loadGameKeysFile = async (file) => {
+		if (!file) {
+			GDV.utils.reportHardWarning("No File Provided", "No file was provided to load.");
+			return;
+		}
+		if (!file.name || !file.name.toLowerCase().endsWith(".json")) {
+			GDV.utils.reportHardWarning("Invalid File Type", "Invalid file. Please provide a JSON file.");
+			return;
+		}
+		try {
+			const text = await file.text();
+			setGameKeys(JSON.parse(text), `${file.name}`);
+		} catch (err) {
+			GDV.utils.reportHardError("Game Keys Load Failed", "Error loading column details JSON", err, { file });
+			setGameKeys({}, null);
 		}
 	};
 
@@ -112,21 +135,6 @@
 		GDV.dom.setControPanelGridAsVisible();
 	}
 
-	async function initializeHostedMode() {
-		initializeCommonSteps();
-		await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
-		await GDV.loading.startLoading("var(--green)");
-		await loadDefaultColumnDetailsJson("Loading column details…", 5, 10);
-		await loadDefaultTagFullPatternsJson("Loading tag definitions…", 10, 15);
-		await loadDefaultColumnCategoriesJson("Loading column categories…", 15, 20);
-		await loadDefaultCsv("Loading database records…", 20, 70);
-		await loadKeysFromCsv("Loading keys from records…", 70, 80);
-		await loadDefaultThumbnailsJson("Linking thumbnails…", 80, 99);
-		await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
-		await GDV.loading.finishLoading();
-		await applyUrlPrefiltersOrPrompt();
-	}
-
 	async function loadFilesFromDataFolder() {
 		if (!dataFolderHandle) {
 			GDV.utils.reportSilentWarning("No Games Folder", "No games folder selected. Cannot load files.");
@@ -136,16 +144,17 @@
 		try {
 			await GDV.loading.startLoading("var(--green)");
 			await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
-			await GDV.loading.updateLoadingDirectUpdate("Loading column details…", 5);
-			await loadColumnDetailsFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 10);
-			await loadTagFullPatternsFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading column categories…", 15);
-			await loadColumnCategoriesFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading database records…", 20);
+			await GDV.loading.updateLoadingDirectUpdate("Loading database records…", 0);
 			await loadCsvFromLocalDataFolder();
-			await loadKeysFromCsv("Loading keys from records…", 70, 80);
-			await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 80);
+			await GDV.loading.updateLoadingDirectUpdate("Loading column details…", 80);
+			await loadColumnDetailsFromLocalDataFolder();
+			await GDV.loading.updateLoadingDirectUpdate("Loading game keys…", 82.5);
+			await loadGameKeysFromLocalDataFolder();
+			await GDV.loading.updateLoadingDirectUpdate("Loading column categories…", 85);
+			await loadColumnCategoriesFromLocalDataFolder();
+			await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 87.5);
+			await loadTagFullPatternsFromLocalDataFolder();
+			await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 90);
 			await loadThumbnailsFromLocalDataFolder();
 			await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
 			await GDV.loading.finishLoading();
@@ -156,40 +165,28 @@
 		}
 	}
 
-	async function applyUrlPrefiltersOrPrompt() {
-		const { prefilters = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
-		const activeCsv = GDV.state.getActiveCsvFile();
-		let applied = false;
-
-		if (prefilters && Object.keys(prefilters).length) {
-			applied = true;
-			GDV.state.setPrefiltersToUse(prefilters);
-		}
-		if (similarityGame) {
-			applied = true;
-			GDV.state.setSimilarityGame(similarityGame);
-		}
-
-		if (applied) {
-			const appliedList = [prefilters && Object.keys(prefilters).length ? "Prefilters" : null, similarityGame ? "Similarity Game" : null].filter(Boolean).join(" & ");
-			GDV.utils.showInfoBanner("URL Parameters Detected", `${appliedList} found in the URL. Applying now and performing automatic search.`);
-			await GDV.csvHandler.executeCsvSearch(activeCsv);
-		} else {
-			await GDV.csvHandler.showPrefiltersForCsvSearch(activeCsv);
-		}
-	}
-
-	async function loadKeysFromCsv(label, startPercent, endPercent) {
-		const file = GDV.state.getActiveCsvFile();
-		GDV.state.setGameKeys(await GDV.csvHandler.extractKeysFromCsv(file, label, startPercent, endPercent));
+	async function initializeHostedMode() {
+		initializeCommonSteps();
+		await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
+		await GDV.loading.startLoading("var(--green)");
+		await loadDefaultCsv("Loading database records…", 0, 80);
+		await loadDefaultColumnDetailsJson("Loading column details…", 80, 82.5);
+		await loadDefaultGameKeysJson("Loading game keys…", 82.5, 85);
+		await loadDefaultColumnCategoriesJson("Loading column categories…", 85, 87.5);
+		await loadDefaultTagFullPatternsJson("Loading tag definitions…", 87.5, 90);
+		await loadDefaultThumbnailsJson("Linking thumbnails…", 90, 100);
+		await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
+		await GDV.loading.finishLoading();
+		await applyUrlPrefiltersOrPrompt();
 	}
 
 	async function loadDefaultCsv(label, startPercent, endPercent) {
 		if (GDV.state.getActiveCsvFile()) return;
 		const files = [
-			{ url: "data/game_data_part_1.csv", size: 52429478 },
-			{ url: "data/game_data_part_2.csv", size: 52432749 },
-			{ url: "data/game_data_part_3.csv", size: 41358046 }
+			{ url: "data/game_data_part_1.csv", size: 52433361 },
+			{ url: "data/game_data_part_2.csv", size: 52429318 },
+			{ url: "data/game_data_part_3.csv", size: 52434655 },
+			{ url: "data/game_data_part_4.csv", size: 1494392 }
 		];
 
 		let combinedText = "";
@@ -224,73 +221,107 @@
 		}
 
 		try {
-			const response = await fetchWithProgress("data/game_column_details.json", 698170, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_column_details.json", 763854, label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Column Details Load Failed", "Failed to fetch the default column details JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/game_column_details.json",
 				});
 				return;
 			}
-
 			const columnDetails = await response.json();
-			updateColumnDetails(columnDetails, "data/game_column_details.json");
+			setColumnDetails(columnDetails, "data/game_column_details.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Column Details Load Failed", "An unexpected error occurred while loading the default column details JSON.", err);
 		}
 	}
 
-	async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
+	async function loadDefaultGameKeysJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/tag_full_patterns.json", 473480, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_keys.json", 1021029, label, startPercent, endPercent);
 			if (!response.ok) {
-				GDV.utils.reportHardError("Tag Patterns Load Failed", "Failed to fetch the default tag full patterns JSON file.", new Error(`HTTP status: ${response.status}`), {
-					url: "data/tag_full_patterns.json",
+				GDV.utils.reportHardError("Game Keys Load Failed", "Failed to fetch the default game keys JSON file.", new Error(`HTTP status: ${response.status}`), {
+					url: "data/game_keys.json",
 				});
 				return;
 			}
-
-			const tagFullPatterns = await response.json();
-			updateTagFullPatterns(tagFullPatterns, "data/tag_full_patterns.json");
+			const gameKeys = await response.json();
+			setGameKeys(gameKeys, "data/game_keys.json");
 		} catch (err) {
-			GDV.utils.reportHardError("Tag Patterns Load Failed", "An unexpected error occurred while loading the default tag full patterns JSON.", err);
+			GDV.utils.reportHardError("Game Keys Load Failed", "An unexpected error occurred while loading the default game keys JSON.", err);
 		}
 	}
 
 	async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/game_column_categories.json", 201805, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_column_categories.json", 226685, label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Column Categories Load Failed", "Failed to fetch the default column categories JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/game_column_categories.json",
 				});
 				return;
 			}
-
 			const columnCategories = await response.json();
-			updateColumnCategories(columnCategories, "data/game_column_categories.json");
+			setColumnCategories(columnCategories, "data/game_column_categories.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Column Categories Load Failed", "An unexpected error occurred while loading the default column categories JSON.", err);
 		}
 	}
 
+	async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
+		try {
+			const response = await fetchWithProgress("data/tag_full_patterns.json", 512261, label, startPercent, endPercent);
+			if (!response.ok) {
+				GDV.utils.reportHardError("Tag Patterns Load Failed", "Failed to fetch the default tag full patterns JSON file.", new Error(`HTTP status: ${response.status}`), {
+					url: "data/tag_full_patterns.json",
+				});
+				return;
+			}
+			const tagFullPatterns = await response.json();
+			setTagFullPatterns(tagFullPatterns, "data/tag_full_patterns.json");
+		} catch (err) {
+			GDV.utils.reportHardError("Tag Patterns Load Failed", "An unexpected error occurred while loading the default tag full patterns JSON.", err);
+		}
+	}
+
 	async function loadDefaultThumbnailsJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/game_thumbnails.json", 18148708, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_thumbnails.json", 18148729, label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Thumbnails Load Failed", "Failed to fetch the default thumbnails JSON file.", new Error(`HTTP status: ${response.status}`), { url: "data/game_thumbnails.json" });
 				return;
 			}
-
 			const thumbnails = await response.json();
-			updateThumbnails(thumbnails, "data/game_thumbnails.json");
+			setThumbnails(thumbnails, "data/game_thumbnails.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Thumbnails Load Failed", "An unexpected error occurred while loading the default thumbnails JSON.", err);
 		}
 	}
 
+	async function applyUrlPrefiltersOrPrompt() {
+		const { prefilters = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
+		const activeCsv = GDV.state.getActiveCsvFile();
+		let applied = false;
+
+		if (prefilters && Object.keys(prefilters).length) {
+			applied = true;
+			GDV.state.setPrefiltersToUse(prefilters);
+		}
+		if (similarityGame) {
+			applied = true;
+			GDV.state.setSimilarityGame(similarityGame);
+		}
+
+		if (applied) {
+			const appliedList = [prefilters && Object.keys(prefilters).length ? "Prefilters" : null, similarityGame ? "Similarity Game" : null].filter(Boolean).join(" & ");
+			GDV.utils.showInfoBanner("URL Parameters Detected", `${appliedList} found in the URL. Applying now and performing automatic search.`);
+			await GDV.csvHandler.executeCsvSearch(activeCsv);
+		} else {
+			await GDV.csvHandler.showPrefiltersForCsvSearch(activeCsv);
+		}
+	}
+
 	async function loadCsvFromLocalDataFolder() {
 		if (!dataFolderHandle) return;
-
 		let combinedText = "";
 		let partIndex = 1;
 		while (true) {
@@ -306,7 +337,6 @@
 			GDV.utils.reportHardWarning("Missing CSV File", 'No "game_data_part_X.csv" files were found in the selected games folder.');
 			return;
 		}
-
 		const blob = new Blob([combinedText], { type: "text/csv" });
 		const file = new File([blob], "game_data.csv", { type: "text/csv" });
 		setActiveCsvFile(file);
@@ -319,30 +349,28 @@
 			GDV.utils.reportHardWarning("Missing Column Details", 'The file "game_column_details.json" was not found in the selected games folder.');
 			return;
 		}
-
 		try {
 			const file = await fileHandle.getFile();
 			const columnDetails = JSON.parse(await file.text());
-			updateColumnDetails(columnDetails, "data/game_column_details.json");
+			setColumnDetails(columnDetails, "data/game_column_details.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Failed to Load Column Details", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
 		}
 	}
 
-	async function loadTagFullPatternsFromLocalDataFolder() {
+	async function loadGameKeysFromLocalDataFolder() {
 		if (!dataFolderHandle) return;
-		const fileHandle = await dataFolderHandle.getFileHandle("tag_full_patterns.json").catch(() => null);
+		const fileHandle = await dataFolderHandle.getFileHandle("game_keys.json").catch(() => null);
 		if (!fileHandle) {
-			GDV.utils.reportHardWarning("Missing Tag Patterns", 'The file "tag_full_patterns.json" was not found in the selected games folder.');
+			GDV.utils.reportHardWarning("Missing Game Keys", 'The file "game_keys.json" was not found in the selected games folder.');
 			return;
 		}
-
 		try {
 			const file = await fileHandle.getFile();
-			const tagFullPatterns = JSON.parse(await file.text());
-			updateTagFullPatterns(tagFullPatterns, "data/tag_full_patterns.json");
+			const gameKeys = JSON.parse(await file.text());
+			setGameKeys(gameKeys, "data/game_keys.json");
 		} catch (err) {
-			GDV.utils.reportHardError("Failed to Load Tag Patterns", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
+			GDV.utils.reportHardError("Failed to Load Game Keys", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
 		}
 	}
 
@@ -353,13 +381,28 @@
 			GDV.utils.reportHardWarning("Missing Column Categories", 'The file "game_column_categories.json" was not found in the selected games folder.');
 			return;
 		}
-
 		try {
 			const file = await fileHandle.getFile();
 			const columnCategories = JSON.parse(await file.text());
-			updateColumnCategories(columnCategories, "data/game_column_categories.json");
+			setColumnCategories(columnCategories, "data/game_column_categories.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Failed to Load Column Categories", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
+		}
+	}
+
+	async function loadTagFullPatternsFromLocalDataFolder() {
+		if (!dataFolderHandle) return;
+		const fileHandle = await dataFolderHandle.getFileHandle("tag_full_patterns.json").catch(() => null);
+		if (!fileHandle) {
+			GDV.utils.reportHardWarning("Missing Tag Patterns", 'The file "tag_full_patterns.json" was not found in the selected games folder.');
+			return;
+		}
+		try {
+			const file = await fileHandle.getFile();
+			const tagFullPatterns = JSON.parse(await file.text());
+			setTagFullPatterns(tagFullPatterns, "data/tag_full_patterns.json");
+		} catch (err) {
+			GDV.utils.reportHardError("Failed to Load Tag Patterns", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
 		}
 	}
 
@@ -370,11 +413,10 @@
 			GDV.utils.reportHardWarning("Missing Thumbnails", 'The file "game_thumbnails.json" was not found in the selected games folder.');
 			return;
 		}
-
 		try {
 			const file = await fileHandle.getFile();
 			const thumbnails = JSON.parse(await file.text());
-			updateThumbnails(thumbnails, "data/game_thumbnails.json");
+			setThumbnails(thumbnails, "data/game_thumbnails.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Failed to Load Thumbnails", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
 		}

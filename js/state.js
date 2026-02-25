@@ -1,11 +1,11 @@
 (() => {
 	let activeCsvFile = null;
 	let activeColumnDetails = {};
-	let activeTagFullPatterns = {};
 	let activeColumnCategories = {};
+	let activeTagFullPatterns = {};
 	let gamesFolderHandle = null;
 	let dataFolderHandle = null;
-	let gameKeys = null;
+	let activeGameKeys = null;
 	let prefiltersToUse = {};
 	let similarityGame = null;
 
@@ -19,25 +19,31 @@
 
 	GDV.state.hasValidColumnDetails = () => activeColumnDetails && Object.keys(activeColumnDetails).length > 0;
 
-	GDV.state.getTagFullPatterns = () => activeTagFullPatterns;
+	GDV.state.getGameKeys = () => activeGameKeys;
 
 	GDV.state.getColumnCategories = () => activeColumnCategories;
 
+	GDV.state.getTagFullPatterns = () => activeTagFullPatterns;
+
 	GDV.state.getThumbnails = () => activeThumbnails;
 
-	GDV.state.updateColumnDetails = (columnDetails) => {
+	GDV.state.setColumnDetails = (columnDetails) => {
 		activeColumnDetails = columnDetails;
 	};
 
-	GDV.state.updateTagFullPatterns = (tagFullPatterns) => {
-		activeTagFullPatterns = tagFullPatterns;
+	GDV.state.setGameKeys = (gameKeys) => {
+		activeGameKeys = gameKeys;
 	};
 
-	GDV.state.updateColumnCategories = (columnCategories) => {
+	GDV.state.setColumnCategories = (columnCategories) => {
 		activeColumnCategories = columnCategories;
 	};
 
-	GDV.state.updateThumbnails = (thumbnails) => {
+	GDV.state.setTagFullPatterns = (tagFullPatterns) => {
+		activeTagFullPatterns = tagFullPatterns;
+	};
+
+	GDV.state.setThumbnails = (thumbnails) => {
 		activeThumbnails = thumbnails;
 	};
 
@@ -51,12 +57,6 @@
 
 	GDV.state.setDataFolderHandle = (dataFolderHandle_) => {
 		dataFolderHandle = dataFolderHandle_;
-	};
-
-	GDV.state.getGameKeys = () => gameKeys;
-
-	GDV.state.setGameKeys = (gameKeys_) => {
-		gameKeys = gameKeys_;
 	};
 
 	GDV.state.getPrefiltersToUse = () => prefiltersToUse;

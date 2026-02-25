@@ -67,13 +67,15 @@
                 <button type="button" id="discussionButton" class="btn" title="Join the discussion about the tool"
                     aria-label="Join the discussion about this tool">👥 Discussion</button>
 
-                <button type="button" id="feedbackButton" class="btn" title="Provide feedback or suggestions about the tool"
-                    aria-label="Provide feedback or suggestions about this tool">💬 Feedback</button>
+                <button type="button" id="feedbackButton" class="btn"
+                    title="Provide feedback or suggestions about the tool"
+                    aria-label="Provide feedback or suggestions about this tool">💬 Tag Request & Feedback</button>
 
                 <button type="button" id="tagPatternsButton" class="btn" title="View the full tag regex patterns"
                     aria-label="View the full tag regex patterns">📄 Tag Patterns</button>
 
-                <button type="button" id="resetFiltersButton" class="btn" title="Reset all filters and sorting to their default state"
+                <button type="button" id="resetFiltersButton" class="btn"
+                    title="Reset all filters and sorting to their default state"
                     aria-label="Reset all filters and sorting to default">🔄 Reset Column Filters</button>
 
                 <button type="button" id="searchButton" class="btn btn-main" title="Search the game data"
@@ -85,16 +87,22 @@
         <div class="controls-main-grid">
             <div class="status-card">
                 <div class="btn-group">
-                    <input type="file" id="csvFile" accept=".csv" aria-hidden="true">
+                    <input type="file" id="csvFileInput" accept=".csv" aria-hidden="true">
                     <input type="file" id="columnDetailsFileInput" accept=".json" style="display:none"
                         aria-hidden="true">
+                    <input type="file" id="gameKeysFileInput" accept=".json" style="display:none" aria-hidden="true">
 
-                    <button type="button" id="fileButton" class="btn" style="flex:1" title="Select a CSV file to load into the table"
+                    <button type="button" id="csvFileButton" class="btn" style="flex:1"
+                        title="Select a CSV file to load into the table"
                         aria-label="Select a CSV file to load into the table">📂 Select CSV</button>
 
                     <button type="button" id="columnDetailsFileButton" class="btn" style="flex:1"
                         title="Select a JSON file containing column details"
                         aria-label="Select a JSON file containing column details">📑 Load Column Details</button>
+
+                    <button type="button" id="gameKeysFileButton" class="btn" style="flex:1"
+                        title="Select a JSON file containing game keys"
+                        aria-label="Select a JSON file containing game keys">📑 Load Game Keys</button>
 
                     <button type="button" id="selectGamesFolderButton" class="btn btn-main" style="flex:1"
                         title="Select the games folder containing your data files"
@@ -110,6 +118,10 @@
                 <div class="controls-status-item">
                     <span class="controls-label">Loaded Column Details:</span>
                     <span id="columnDetailsDisplay" class="controls-value">(None)</span>
+                </div>
+                <div class="controls-status-item">
+                    <span class="controls-label">Loaded Game Keys:</span>
+                    <span id="gameKeysDisplay" class="controls-value">(None)</span>
                 </div>
                 <div class="controls-status-item">
                     <span class="controls-label">Loaded tag patterns:</span>
@@ -150,7 +162,8 @@
             <div id="loadingOverlayProgressBar"></div>
             <span id="loadingOverlayProgressText">0%</span>
         </div>
-        <button type="button" id="loadingOverlayStopButton" class="btn btn-danger" aria-label="Stop loading process">⏹ Stop</button>
+        <button type="button" id="loadingOverlayStopButton" class="btn btn-danger" aria-label="Stop loading process">⏹
+            Stop</button>
     </div>
 
     <div id="previewOverlay">

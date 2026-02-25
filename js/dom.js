@@ -8,14 +8,17 @@
 	const searchButton = document.getElementById("searchButton");
 	const mainPrefiltersPanelSection = document.getElementById("mainPrefiltersPanelSection");
 	const controlsPanelGrid = document.querySelector(".controls-main-grid");
-	const fileButton = document.getElementById("fileButton");
-	const fileInput = document.getElementById("csvFile");
+	const csvFileButton = document.getElementById("csvFileButton");
+	const csvFileInput = document.getElementById("csvFileInput");
 	const columnDetailsFileButton = document.getElementById("columnDetailsFileButton");
 	const columnDetailsFileInput = document.getElementById("columnDetailsFileInput");
+	const gameKeysFileButton = document.getElementById("gameKeysFileButton");
+	const gameKeysFileInput = document.getElementById("gameKeysFileInput");
 	const selectGamesFolderButton = document.getElementById("selectGamesFolderButton");
 	const pinButton = document.getElementById("controlsPinButton");
 	const csvFileDisplay = document.getElementById("csvFileDisplay");
 	const columnDetailsDisplay = document.getElementById("columnDetailsDisplay");
+	const gameKeysDisplay = document.getElementById("gameKeysDisplay");
 	const tagPatternsDisplay = document.getElementById("tagPatternsDisplay");
 	const columnCategories = document.getElementById("columnCategories");
 	const thumbnailsDisplay = document.getElementById("thumbnailsDisplay");
@@ -46,19 +49,23 @@
 		csvFileDisplay.title = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
 	};
 
-	GDV.dom.updateColumnDetails = (description) => {
+	GDV.dom.setColumnDetails = (description) => {
 		columnDetailsDisplay.textContent = description || "(None)";
 	};
 
-	GDV.dom.updateTagFullPatterns = (fileName) => {
-		tagPatternsDisplay.textContent = fileName || "(None)";
+	GDV.dom.setGameKeys = (description) => {
+		gameKeysDisplay.textContent = description || "(None)";
 	};
 
-	GDV.dom.updateColumnCategories = (fileName) => {
+	GDV.dom.setColumnCategories = (fileName) => {
 		columnCategories.textContent = fileName || "(None)";
 	};
 
-	GDV.dom.updateThumbnails = (fileName) => {
+	GDV.dom.setTagFullPatterns = (fileName) => {
+		tagPatternsDisplay.textContent = fileName || "(None)";
+	};
+
+	GDV.dom.setThumbnails = (fileName) => {
 		thumbnailsDisplay.textContent = fileName || "(None)";
 	};
 
@@ -374,10 +381,10 @@
 	controlsPanelGrid.parentElement.addEventListener("mouseleave", () => setControPanelGridState(false));
 
 	// Select CSV File
-	fileButton.addEventListener("click", () => fileInput.click());
-	fileButton.setAttribute("aria-label", "Select CSV File");
-	fileInput.style.display = "none"; // Make sure input is hidden
-	fileInput.addEventListener("change", async (e) => {
+	csvFileButton.addEventListener("click", () => csvFileInput.click());
+	csvFileButton.setAttribute("aria-label", "Select CSV File");
+	csvFileInput.style.display = "none"; // Make sure input is hidden
+	csvFileInput.addEventListener("change", async (e) => {
 		if (e.target.files.length) {
 			await GDV.controller.loadAndSearchCsv(e.target.files[0]);
 		}
@@ -390,6 +397,16 @@
 	columnDetailsFileInput.addEventListener("change", async (e) => {
 		if (e.target.files.length) {
 			await GDV.controller.loadColumnDetailsFile(e.target.files[0]);
+		}
+	});
+
+	// Column Details JSON File
+	gameKeysFileButton.addEventListener("click", () => gameKeysFileInput.click());
+	gameKeysFileButton.setAttribute("aria-label", "Load Game Keys JSON");
+	gameKeysFileInput.style.display = "none"; // Make sure input is hidden
+	gameKeysFileInput.addEventListener("change", async (e) => {
+		if (e.target.files.length) {
+			await GDV.controller.loadGameKeysFile(e.target.files[0]);
 		}
 	});
 
