@@ -265,7 +265,7 @@
 				ghostText.textContent = "";
 
 				GDV.state.setSimilarityGame(nearest);
-			}, 1000);
+			}, 2000);
 		});
 
 		return similarityWrapper;
