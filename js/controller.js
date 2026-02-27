@@ -122,7 +122,7 @@
 		if (localStorage.getItem("theme") === "light") {
 			document.body.classList.add("light-theme");
 		}
-		updateThemeButton();
+		GDV.dom.updateThemeButton();
 	}
 
 	async function initializeCommonSteps() {
@@ -467,11 +467,6 @@
 			status: response.status,
 			statusText: response.statusText,
 		});
-	}
-
-	function updateThemeButton() {
-		const isLight = document.body.classList.contains("light-theme");
-		GDV.dom.updateThemeButton(isLight);
 	}
 
 	async function selectGamesFolder() {

@@ -190,22 +190,14 @@
 
 		const { min, max } = GDV.state.getActiveColumnDetails()[colName] || {};
 		const intensity = max === min ? 0 : Math.max(0, Math.min(1, (num - min) / (max - min)));
-		const isLightMode = document.body.classList.contains("light-theme");
 
-		let low, high;
-		if (isLightMode) {
-			low = { h: 0, s: 70, l: 80 }; // light red
-			high = { h: 120, s: 70, l: 80 }; // light green (readable on black)
-		} else {
-			low = { h: 0, s: 70, l: 20 }; // dark red
-			high = { h: 120, s: 70, l: 20 }; // dark green (readable on white)
-		}
-
+		const { low, high } = getRangeColors();
 		const hue = Math.round(low.h + (high.h - low.h) * intensity);
 		const saturation = Math.round(low.s + (high.s - low.s) * intensity);
 		const lightness = Math.round(low.l + (high.l - low.l) * intensity);
+		
 		const bgColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-		const textColor = isLightMode ? "#000000" : "#ffffff";
+		const textColor = isLightTheme() ? "#000000" : "#ffffff";
 		const weightClass = intensity > 0.7 ? "high" : intensity > 0.4 ? "medium" : "low";
 
 		const span = document.createElement("span");
@@ -223,36 +215,8 @@
 		const span = document.createElement("span");
 		const weightClass = text === "1. Very Positive" ? "high" : text === "9. Very Negative" ? "low" : "medium";
 		span.className = `highlight-cell ${weightClass}`;
-
-		const isLightMode = document.body.classList.contains("light-theme");
-
-		const lightMap = {
-			"1. Very Positive": "#006400",
-			"2. Positive": "#2E8B57",
-			"3. Mildly Positive": "#7FBF7F",
-			"4. Neutral": "#808080",
-			"5. Mixed": "#B8860B",
-			"6. No Data": "#a0a0a0",
-			"7. Mildly Negative": "#F2A0A0",
-			"8. Negative": "#D9534F",
-			"9. Very Negative": "#8B0000",
-		};
-
-		const darkMap = {
-			"1. Very Positive": "#66FF66",
-			"2. Positive": "#4CFF4C",
-			"3. Mildly Positive": "#B3FFB3",
-			"4. Neutral": "#aaaaaa",
-			"5. Mixed": "#FFD166",
-			"6. No Data": "#888888",
-			"7. Mildly Negative": "#FFB3B3",
-			"8. Negative": "#FF6B6B",
-			"9. Very Negative": "#FF3333",
-		};
-
-		const map = isLightMode ? lightMap : darkMap;
-		const color = map[text];
-
+		const colorMap = getSentimentColors();
+		const color = colorMap[text];
 		if (color) {
 			span.style.color = color;
 		}
@@ -267,26 +231,8 @@
 		const span = document.createElement("span");
 		const weightClass = text === "Completed" ? "high" : text === "Abandoned" ? "low" : "medium";
 		span.className = `highlight-cell ${weightClass}`;
-
-		const isLightMode = document.body.classList.contains("light-theme");
-
-		const lightMap = {
-			Completed: "#006400",
-			Onhold: "#808080",
-			Ongoing: "#B8860B",
-			Abandoned: "#8B0000",
-		};
-
-		const darkMap = {
-			Completed: "#66FF66",
-			Onhold: "#aaaaaa",
-			Ongoing: "#FFD166",
-			Abandoned: "#FF3333",
-		};
-
-		const map = isLightMode ? lightMap : darkMap;
-		const color = map[text];
-
+		const colorMap = getStatusColors();
+		const color = colorMap[text];
 		if (color) {
 			span.style.color = color;
 		}
@@ -295,9 +241,119 @@
 		return span;
 	};
 
+	GDV.dom.createHighlightFromPlayTimeLabel = (text) => {
+		if (!text) return document.createTextNode("");
+
+		const span = document.createElement("span");
+		const weightClass = text === "3. Long Game" || text === "4. Very Long Game" ? "high" : text === "2. Medium Game" ? "medium" : "low";
+		span.className = `highlight-cell ${weightClass}`;
+		const colorMap = getPlayTimeColors();
+		const color = colorMap[text];
+		if (color) {
+			span.style.color = color;
+		}
+		span.textContent = text;
+
+		return span;
+	};
+
+	GDV.dom.isLightTheme = isLightTheme;
+	function isLightTheme() {
+		return document.body.classList.contains("light-theme");
+	}
+
+	GDV.dom.getCurrentTheme = getCurrentTheme;
+	function getCurrentTheme() {
+		return isLightTheme() ? "light" : "dark";
+	}
+
 	GDV.dom.updateThemeButton = updateThemeButton;
-	function updateThemeButton(isLight) {
-		themeToggleButton.textContent = isLight ? "🌞 Light" : "🌙 Dark";
+	function updateThemeButton() {
+		themeToggleButton.textContent = isLightTheme() ? "🌞 Light" : "🌙 Dark";
+	}
+
+	// Unified theme-based color map
+	const COLOR_MAP = {
+		light: {
+			range: {
+				low: { h: 0, s: 70, l: 80 },   // light red
+				high: { h: 120, s: 70, l: 80 } // light green
+			},
+			sentiment: {
+				"1. Very Positive": "#006400",
+				"2. Positive": "#2E8B57",
+				"3. Mildly Positive": "#7FBF7F",
+				"4. Neutral": "#808080",
+				"5. Mixed": "#B8860B",
+				"6. No Data": "#A0A0A0",
+				"7. Mildly Negative": "#F2A0A0",
+				"8. Negative": "#D9534F",
+				"9. Very Negative": "#8B0000",
+			},
+			status: {
+				"Completed": "#006400",
+				"Onhold": "#808080",
+				"Ongoing": "#B8860B",
+				"Abandoned": "#8B0000",
+			},
+			play_time: {
+				"1. Short Game": "#8B0000",
+				"2. Medium Game": "#B8860B",
+				"3. Long Game": "#2E8B57",
+				"4. Very Long Game": "#006400",
+				"5. Unknown Length": "#808080",
+			}
+		},
+		dark: {
+			range: {
+				low: { h: 0, s: 70, l: 20 },   // dark red
+				high: { h: 120, s: 70, l: 20 } // dark green
+			},
+			sentiment: {
+				"1. Very Positive": "#66FF66",
+				"2. Positive": "#4CFF4C",
+				"3. Mildly Positive": "#B3FFB3",
+				"4. Neutral": "#AAAAAA",
+				"5. Mixed": "#FFD166",
+				"6. No Data": "#888888",
+				"7. Mildly Negative": "#FFB3B3",
+				"8. Negative": "#FF6B6B",
+				"9. Very Negative": "#FF3333",
+			},
+			status: {
+				"Completed": "#66FF66",
+				"Onhold": "#aaaaaa",
+				"Ongoing": "#FFD166",
+				"Abandoned": "#FF3333",
+			},
+			play_time: {
+				"1. Short Game": "#FF3333",
+				"2. Medium Game": "#FFD166",
+				"3. Long Game": "#4CFF4C",
+				"4. Very Long Game": "#66FF66",
+				"5. Unknown Length": "#888888",
+			}
+		}
+	};
+
+	function getRangeColors() {
+		const theme = getCurrentTheme();
+		return COLOR_MAP[theme].range;
+	}
+
+	function getSentimentColors() {
+		const theme = getCurrentTheme();
+		return COLOR_MAP[theme].sentiment;
+	}
+
+	function getStatusColors() {
+		const theme = getCurrentTheme();
+		return COLOR_MAP[theme].status;
+	}
+
+	function getPlayTimeColors() {
+		const theme = getCurrentTheme();
+		return COLOR_MAP[theme].play_time;
 	}
 
 	function setControPanelGridState(expanded) {
@@ -372,8 +428,7 @@
 	// Theme toggle button
 	themeToggleButton.addEventListener("click", () => {
 		document.body.classList.toggle("light-theme");
-		const isLight = document.body.classList.contains("light-theme");
-		localStorage.setItem("theme", isLight ? "light" : "dark");
+		localStorage.setItem("theme", isLightTheme() ? "light" : "dark");
 		updateThemeButton(isLight);
 	});
 

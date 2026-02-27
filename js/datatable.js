@@ -1039,6 +1039,8 @@
 			return GDV.dom.createHighlightFromSentiment(text);
 		} else if (colNameLower === "status") {
 			return GDV.dom.createHighlightFromStatus(text);
+		} else if (colNameLower === "play_time_label") {
+			return GDV.dom.createHighlightFromPlayTimeLabel(text);
 		}
 		return null;
 	}
