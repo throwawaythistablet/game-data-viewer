@@ -29,44 +29,6 @@
 		}
 	}
 
-	GDV.csvHandler.extractKeysFromCsv = extractKeysFromCsv;
-	async function extractKeysFromCsv(file, label, startPercent, endPercent) {
-		if (!file) return [];
-		const totalSize = file.size;
-		let rowsProcessed = 0;
-		let bytesProcessed = 0;
-		const THROTTLE = 100;
-
-		const collectedKeys = [];
-		return new Promise((resolve, reject) => {
-			Papa.parse(file, {
-				header: true,
-				skipEmptyLines: true,
-				worker: true,
-				step: (row) => {
-					const keyValue = row.data?.key;
-					if (typeof keyValue === "string" && keyValue.trim() !== "") {
-						collectedKeys.push(keyValue.trim());
-					}
-					rowsProcessed++;
-					bytesProcessed += new TextEncoder().encode(`${Object.values(row.data).join(",")}\n`).length;
-
-					// Throttle progress updates
-					if (rowsProcessed % THROTTLE === 0) {
-						GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, bytesProcessed, totalSize);
-					}
-				},
-				complete: () => {
-					GDV.loading.updateLoadingDirectUpdate(label, endPercent);
-					resolve(collectedKeys);
-				},
-				error: (err) => {
-					reject(err);
-				},
-			});
-		});
-	}
-
 	async function startCsvSearchUi() {
 		await GDV.loading.startLoading("var(--accent)");
 		await GDV.loading.updateLoadingDirectUpdate("Starting Data Search...", 0);
@@ -119,11 +81,11 @@
 
 					// Throttle progress updates
 					if (rowsProcessed % THROTTLE === 0) {
-						GDV.loading.updateLoadingStepProgress("Loading Data From File...", 0, 30, bytesProcessed, totalSize);
+						GDV.loading.updateLoadingStepProgress("Loading Data From File...", 0, 50, bytesProcessed, totalSize);
 					}
 				},
 				complete: () => {
-					GDV.loading.updateLoadingDirectUpdate("Loading Data From File Finished...", 30);
+					GDV.loading.updateLoadingDirectUpdate("Loading Data From File Finished...", 50);
 					resolve(parsedData);
 				},
 				error: (err) => {

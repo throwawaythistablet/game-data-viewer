@@ -151,9 +151,24 @@
 		return minDistance;
 	};
 
+	GDV.utils.getNormalizedDifference = (a, b) => {
+		if (a === b) return 1;
+		const max = Math.max(Math.abs(a), Math.abs(b));
+		if (max === 0) return 1;
+		return Math.max(0, 1 - (Math.abs(a - b) / max));
+	}
+
+	GDV.utils.getSimilarityRatio = (a, b) => {
+		if (a === 0 && b === 0) return 1;
+		const aa = Math.abs(a);
+		const bb = Math.abs(b);
+		return Math.min(aa, bb) / Math.max(aa, bb);
+	}
+
 	function createErrorMessage(error) {
 		if (!error?.message) return "";
 		const msg = error.message.toString().trim();
 		return msg ? `\n${msg}` : "";
 	}
+
 })();

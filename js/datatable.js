@@ -160,38 +160,50 @@
 	}
 
 	function computeRowSimilarityPercent(similarGameRow, row) {
-		const IGNORE_COLS = new Set(["key", "url", "similarity_score", "__thumbnail__", "__view_images__"]);
+		const IGNORE_COLS = new Set([
+			"__thumbnail__",
+			"__view_images__",
+			"key",
+			"similarity_score",
+			"site_std_version",
+			"site_version",
+			"site_last_update_date",
+			"site_release_date",
+			"url",
+			"platforms", 
+			"title"
+		]);
 
-		const compareKeys = Object.keys(similarGameRow).filter((k) => !IGNORE_COLS.has(k));
+		const compareKeys = Object.keys(similarGameRow) .filter((k) => !IGNORE_COLS.has(k));
 
-		let matches = 0;
+		let score = 0;
 		let total = 0;
 
 		compareKeys.forEach((col) => {
 			const a = similarGameRow[col];
 			const b = row[col];
-
 			if (a == null || b == null) return;
-
-			let isMatch = false;
-
-			// Numeric exact compare
 			const na = parseFloat(a);
 			const nb = parseFloat(b);
+
+			let similarity = 0;
+
+			// ✅ Numeric similarity
 			if (!Number.isNaN(na) && !Number.isNaN(nb)) {
-				isMatch = na === nb;
+				similarity = GDV.utils.getNormalizedDifference(na, nb);
 			} else {
-				// String compare: case-insensitive, trimmed
+				// String compare (exact)
 				const sa = String(a).trim().toLowerCase();
 				const sb = String(b).trim().toLowerCase();
-				isMatch = sa === sb;
+				similarity = sa === sb ? 1 : 0;
 			}
-
+			score += similarity;
 			total++;
-			if (isMatch) matches++;
 		});
 
-		return total === 0 ? "0.00" : ((matches / total) * 100).toFixed(2);
+		return total === 0
+			? "0.00"
+			: ((score / total) * 100).toFixed(2);
 	}
 
 	async function renderCsvTable(data, columns) {
@@ -354,7 +366,7 @@
 
 			// Actual rows processed so far
 			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 30, 70, rowsProcessed, totalRows);
+			await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 50, 90, rowsProcessed, totalRows);
 			await GDV.utils.yieldToBrowser();
 		}
 	}
@@ -433,7 +445,7 @@
 			if (!colDef) continue;
 			addColumnFilterItems(container, column, colName, colDef, colIdx);
 
-			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 70, 99, colIdx + 1, colCount);
+			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
 			await GDV.utils.yieldToBrowser();
 		}
 
