@@ -60,10 +60,10 @@
   "play_time_label": {
     "type": "str",
     "choices": [
-      "1. Short Game",
-      "2. Medium Game",
-      "3. Long Game",
-      "4. Very Long Game",
+      "1. Very Long Game",
+      "2. Long Game",
+      "3. Medium Game",
+      "4. Short Game",
       "5. Unknown Length"
     ],
     "description": "Human-readable label describing the estimated play time of the game (e.g., Short, Medium, Long, Very Long)."

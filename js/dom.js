@@ -245,7 +245,7 @@
 		if (!text) return document.createTextNode("");
 
 		const span = document.createElement("span");
-		const weightClass = text === "3. Long Game" || text === "4. Very Long Game" ? "high" : text === "2. Medium Game" ? "medium" : "low";
+		const weightClass = text === "1. Very Long Game" || text === "2. Long Game" ? "high" : text === "3. Medium Game" ? "medium" : "low";
 		span.className = `highlight-cell ${weightClass}`;
 		const colorMap = getPlayTimeColors();
 		const color = colorMap[text];
@@ -297,10 +297,10 @@
 				"Abandoned": "#8B0000",
 			},
 			play_time: {
-				"1. Short Game": "#8B0000",
-				"2. Medium Game": "#B8860B",
-				"3. Long Game": "#2E8B57",
-				"4. Very Long Game": "#006400",
+				"1. Very Long Game": "#006400",
+				"2. Long Game": "#2E8B57",
+				"3. Medium Game": "#B8860B",
+				"4. Short Game": "#8B0000",
 				"5. Unknown Length": "#808080",
 			}
 		},
@@ -327,10 +327,10 @@
 				"Abandoned": "#FF3333",
 			},
 			play_time: {
-				"1. Short Game": "#FF3333",
-				"2. Medium Game": "#FFD166",
-				"3. Long Game": "#4CFF4C",
-				"4. Very Long Game": "#66FF66",
+				"1. Very Long Game": "#66FF66",
+				"2. Long Game": "#4CFF4C",
+				"3. Medium Game": "#FFD166",
+				"4. Short Game": "#FF3333",
 				"5. Unknown Length": "#888888",
 			}
 		}
