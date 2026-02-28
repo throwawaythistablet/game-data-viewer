@@ -170,6 +170,10 @@
 		return Math.min(aa, bb) / Math.max(aa, bb);
 	}
 
+	GDV.utils.normalizeFilterName = (columnName) => {
+		return columnName.includes(": ") ? columnName.split(": ")[1] : columnName;
+	}
+
 	function createErrorMessage(error) {
 		if (!error?.message) return "";
 		const msg = error.message.toString().trim();

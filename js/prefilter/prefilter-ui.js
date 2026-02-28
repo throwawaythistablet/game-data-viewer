@@ -802,7 +802,7 @@
 	}
 
 	function sectionMatchesTokens(colName, tokens) {
-		const filterName = colName.includes(": ") ? colName.split(": ")[1] : colName;
+		const filterName = GDV.utils.normalizeFilterName(colName);
 		const columnDetails = GDV.state.getActiveColumnDetails()?.[filterName];
 		const description = columnDetails?.description?.toLowerCase() || "";
 		const tagPatterns = GDV.state.getTagFullPatterns()?.[filterName];
