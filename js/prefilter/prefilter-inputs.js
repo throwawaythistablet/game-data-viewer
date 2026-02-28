@@ -55,7 +55,7 @@
 	};
 
 	// Delegated input/change binding (single handler per form)
-	GDV.prefilter.bindPrefilterInputs = (form) => {
+	GDV.prefilter.bindPrefilterGridInputs = (form) => {
 		form.addEventListener("input", (e) => {
 			const input = e.target;
 			if (!input || input.classList?.contains("prefilter-search-input") || !input.name) return;
@@ -63,10 +63,7 @@
 			// Only text/textarea/range inputs
 			if (input.type === "text" || input.tagName.toLowerCase() === "textarea" || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
 				const col = input.name.replace(/__(min|max)$/, "");
-				updateLivePrefilterForColumn(form, col);
-
-				updatePrefilterWarningFromLiveState();
-				updateSinglePrefilterSummary(form, col);
+				updateAllBasedFromFormColumnChanges(form, col);
 			}
 		});
 
@@ -76,10 +73,7 @@
 
 			// Only checkboxes, selects, or final number input state
 			const col = input.name.replace(/__(min|max)$/, "");
-			updateLivePrefilterForColumn(form, col);
-
-			updatePrefilterWarningFromLiveState();
-			updateSinglePrefilterSummary(form, col);
+			updateAllBasedFromFormColumnChanges(form, col);
 		});
 	};
 
@@ -138,6 +132,12 @@
 		} else {
 			sortPrefilterChipsByUsage(summary);
 		}
+	}
+
+	function updateAllBasedFromFormColumnChanges(form, col) {
+		updateLivePrefilterForColumn(form, col);
+		updatePrefilterWarningFromLiveState();
+		updateSinglePrefilterSummary(form, col);
 	}
 
 	function isPrefilterOpen() {

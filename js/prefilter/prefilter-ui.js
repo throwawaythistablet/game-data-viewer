@@ -1,53 +1,32 @@
 (() => {
 	const noPrefiltersLabel = "No Prefilters Applied";
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
+	let prefilterOverlay = null;
+
+	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
+	function initializePrefilterOverlayIfNeeded() {
+		if (!prefilterOverlay) {
+			prefilterOverlay = createPrefilterOverlay();
+		}
+	}
 
 	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async () => {
 		try {
-			const overlay = createPrefilterOverlayContainer("Refine Your Search Using Prefilters");
-			overlay.appendChild(GDV.helpNotice.createHelpNotice());
-			const form = document.createElement("form");
-			form.className = "prefilter-form-root";
-			overlay.appendChild(form);
-			document.body.appendChild(overlay);
+			initializePrefilterOverlayIfNeeded();
+			showPrefilterOverlay();
 
+			// Return a fresh Promise for this open
+			const { overlay, form } = prefilterOverlay
 			return new Promise((resolve) => {
-				form.appendChild(createPrefilterSearchAndCategoryGroup(form));
-				
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
-				form.appendChild(createPrefiltersSummary(form, resolve, overlay, cleanupFocus));
-
-				const loadingIndicator = createPrefilterLoadingIndicator();
-				form.appendChild(loadingIndicator);
-
-				(async () => {
-					const grid = await buildPrefilterGridIncrementally(GDV.state.getPrefiltersToUse());
-					loadingIndicator.replaceWith(grid);
-					refreshPrefilterSections(form);
-
-					GDV.prefilter.initializeLiveStateFromForm(form);
-					GDV.prefilter.updatePrefilterWarningFromLiveState(form);
-					renderFullActivePrefiltersSummary(form);
-
-					GDV.prefilter.bindPrefilterInputs(form);
-					bindActivePrefiltersSummaryRemoval(form);
-
-					waitForPrefilterFormSubmission(form, resolve, overlay, cleanupFocus);
-				})();
+				replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
+				updatePrefilterLiveStateRelatedItems(form);
+				waitForPrefilterFormSubmission(form, resolve);
 			});
 		} catch (err) {
 			GDV.utils.reportSilentWarning("Prefilter UI Failure", "Prefilter overlay failed to initialize, continuing without prefiltering.", err);
 			return {};
 		}
-	};
-
-	GDV.prefilter.renderRemoveButton = (col) => {
-		const removeBtn = document.createElement("button");
-		removeBtn.type = "button";
-		removeBtn.className = "prefilter-remove-btn";
-		removeBtn.textContent = "×";
-		removeBtn.setAttribute("aria-label", `Remove prefilter for ${col}`);
-		return removeBtn;
 	};
 
 	GDV.prefilter.hideNoPrefilterWarning = hideNoPrefilterWarning;
@@ -61,9 +40,46 @@
 		GDV.utils.showPermanentWarningBanner(noPrefiltersLabel, noPrefiltersMessage);
 	}
 
-	function closePrefilterOverlay(overlay) {
+	GDV.prefilter.renderRemoveButton = renderRemoveButton;
+	function renderRemoveButton(col) {
+		const removeBtn = document.createElement("button");
+		removeBtn.type = "button";
+		removeBtn.className = "prefilter-remove-btn";
+		removeBtn.textContent = "×";
+		removeBtn.setAttribute("aria-label", `Remove prefilter for ${col}`);
+		return removeBtn;
+	};
+
+	function showPrefilterOverlay() {
 		hideNoPrefilterWarning();
-		overlay.remove();
+		if (prefilterOverlay?.overlay) {
+			prefilterOverlay.overlay.style.display = "";
+		}
+	}
+
+	function closePrefilterOverlay() {
+		hideNoPrefilterWarning();
+		if (prefilterOverlay?.overlay) {
+			prefilterOverlay.overlay.style.display = "none";
+		}
+	}
+
+	function createPrefilterOverlay() {
+		const overlay = createPrefilterOverlayContainer("Refine Your Search Using Prefilters");
+		document.body.appendChild(overlay);
+		overlay.appendChild(GDV.helpNotice.createHelpNotice());
+
+		const form = document.createElement("form");
+		form.className = "prefilter-form-root";
+		overlay.appendChild(form);
+		form.appendChild(createPrefilterSearchAndCategoryGroup(form));
+		form.appendChild(createPrefiltersSummary(form, null, null));
+		form.appendChild(createPrefilterGrid(GDV.state.getPrefiltersToUse()));
+		refreshPrefilterSections(form);
+
+		GDV.prefilter.bindPrefilterGridInputs(form);
+		bindActivePrefiltersSummaryRemoval(form);
+		return { overlay, form };
 	}
 
 	// Overlay container
@@ -174,12 +190,21 @@
 	}
 
 	// Active summary
-	function createPrefiltersSummary(form, resolve, overlay, cleanupFocus) {
+	function replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus) {
+		const oldSummary = form.querySelector(".prefilter-summary-container");
+		const newSummary = createPrefiltersSummary(form, resolve, cleanupFocus);
+		if (oldSummary) {
+			oldSummary.replaceWith(newSummary);
+			bindActivePrefiltersSummaryRemoval(form);
+		}
+	}
+
+	function createPrefiltersSummary(form, resolve, cleanupFocus) {
 		const container = document.createElement("div");
 		container.className = "prefilter-summary-container";
 
 		container.appendChild(createPrefiltersSummaryLeft());
-		container.appendChild(createPrefiltersSummaryRight(form, resolve, overlay, cleanupFocus));
+		container.appendChild(createPrefiltersSummaryRight(form, resolve, cleanupFocus));
 
 		return container;
 	}
@@ -201,20 +226,20 @@
 		return leftGroup;
 	}
 
-	function createPrefiltersSummaryRight(form, resolve, overlay, cleanupFocus) {
+	function createPrefiltersSummaryRight(form, resolve, cleanupFocus) {
 		const rightGroup = document.createElement("div");
 		rightGroup.className = "prefilter-summary-right";
-		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(form, resolve, overlay, cleanupFocus));
+		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(form, resolve, cleanupFocus));
 		rightGroup.appendChild(createPrefilterSimilarityRow());
 		rightGroup.appendChild(createPrefiltersSummaryCategoryRow(form));
 		return rightGroup;
 	}
 
-	function createPrefiltersSummaryActionButtonsRow(form, resolve, overlay, cleanupFocus) {
+	function createPrefiltersSummaryActionButtonsRow(form, resolve, cleanupFocus) {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-buttons";
 		buttonWrapper.appendChild(createPrefiltersResetButton(form));
-		buttonWrapper.appendChild(createPrefiltersCancelButton(resolve, overlay, cleanupFocus));
+		buttonWrapper.appendChild(createPrefiltersCloseButton(resolve, cleanupFocus));
 		buttonWrapper.appendChild(createPrefilterSubmitButton("Apply Prefilters & Search"));
 		return buttonWrapper;
 	}
@@ -311,14 +336,14 @@
 		return btn;
 	}
 
-	function createPrefiltersCancelButton(resolve, overlay, cleanupFocus) {
+	function createPrefiltersCloseButton(resolve, cleanupFocus) {
 		const btn = document.createElement("button");
 		btn.type = "button";
 		btn.textContent = "Close";
-		btn.className = "btn btn-danger btn-cancel";
+		btn.className = "btn btn-danger btn-close";
 		btn.addEventListener("click", () => {
-			if (overlay) closePrefilterOverlay(overlay);
 			if (cleanupFocus) cleanupFocus();
+			closePrefilterOverlay();
 			resolve(null);
 		});
 		return btn;
@@ -345,42 +370,14 @@
 	}
 
 	// Grid
-	async function buildPrefilterGridIncrementally(prefill = {}) {
+	function createPrefilterGrid(prefill = {}) {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-form";
-
-		const colDefs = Object.entries(GDV.state.getActiveColumnDetails() || {});
-		const fragment = document.createDocumentFragment();
-
-		const BATCH_SIZE = 54; // Adjust per performance
-		for (let i = 0; i < colDefs.length; i += BATCH_SIZE) {
-			const batch = colDefs.slice(i, i + BATCH_SIZE);
-			for (const [col, colDef] of batch) {
-				fragment.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
-			}
-			grid.appendChild(fragment);
-			fragment.textContent = "";
-			await GDV.utils.yieldToBrowserFrame();
+		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		for (const [col, colDef] of Object.entries(colDefs)) {
+			grid.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
 		}
 		return grid;
-	}
-
-	function createPrefilterLoadingIndicator() {
-		const container = document.createElement("div");
-		container.className = "prefilter-loading-indicator";
-		container.setAttribute("role", "status");
-		container.setAttribute("aria-live", "polite");
-		container.setAttribute("aria-label", "Loading prefilters");
-
-		const label = document.createElement("div");
-		label.className = "prefilter-loading-label";
-		label.textContent = "Loading prefilters...";
-
-		const spinner = document.createElement("div");
-		spinner.className = "prefilter-loading-spinner";
-
-		container.append(label, spinner);
-		return container;
 	}
 
 	function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
@@ -630,8 +627,8 @@
 		return JSON.parse(JSON.stringify(GDV.prefilter.getPrefilterLiveState()));
 	}
 
-	function waitForPrefilterFormSubmission(form, resolve, overlay) {
-		form.addEventListener("submit", async (e) => {
+	function waitForPrefilterFormSubmission(form, resolve) {
+		form.onsubmit = async (e) => {
 			e.preventDefault();
 			const prefilter = collectPrefilterFromForm();
 
@@ -642,9 +639,9 @@
 
 			GDV.state.setPrefiltersToUse(prefilter);
 			GDV.dom.renderMainPagePrefiltersPanel();
-			closePrefilterOverlay(overlay);
+			closePrefilterOverlay();
 			resolve(prefilter);
-		});
+		};
 	}
 
 	async function confirmNoPrefiltersWarning() {
@@ -661,8 +658,8 @@
 
 		function onKeydown(e) {
 			if (e.key === "Escape") {
-				closePrefilterOverlay(overlay);
 				if (previousActive?.focus) previousActive.focus();
+				closePrefilterOverlay(overlay);
 				resolve(null);
 			}
 			if (e.key === "Tab") {
@@ -681,14 +678,19 @@
 		}
 
 		overlay.addEventListener("keydown", onKeydown);
-
 		return () => {
 			overlay.removeEventListener("keydown", onKeydown);
 			if (previousActive?.focus) previousActive.focus();
 		};
 	}
 
-	function renderFullActivePrefiltersSummary(form) {
+	function updatePrefilterLiveStateRelatedItems(form) {
+		GDV.prefilter.setPrefilterLiveState(GDV.state.getPrefiltersToUse());
+		GDV.prefilter.updatePrefilterWarningFromLiveState();
+		renderActivePrefiltersSummaryFromLiveState(form);
+	}
+
+	function renderActivePrefiltersSummaryFromLiveState(form) {
 		const summary = form.querySelector("#prefilter-active-items");
 		if (!summary) return;
 
@@ -702,7 +704,7 @@
 			span.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
 			span.title = GDV.datatable.getColumnDescription(col) || "";
 			span.appendChild(document.createTextNode(`${GDV.prefilter.getPrefilterDisplayText(col, val)} `));
-			span.appendChild(GDV.prefilter.renderRemoveButton(col));
+			span.appendChild(renderRemoveButton(col));
 			summary.appendChild(span);
 		}
 	}
@@ -868,7 +870,7 @@
 			// Update live state & UI for this column
 			GDV.prefilter.updateLivePrefilterForColumn(form, col);
 			GDV.prefilter.updateSinglePrefilterSummary(form, col);
-			GDV.prefilter.updatePrefilterWarningFromLiveState(form);
+			GDV.prefilter.updatePrefilterWarningFromLiveState();
 		});
 	}
 
@@ -906,8 +908,8 @@
 
 		// Reset liveState and UI
 		GDV.prefilter.resetPrefilterLiveState();
-		renderFullActivePrefiltersSummary(form);
-		GDV.prefilter.updatePrefilterWarningFromLiveState(form);
+		renderActivePrefiltersSummaryFromLiveState(form);
+		GDV.prefilter.updatePrefilterWarningFromLiveState();
 	}
 
 	function resetPrefilterCategory(form) {

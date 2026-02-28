@@ -156,6 +156,7 @@
 			await loadTagFullPatternsFromLocalDataFolder();
 			await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 90);
 			await loadThumbnailsFromLocalDataFolder();
+			GDV.prefilter.initializePrefilterOverlayIfNeeded();
 			await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
 			await GDV.loading.finishLoading();
 			await applyUrlPrefiltersOrPrompt();
@@ -175,6 +176,7 @@
 		await loadDefaultColumnCategoriesJson("Loading column categories…", 85, 87.5);
 		await loadDefaultTagFullPatternsJson("Loading tag definitions…", 87.5, 90);
 		await loadDefaultThumbnailsJson("Linking thumbnails…", 90, 100);
+		GDV.prefilter.initializePrefilterOverlayIfNeeded();
 		await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
 		await GDV.loading.finishLoading();
 		await applyUrlPrefiltersOrPrompt();
