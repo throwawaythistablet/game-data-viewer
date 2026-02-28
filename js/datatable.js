@@ -112,8 +112,8 @@
 			return description;
 		}
 
-		const baseColName = colName.split(": ")[1];
-		const pattern = GDV.state.getTagFullPatterns()?.[baseColName]?.pattern;
+		const filterName = colName.includes(": ") ? colName.split(": ")[1] : colName;
+		const pattern = GDV.state.getTagFullPatterns()?.[filterName]?.pattern;
 		const patternDesc = pattern ? `Regex pattern:\n${pattern}` : "";
 
 		return [description, patternDesc].filter(Boolean).join("\n");

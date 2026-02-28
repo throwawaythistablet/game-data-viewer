@@ -802,17 +802,16 @@
 	}
 
 	function sectionMatchesTokens(colName, tokens) {
-		const lowerColName = colName.toLowerCase();
-		const columnDetails = GDV.state.getActiveColumnDetails()?.[colName];
+		const filterName = colName.includes(": ") ? colName.split(": ")[1] : colName;
+		const columnDetails = GDV.state.getActiveColumnDetails()?.[filterName];
 		const description = columnDetails?.description?.toLowerCase() || "";
-
-		const tagPatterns = GDV.state.getTagFullPatterns()?.[colName];
+		const tagPatterns = GDV.state.getTagFullPatterns()?.[filterName];
 		const regexStr = tagPatterns?.pattern?.toLowerCase() || "";
 		const regex = tagPatterns?.regex || null;
 
 		return tokens.every((token) => {
 			const lowerToken = token.toLowerCase();
-			if (lowerColName.includes(lowerToken)) return true;
+			if (filterName.toLowerCase().includes(lowerToken)) return true;
 			if (description.includes(lowerToken)) return true;
 			if (regexStr.includes(lowerToken)) return true;
 			if (regex?.test(token)) return true;
