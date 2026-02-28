@@ -129,6 +129,9 @@
 		}
 		if (sortMode === "alpha") {
 			sortPrefilterChipsAlphabetically(summary);
+		} else if (sortMode === "nearest") {
+			sortPrefilterChipsByUsage(summary);
+			// sortPrefilterChipsByNearestMatch(summary);
 		} else {
 			sortPrefilterChipsByUsage(summary);
 		}
@@ -221,6 +224,42 @@
 			summary.appendChild(c);
 		});
 	}
+
+	/*function sortPrefilterChipsByNearestMatch(summary) {
+		const searchText = GDV.prefilter.getSearchText();
+		if (!searchText) {
+			// fallback to usage order if no search text
+			sortPrefilterChipsByUsage(summary);
+			return;
+		}
+
+		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const columnOrder = Object.keys(colDefs);
+
+		const chipsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
+
+		// Compute distance cache
+		const distanceCache = new Map();
+		for (const chip of chipsArray) {
+			const colName = chip.dataset.col;
+			distanceCache.set(colName, GDV.utils.computeNearestMatchDistance(colName, searchText));
+		}
+
+		// Sort by distance, then by usage order
+		chipsArray.sort((a, b) => {
+			const distA = distanceCache.get(a.dataset.col);
+			const distB = distanceCache.get(b.dataset.col);
+			if (distA !== distB) return distA - distB;
+			const usageA = columnOrder.indexOf(a.dataset.col);
+			const usageB = columnOrder.indexOf(b.dataset.col);
+			return usageA - usageB;
+		});
+
+		// Re-append in sorted order
+		chipsArray.forEach((c) => {
+			summary.appendChild(c)
+		});
+	}*/
 
 	function sortPrefilterChipsByUsage(summary) {
 		const colDefs = GDV.state.getActiveColumnDetails() || {};

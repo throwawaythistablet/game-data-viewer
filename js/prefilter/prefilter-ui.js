@@ -75,7 +75,7 @@
 		form.appendChild(createPrefilterSearchAndCategoryGroup(form));
 		form.appendChild(createPrefiltersSummary(form, null, null));
 		form.appendChild(createPrefilterGrid(GDV.state.getPrefiltersToUse()));
-		refreshPrefilterSections(form);
+		refreshFilteringOfPrefilterSections(form);
 
 		GDV.prefilter.bindPrefilterGridInputs(form);
 		bindActivePrefiltersSummaryRemoval(form);
@@ -140,7 +140,7 @@
 
 		// Update prefilter sections and summary chip on change
 		select.addEventListener("change", () => {
-			refreshPrefilterSections(form);
+			refreshFilteringOfPrefilterSections(form);
 
 			// Update summary chip
 			const summaryChip = document.getElementById("prefilter-selected-category");
@@ -735,7 +735,7 @@
 		});
 
 		GDV.prefilter.setSearchText(searchText);
-		sortPrefilterSectionsDebounced();
+		sortPrefilterSectionsDebounced(form);
 	}
 
 	function sortPrefilterSections(form) {
@@ -761,8 +761,10 @@
 		});
 	}
 
-	const sortPrefilterSectionsDebounced = GDV.utils.debounce(sortPrefilterSections, 150);
 	GDV.prefilter.sortPrefilterSectionsDebounced = sortPrefilterSectionsDebounced;
+	function sortPrefilterSectionsDebounced(form) {
+		GDV.utils.debounce(sortPrefilterSections(form), 150);
+	}
 
 	function sortPrefilterSectionsAlphabetically(sections) {
 		sections.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
@@ -899,11 +901,11 @@
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		if (categorySelect) {
 			categorySelect.value = "__all__";
-			refreshPrefilterSections(form);
+			refreshFilteringOfPrefilterSections(form);
 		}
 	}
 
-	function refreshPrefilterSections(form) {
+	function refreshFilteringOfPrefilterSections(form) {
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		const category = categorySelect?.value || "__all__";
 		const searchInput = form.querySelector(".prefilter-search-input");
