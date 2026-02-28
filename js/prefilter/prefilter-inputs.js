@@ -118,6 +118,8 @@
 
 	GDV.prefilter.updatePrefilterWarningFromLiveState = updatePrefilterWarningFromLiveState;
 	function updatePrefilterWarningFromLiveState() {
+		if (!isPrefilterOpen()) return; // Exit if prefilter overlay is not open
+		
 		const hasFilters = Object.keys(prefilterLiveState).length > 0;
 		if (hasFilters) {
 			GDV.prefilter.hideNoPrefilterWarning();
@@ -136,6 +138,10 @@
 		} else {
 			sortPrefilterChipsByUsage(summary);
 		}
+	}
+
+	function isPrefilterOpen() {
+		return !!document.getElementById("prefilterOverlay");
 	}
 
 	function updateNumericPrefilter(form, col, def) {
