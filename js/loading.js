@@ -45,7 +45,7 @@
 
 		// GDV.utils.reportInformation(`Loading Direct Progress: ${percent.toFixed(2)}%`);
 
-		await GDV.utils.yieldToBrowser();
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
 	GDV.loading.updateLoadingStepProgress = updateLoadingStepProgress;
@@ -61,7 +61,7 @@
 
 		// GDV.utils.reportInformation(`Loading Step Progress: ${totalPercent.toFixed(2)}%`, `Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`, {'startPercent': startPercent, 'endPercent': endPercent, 'currentStep': currentStep, 'totalSteps': totalSteps});
 
-		await GDV.utils.yieldToBrowser();
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
 	async function showLoading(color) {
@@ -69,12 +69,12 @@
 			changeColor(color);
 		}
 		loadingOverlayElement.style.display = "flex";
-		await GDV.utils.yieldToBrowser();
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
 	async function hideLoading() {
 		loadingOverlayElement.style.display = "none";
-		await GDV.utils.yieldToBrowser();
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
 	function changeColor(color) {

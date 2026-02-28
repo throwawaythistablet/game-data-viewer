@@ -84,10 +84,15 @@
 		logInformation("info", label, description, context);
 		return showConfirmationDialog(label, description);
 	};
+	
+	// Yield with a short fixed delay (setTimeout)
+	GDV.utils.yieldToBrowserTimeout = async (ms = 50) => {
+		await new Promise((resolve) => setTimeout(resolve, ms));
+	};
 
-	GDV.utils.yieldToBrowser = async () => {
-		await new Promise((r) => setTimeout(r, 50));
-		// if (!document.hidden) await new Promise(r => setTimeout(r, 0));
+	// Yield until the next browser repaint (requestAnimationFrame)
+	GDV.utils.yieldToBrowserFrame = async () => {
+		await new Promise(requestAnimationFrame);
 	};
 
 	GDV.utils.debounce = (fn, delay = 150) => {

@@ -6,27 +6,34 @@
 		try {
 			const overlay = createPrefilterOverlayContainer("Refine Your Search Using Prefilters");
 			overlay.appendChild(GDV.helpNotice.createHelpNotice());
-
 			const form = document.createElement("form");
 			form.className = "prefilter-form-root";
-
 			overlay.appendChild(form);
 			document.body.appendChild(overlay);
-			const cleanupFocus = showModalAccessibility(overlay);
 
 			return new Promise((resolve) => {
-				form.appendChild(createPrefilterSearchAndCategoryGroup());
+				form.appendChild(createPrefilterSearchAndCategoryGroup(form));
+				
+				const cleanupFocus = showModalAccessibility(overlay, resolve);
 				form.appendChild(createPrefiltersSummary(form, resolve, overlay, cleanupFocus));
-				form.appendChild(createPrefilterGrid(GDV.state.getPrefiltersToUse()));
 
-				GDV.prefilter.initializeLiveStateFromForm(form);
-				GDV.prefilter.updatePrefilterWarningFromLiveState(form);
-				renderFullActivePrefiltersSummary(form);
+				const loadingIndicator = createPrefilterLoadingIndicator();
+				form.appendChild(loadingIndicator);
 
-				GDV.prefilter.bindPrefilterInputs(form);
-				bindActivePrefiltersSummaryRemoval(form);
+				(async () => {
+					const grid = await buildPrefilterGridIncrementally(GDV.state.getPrefiltersToUse());
+					loadingIndicator.replaceWith(grid);
+					refreshPrefilterSections(form);
 
-				waitForPrefilterFormSubmission(form, resolve, overlay, cleanupFocus);
+					GDV.prefilter.initializeLiveStateFromForm(form);
+					GDV.prefilter.updatePrefilterWarningFromLiveState(form);
+					renderFullActivePrefiltersSummary(form);
+
+					GDV.prefilter.bindPrefilterInputs(form);
+					bindActivePrefiltersSummaryRemoval(form);
+
+					waitForPrefilterFormSubmission(form, resolve, overlay, cleanupFocus);
+				})();
 			});
 		} catch (err) {
 			GDV.utils.reportSilentWarning("Prefilter UI Failure", "Prefilter overlay failed to initialize, continuing without prefiltering.", err);
@@ -77,16 +84,16 @@
 	}
 
 	// Category drop down and search box
-	function createPrefilterSearchAndCategoryGroup() {
+	function createPrefilterSearchAndCategoryGroup(form) {
 		const container = document.createElement("div");
 		container.className = "prefilter-search-category-group";
-		container.appendChild(createPrefilterCategoryDropdown());
-		container.appendChild(createPrefilterSearchBox());
+		container.appendChild(createPrefilterCategoryDropdown(form));
+		container.appendChild(createPrefilterSearchBox(form));
 		return container;
 	}
 
 	// Category drop down
-	function createPrefilterCategoryDropdown() {
+	function createPrefilterCategoryDropdown(form) {
 		const container = document.createElement("div");
 		container.className = "prefilter-search-box";
 
@@ -117,9 +124,7 @@
 
 		// Update prefilter sections and summary chip on change
 		select.addEventListener("change", () => {
-			const searchInput = document.querySelector(".prefilter-search-input");
-			const searchText = searchInput?.value || "";
-			filterPrefilterSections(searchText, select.value);
+			refreshPrefilterSections(form);
 
 			// Update summary chip
 			const summaryChip = document.getElementById("prefilter-selected-category");
@@ -133,7 +138,7 @@
 	}
 
 	// Search box
-	function createPrefilterSearchBox() {
+	function createPrefilterSearchBox(form) {
 		// Container wrapper
 		const container = document.createElement("div");
 		container.className = "prefilter-search-box";
@@ -156,9 +161,9 @@
 
 		// Input event handler
 		const handler = () => {
-			const select = document.querySelector(".prefilter-category-select");
-			const category = select?.value || "__all__";
-			filterPrefilterSections(input.value, category);
+			const categorySelect = form.querySelector(".prefilter-category-select");
+			const category = categorySelect?.value || "__all__";
+			filterPrefilterSections(form, input.value, category);
 		};
 
 		input.addEventListener("input", handler);
@@ -259,11 +264,11 @@
 			if (nearest && nearest.toLowerCase() !== query.toLowerCase()) ghostText.textContent = nearest;
 			else ghostText.textContent = "";
 			debounceTimer = setTimeout(async () => {
-				if (!nearest) return;
-
-				similarityInput.value = nearest;
+				const latestQuery = similarityInput.value.trim();
+				const latestNearest = GDV.utils.findNearestGameKey(latestQuery);
+				if (!latestNearest) return;
+				similarityInput.value = latestNearest;
 				ghostText.textContent = "";
-
 				GDV.state.setSimilarityGame(nearest);
 			}, 2000);
 		});
@@ -333,21 +338,49 @@
 
 			const summary = form.querySelector("#prefilter-active-items");
 			GDV.prefilter.sortPrefilterChips(summary);
-			sortPrefilterSections();
+			sortPrefilterSections(form);
 		});
 
 		return btn;
 	}
 
 	// Grid
-	function createPrefilterGrid(prefill = {}) {
+	async function buildPrefilterGridIncrementally(prefill = {}) {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-form";
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		for (const [col, colDef] of Object.entries(colDefs)) {
-			grid.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
+
+		const colDefs = Object.entries(GDV.state.getActiveColumnDetails() || {});
+		const fragment = document.createDocumentFragment();
+
+		const BATCH_SIZE = 54; // Adjust per performance
+		for (let i = 0; i < colDefs.length; i += BATCH_SIZE) {
+			const batch = colDefs.slice(i, i + BATCH_SIZE);
+			for (const [col, colDef] of batch) {
+				fragment.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
+			}
+			grid.appendChild(fragment);
+			fragment.textContent = "";
+			await GDV.utils.yieldToBrowserFrame();
 		}
 		return grid;
+	}
+
+	function createPrefilterLoadingIndicator() {
+		const container = document.createElement("div");
+		container.className = "prefilter-loading-indicator";
+		container.setAttribute("role", "status");
+		container.setAttribute("aria-live", "polite");
+		container.setAttribute("aria-label", "Loading prefilters");
+
+		const label = document.createElement("div");
+		label.className = "prefilter-loading-label";
+		label.textContent = "Loading prefilters...";
+
+		const spinner = document.createElement("div");
+		spinner.className = "prefilter-loading-spinner";
+
+		container.append(label, spinner);
+		return container;
 	}
 
 	function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
@@ -619,7 +652,7 @@
 	}
 
 	// Accessibility: trap focus inside overlay and restore on close
-	function showModalAccessibility(overlay) {
+	function showModalAccessibility(overlay, resolve) {
 		const previousActive = document.activeElement;
 
 		// Focus first focusable element
@@ -630,6 +663,7 @@
 			if (e.key === "Escape") {
 				closePrefilterOverlay(overlay);
 				if (previousActive?.focus) previousActive.focus();
+				resolve(null);
 			}
 			if (e.key === "Tab") {
 				const focusables = Array.from(overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((el) => !el.disabled && el.offsetParent !== null);
@@ -673,9 +707,9 @@
 		}
 	}
 
-	function filterPrefilterSections(searchText = "", category = "__all__") {
+	function filterPrefilterSections(form, searchText = "", category = "__all__") {
 		const colCategories = GDV.state.getColumnCategories() || {};
-		const sections = document.querySelectorAll("#prefilterOverlay .prefilter-section");
+		const sections = form.querySelectorAll(".prefilter-section");
 
 		// Tokenize search input: lowercase, split by spaces, remove empty tokens
 		const tokens = searchText
@@ -702,8 +736,10 @@
 		sortPrefilterSectionsDebounced();
 	}
 
-	function sortPrefilterSections() {
-		const grid = document.querySelector("#prefilterOverlay .prefilter-form");
+	function sortPrefilterSections(form) {
+		if (!form) return; // Exit early if the form isn't ready yet (prefilters still building asynchronously)
+
+		const grid = form.querySelector(".prefilter-form");
 		if (!grid) return;
 
 		const sections = Array.from(grid.querySelectorAll(".prefilter-section"));
@@ -865,6 +901,9 @@
 		// Reset Prefilter Category
 		resetPrefilterCategory(form);
 
+		// Reset Similarity Game
+		GDV.state.resetSimilarityGame();
+
 		// Reset liveState and UI
 		GDV.prefilter.resetPrefilterLiveState();
 		renderFullActivePrefiltersSummary(form);
@@ -875,12 +914,15 @@
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		if (categorySelect) {
 			categorySelect.value = "__all__";
-
-			const searchInput = form.querySelector(".prefilter-search-input");
-			const searchText = searchInput?.value || "";
-
-			// Re-filter sections so everything shows again
-			filterPrefilterSections(searchText, "__all__");
+			refreshPrefilterSections(form);
 		}
+	}
+
+	function refreshPrefilterSections(form) {
+		const categorySelect = form.querySelector(".prefilter-category-select");
+		const category = categorySelect?.value || "__all__";
+		const searchInput = form.querySelector(".prefilter-search-input");
+		const searchText = searchInput?.value || "";
+		filterPrefilterSections(form, searchText, category);
 	}
 })();

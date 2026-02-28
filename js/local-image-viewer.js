@@ -122,7 +122,7 @@
 					const ext = name.split(".").pop().toLowerCase();
 					if (SUPPORTED_IMAGE_EXTS.includes(ext)) {
 						onImageFound(handle);
-						await GDV.utils.yieldToBrowser();
+						await GDV.utils.yieldToBrowserTimeout();
 					}
 				} else if (handle.kind === "directory") {
 					stack.push(handle);
