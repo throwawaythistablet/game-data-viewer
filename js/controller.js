@@ -34,7 +34,7 @@
 
 	GDV.controller.setTagFullPatterns = setTagFullPatterns;
 	function setTagFullPatterns(tagFullPatterns, fileName) {
-		GDV.state.setTagFullPatterns(tagFullPatterns);
+		GDV.state.setTagFullPatterns(buildTagFullPatternObjects(tagFullPatterns));
 		GDV.dom.setTagFullPatterns(fileName);
 	}
 
@@ -485,5 +485,20 @@
 			GDV.utils.reportHardError("Folder Selection Failed", "An unexpected error occurred while selecting the games folder.", err, { gamesFolderHandle });
 			return false;
 		}
+	}
+
+	function buildTagFullPatternObjects(tagFullPatterns) {
+		const result = Object.create(null); // faster lookup, no prototype chain
+		for (const tag in tagFullPatterns) {
+			const pattern = tagFullPatterns[tag];
+			let regex = null;
+			try {
+				regex = new RegExp(pattern, "i");
+			} catch (err) {
+				GDV.utils.reportSilentWarning("Invalid Regex", `Invalid regex pattern for tag "${tag}".`, err, { regexStr: pattern });
+			}
+			result[tag] = { pattern, regex };
+		}
+		return result;
 	}
 })();

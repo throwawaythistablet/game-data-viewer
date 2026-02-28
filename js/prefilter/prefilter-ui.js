@@ -803,35 +803,19 @@
 
 	function sectionMatchesTokens(colName, tokens) {
 		const lowerColName = colName.toLowerCase();
-		const description = GDV.state.getActiveColumnDetails()?.[colName]?.description?.toLowerCase() || "";
-		const regexStr = GDV.state.getTagFullPatterns()?.[colName];
-		const regexStrLower = regexStr?.toLowerCase() || "";
+		const columnDetails = GDV.state.getActiveColumnDetails()?.[colName];
+		const description = columnDetails?.description?.toLowerCase() || "";
 
-		let regexExp = null;
-		if (regexStr) {
-			try {
-				regexExp = new RegExp(regexStr, "i");
-			} catch (err) {
-				GDV.utils.reportSilentWarning("Invalid Regex", `Column: "${colName}" contains an invalid regex pattern.`, err, { regexStr });
-				regexExp = null; // fallback: don't break token checking
-			}
-		}
+		const tagPatterns = GDV.state.getTagFullPatterns()?.[colName];
+		const regexStr = tagPatterns?.pattern?.toLowerCase() || "";
+		const regex = tagPatterns?.regex || null;
 
 		return tokens.every((token) => {
 			const lowerToken = token.toLowerCase();
-
-			// Match token in column name
 			if (lowerColName.includes(lowerToken)) return true;
-
-			// Match token in description
 			if (description.includes(lowerToken)) return true;
-
-			// Match token in regex string (as string)
-			if (regexStrLower?.includes(lowerToken)) return true;
-
-			// Try actual regex test
-			if (regexExp?.test(token)) return true;
-
+			if (regexStr.includes(lowerToken)) return true;
+			if (regex?.test(token)) return true;
 			return false;
 		});
 	}

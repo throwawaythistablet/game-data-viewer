@@ -113,10 +113,10 @@
 		}
 
 		const baseColName = colName.split(": ")[1];
-		const regex = GDV.state.getTagFullPatterns()?.[baseColName];
-		const regexDesc = regex ? `Regex pattern:\n${regex}` : "";
+		const pattern = GDV.state.getTagFullPatterns()?.[baseColName]?.pattern;
+		const patternDesc = pattern ? `Regex pattern:\n${pattern}` : "";
 
-		return [description, regexDesc].filter(Boolean).join("\n");
+		return [description, patternDesc].filter(Boolean).join("\n");
 	}
 
 	GDV.datatable.getColumnTagCount = (colName) => GDV.state.getActiveColumnDetails()?.[colName]?.tag_count ?? null;
