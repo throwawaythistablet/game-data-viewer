@@ -67,6 +67,7 @@
 	function createPrefilterOverlay() {
 		const overlay = createPrefilterOverlayContainer("Refine Your Search Using Prefilters");
 		document.body.appendChild(overlay);
+		overlay.style.display = "none";
 		overlay.appendChild(GDV.helpNotice.createHelpNotice());
 
 		const form = document.createElement("form");
