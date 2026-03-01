@@ -43,13 +43,6 @@
     "max": 5,
     "description": "Normalized rating of the game using a Bayesian average to account for varying number of reviews."
   },
-  "site_rating": {
-    "type": "float",
-    "choices": [],
-    "min": 0,
-    "max": 5,
-    "description": "Average rating given on the original site."
-  },
   "play_time_hours": {
     "type": "float",
     "choices": [],
@@ -164,6 +157,20 @@
       "7. Mildly Negative"
     ],
     "description": "Human-readable label for the gameplay sentiment score."
+  },
+  "site_rating": {
+    "type": "float",
+    "choices": [],
+    "min": 0,
+    "max": 5,
+    "description": "Average rating given on the original site."
+  },
+  "site_rating_count": {
+    "type": "int",
+    "choices": [],
+    "min": 0,
+    "max": 1746,
+    "description": "Number of ratings submitted on the site."
   },
   "url": {
     "type": "str",
