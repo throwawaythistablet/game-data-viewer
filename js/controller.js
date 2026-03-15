@@ -1,4 +1,19 @@
 (() => {
+// FILE_PATH_TO_SIZE_MAP START
+    const filePathToSizeMap = new Map([
+      ["data/.gitattributes", 0],
+      ["data/game_column_categories.json", 235170],
+      ["data/game_column_details.json", 795742],
+      ["data/game_data_part_1.csv", 52433988],
+      ["data/game_data_part_2.csv", 52431659],
+      ["data/game_data_part_3.csv", 52430576],
+      ["data/game_data_part_4.csv", 7974318],
+      ["data/game_keys.json", 1021029],
+      ["data/game_thumbnails.json", 18148729],
+      ["data/tag_full_patterns.json", 525559],
+    ]);
+// FILE_PATH_TO_SIZE_MAP END
+
 	GDV.controller.initialize = async () => {
 		const isStandalone = location.protocol === "file:";
 		if (isStandalone) {
@@ -184,15 +199,13 @@
 
 	async function loadDefaultCsv(label, startPercent, endPercent) {
 		if (GDV.state.getActiveCsvFile()) return;
-		const files = [
-			{ url: "data/game_data_part_1.csv", size: 52433361 },
-			{ url: "data/game_data_part_2.csv", size: 52429318 },
-			{ url: "data/game_data_part_3.csv", size: 52434655 },
-			{ url: "data/game_data_part_4.csv", size: 1494392 }
-		];
+
+		const files = [...filePathToSizeMap.entries()]
+			.filter(([path]) => path.includes("game_data_part"))
+			.map(([url, size]) => ({ url, size }))
+			.sort((a, b) => a.url.localeCompare(b.url));
 
 		let combinedText = "";
-
 		for (let i = 0; i < files.length; i++) {
 			const { url, size } = files[i];
 
@@ -211,7 +224,6 @@
 				return;
 			}
 		}
-
 		const blob = new Blob([combinedText], { type: "text/csv" });
 		const file = new File([blob], "game_data.csv", { type: "text/csv" });
 		setActiveCsvFile(file);
@@ -223,7 +235,7 @@
 		}
 
 		try {
-			const response = await fetchWithProgress("data/game_column_details.json", 763854, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_column_details.json", getFileSize("data/game_column_details.json"), label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Column Details Load Failed", "Failed to fetch the default column details JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/game_column_details.json",
@@ -239,7 +251,7 @@
 
 	async function loadDefaultGameKeysJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/game_keys.json", 1021029, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_keys.json", getFileSize("data/game_keys.json"), label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Game Keys Load Failed", "Failed to fetch the default game keys JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/game_keys.json",
@@ -255,7 +267,7 @@
 
 	async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/game_column_categories.json", 226685, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_column_categories.json", getFileSize("data/game_column_categories.json"), label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Column Categories Load Failed", "Failed to fetch the default column categories JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/game_column_categories.json",
@@ -271,7 +283,7 @@
 
 	async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/tag_full_patterns.json", 512261, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/tag_full_patterns.json", getFileSize("data/tag_full_patterns.json"), label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Tag Patterns Load Failed", "Failed to fetch the default tag full patterns JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/tag_full_patterns.json",
@@ -287,7 +299,7 @@
 
 	async function loadDefaultThumbnailsJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/game_thumbnails.json", 18148729, label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_thumbnails.json", getFileSize("data/game_thumbnails.json"), label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Thumbnails Load Failed", "Failed to fetch the default thumbnails JSON file.", new Error(`HTTP status: ${response.status}`), { url: "data/game_thumbnails.json" });
 				return;
