@@ -139,6 +139,10 @@
 		}
 		GDV.dom.updateThemeButton();
 	}
+    
+    function getFileSize(filename) {
+        return filePathToSizeMap.get(filename) ?? null;
+    }
 
 	async function initializeCommonSteps() {
 		// loadAndUpdateTheme();
