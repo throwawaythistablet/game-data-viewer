@@ -3,7 +3,7 @@
     const filePathToSizeMap = new Map([
       ["data/.gitattributes", 0],
       ["data/game_column_categories.json", 246367],
-      ["data/game_column_details.json", 791290],
+      ["data/game_column_details.json", 824178],
       ["data/game_data_part_1.csv", 52433205],
       ["data/game_data_part_2.csv", 52434880],
       ["data/game_data_part_3.csv", 52429148],
