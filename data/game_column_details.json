@@ -131,7 +131,6 @@
   "content_sentiment_label": {
     "type": "str",
     "choices": [
-      "2. Positive",
       "3. Mildly Positive",
       "4. Neutral",
       "5. Mixed",
@@ -155,8 +154,7 @@
       "4. Neutral",
       "5. Mixed",
       "6. No Data",
-      "7. Mildly Negative",
-      "8. Negative"
+      "7. Mildly Negative"
     ],
     "description": "Human-readable label for the gameplay sentiment score."
   },
