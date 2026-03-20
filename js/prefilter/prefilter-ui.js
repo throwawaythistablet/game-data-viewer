@@ -295,7 +295,7 @@
 				if (!latestNearest) return;
 				similarityInput.value = latestNearest;
 				ghostText.textContent = "";
-				GDV.state.setSimilarityGame(nearest);
+				GDV.state.setSimilarityGame(latestNearest);
 			}, 2000);
 		});
 
