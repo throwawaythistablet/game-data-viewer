@@ -1,7 +1,9 @@
 (() => {
 	const noPrefiltersLabel = "No Prefilters Applied";
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
+	const visibleSectionsBatchSize = 99;
 	let prefilterOverlay = null;
+	let maxVisibleSections = visibleSectionsBatchSize;
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
 	function initializePrefilterOverlayIfNeeded() {
@@ -13,6 +15,7 @@
 	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async () => {
 		try {
 			initializePrefilterOverlayIfNeeded();
+			resetForNewPrefilterOverlay();
 			showPrefilterOverlay();
 
 			// Return a fresh Promise for this open
@@ -50,6 +53,10 @@
 		return removeBtn;
 	};
 
+	function resetForNewPrefilterOverlay() {
+		maxVisibleSections = visibleSectionsBatchSize;
+	}
+
 	function showPrefilterOverlay() {
 		hideNoPrefilterWarning();
 		if (prefilterOverlay?.overlay) {
@@ -71,12 +78,13 @@
 		overlay.appendChild(GDV.helpNotice.createHelpNotice());
 
 		const form = document.createElement("form");
-		form.className = "prefilter-form-root";
+		form.className = "prefilter-form";
 		overlay.appendChild(form);
 		form.appendChild(createPrefilterSearchAndCategoryGroup(form));
 		form.appendChild(createPrefiltersSummary(form, null, null));
 		form.appendChild(createPrefilterGrid(GDV.state.getPrefiltersToUse()));
-		refreshFilteringOfPrefilterSections(form);
+		form.appendChild(createPrefilterLimitIndicator(form));
+		updatePrefilterSections(form);
 
 		GDV.prefilter.bindPrefilterGridInputs(form);
 		bindActivePrefiltersSummaryRemoval(form);
@@ -141,7 +149,7 @@
 
 		// Update prefilter sections and summary chip on change
 		select.addEventListener("change", () => {
-			refreshFilteringOfPrefilterSections(form);
+			updatePrefilterSections(form);
 
 			// Update summary chip
 			const summaryChip = document.getElementById("prefilter-selected-category");
@@ -178,9 +186,7 @@
 
 		// Input event handler
 		const handler = () => {
-			const categorySelect = form.querySelector(".prefilter-category-select");
-			const category = categorySelect?.value || "__all__";
-			filterPrefilterSections(form, input.value, category);
+			updatePrefilterSectionsDebounced(form);
 		};
 
 		input.addEventListener("input", handler);
@@ -373,7 +379,7 @@
 	// Grid
 	function createPrefilterGrid(prefill = {}) {
 		const grid = document.createElement("div");
-		grid.className = "prefilter-form";
+		grid.className = "prefilter-grid";
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		for (const [col, colDef] of Object.entries(colDefs)) {
 			grid.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
@@ -410,6 +416,33 @@
 		}
 
 		return section;
+	}
+
+	function createPrefilterLimitIndicator(form) {
+		const indicator = document.createElement("div");
+		indicator.className = "prefilter-limit-indicator";
+		indicator.dataset.hiddenPastLimit = 0;
+
+		const textSpan = document.createElement("span");
+		textSpan.className = "hidden-past-limit";
+		textSpan.textContent = "0";
+		indicator.appendChild(document.createTextNode("…and "));
+		indicator.appendChild(textSpan);
+		indicator.appendChild(document.createTextNode(" more hidden "));
+
+		const showMoreBtn = document.createElement("button");
+		showMoreBtn.className = "btn btn-show-more";
+		showMoreBtn.type = "button";
+		showMoreBtn.textContent = "Show More";
+
+		showMoreBtn.addEventListener("click", () => {
+			maxVisibleSections += visibleSectionsBatchSize;
+			updatePrefilterSections(form);
+		});
+
+		indicator.appendChild(showMoreBtn);
+		form.appendChild(indicator);
+		return indicator;
 	}
 
 	// Tag checkboxes
@@ -710,71 +743,98 @@
 		}
 	}
 
-	function filterPrefilterSections(form, searchText = "", category = "__all__") {
+	GDV.prefilter.updatePrefilterSectionsDebounced = updatePrefilterSectionsDebounced;
+	function updatePrefilterSectionsDebounced(form) {
+		updatePrefilterSectionsDebouncedInternal(form);
+	}
+	const updatePrefilterSectionsDebouncedInternal = GDV.utils.debounce((form) => {
+		updatePrefilterSections(form);
+	});
+
+	function updatePrefilterSections(form) {
+		sortPrefilterSections(form);
+		filterPrefilterSections(form);
+		GDV.prefilter.setSearchText(getSearchTextInForm(form));
+	}
+
+	function sortPrefilterSections(form) {
+		const grid = form.querySelector(".prefilter-grid");
+		const sections = form.querySelectorAll(".prefilter-section");
+		const sectionArray = Array.from(sections);
+		const sortMode = GDV.prefilter.getSortMode();
+		switch (sortMode) {
+			case "alpha":
+				sortPrefilterSectionsAlphabetically(sectionArray);
+				break;
+			case "nearest":
+				sortPrefilterSectionsByNearestMatch(form, sectionArray);
+				break;
+			default:
+				sortPrefilterSectionsByUsage(sectionArray);
+		}
+
+		const fragment = document.createDocumentFragment();
+		sectionArray.forEach((section) => {
+			fragment.appendChild(section);
+		});
+		grid.appendChild(fragment);
+	}
+
+	function filterPrefilterSections(form) {
+		const searchText = getSearchTextInForm(form);
+		const category = getCategoryInForm(form);
 		const colCategories = GDV.state.getColumnCategories() || {};
 		const sections = form.querySelectorAll(".prefilter-section");
 
 		// Tokenize search input: lowercase, split by spaces, remove empty tokens
-		const tokens = searchText
-			.trim()
-			.toLowerCase()
-			.split(/\s+/)
-			.filter((t) => t.length > 0);
+		const tokens = searchText.trim().toLowerCase().split(/\s+/).filter((t) => t.length > 0);
+
+		let visibleCount = 0;
+		let hiddenPastLimit = 0;
 
 		sections.forEach((section) => {
 			const colName = section.dataset.col;
 			const matchesSearch = tokens.length === 0 || sectionMatchesTokens(colName, tokens);
+			const matchesCategory = category === "__all__" || (colCategories[category] || []).includes(colName);
 
-			// Category check
-			let matchesCategory = true;
-			if (category !== "__all__") {
-				const colsInCat = colCategories[category] || [];
-				matchesCategory = colsInCat.includes(colName);
+			if (matchesSearch && matchesCategory) {
+				visibleCount++;
+				if (visibleCount > maxVisibleSections) {
+					section.style.display = "none";
+					hiddenPastLimit++;
+				} else {
+					section.style.display = "";
+				}
+			} else {
+				section.style.display = "none";
 			}
-
-			section.style.display = matchesSearch && matchesCategory ? "" : "none";
 		});
 
-		GDV.prefilter.setSearchText(searchText);
-		sortPrefilterSectionsDebounced(form);
+		updatePrefilterLimitIndicator(form, hiddenPastLimit);
 	}
 
-	function sortPrefilterSections(form) {
-		if (!form) return; // Exit early if the form isn't ready yet (prefilters still building asynchronously)
+	function updatePrefilterLimitIndicator(form, hiddenPastLimit) {
+		const indicator = form.querySelector(".prefilter-limit-indicator");
+		if (!indicator) return;
 
-		const grid = form.querySelector(".prefilter-form");
-		if (!grid) return;
+		const count = Math.max(0, hiddenPastLimit | 0); // ensure valid non-negative int
+		indicator.dataset.hiddenPastLimit = count;
 
-		const sections = Array.from(grid.querySelectorAll(".prefilter-section"));
-		const sortMode = GDV.prefilter.getSortMode();
+		const textSpan = indicator.querySelector(".hidden-past-limit");
+		if (textSpan) textSpan.textContent = String(count);
 
-		if (sortMode === "alpha") {
-			sortPrefilterSectionsAlphabetically(sections);
-		} else if (sortMode === "nearest") {
-			sortPrefilterSectionsByNearestMatch(sections);
-		} else {
-			sortPrefilterSectionsByUsage(sections);
-		}
-
-		// Re-append in sorted order (only visible sections)
-		sections.forEach((section) => {
-			grid.appendChild(section);
-		});
+		// Hide indicator if nothing is hidden
+		indicator.style.display = count > 0 ? "" : "none";
 	}
 
-	GDV.prefilter.sortPrefilterSectionsDebounced = sortPrefilterSectionsDebounced;
-	function sortPrefilterSectionsDebounced(form) {
-		GDV.utils.debounce(sortPrefilterSections(form), 150);
+	function sortPrefilterSectionsAlphabetically(sectionArray) {
+		sectionArray.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
 	}
 
-	function sortPrefilterSectionsAlphabetically(sections) {
-		sections.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
-	}
-
-	function sortPrefilterSectionsByNearestMatch(sections) {
-		const searchText = GDV.prefilter.getSearchText();
+	function sortPrefilterSectionsByNearestMatch(form, sectionArray) {
+		const searchText = getSearchTextInForm(form);
 		if (!searchText) {
-			sortPrefilterSectionsByUsage(sections);
+			sortPrefilterSectionsByUsage(sectionArray);
 			return;
 		}
 
@@ -782,13 +842,13 @@
 		const colOrder = Object.keys(colDefs);
 
 		const distanceCache = new Map();
-		for (const section of sections) {
+		for (const section of sectionArray) {
 			const colName = section.dataset.col;
 			const dist = GDV.utils.computeNearestMatchDistance(colName, searchText);
 			distanceCache.set(colName, dist);
 		}
 
-		sections.sort((a, b) => {
+		sectionArray.sort((a, b) => {
 			const distA = distanceCache.get(a.dataset.col);
 			const distB = distanceCache.get(b.dataset.col);
 			if (distA !== distB) return distA - distB;
@@ -798,10 +858,10 @@
 		});
 	}
 
-	function sortPrefilterSectionsByUsage(sections) {
+	function sortPrefilterSectionsByUsage(sectionArray) {
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		const colOrder = Object.keys(colDefs);
-		sections.sort((a, b) => colOrder.indexOf(a.dataset.col) - colOrder.indexOf(b.dataset.col));
+		sectionArray.sort((a, b) => colOrder.indexOf(a.dataset.col) - colOrder.indexOf(b.dataset.col));
 	}
 
 	function sectionMatchesTokens(colName, tokens) {
@@ -902,15 +962,16 @@
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		if (categorySelect) {
 			categorySelect.value = "__all__";
-			refreshFilteringOfPrefilterSections(form);
+			updatePrefilterSections(form);
 		}
 	}
-
-	function refreshFilteringOfPrefilterSections(form) {
+	function getCategoryInForm(form) {
 		const categorySelect = form.querySelector(".prefilter-category-select");
-		const category = categorySelect?.value || "__all__";
+		return categorySelect?.value || "__all__";
+	}
+
+	function getSearchTextInForm(form) {
 		const searchInput = form.querySelector(".prefilter-search-input");
-		const searchText = searchInput?.value || "";
-		filterPrefilterSections(form, searchText, category);
+		return searchInput?.value || "";
 	}
 })();

@@ -850,7 +850,7 @@ td {
 	-webkit-backdrop-filter: blur(4px);
 }
 
-.prefilter-form {
+.prefilter-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 	gap: 16px;
@@ -925,16 +925,15 @@ td {
 	width: 100%;
 	padding: 8px 12px;
 	font-size: 14px;
-	border: 2px solid var(--glow);
+	border: 2px solid var(--bg-surface);
 	border-radius: 6px;
 	background: var(--bg-elevated);
 	color: var(--text-main);
 	box-sizing: border-box;
-
 	box-shadow:
 		inset 0 1px 3px rgba(0, 0, 0, 0.4),
-		0 0 10px var(--glow-soft),
-		0 0 20px var(--glow-soft);
+		0 0 10px var(--bg-surface),
+		0 0 20px var(--bg-surface);
 	transition:
 		box-shadow 0.2s,
 		border-color 0.2s;
@@ -952,8 +951,8 @@ td {
 	outline: none;
 	box-shadow:
 		inset 0 1px 3px rgba(0, 0, 0, 0.4),
-		0 0 14px var(--glow-strong),
-		0 0 28px var(--glow-strong);
+		0 0 14px var(--bg-hover),
+		0 0 28px var(--bg-hover);
 }
 
 /* Optional: add a custom arrow using background */
@@ -1236,6 +1235,24 @@ td {
 	color: var(--text-main);
 	border-radius: 4px;
 	box-sizing: border-box;
+}
+
+.prefilter-limit-indicator {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-style: italic;
+	color: var(--text-muted);
+	margin-top: 12px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	background: var(--bg-panel);
+	font-size: 13px;
+}
+
+.prefilter-limit-indicator .hidden-past-limit {
+	font-weight: bold;
+	color: var(--accent);
 }
 
 .prefilter-footer {

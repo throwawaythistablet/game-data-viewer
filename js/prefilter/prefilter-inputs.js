@@ -20,9 +20,16 @@
 	};
 
 	GDV.prefilter.toggleSortMode = () => {
-		if (sortMode === "usage") sortMode = "alpha";
-		else if (sortMode === "alpha") sortMode = "nearest";
-		else sortMode = "usage";
+		switch (sortMode) {
+			case "usage":
+				sortMode = "alpha";
+				break;
+			case "alpha":
+				sortMode = "nearest";
+				break;
+			default:
+				sortMode = "usage";
+		}
 	};
 
 	GDV.prefilter.resetSortMode = () => {
@@ -113,7 +120,7 @@
 	GDV.prefilter.updatePrefilterWarningFromLiveState = updatePrefilterWarningFromLiveState;
 	function updatePrefilterWarningFromLiveState() {
 		if (!isPrefilterOpen()) return; // Exit if prefilter overlay is not open
-		
+
 		const hasFilters = Object.keys(prefilterLiveState).length > 0;
 		if (hasFilters) {
 			GDV.prefilter.hideNoPrefilterWarning();

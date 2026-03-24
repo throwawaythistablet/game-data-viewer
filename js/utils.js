@@ -84,7 +84,7 @@
 		logInformation("info", label, description, context);
 		return showConfirmationDialog(label, description);
 	};
-	
+
 	// Yield with a short fixed delay (setTimeout)
 	GDV.utils.yieldToBrowserTimeout = async (ms = 50) => {
 		await new Promise((resolve) => setTimeout(resolve, ms));
@@ -95,7 +95,7 @@
 		await new Promise(requestAnimationFrame);
 	};
 
-	GDV.utils.debounce = (fn, delay = 150) => {
+	GDV.utils.debounce = (fn, delay = 100) => {
 		let timer = null;
 		return function (...args) {
 			clearTimeout(timer);
