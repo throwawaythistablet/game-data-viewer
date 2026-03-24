@@ -70,9 +70,9 @@
 
 	function parseQueryString() {
 		const params = {};
-		const search = window.location.search.substring(1);
-		if (!search) return params;
-		search.split("&").forEach((pair) => {
+		const windowSearch = window.location.search.substring(1);
+		if (!windowSearch) return params;
+		windowSearch.split("&").forEach((pair) => {
 			const [rawKey, ...rest] = pair.split("=");
 			const key = decodeURIComponent(rawKey);
 			const value = decodeURIComponent(rest.join("="));

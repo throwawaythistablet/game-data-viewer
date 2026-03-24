@@ -170,11 +170,11 @@
 			"site_last_update_date",
 			"site_release_date",
 			"url",
-			"platforms", 
+			"platforms",
 			"title"
 		]);
 
-		const compareKeys = Object.keys(similarGameRow) .filter((k) => !IGNORE_COLS.has(k));
+		const compareKeys = Object.keys(similarGameRow).filter((k) => !IGNORE_COLS.has(k));
 
 		let score = 0;
 		let total = 0;
@@ -527,12 +527,12 @@
 				return;
 			}
 			setSimilarityGame(gameKey);
-			await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
 
 		resetButton.addEventListener("click", async () => {
 			resetSimilarityGame();
-			await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
 	}
 
@@ -954,7 +954,7 @@
 		findSimilarGames.addEventListener("click", async (e) => {
 			e.preventDefault();
 			setSimilarityGame(key);
-			await GDV.csvHandler.executeCsvSearch(GDV.state.getActiveCsvFile());
+			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
 
 		overlay.appendChild(playLink);

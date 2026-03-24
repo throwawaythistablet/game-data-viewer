@@ -42,8 +42,8 @@
 	--red: rgba(160, 32, 32, 1);
 	--yellow: rgba(240, 196, 16, 1);
 	--orange: rgba(240, 120, 16, 1);
-	--blue: rgba(40, 80, 160, 1);
-	--green: rgba(40, 160, 80, 1);
+	--blue: rgba(80, 120, 200, 1);
+	--green: rgba(80, 200, 120, 1);
 }
 
 body.light-theme {
@@ -1201,6 +1201,7 @@ td {
 	from {
 		transform: rotate(0deg);
 	}
+
 	to {
 		transform: rotate(360deg);
 	}
@@ -1368,7 +1369,7 @@ td {
 
 #loadingOverlayProgressBar {
 	width: 0%;
-	height: 20px;
+	height: 28px;
 	background: var(--accent);
 	transition: width 0.1s;
 }
@@ -1380,9 +1381,10 @@ td {
 	align-items: center;
 	justify-content: center;
 	color: var(--text-main);
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: bold;
 	pointer-events: none;
+	text-shadow: 2px 2px 2px var(--bg-main);
 }
 
 /* ==========================================================================

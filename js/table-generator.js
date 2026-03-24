@@ -1,5 +1,5 @@
 (() => {
-	GDV.csvHandler.showPrefiltersForCsvSearch = async (file) => {
+	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file) => {
 		if (!file) return false;
 		try {
 			const collectedPrefilters = GDV.state.hasValidColumnDetails() ? await GDV.prefilter.showPrefilterOverlayAndCollectFilters() : {};
@@ -11,53 +11,53 @@
 			return false;
 		}
 
-		return await executeCsvSearch(file);
+		return await runTableGeneration(file);
 	};
 
-	GDV.csvHandler.executeCsvSearch = executeCsvSearch;
-	async function executeCsvSearch(file) {
+	GDV.tableGenerator.runTableGeneration = runTableGeneration;
+	async function runTableGeneration(file) {
 		if (!file) return false;
 		try {
-			await startCsvSearchUi();
-			await loadCsvAndBuildTable(file);
+			await startTableGenerationUi();
+			await generateTable(file);
 			return true;
 		} catch (err) {
 			GDV.utils.reportHardError("CSV Search Failed", "An error occurred while executing the CSV search.", err, { file });
 			return false;
 		} finally {
-			await finishCsvSearchUi();
+			await finishTableGenerationUi();
 		}
 	}
 
-	async function startCsvSearchUi() {
+	async function startTableGenerationUi() {
 		await GDV.loading.startLoading("var(--accent)");
 		await GDV.loading.updateLoadingDirectUpdate("Starting Data Search...", 0);
 		GDV.dom.hideMainPrefiltersPanelSection();
 	}
 
-	async function finishCsvSearchUi() {
+	async function finishTableGenerationUi() {
 		GDV.dom.renderMainPagePrefiltersPanel();
 		GDV.dom.showMainPrefiltersPanelSection();
 		await GDV.loading.finishLoading();
 	}
 
-	async function loadCsvAndBuildTable(file) {
+	async function generateTable(file) {
 		prefilters = GDV.state.getPrefiltersToUse();
-		const parsedData = await parseAndFilterCsv(file, prefilters);
+		const generatedData = await generateDataFromCsv(file, prefilters);
 		const context = { file, prefilters };
-		if (!Array.isArray(parsedData) || parsedData.length === 0) {
+		if (!Array.isArray(generatedData) || generatedData.length === 0) {
 			GDV.utils.reportHardWarning("No results were found.", "The search did not produce any rows after applying the prefilters.", context);
 			return;
 		}
-		await GDV.datatable.loadTable(parsedData);
+		await GDV.datatable.loadTable(generatedData);
 	}
 
-	async function parseAndFilterCsv(file, prefilters) {
-		const parsedData = [];
+	async function generateDataFromCsv(file, prefilters) {
+		const generatedData = [];
 		const totalSize = file.size;
 		let rowsProcessed = 0;
 		let bytesProcessed = 0;
-		const THROTTLE = 100;
+		const THROTTLE = 500;
 
 		return new Promise((resolve, reject) => {
 			Papa.parse(file, {
@@ -73,7 +73,7 @@
 
 					// Add row if passes prefilters
 					if (!prefilters || Object.keys(prefilters).length === 0 || isRowIncluded(row.data, prefilters)) {
-						parsedData.push(row.data);
+						generatedData.push(row.data);
 					}
 
 					rowsProcessed++;
@@ -81,12 +81,12 @@
 
 					// Throttle progress updates
 					if (rowsProcessed % THROTTLE === 0) {
-						GDV.loading.updateLoadingStepProgress("Loading Data From File...", 0, 50, bytesProcessed, totalSize);
+						GDV.loading.updateLoadingStepProgress("Generating Data...", 0, 50, bytesProcessed, totalSize);
 					}
 				},
 				complete: () => {
-					GDV.loading.updateLoadingDirectUpdate("Loading Data From File Finished...", 50);
-					resolve(parsedData);
+					GDV.loading.updateLoadingDirectUpdate("Generating Data Finished...", 50);
+					resolve(generatedData);
 				},
 				error: (err) => {
 					reject(err); // Ensure rejection on any parsing error

@@ -1,29 +1,28 @@
 (() => {
-	GDV.helpNotice.createHelpNotice = () => {
-		const notice = document.createElement("div");
-		notice.className = "help-notice is-collapsed";
+    GDV.helpNotice.createHelpNotice = () => {
+        const notice = document.createElement("div");
+        notice.className = "help-notice is-collapsed";
 
-		// Wrap body + toggle text
-		notice.innerHTML = `
+        // Wrap body + toggle text
+        notice.innerHTML = `
         ${getHelpNoticeContent()}
         <div class="help-notice-toggle-text">Show Help ▼</div>
     `;
 
-		bindHelpNoticeToggle(notice);
-		return notice;
-	};
+        bindHelpNoticeToggle(notice);
+        return notice;
+    };
 
-	function getHelpNoticeContent() {
-		return `
+    function getHelpNoticeContent() {
+        return `
             <div class="help-notice-body">
-            <strong>📚 Help: Guide to Prefilters, Search, and Table Navigation</strong>
+            <strong>📚 Help: Guide to Finding Games, Using Prefilters, and Table Navigation</strong>
             <ol style="margin-top: 8px;">
                 <li>
-                🔍 <strong>Open Prefilter Overlay</strong> – Click the <em>Search</em> button to see all available prefilters.
-                (This is shown by default, so clicking the button isn’t always necessary.)
+                🔍 <strong>Open Prefilters Panel</strong> – Click the <em>Find Games</em> button to see all available prefilters. (It may already be open by default.)
                 </li>
                 <li>
-                🧩 <strong>Search Prefilters</strong> – Choose prefilters to narrow your search before the table loads, saving time and memory.
+                🧩 <strong>Select Prefilters</strong> – Choose prefilters to narrow your search before the table loads, saving time and memory.
                 Use the glowing search box to quickly locate specific prefilter sections.
                 </li>
                 <li>
@@ -31,7 +30,7 @@
                 Combine tags for more precise results (for example: <em>site: female protagonist</em> + <em>text search: 2D CG</em>).
                 </li>
                 <li>
-                ⏳ <strong>Load Table</strong> – Click <em>Apply Prefilters &amp; Search</em> to load only the filtered rows.
+                ⏳ <strong>Generate Table</strong> – Click <em>Generate Table</em> to create a new table using your selected prefilters. 
                 A warning appears if no prefilters are selected.
                 </li>
                 <li>
@@ -46,7 +45,7 @@
                 💬 <strong>Provide Feedback</strong> – Click the <em>Feedback</em> button to suggest new tags, report issues, or give general feedback.
                 </li>
                 <li>
-                🔍 <strong>New Search</strong> – Use the <em>Search</em> button to adjust prefilters or start a new search.
+                🔍 <strong>Find Games Again</strong> – Click <em>Find Games</em> to adjust prefilters or load a new set of results.
                 </li>
             </ol>
 
@@ -67,9 +66,9 @@
                 Tags are assigned using pattern matching (regex) applied to:
                 <ul>
                 <li>📖 Game descriptions</li>
+                <li>✍️  Author-provided genre/description</li>
                 <li>💬 User reviews</li>
                 <li>📝 Forum recommendation threads</li>
-                <li>✍️ The author's genre/description where available</li>
                 </ul>
 
                 <strong>Tag types (visible as prefixes)</strong>
@@ -90,14 +89,14 @@
                 Because tags are text-based, they are not perfect:
                 </p>
                 <ul>
-                <li>⚠ Some tags may trigger from metaphorical or out-of-context mentions in reviews.</li>
+                <li>⚠ Some tags may be triggered by out-of-context or metaphorical mentions in reviews.</li>
                 <li>❌ You may see occasional false positives (irrelevant matches) or false negatives (missed cases).</li>
-                <li>🛠️ Tag accuracy depends on the pattern definitions — these are actively refined.</li>
+                <li>🛠️ Tag accuracy depends on the underlying text-matching patterns (regex), which are continuously refined for better results.</li>
                 </ul>
 
                 <p>You can view full tag patterns by clicking the <em>Tag Patterns</em> button.</p>
-            </div>
-
+            </div> 
+            
             <hr style="margin: 12px 0;">
 
             💡 <strong>Feedback & Troubleshooting</strong><br>
@@ -106,24 +105,24 @@
             </div>
             </div>
     `;
-	}
+    }
 
-	function bindHelpNoticeToggle(notice) {
-		notice.style.cursor = "pointer"; // user sees it’s clickable
+    function bindHelpNoticeToggle(notice) {
+        notice.style.cursor = "pointer"; // user sees it’s clickable
 
-		const toggleText = notice.querySelector(".help-notice-toggle-text");
+        const toggleText = notice.querySelector(".help-notice-toggle-text");
 
-		function toggleNotice() {
-			const expanded = notice.classList.toggle("is-expanded");
-			notice.classList.toggle("is-collapsed", !expanded);
+        function toggleNotice() {
+            const expanded = notice.classList.toggle("is-expanded");
+            notice.classList.toggle("is-collapsed", !expanded);
 
-			// Update toggle text
-			toggleText.textContent = expanded ? "Hide Help ▲" : "Show Help ▼";
-		}
+            // Update toggle text
+            toggleText.textContent = expanded ? "Hide Help ▲" : "Show Help ▼";
+        }
 
-		notice.addEventListener("click", toggleNotice);
+        notice.addEventListener("click", toggleNotice);
 
-		// Initial state
-		notice.classList.add("is-collapsed");
-	}
+        // Initial state
+        notice.classList.add("is-collapsed");
+    }
 })();

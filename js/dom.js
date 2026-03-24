@@ -5,7 +5,7 @@
 	const feedbackButton = document.getElementById("feedbackButton");
 	const tagPatternsButton = document.getElementById("tagPatternsButton");
 	const resetFiltersButton = document.getElementById("resetFiltersButton");
-	const searchButton = document.getElementById("searchButton");
+	const findGamesButton = document.getElementById("findGamesButton");
 	const mainPrefiltersPanelSection = document.getElementById("mainPrefiltersPanelSection");
 	const controlsPanelGrid = document.querySelector(".controls-main-grid");
 	const csvFileButton = document.getElementById("csvFileButton");
@@ -195,7 +195,7 @@
 		const hue = Math.round(low.h + (high.h - low.h) * intensity);
 		const saturation = Math.round(low.s + (high.s - low.s) * intensity);
 		const lightness = Math.round(low.l + (high.l - low.l) * intensity);
-		
+
 		const bgColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 		const textColor = isLightTheme() ? "#000000" : "#ffffff";
 		const weightClass = intensity > 0.7 ? "high" : intensity > 0.4 ? "medium" : "low";
@@ -391,7 +391,7 @@
 	}
 
 	// Search button
-	searchButton.addEventListener("click", async () => {
+	findGamesButton.addEventListener("click", async () => {
 		if (!GDV.state.getActiveCsvFile()) {
 			GDV.utils.reportHardWarning("CSV Not Loaded", "No CSV file has been loaded yet.");
 			return;
@@ -402,7 +402,7 @@
 			return;
 		}
 
-		await GDV.csvHandler.showPrefiltersForCsvSearch(GDV.state.getActiveCsvFile());
+		await GDV.tableGenerator.showPrefiltersAndGenerateTable(GDV.state.getActiveCsvFile());
 	});
 
 	// Reset filters button
@@ -441,7 +441,7 @@
 	csvFileInput.style.display = "none"; // Make sure input is hidden
 	csvFileInput.addEventListener("change", async (e) => {
 		if (e.target.files.length) {
-			await GDV.controller.loadAndSearchCsv(e.target.files[0]);
+			await GDV.controller.loadCsvFile(e.target.files[0]);
 		}
 	});
 
@@ -493,7 +493,7 @@
 
 		const file = e.dataTransfer.files[0];
 		if (file?.name.endsWith(".csv")) {
-			GDV.controller.loadAndSearchCsv(file);
+			GDV.controller.loadCsvFile(file);
 		} else {
 			GDV.utils.reportHardWarning("Invalid File Drop", "Please drop a valid CSV file.");
 		}

@@ -1,18 +1,18 @@
 (() => {
-// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 246367],
-      ["data/game_column_details.json", 824178],
-      ["data/game_data_part_1.csv", 52433205],
-      ["data/game_data_part_2.csv", 52434880],
-      ["data/game_data_part_3.csv", 52429148],
-      ["data/game_data_part_4.csv", 16900278],
-      ["data/game_keys.json", 1254376],
-      ["data/game_thumbnails.json", 18736426],
-      ["data/tag_full_patterns.json", 587276],
-    ]);
-// FILE_PATH_TO_SIZE_MAP END
+	// FILE_PATH_TO_SIZE_MAP START
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 246367],
+		["data/game_column_details.json", 824178],
+		["data/game_data_part_1.csv", 52433205],
+		["data/game_data_part_2.csv", 52434880],
+		["data/game_data_part_3.csv", 52429148],
+		["data/game_data_part_4.csv", 16900278],
+		["data/game_keys.json", 1254376],
+		["data/game_thumbnails.json", 18736426],
+		["data/tag_full_patterns.json", 587276],
+	]);
+	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
 		const isStandalone = location.protocol === "file:";
@@ -74,7 +74,7 @@
 		GDV.dom.updateGameFolder(gamesFolderHandle.name);
 	}
 
-	GDV.controller.loadAndSearchCsv = async (file) => {
+	GDV.controller.loadCsvFile = async (file) => {
 		if (!file) {
 			GDV.utils.reportHardWarning("No File Provided", "No file was provided to load.");
 			return;
@@ -85,7 +85,7 @@
 			return;
 		}
 		setActiveCsvFile(file);
-		await GDV.csvHandler.showPrefiltersForCsvSearch(file);
+		await GDV.tableGenerator.showPrefiltersAndGenerateTable(file);
 	};
 
 	GDV.controller.loadColumnDetailsFile = async (file) => {
@@ -139,10 +139,10 @@
 		}
 		GDV.dom.updateThemeButton();
 	}
-    
-    function getFileSize(filename) {
-        return filePathToSizeMap.get(filename) ?? null;
-    }
+
+	function getFileSize(filename) {
+		return filePathToSizeMap.get(filename) ?? null;
+	}
 
 	async function initializeCommonSteps() {
 		// loadAndUpdateTheme();
@@ -333,9 +333,9 @@
 		if (applied) {
 			const appliedList = [prefilters && Object.keys(prefilters).length ? "Prefilters" : null, similarityGame ? "Similarity Game" : null].filter(Boolean).join(" & ");
 			GDV.utils.showInfoBanner("URL Parameters Detected", `${appliedList} found in the URL. Applying now and performing automatic search.`);
-			await GDV.csvHandler.executeCsvSearch(activeCsv);
+			await GDV.tableGenerator.runTableGeneration(activeCsv);
 		} else {
-			await GDV.csvHandler.showPrefiltersForCsvSearch(activeCsv);
+			await GDV.tableGenerator.showPrefiltersAndGenerateTable(activeCsv);
 		}
 	}
 

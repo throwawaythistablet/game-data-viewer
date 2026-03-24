@@ -241,7 +241,7 @@
 		buttonWrapper.className = "prefilter-summary-buttons";
 		buttonWrapper.appendChild(createPrefiltersResetButton(form));
 		buttonWrapper.appendChild(createPrefiltersCloseButton(resolve, cleanupFocus));
-		buttonWrapper.appendChild(createPrefilterSubmitButton("Apply Prefilters & Search"));
+		buttonWrapper.appendChild(createPrefilterSubmitButton("Generate Table"));
 		return buttonWrapper;
 	}
 

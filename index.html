@@ -44,7 +44,7 @@
             controller: {},
             dom: {},
             loading: {},
-            csvHandler: {},
+            tableGenerator: {},
             datatable: {},
             prefilter: {},
             urlParameters: {},
@@ -78,9 +78,9 @@
                     title="Reset all filters and sorting to their default state"
                     aria-label="Reset all filters and sorting to default">🔄 Reset Column Filters</button>
 
-                <button type="button" id="searchButton" class="btn btn-main" title="Search the game data"
-                    aria-label="Search the game data">🔍
-                    Search</button>
+                <button type="button" id="findGamesButton" class="btn btn-main"
+                    title="Find games using the selected prefilters"
+                    aria-label="Find games using the selected prefilters">🔍 Find Games</button>
             </div>
         </div>
 
@@ -190,7 +190,7 @@
     <script src="js/state.js"></script>
     <script src="js/dom.js"></script>
     <script src="js/loading.js"></script>
-    <script src="js/csv-handler.js"></script>
+    <script src="js/table-generator.js"></script>
     <script src="js/datatable.js"></script>
     <script src="js/prefilter/prefilter-utils.js"></script>
     <script src="js/prefilter/prefilter-ui.js"></script>
