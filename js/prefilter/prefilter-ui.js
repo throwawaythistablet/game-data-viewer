@@ -15,11 +15,12 @@
 	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async () => {
 		try {
 			initializePrefilterOverlayIfNeeded();
-			resetForNewPrefilterOverlay();
+			const { overlay, form } = prefilterOverlay
+
+			resetForNewPrefilterOverlay(form);
 			showPrefilterOverlay();
 
 			// Return a fresh Promise for this open
-			const { overlay, form } = prefilterOverlay
 			return new Promise((resolve) => {
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
 				replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
@@ -53,8 +54,9 @@
 		return removeBtn;
 	};
 
-	function resetForNewPrefilterOverlay() {
+	function resetForNewPrefilterOverlay(form) {
 		maxVisibleSections = visibleSectionsBatchSize;
+		updatePrefilterSections(form);
 	}
 
 	function showPrefilterOverlay() {
