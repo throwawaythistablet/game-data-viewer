@@ -1,17 +1,17 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-	const filePathToSizeMap = new Map([
-		["data/.gitattributes", 0],
-		["data/game_column_categories.json", 246367],
-		["data/game_column_details.json", 824178],
-		["data/game_data_part_1.csv", 52433205],
-		["data/game_data_part_2.csv", 52434880],
-		["data/game_data_part_3.csv", 52429148],
-		["data/game_data_part_4.csv", 16900278],
-		["data/game_keys.json", 1254376],
-		["data/game_thumbnails.json", 18736426],
-		["data/tag_full_patterns.json", 587276],
-	]);
+    const filePathToSizeMap = new Map([
+      ["data/.gitattributes", 0],
+      ["data/game_column_categories.json", 256682],
+      ["data/game_column_details.json", 860454],
+      ["data/game_data_part_1.csv", 52428808],
+      ["data/game_data_part_2.csv", 52429676],
+      ["data/game_data_part_3.csv", 52432043],
+      ["data/game_data_part_4.csv", 23939750],
+      ["data/game_keys.json", 1253350],
+      ["data/game_thumbnails.json", 18677909],
+      ["data/tag_full_patterns.json", 693132],
+    ]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
