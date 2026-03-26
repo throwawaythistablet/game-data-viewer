@@ -4,12 +4,12 @@
       ["data/.gitattributes", 0],
       ["data/game_column_categories.json", 256682],
       ["data/game_column_details.json", 860455],
-      ["data/game_data_part_1.csv", 52429109],
-      ["data/game_data_part_2.csv", 52429800],
-      ["data/game_data_part_3.csv", 52431546],
-      ["data/game_data_part_4.csv", 23939723],
-      ["data/game_keys.json", 1253286],
-      ["data/game_thumbnails.json", 18677909],
+      ["data/game_data_part_1.csv", 52429266],
+      ["data/game_data_part_2.csv", 52435597],
+      ["data/game_data_part_3.csv", 52432224],
+      ["data/game_data_part_4.csv", 24502692],
+      ["data/game_keys.json", 1257567],
+      ["data/game_thumbnails.json", 18751139],
       ["data/tag_full_patterns.json", 693132],
     ]);
 	// FILE_PATH_TO_SIZE_MAP END
