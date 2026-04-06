@@ -2,15 +2,15 @@
 	// FILE_PATH_TO_SIZE_MAP START
     const filePathToSizeMap = new Map([
       ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 256682],
-      ["data/game_column_details.json", 860455],
-      ["data/game_data_part_1.csv", 52429207],
-      ["data/game_data_part_2.csv", 52428945],
-      ["data/game_data_part_3.csv", 52433150],
-      ["data/game_data_part_4.csv", 24510005],
+      ["data/game_column_categories.json", 261912],
+      ["data/game_column_details.json", 951770],
+      ["data/game_data_part_1.csv", 52435442],
+      ["data/game_data_part_2.csv", 52433883],
+      ["data/game_data_part_3.csv", 52434355],
+      ["data/game_data_part_4.csv", 42591553],
       ["data/game_keys.json", 1257567],
       ["data/game_thumbnails.json", 18751139],
-      ["data/tag_full_patterns.json", 693132],
+      ["data/tag_quick_search_patterns.json", 961731],
     ]);
 	// FILE_PATH_TO_SIZE_MAP END
 
@@ -287,15 +287,15 @@
 
 	async function loadDefaultTagFullPatternsJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/tag_full_patterns.json", getFileSize("data/tag_full_patterns.json"), label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/tag_quick_search_patterns.json", getFileSize("data/tag_quick_search_patterns.json"), label, startPercent, endPercent);
 			if (!response.ok) {
 				GDV.utils.reportHardError("Tag Patterns Load Failed", "Failed to fetch the default tag full patterns JSON file.", new Error(`HTTP status: ${response.status}`), {
-					url: "data/tag_full_patterns.json",
+					url: "data/tag_quick_search_patterns.json",
 				});
 				return;
 			}
 			const tagFullPatterns = await response.json();
-			setTagFullPatterns(tagFullPatterns, "data/tag_full_patterns.json");
+			setTagFullPatterns(tagFullPatterns, "data/tag_quick_search_patterns.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Tag Patterns Load Failed", "An unexpected error occurred while loading the default tag full patterns JSON.", err);
 		}
@@ -411,15 +411,15 @@
 
 	async function loadTagFullPatternsFromLocalDataFolder() {
 		if (!dataFolderHandle) return;
-		const fileHandle = await dataFolderHandle.getFileHandle("tag_full_patterns.json").catch(() => null);
+		const fileHandle = await dataFolderHandle.getFileHandle("tag_quick_search_patterns.json").catch(() => null);
 		if (!fileHandle) {
-			GDV.utils.reportHardWarning("Missing Tag Patterns", 'The file "tag_full_patterns.json" was not found in the selected games folder.');
+			GDV.utils.reportHardWarning("Missing Tag Patterns", 'The file "tag_quick_search_patterns.json" was not found in the selected games folder.');
 			return;
 		}
 		try {
 			const file = await fileHandle.getFile();
 			const tagFullPatterns = JSON.parse(await file.text());
-			setTagFullPatterns(tagFullPatterns, "data/tag_full_patterns.json");
+			setTagFullPatterns(tagFullPatterns, "data/tag_quick_search_patterns.json");
 		} catch (err) {
 			GDV.utils.reportHardError("Failed to Load Tag Patterns", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
 		}
