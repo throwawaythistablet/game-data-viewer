@@ -1,6 +1,8 @@
 (() => {
 	let searchText = null;
 	let prefilterConditions = {};
+	let prefilterAst = null;
+	let prefilterAstCurrentNode = null;
 	let sortMode = "nearest";
 
 	GDV.prefilter.getSearchText = () => searchText;
@@ -11,12 +13,24 @@
 
 	GDV.prefilter.getPrefilterConditions = () => prefilterConditions;
 
-	GDV.prefilter.setPrefilterConditions = (data) => {
-		prefilterConditions = data;
+	GDV.prefilter.getPrefilterAst = () => prefilterAst;
+
+	GDV.prefilter.getPrefilterAstCurrentNode = () => prefilterAstCurrentNode;
+
+	GDV.prefilter.setPrefilterConditionsAndAst = (prefilterConditions_, prefilterAst_) => {
+		prefilterConditions = prefilterConditions_;
+		if (!prefilterAst_) {
+			prefilterAst = createDefaultPrefilterAst();
+		} else {
+			prefilterAst = prefilterAst_;
+		}
+		prefilterAstCurrentNode = prefilterAst;
 	};
 
-	GDV.prefilter.resetPrefilterConditions = () => {
+	GDV.prefilter.resetPrefilterConditionsAndAst = () => {
 		prefilterConditions = {};
+		prefilterAst = null;
+		prefilterAstCurrentNode = null;
 	};
 
 	GDV.prefilter.toggleSortMode = () => {
@@ -50,16 +64,6 @@
 	};
 
 	GDV.prefilter.getSortMode = () => sortMode;
-
-	// Initialize liveState by scanning the form once (cheap)
-	GDV.prefilter.initializeLiveStateFromForm = (form) => {
-		prefilterConditions = {};
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		for (const col of Object.keys(colDefs)) {
-			// Reuse the update logic; this does targeted queries per column
-			updateLivePrefilterForColumn(form, col);
-		}
-	};
 
 	// Delegated input/change binding (single handler per form)
 	GDV.prefilter.bindPrefilterGridInputs = (form) => {
@@ -97,25 +101,77 @@
 		} else if (isTextColumn(form, col)) {
 			updateTextPrefilter(form, col);
 		} else {
-			// fallback: remove from live state
-			delete prefilterConditions[col];
+			removeFromConditionAndAst(col);
 		}
 	}
 
 	GDV.prefilter.updatePrefilterActiveItems = updatePrefilterActiveItems;
-	function updatePrefilterActiveItems(form, col) {
+	function updatePrefilterActiveItems(form) {
 		const summary = form.querySelector("#prefilter-active-items");
 		if (!summary) return;
-
-		const val = prefilterConditions[col];
-		const activeItem = updateOrCreateActiveItem(summary, col, val);
-		if (!activeItem) return;
-
-		sortPrefilterActiveItems(summary);
+		if (!prefilterAst) {
+			summary.replaceChildren();
+			return;
+		}
+		const astNodeElement = renderPrefilterAstNode(prefilterAst);
+		summary.replaceChildren(astNodeElement || document.createTextNode(""));
 	}
 
-	GDV.prefilter.updatePrefilterWarningFromLiveState = updatePrefilterWarningFromLiveState;
-	function updatePrefilterWarningFromLiveState() {
+	function renderPrefilterAstNode(node) {
+		if (!node) return null;
+		switch (node.ast_type) {
+			case "VALUE":
+				return createPrefilterActiveItem(node.column);
+			case "NOT": {
+				const container = document.createElement("span");
+				container.className = "prefilter-ast-group";
+				container.appendChild(createOperator("NOT"));
+				const child = renderPrefilterAstNode(node.child);
+				if (child) container.appendChild(child);
+				return container;
+			}
+			case "AND":
+			case "OR": {
+				const container = document.createElement("span");
+				container.className = "prefilter-ast-group";
+				node.children.forEach((child, i) => {
+					if (i > 0) container.appendChild(createOperator(node.ast_type));
+					const childEl = renderPrefilterAstNode(child);
+					if (childEl) container.appendChild(childEl);
+				});
+				return container;
+			}
+			default:
+				GDV.utils.reportSoftError("Something went wrong while displaying your filters", "The filter display system encountered an unexpected data format and could not render part of your selected filters. This does not affect your data, only how it is shown.", null, { nodeType: node.ast_type, node });
+				return null;
+		}
+	}
+
+	function createOperator(type) {
+		const el = document.createElement("span");
+		el.className = "prefilter-ast-operator";
+		el.textContent = type;
+		return el;
+	}
+
+	function createPrefilterActiveItem(col) {
+		const val = prefilterConditions[col];
+		if (!val) return null;
+
+		const activeItem = document.createElement("span");
+		activeItem.className = "prefilter-active-item";
+		activeItem.dataset.col = col;
+		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
+		activeItem.textContent = `${text} `;
+		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
+		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
+		activeItem.appendChild(GDV.prefilter.renderRemoveButton(col));
+
+		return activeItem;
+	}
+
+	GDV.prefilter.updatePrefilterWarning = updatePrefilterWarning;
+	function updatePrefilterWarning() {
 		if (!isPrefilterOpen()) return;
 
 		const hasFilters = Object.keys(prefilterConditions).length > 0;
@@ -126,24 +182,9 @@
 		}
 	}
 
-	GDV.prefilter.sortPrefilterActiveItems = sortPrefilterActiveItems;
-	function sortPrefilterActiveItems(summary) {
-		if (!summary) {
-			return;
-		}
-		if (sortMode === "alpha") {
-			sortPrefilterActiveItemsAlphabetically(summary);
-		} else if (sortMode === "nearest") {
-			sortPrefilterActiveItemsByUsage(summary);
-			// sortPrefilterActiveItemsByNearestMatch(summary);
-		} else {
-			sortPrefilterActiveItemsByUsage(summary);
-		}
-	}
-
 	function updateAllBasedFromFormColumnChanges(form, col) {
 		updateLivePrefilterForColumn(form, col);
-		updatePrefilterWarningFromLiveState();
+		updatePrefilterWarning();
 		updatePrefilterActiveItems(form, col);
 	}
 
@@ -155,7 +196,7 @@
 		const [minEl] = getFormElementsByName(form, `${col}__min`);
 		const [maxEl] = getFormElementsByName(form, `${col}__max`);
 		if (!minEl && !maxEl) {
-			delete prefilterConditions[col];
+			removeFromConditionAndAst(col);
 			return;
 		}
 
@@ -167,8 +208,11 @@
 			if (max != null) max = Math.round(max);
 		}
 
-		if (min == null && max == null) delete prefilterConditions[col];
-		else prefilterConditions[col] = { type: def.type, min, max };
+		if (min == null && max == null) {
+			removeFromConditionAndAst(col);
+		} else {
+			addToConditionAndAst(col, { type: def.type, min, max });
+		}
 	}
 
 	function updateCheckboxPrefilter(form, col, def) {
@@ -176,10 +220,10 @@
 		const checked = checkboxes.filter((c) => c.checked).map((c) => c.value);
 
 		if (checked.length === 0 || checked.length === checkboxes.length) {
-			delete prefilterConditions[col];
+			removeFromConditionAndAst(col);
 		} else {
 			const converted = checked.map((v) => convertCheckboxValue(v, def.type));
-			prefilterConditions[col] = { type: def.type, choices: converted };
+			addToConditionAndAst(col, { type: def.type, choices: converted });
 		}
 	}
 
@@ -188,97 +232,12 @@
 		if (!textInputs.length) return;
 
 		const val = textInputs[0].value?.trim();
-		if (!val) delete prefilterConditions[col];
-		else prefilterConditions[col] = { text: [val] };
-	}
-
-	function updateOrCreateActiveItem(summary, col, val) {
-		const existingActiveItem = summary.querySelector(`[data-col="${col}"]`);
 		if (!val) {
-			if (existingActiveItem) existingActiveItem.remove();
-			return null;
+			removeFromConditionAndAst(col);
 		}
-
-		let activeItem = existingActiveItem;
-		if (!activeItem) {
-			activeItem = document.createElement("span");
-			activeItem.className = "prefilter-active-item";
-			activeItem.dataset.col = col;
-			summary.appendChild(activeItem);
+		else {
+			addToConditionAndAst(col, { text: [val] });
 		}
-
-		updateActiveItemContent(activeItem, col, val);
-		return activeItem;
-	}
-
-	function updateActiveItemContent(activeItem, col, val) {
-		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
-		activeItem.textContent = `${text} `;
-		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
-		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
-		activeItem.appendChild(GDV.prefilter.renderRemoveButton(col));
-	}
-
-	function sortPrefilterActiveItemsAlphabetically(summary) {
-		const itemsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
-
-		itemsArray.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
-
-		itemsArray.forEach((c) => {
-			summary.appendChild(c);
-		});
-	}
-
-	/* function sortPrefilterActiveItemsByNearestMatch(summary) {
-		const searchText = GDV.prefilter.getSearchText();
-		if (!searchText) {
-			// fallback to usage order if no search text
-			sortPrefilterActiveItemsByUsage(summary);
-			return;
-		}
-
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const columnOrder = Object.keys(colDefs);
-
-		const itemsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
-
-		// Compute distance cache
-		const distanceCache = new Map();
-		for (const activeItem of itemsArray) {
-			const colName = activeItem.dataset.col;
-			distanceCache.set(colName, GDV.utils.computeNearestMatchDistance(colName, searchText));
-		}
-
-		// Sort by distance, then by usage order
-		itemsArray.sort((a, b) => {
-			const distA = distanceCache.get(a.dataset.col);
-			const distB = distanceCache.get(b.dataset.col);
-			if (distA !== distB) return distA - distB;
-			const usageA = columnOrder.indexOf(a.dataset.col);
-			const usageB = columnOrder.indexOf(b.dataset.col);
-			return usageA - usageB;
-		});
-
-		// Re-append in sorted order
-		itemsArray.forEach((c) => {
-			summary.appendChild(c)
-		});
-	} */
-
-	function sortPrefilterActiveItemsByUsage(summary) {
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const columnOrder = Object.keys(colDefs);
-
-		const itemsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
-		itemsArray.sort((a, b) => {
-			const idxA = columnOrder.indexOf(a.dataset.col);
-			const idxB = columnOrder.indexOf(b.dataset.col);
-			return idxA - idxB;
-		});
-
-		itemsArray.forEach((c) => {
-			summary.appendChild(c);
-		});
 	}
 
 	function getFormElementsByName(form, name) {
@@ -310,5 +269,134 @@
 
 	function isTextColumn(form, col) {
 		return getFormElementsByName(form, col).some((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
+	}
+
+	function addToConditionAndAst(col, condition) {
+		prefilterConditions[col] = condition;
+		addToPrefilterAst(col);
+	}
+
+	function removeFromConditionAndAst(col) {
+		delete prefilterConditions[col];
+		removeFromPrefilterAst(col);
+	}
+
+	function createDefaultPrefilterAst() {
+		const cols = Object.keys(prefilterConditions || {});
+		if (cols.length === 0) return null;
+		if (cols.length === 1) {
+			return {
+				ast_type: "VALUE",
+				column: cols[0]
+			};
+		}
+		return {
+			ast_type: "AND",
+			children: cols.map(col => ({
+				ast_type: "VALUE",
+				column: col
+			}))
+		};
+	}
+
+	function addToPrefilterAst(col) {
+		if (!prefilterAst) {
+			prefilterAst = { ast_type: "VALUE", column: col };
+			prefilterAstCurrentNode = prefilterAst;
+			return;
+		}
+		if (astHasColumn(prefilterAst, col)) return;
+		const newNode = { ast_type: "VALUE", column: col };
+		switch (prefilterAstCurrentNode.ast_type) {
+			case "VALUE": {
+				const oldNode = { ast_type: "VALUE", column: prefilterAstCurrentNode.column };
+				prefilterAstCurrentNode.ast_type = "AND";
+				prefilterAstCurrentNode.children = [oldNode, newNode];
+				delete prefilterAstCurrentNode.column;
+				return;
+			}
+			case "NOT": {
+				const oldNode = { ast_type: "NOT", child: prefilterAstCurrentNode.child };
+				prefilterAstCurrentNode.ast_type = "AND";
+				prefilterAstCurrentNode.children = [oldNode, newNode];
+				delete prefilterAstCurrentNode.child;
+				return;
+			}
+			case "AND":
+			case "OR": {
+				if (!prefilterAstCurrentNode.children) prefilterAstCurrentNode.children = [];
+				prefilterAstCurrentNode.children.push(newNode);
+				return;
+			}
+			default:
+				GDV.utils.reportSoftError("Problem updating your filters", "The filter system received an unexpected internal structure while trying to update your active filters. Your changes may not have been fully applied visually.", null, { nodeType: prefilterAstCurrentNode.ast_type, node: prefilterAstCurrentNode, column: col });
+				return;
+		}
+	}
+
+	function astHasColumn(node, col) {
+		if (!node) return false;
+		if (node.ast_type === "VALUE") return node.column === col;
+		if (node.ast_type === "AND") return node.children.some(child => astHasColumn(child, col));
+		return false;
+	}
+
+	function removeFromPrefilterAst(col) {
+		if (!prefilterAst) return;
+
+		const path = [];
+		prefilterAst = removeFromNode(prefilterAst, col, path);
+
+		prefilterAstCurrentNode = path.length
+			? path[path.length - 1]
+			: prefilterAst;
+	}
+
+	function removeFromNode(node, col, path) {
+		if (!node) return null;
+		path.push(node);
+		switch (node.ast_type) {
+			case "VALUE":
+				if (node.column === col) {
+					path.pop();
+					return null;
+				}
+				path.pop();
+				return node;
+			case "NOT":
+				if (node.child) {
+					node.child = removeFromNode(node.child, col, path);
+				}
+				if (!node.child) {
+					path.pop();
+					return null;
+				}
+				path.pop();
+				return node;
+			case "AND":
+			case "OR":
+				if (!node.children) {
+					path.pop();
+					return node;
+				}
+				node.children = node.children
+					.map(child => removeFromNode(child, col, path))
+					.filter(Boolean);
+				if (node.children.length === 0) {
+					path.pop();
+					return null;
+				}
+				if (node.children.length === 1) {
+					const onlyChild = node.children[0];
+					path.pop();
+					return onlyChild;
+				}
+				path.pop();
+				return node;
+			default:
+				GDV.utils.reportSoftError("Problem removing a filter", "The system encountered an unexpected filter structure while trying to remove a selected filter. Some filters may still appear until refreshed.", null, { nodeType: node.ast_type, node, column: col });
+				path.pop();
+				return node;
+		}
 	}
 })();

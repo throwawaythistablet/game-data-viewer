@@ -283,7 +283,7 @@
 				csvTableElement.DataTable().destroy();
 			}
 		} catch (err) {
-			GDV.utils.reportSilentWarning("Destroy DataTable Failed", "Failed to destroy existing DataTable.", err, { csvTableElement });
+			GDV.utils.reportSoftWarning("Destroy DataTable Failed", "Failed to destroy existing DataTable.", err, { csvTableElement });
 		} finally {
 			clearTableRangeFilters();
 			csvTableElement.empty();
@@ -375,7 +375,7 @@
 		sortColumnName = getDefaultSortColumnName();
 		let sortColumnIndex = findIndexOfColumnByNameInColumns(columns, sortColumnName);
 		if (isInvalidColumnIndex(sortColumnIndex)) {
-			GDV.utils.reportSilentWarning("Invalid Column Index", `Cannot sort by "${sortColumnName}": the column index is missing or invalid.`);
+			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot sort by "${sortColumnName}": the column index is missing or invalid.`);
 			sortColumnIndex = 0;
 		}
 
@@ -1004,7 +1004,7 @@
 	function sortTableByColumn(columnName, order) {
 		const columnIndex = findIndexOfColumnByNameInTable(columnName);
 		if (isInvalidColumnIndex(columnIndex)) {
-			GDV.utils.reportSilentWarning("Invalid Column Index", `Cannot sort by "${columnName}": the column index is missing or invalid.`);
+			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot sort by "${columnName}": the column index is missing or invalid.`);
 			return;
 		}
 

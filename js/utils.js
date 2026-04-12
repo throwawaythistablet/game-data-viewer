@@ -60,7 +60,7 @@
 		showAlertMessage(label, description, error);
 	};
 
-	GDV.utils.reportSilentError = (label, description, error, context = null) => {
+	GDV.utils.reportSoftError = (label, description, error, context = null) => {
 		logWarnOrError("error", label, description, error, context);
 		showErrorBanner(label, description, error);
 	};
@@ -70,7 +70,7 @@
 		showAlertMessage(label, description, error);
 	};
 
-	GDV.utils.reportSilentWarning = (label, description, error = null, context = null) => {
+	GDV.utils.reportSoftWarning = (label, description, error = null, context = null) => {
 		logWarnOrError("warn", label, description, error, context);
 		showWarningBanner(label, description, error);
 	};

@@ -7,6 +7,7 @@
 	let dataFolderHandle = null;
 	let activeGameKeys = null;
 	let prefilterConditions = {};
+	let prefilterAst = null;
 	let similarityGame = null;
 
 	GDV.state.getActiveCsvFile = () => activeCsvFile;
@@ -61,8 +62,14 @@
 
 	GDV.state.getPrefilterConditions = () => prefilterConditions;
 
-	GDV.state.setPrefilterConditions = (prefilters) => {
-		prefilterConditions = prefilters;
+	GDV.state.setPrefilterConditions = (prefilterConditions_) => {
+		prefilterConditions = prefilterConditions_;
+	};
+
+	GDV.state.getPrefilterAst = () => prefilterAst;
+
+	GDV.state.setPrefilterAst = (prefilterAst_) => {
+		prefilterAst = prefilterAst_;
 	};
 
 	GDV.state.getSimilarityGame = () => similarityGame;

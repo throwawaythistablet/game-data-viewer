@@ -156,7 +156,7 @@
 
 	async function loadFilesFromDataFolder() {
 		if (!dataFolderHandle) {
-			GDV.utils.reportSilentWarning("No Games Folder", "No games folder selected. Cannot load files.");
+			GDV.utils.reportSoftWarning("No Games Folder", "No games folder selected. Cannot load files.");
 			return;
 		}
 
@@ -316,13 +316,17 @@
 	}
 
 	async function applyUrlPrefiltersOrPrompt() {
-		const { prefilters = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
+		const { prefilterConditions = null, prefilterAst = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
 		const activeCsv = GDV.state.getActiveCsvFile();
 		let applied = false;
 
-		if (prefilters && Object.keys(prefilters).length) {
+		if (prefilterConditions && Object.keys(prefilterConditions).length) {
 			applied = true;
-			GDV.state.setPrefilterConditions(prefilters);
+			GDV.state.setPrefilterConditions(prefilterConditions);
+		}
+		if (prefilterAst && Object.keys(prefilterAst).length) {
+			applied = true;
+			GDV.state.setPrefilterAst(prefilterAst);
 		}
 		if (similarityGame) {
 			applied = true;
@@ -331,12 +335,26 @@
 		}
 
 		if (applied) {
-			const appliedList = [prefilters && Object.keys(prefilters).length ? "Prefilters" : null, similarityGame ? "Similarity Game" : null].filter(Boolean).join(" & ");
-			GDV.utils.showInfoBanner("URL Parameters Detected", `${appliedList} found in the URL. Applying now and performing automatic search.`);
+			GDV.utils.showInfoBanner("URL Parameters Detected", getUrlParameterMessage(prefilterConditions, prefilterAst, similarityGame));
 			await GDV.tableGenerator.runTableGeneration(activeCsv);
 		} else {
 			await GDV.tableGenerator.showPrefiltersAndGenerateTable(activeCsv);
 		}
+	}
+
+	function getUrlParameterMessage(prefilterConditions, prefilterAst, similarityGame) {
+		const appliedListParts = [];
+		if (prefilterConditions && Object.keys(prefilterConditions).length) {
+			appliedListParts.push("Prefilter Conditions");
+		}
+		if (prefilterAst) {
+			appliedListParts.push("Prefilter Abstract Syntax Tree");
+		}
+		if (similarityGame) {
+			appliedListParts.push("Similarity Game");
+		}
+		const appliedList = appliedListParts.join(" & ");
+		return `${appliedList} found in the URL. Applying now and performing automatic search.`
 	}
 
 	async function loadCsvFromLocalDataFolder() {
@@ -495,7 +513,7 @@
 			return true;
 		} catch (err) {
 			if (err?.name === "AbortError") {
-				GDV.utils.reportSilentWarning("Folder Selection Cancelled", "The user closed the folder picker without selecting a folder.", err);
+				GDV.utils.reportSoftWarning("Folder Selection Cancelled", "The user closed the folder picker without selecting a folder.", err);
 				return false;
 			}
 
@@ -512,7 +530,7 @@
 			try {
 				regex = new RegExp(pattern, "i");
 			} catch (err) {
-				GDV.utils.reportSilentWarning("Invalid Regex", `Invalid regex pattern for tag "${tag}".`, err, { regexStr: pattern });
+				GDV.utils.reportSoftWarning("Invalid Regex", `Invalid regex pattern for tag "${tag}".`, err, { regexStr: pattern });
 			}
 			result[tag] = { pattern, regex };
 		}

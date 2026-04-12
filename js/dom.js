@@ -373,9 +373,9 @@
 
 		shareBtn.addEventListener("click", async () => {
 			try {
-				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefilterConditions(), GDV.state.getSimilarityGame());
+				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst(), GDV.state.getSimilarityGame());
 				if (!encoded) {
-					GDV.utils.reportSilentWarning("URL Encoding Failed", "Unable to encode prefilters for sharing.");
+					GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode prefilters for sharing.");
 					return;
 				}
 
@@ -384,7 +384,7 @@
 				await navigator.clipboard.writeText(shareUrl);
 				GDV.utils.showInfoBanner("Shareable URL Copied", "The encoded prefilter URL has been copied to your clipboard.");
 			} catch (err) {
-				GDV.utils.reportSilentWarning("Clipboard Copy Failed", "Failed to copy the shareable URL to the clipboard.", err);
+				GDV.utils.reportSoftWarning("Clipboard Copy Failed", "Failed to copy the shareable URL to the clipboard.", err);
 			}
 		});
 		return shareBtn;

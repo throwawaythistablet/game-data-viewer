@@ -28,7 +28,7 @@
 				waitForPrefilterFormSubmission(form, resolve);
 			});
 		} catch (err) {
-			GDV.utils.reportSilentWarning("Prefilter UI Failure", "Prefilter overlay failed to initialize, continuing without prefiltering.", err);
+			GDV.utils.reportSoftWarning("Prefilter UI Failure", "Prefilter overlay failed to initialize, continuing without prefiltering.", err);
 			return {};
 		}
 	};
@@ -653,27 +653,37 @@
 		return container;
 	}
 
-	// collectPrefilterFromForm now returns a shallow clone of the liveState (very cheap)
 	function collectPrefilterFromForm() {
-		// structuredClone may not be available in all environments; fallback to JSON
-		if (typeof structuredClone === "function") return structuredClone(GDV.prefilter.getPrefilterConditions());
-		return JSON.parse(JSON.stringify(GDV.prefilter.getPrefilterConditions()));
+		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+		const prefilterAst = GDV.prefilter.getPrefilterAst();
+		if (typeof structuredClone === "function") {
+			return {
+				prefilterConditions: structuredClone(prefilterConditions),
+				prefilterAst: structuredClone(prefilterAst)
+			};
+		}
+		return {
+			prefilterConditions: JSON.parse(JSON.stringify(prefilterConditions)),
+			prefilterAst: JSON.parse(JSON.stringify(prefilterAst))
+		};
 	}
 
 	function waitForPrefilterFormSubmission(form, resolve) {
 		form.onsubmit = async (e) => {
 			e.preventDefault();
-			const prefilter = collectPrefilterFromForm();
-
-			if (Object.keys(prefilter).length === 0) {
+			const prefilterFromForm = collectPrefilterFromForm();
+			const prefilterConditions = prefilterFromForm.prefilterConditions;
+			const prefilterAst = prefilterFromForm.prefilterAst;
+			if (Object.keys(prefilterConditions).length === 0) {
 				const proceed = await confirmPrefiltersWarning();
 				if (!proceed) return;
 			}
 
-			GDV.state.setPrefilterConditions(prefilter);
+			GDV.state.setPrefilterConditions(prefilterConditions);
+			GDV.state.setPrefilterAst(prefilterAst);
 			GDV.dom.renderMainPagePrefiltersPanel();
 			closePrefilterOverlay();
-			resolve(prefilter);
+			resolve(prefilterConditions);
 		};
 	}
 
@@ -718,28 +728,9 @@
 	}
 
 	function updatePrefilterConditionsRelatedItems(form) {
-		GDV.prefilter.setPrefilterConditions(GDV.state.getPrefilterConditions());
-		GDV.prefilter.updatePrefilterWarningFromLiveState();
-		renderActivePrefiltersSummaryFromLiveState(form);
-	}
-
-	function renderActivePrefiltersSummaryFromLiveState(form) {
-		const summary = form.querySelector("#prefilter-active-items");
-		if (!summary) return;
-
-		// clear existing chips
-		summary.textContent = "";
-
-		for (const [col, val] of Object.entries(GDV.prefilter.getPrefilterConditions())) {
-			const span = document.createElement("span");
-			span.className = "prefilter-active-item";
-			span.dataset.col = col;
-			span.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
-			span.title = GDV.datatable.getColumnDescription(col) || "";
-			span.appendChild(document.createTextNode(`${GDV.prefilter.getPrefilterDisplayText(col, val)} `));
-			span.appendChild(renderRemoveButton(col));
-			summary.appendChild(span);
-		}
+		GDV.prefilter.setPrefilterConditionsAndAst(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst());
+		GDV.prefilter.updatePrefilterWarning();
+		GDV.prefilter.updatePrefilterActiveItems(form);
 	}
 
 	GDV.prefilter.updatePrefilterSectionsDebounced = updatePrefilterSectionsDebounced;
@@ -915,7 +906,7 @@
 			// Update live state & UI for this column
 			GDV.prefilter.updateLivePrefilterForColumn(form, col);
 			GDV.prefilter.updatePrefilterActiveItems(form, col);
-			GDV.prefilter.updatePrefilterWarningFromLiveState();
+			GDV.prefilter.updatePrefilterWarning();
 		});
 	}
 
@@ -951,10 +942,10 @@
 		// Reset Similarity Game
 		GDV.state.resetSimilarityGame();
 
-		// Reset liveState and UI
-		GDV.prefilter.resetPrefilterConditions();
-		renderActivePrefiltersSummaryFromLiveState(form);
-		GDV.prefilter.updatePrefilterWarningFromLiveState();
+		// Reset and update
+		GDV.prefilter.resetPrefilterConditionsAndAst();
+		GDV.prefilter.updatePrefilterActiveItems(form);
+		GDV.prefilter.updatePrefilterWarning();
 	}
 
 	function resetPrefilterCategory(form) {
