@@ -24,7 +24,7 @@
 			return new Promise((resolve) => {
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
 				replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
-				updatePrefilterLiveStateRelatedItems(form);
+				updatePrefilterConditionsRelatedItems(form);
 				waitForPrefilterFormSubmission(form, resolve);
 			});
 		} catch (err) {
@@ -84,7 +84,7 @@
 		overlay.appendChild(form);
 		form.appendChild(createPrefilterSearchAndCategoryGroup(form));
 		form.appendChild(createPrefiltersSummary(form, null, null));
-		form.appendChild(createPrefilterGrid(GDV.state.getPrefiltersToUse()));
+		form.appendChild(createPrefilterGrid(GDV.state.getPrefilterConditions()));
 		form.appendChild(createPrefilterLimitIndicator(form));
 		updatePrefilterSections(form);
 
@@ -376,7 +376,7 @@
 	}
 
 	// Grid
-	function createPrefilterGrid(prefill = {}) {
+	function createPrefilterGrid(prefill) {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
@@ -386,7 +386,7 @@
 		return grid;
 	}
 
-	function createFilterSectionForColumnDetails(col, colDef, prefill = null) {
+	function createFilterSectionForColumnDetails(col, colDef, prefill) {
 		const section = document.createElement("section");
 		section.className = "prefilter-section";
 		section.dataset.col = String(col);
@@ -656,8 +656,8 @@
 	// collectPrefilterFromForm now returns a shallow clone of the liveState (very cheap)
 	function collectPrefilterFromForm() {
 		// structuredClone may not be available in all environments; fallback to JSON
-		if (typeof structuredClone === "function") return structuredClone(GDV.prefilter.getPrefilterLiveState());
-		return JSON.parse(JSON.stringify(GDV.prefilter.getPrefilterLiveState()));
+		if (typeof structuredClone === "function") return structuredClone(GDV.prefilter.getPrefilterConditions());
+		return JSON.parse(JSON.stringify(GDV.prefilter.getPrefilterConditions()));
 	}
 
 	function waitForPrefilterFormSubmission(form, resolve) {
@@ -670,7 +670,7 @@
 				if (!proceed) return;
 			}
 
-			GDV.state.setPrefiltersToUse(prefilter);
+			GDV.state.setPrefilterConditions(prefilter);
 			GDV.dom.renderMainPagePrefiltersPanel();
 			closePrefilterOverlay();
 			resolve(prefilter);
@@ -717,8 +717,8 @@
 		};
 	}
 
-	function updatePrefilterLiveStateRelatedItems(form) {
-		GDV.prefilter.setPrefilterLiveState(GDV.state.getPrefiltersToUse());
+	function updatePrefilterConditionsRelatedItems(form) {
+		GDV.prefilter.setPrefilterConditions(GDV.state.getPrefilterConditions());
 		GDV.prefilter.updatePrefilterWarningFromLiveState();
 		renderActivePrefiltersSummaryFromLiveState(form);
 	}
@@ -730,7 +730,7 @@
 		// clear existing chips
 		summary.textContent = "";
 
-		for (const [col, val] of Object.entries(GDV.prefilter.getPrefilterLiveState())) {
+		for (const [col, val] of Object.entries(GDV.prefilter.getPrefilterConditions())) {
 			const span = document.createElement("span");
 			span.className = "prefilter-active-item";
 			span.dataset.col = col;
@@ -952,7 +952,7 @@
 		GDV.state.resetSimilarityGame();
 
 		// Reset liveState and UI
-		GDV.prefilter.resetPrefilterLiveState();
+		GDV.prefilter.resetPrefilterConditions();
 		renderActivePrefiltersSummaryFromLiveState(form);
 		GDV.prefilter.updatePrefilterWarningFromLiveState();
 	}

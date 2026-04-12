@@ -42,9 +42,9 @@
 	}
 
 	async function generateTable(file) {
-		prefilters = GDV.state.getPrefiltersToUse();
-		const generatedData = await generateDataFromCsv(file, prefilters);
-		const context = { file, prefilters };
+		const prefilterConditions = GDV.state.getPrefilterConditions();
+		const generatedData = await generateDataFromCsv(file, prefilterConditions);
+		const context = { file, prefilters: prefilterConditions };
 		if (!Array.isArray(generatedData) || generatedData.length === 0) {
 			GDV.utils.reportHardWarning("No results were found.", "The search did not produce any rows after applying the prefilters.", context);
 			return;
@@ -52,7 +52,7 @@
 		await GDV.datatable.loadTable(generatedData);
 	}
 
-	async function generateDataFromCsv(file, prefilters) {
+	async function generateDataFromCsv(file, prefilterConditions) {
 		const generatedData = [];
 		const totalSize = file.size;
 		let rowsProcessed = 0;
@@ -72,7 +72,7 @@
 					}
 
 					// Add row if passes prefilters
-					if (!prefilters || Object.keys(prefilters).length === 0 || isRowIncluded(row.data, prefilters)) {
+					if (!prefilterConditions || Object.keys(prefilterConditions).length === 0 || isRowIncluded(row.data, prefilterConditions)) {
 						generatedData.push(row.data);
 					}
 

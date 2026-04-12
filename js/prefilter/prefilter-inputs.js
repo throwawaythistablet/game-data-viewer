@@ -1,6 +1,6 @@
 (() => {
 	let searchText = null;
-	let prefilterLiveState = {};
+	let prefilterConditions = {};
 	let sortMode = "nearest";
 
 	GDV.prefilter.getSearchText = () => searchText;
@@ -9,14 +9,14 @@
 		searchText = searchText_;
 	};
 
-	GDV.prefilter.getPrefilterLiveState = () => prefilterLiveState;
+	GDV.prefilter.getPrefilterConditions = () => prefilterConditions;
 
-	GDV.prefilter.setPrefilterLiveState = (data) => {
-		prefilterLiveState = data;
+	GDV.prefilter.setPrefilterConditions = (data) => {
+		prefilterConditions = data;
 	};
 
-	GDV.prefilter.resetPrefilterLiveState = () => {
-		prefilterLiveState = {};
+	GDV.prefilter.resetPrefilterConditions = () => {
+		prefilterConditions = {};
 	};
 
 	GDV.prefilter.toggleSortMode = () => {
@@ -53,7 +53,7 @@
 
 	// Initialize liveState by scanning the form once (cheap)
 	GDV.prefilter.initializeLiveStateFromForm = (form) => {
-		prefilterLiveState = {};
+		prefilterConditions = {};
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		for (const col of Object.keys(colDefs)) {
 			// Reuse the update logic; this does targeted queries per column
@@ -98,7 +98,7 @@
 			updateTextPrefilter(form, col);
 		} else {
 			// fallback: remove from live state
-			delete prefilterLiveState[col];
+			delete prefilterConditions[col];
 		}
 	}
 
@@ -107,7 +107,7 @@
 		const summary = form.querySelector("#prefilter-active-items");
 		if (!summary) return;
 
-		const val = prefilterLiveState[col];
+		const val = prefilterConditions[col];
 		const activeItem = updateOrCreateActiveItem(summary, col, val);
 		if (!activeItem) return;
 
@@ -118,7 +118,7 @@
 	function updatePrefilterWarningFromLiveState() {
 		if (!isPrefilterOpen()) return;
 
-		const hasFilters = Object.keys(prefilterLiveState).length > 0;
+		const hasFilters = Object.keys(prefilterConditions).length > 0;
 		if (hasFilters) {
 			GDV.prefilter.hidePrefilterWarning();
 		} else {
@@ -155,7 +155,7 @@
 		const [minEl] = getFormElementsByName(form, `${col}__min`);
 		const [maxEl] = getFormElementsByName(form, `${col}__max`);
 		if (!minEl && !maxEl) {
-			delete prefilterLiveState[col];
+			delete prefilterConditions[col];
 			return;
 		}
 
@@ -167,8 +167,8 @@
 			if (max != null) max = Math.round(max);
 		}
 
-		if (min == null && max == null) delete prefilterLiveState[col];
-		else prefilterLiveState[col] = { type: def.type, min, max };
+		if (min == null && max == null) delete prefilterConditions[col];
+		else prefilterConditions[col] = { type: def.type, min, max };
 	}
 
 	function updateCheckboxPrefilter(form, col, def) {
@@ -176,10 +176,10 @@
 		const checked = checkboxes.filter((c) => c.checked).map((c) => c.value);
 
 		if (checked.length === 0 || checked.length === checkboxes.length) {
-			delete prefilterLiveState[col];
+			delete prefilterConditions[col];
 		} else {
 			const converted = checked.map((v) => convertCheckboxValue(v, def.type));
-			prefilterLiveState[col] = { type: def.type, choices: converted };
+			prefilterConditions[col] = { type: def.type, choices: converted };
 		}
 	}
 
@@ -188,8 +188,8 @@
 		if (!textInputs.length) return;
 
 		const val = textInputs[0].value?.trim();
-		if (!val) delete prefilterLiveState[col];
-		else prefilterLiveState[col] = { text: [val] };
+		if (!val) delete prefilterConditions[col];
+		else prefilterConditions[col] = { text: [val] };
 	}
 
 	function updateOrCreateActiveItem(summary, col, val) {

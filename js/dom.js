@@ -144,9 +144,9 @@
 
 		while (marker.firstChild) marker.removeChild(marker.firstChild);
 
-		const lastSearchedPrefilters = GDV.state.getPrefiltersToUse();
+		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const similarityGame = GDV.state.getSimilarityGame();
-		if (!lastSearchedPrefilters || Object.keys(lastSearchedPrefilters).length === 0) return;
+		if (!prefilterConditions || Object.keys(prefilterConditions).length === 0) return;
 
 		const container = document.createElement("div");
 		container.id = "mainPrefiltersPanel";
@@ -172,7 +172,7 @@
 		prefilterlabel.textContent = "Last Searched Prefilters:";
 		container.appendChild(prefilterlabel);
 
-		for (const [col, val] of Object.entries(lastSearchedPrefilters)) {
+		for (const [col, val] of Object.entries(prefilterConditions)) {
 			const text = GDV.prefilter.getPrefilterDisplayText(col, val);
 			if (!text) continue;
 
@@ -373,7 +373,7 @@
 
 		shareBtn.addEventListener("click", async () => {
 			try {
-				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefiltersToUse(), GDV.state.getSimilarityGame());
+				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefilterConditions(), GDV.state.getSimilarityGame());
 				if (!encoded) {
 					GDV.utils.reportSilentWarning("URL Encoding Failed", "Unable to encode prefilters for sharing.");
 					return;

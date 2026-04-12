@@ -125,10 +125,10 @@
 		if (!parsedData || !parsedData.length) return [];
 
 		const columnNames = Object.keys(parsedData[0]);
-		const searchedPrefilters = GDV.state.getPrefiltersToUse() || {};
+		const prefilterConditions = GDV.state.getPrefilterConditions() || {};
 		const columnDetails = GDV.state.getActiveColumnDetails();
 
-		const columns = buildColumns(columnNames, columnDetails, searchedPrefilters);
+		const columns = buildColumns(columnNames, columnDetails, prefilterConditions);
 
 		const thumbnailColumn = buildThumbnailColumn();
 		if (thumbnailColumn) {
