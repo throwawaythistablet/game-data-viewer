@@ -102,52 +102,49 @@
 		}
 	}
 
-	GDV.prefilter.updateSinglePrefilterSummary = updateSinglePrefilterSummary;
-	function updateSinglePrefilterSummary(form, col) {
+	GDV.prefilter.updatePrefilterActiveItems = updatePrefilterActiveItems;
+	function updatePrefilterActiveItems(form, col) {
 		const summary = form.querySelector("#prefilter-active-items");
 		if (!summary) return;
 
 		const val = prefilterLiveState[col];
+		const activeItem = updateOrCreateActiveItem(summary, col, val);
+		if (!activeItem) return;
 
-		// Remove or create/update the chip
-		const chip = updateOrCreateChip(summary, col, val);
-		if (!chip) return; // nothing to show
-
-		// Sort all chips according to column order
-		sortPrefilterChips(summary);
+		sortPrefilterActiveItems(summary);
 	}
 
 	GDV.prefilter.updatePrefilterWarningFromLiveState = updatePrefilterWarningFromLiveState;
 	function updatePrefilterWarningFromLiveState() {
-		if (!isPrefilterOpen()) return; // Exit if prefilter overlay is not open
+		if (!isPrefilterOpen()) return;
 
 		const hasFilters = Object.keys(prefilterLiveState).length > 0;
 		if (hasFilters) {
-			GDV.prefilter.hideNoPrefilterWarning();
+			GDV.prefilter.hidePrefilterWarning();
 		} else {
-			GDV.prefilter.showNoPrefilterWarning();
+			GDV.prefilter.showPrefilterWarning();
 		}
 	}
 
-	GDV.prefilter.sortPrefilterChips = sortPrefilterChips;
-	function sortPrefilterChips(summary) {
+	GDV.prefilter.sortPrefilterActiveItems = sortPrefilterActiveItems;
+	function sortPrefilterActiveItems(summary) {
 		if (!summary) {
 			return;
 		}
 		if (sortMode === "alpha") {
-			sortPrefilterChipsAlphabetically(summary);
+			sortPrefilterActiveItemsAlphabetically(summary);
 		} else if (sortMode === "nearest") {
-			sortPrefilterChipsByUsage(summary);
-			// sortPrefilterChipsByNearestMatch(summary);
+			sortPrefilterActiveItemsByUsage(summary);
+			// sortPrefilterActiveItemsByNearestMatch(summary);
 		} else {
-			sortPrefilterChipsByUsage(summary);
+			sortPrefilterActiveItemsByUsage(summary);
 		}
 	}
 
 	function updateAllBasedFromFormColumnChanges(form, col) {
 		updateLivePrefilterForColumn(form, col);
 		updatePrefilterWarningFromLiveState();
-		updateSinglePrefilterSummary(form, col);
+		updatePrefilterActiveItems(form, col);
 	}
 
 	function isPrefilterOpen() {
@@ -195,65 +192,65 @@
 		else prefilterLiveState[col] = { text: [val] };
 	}
 
-	function updateOrCreateChip(summary, col, val) {
-		const existingChip = summary.querySelector(`[data-col="${col}"]`);
+	function updateOrCreateActiveItem(summary, col, val) {
+		const existingActiveItem = summary.querySelector(`[data-col="${col}"]`);
 		if (!val) {
-			if (existingChip) existingChip.remove();
+			if (existingActiveItem) existingActiveItem.remove();
 			return null;
 		}
 
-		let chip = existingChip;
-		if (!chip) {
-			chip = document.createElement("span");
-			chip.className = "prefilter-active-item";
-			chip.dataset.col = col;
-			summary.appendChild(chip);
+		let activeItem = existingActiveItem;
+		if (!activeItem) {
+			activeItem = document.createElement("span");
+			activeItem.className = "prefilter-active-item";
+			activeItem.dataset.col = col;
+			summary.appendChild(activeItem);
 		}
 
-		updateChipContent(chip, col, val);
-		return chip;
+		updateActiveItemContent(activeItem, col, val);
+		return activeItem;
 	}
 
-	function updateChipContent(chip, col, val) {
+	function updateActiveItemContent(activeItem, col, val) {
 		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
-		chip.textContent = `${text} `;
-		chip.title = GDV.datatable.getColumnDescription(col) || "";
-		chip.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
-		chip.appendChild(GDV.prefilter.renderRemoveButton(col));
+		activeItem.textContent = `${text} `;
+		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
+		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
+		activeItem.appendChild(GDV.prefilter.renderRemoveButton(col));
 	}
 
-	function sortPrefilterChipsAlphabetically(summary) {
-		const chipsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
+	function sortPrefilterActiveItemsAlphabetically(summary) {
+		const itemsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
 
-		chipsArray.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
+		itemsArray.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
 
-		chipsArray.forEach((c) => {
+		itemsArray.forEach((c) => {
 			summary.appendChild(c);
 		});
 	}
 
-	/*function sortPrefilterChipsByNearestMatch(summary) {
+	/* function sortPrefilterActiveItemsByNearestMatch(summary) {
 		const searchText = GDV.prefilter.getSearchText();
 		if (!searchText) {
 			// fallback to usage order if no search text
-			sortPrefilterChipsByUsage(summary);
+			sortPrefilterActiveItemsByUsage(summary);
 			return;
 		}
 
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		const columnOrder = Object.keys(colDefs);
 
-		const chipsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
+		const itemsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
 
 		// Compute distance cache
 		const distanceCache = new Map();
-		for (const chip of chipsArray) {
-			const colName = chip.dataset.col;
+		for (const activeItem of itemsArray) {
+			const colName = activeItem.dataset.col;
 			distanceCache.set(colName, GDV.utils.computeNearestMatchDistance(colName, searchText));
 		}
 
 		// Sort by distance, then by usage order
-		chipsArray.sort((a, b) => {
+		itemsArray.sort((a, b) => {
 			const distA = distanceCache.get(a.dataset.col);
 			const distB = distanceCache.get(b.dataset.col);
 			if (distA !== distB) return distA - distB;
@@ -263,23 +260,23 @@
 		});
 
 		// Re-append in sorted order
-		chipsArray.forEach((c) => {
+		itemsArray.forEach((c) => {
 			summary.appendChild(c)
 		});
-	}*/
+	} */
 
-	function sortPrefilterChipsByUsage(summary) {
+	function sortPrefilterActiveItemsByUsage(summary) {
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		const columnOrder = Object.keys(colDefs);
 
-		const chipsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
-		chipsArray.sort((a, b) => {
+		const itemsArray = Array.from(summary.querySelectorAll(".prefilter-active-item"));
+		itemsArray.sort((a, b) => {
 			const idxA = columnOrder.indexOf(a.dataset.col);
 			const idxB = columnOrder.indexOf(b.dataset.col);
 			return idxA - idxB;
 		});
 
-		chipsArray.forEach((c) => {
+		itemsArray.forEach((c) => {
 			summary.appendChild(c);
 		});
 	}

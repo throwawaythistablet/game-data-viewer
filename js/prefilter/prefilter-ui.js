@@ -33,13 +33,13 @@
 		}
 	};
 
-	GDV.prefilter.hideNoPrefilterWarning = hideNoPrefilterWarning;
-	function hideNoPrefilterWarning() {
+	GDV.prefilter.hidePrefilterWarning = hidePrefilterWarning;
+	function hidePrefilterWarning() {
 		GDV.utils.hideBannerWithLabel(noPrefiltersLabel);
 	}
 
-	GDV.prefilter.showNoPrefilterWarning = showNoPrefilterWarning;
-	function showNoPrefilterWarning() {
+	GDV.prefilter.showPrefilterWarning = showPrefilterWarning;
+	function showPrefilterWarning() {
 		GDV.utils.hideBannerWithLabel(noPrefiltersLabel);
 		GDV.utils.showPermanentWarningBanner(noPrefiltersLabel, noPrefiltersMessage);
 	}
@@ -60,14 +60,14 @@
 	}
 
 	function showPrefilterOverlay() {
-		hideNoPrefilterWarning();
+		hidePrefilterWarning();
 		if (prefilterOverlay?.overlay) {
 			prefilterOverlay.overlay.style.display = "";
 		}
 	}
 
 	function closePrefilterOverlay() {
-		hideNoPrefilterWarning();
+		hidePrefilterWarning();
 		if (prefilterOverlay?.overlay) {
 			prefilterOverlay.overlay.style.display = "none";
 		}
@@ -149,15 +149,12 @@
 			select.appendChild(opt);
 		});
 
-		// Update prefilter sections and summary chip on change
 		select.addEventListener("change", () => {
 			updatePrefilterSections(form);
-
-			// Update summary chip
-			const summaryChip = document.getElementById("prefilter-selected-category");
-			if (summaryChip) {
-				summaryChip.dataset.value = select.value;
-				summaryChip.textContent = select.selectedOptions[0].textContent;
+			const categoryChip = document.getElementById("prefilter-selected-category");
+			if (categoryChip) {
+				categoryChip.dataset.value = select.value;
+				categoryChip.textContent = select.selectedOptions[0].textContent;
 			}
 		});
 
@@ -669,7 +666,7 @@
 			const prefilter = collectPrefilterFromForm();
 
 			if (Object.keys(prefilter).length === 0) {
-				const proceed = await confirmNoPrefiltersWarning();
+				const proceed = await confirmPrefiltersWarning();
 				if (!proceed) return;
 			}
 
@@ -680,7 +677,7 @@
 		};
 	}
 
-	async function confirmNoPrefiltersWarning() {
+	async function confirmPrefiltersWarning() {
 		return await GDV.utils.requestUserConfirmation("No Prefilters Applied", "⚠ You haven't applied any prefilters.\n" + "Loading the full dataset may be very memory-intensive and slow.\n\n" + "Do you want to continue anyway?");
 	}
 
@@ -917,7 +914,7 @@
 
 			// Update live state & UI for this column
 			GDV.prefilter.updateLivePrefilterForColumn(form, col);
-			GDV.prefilter.updateSinglePrefilterSummary(form, col);
+			GDV.prefilter.updatePrefilterActiveItems(form, col);
 			GDV.prefilter.updatePrefilterWarningFromLiveState();
 		});
 	}
