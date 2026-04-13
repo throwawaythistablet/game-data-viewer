@@ -140,7 +140,7 @@
 
 		select.addEventListener("change", () => {
 			updatePrefilterSections(form);
-			const categoryChip = document.getElementById("prefilter-selected-category");
+			const categoryChip = form.querySelector("#prefilter-selected-category");
 			if (categoryChip) {
 				categoryChip.dataset.value = select.value;
 				categoryChip.textContent = select.selectedOptions[0].textContent;
@@ -354,9 +354,6 @@
 		btn.addEventListener("click", () => {
 			GDV.prefilter.toggleSortMode();
 			btn.textContent = GDV.prefilter.getSortButtonDisplayText();
-
-			const summary = form.querySelector("#prefilter-active-items");
-			GDV.prefilter.sortPrefilterChips(summary);
 			sortPrefilterSections(form);
 		});
 
@@ -943,17 +940,17 @@
 	}
 
 	function updatePrefilterActiveItems(form) {
-		const summary = form.querySelector("#prefilter-active-items");
-		if (!summary) return;
+		const activeItems = form.querySelector("#prefilter-active-items");
+		if (!activeItems) return;
 
 		const prefilterAst = GDV.prefilter.getPrefilterAst();
 		if (!prefilterAst) {
-			summary.replaceChildren();
+			activeItems.replaceChildren();
 			return;
 		}
 
 		const astNodeElement = renderPrefilterAstNode(form, prefilterAst);
-		summary.replaceChildren(astNodeElement || document.createTextNode(""));
+		activeItems.replaceChildren(astNodeElement || document.createTextNode(""));
 	}
 
 	function updateAllBasedFromFormColumnChanges(form, col) {
