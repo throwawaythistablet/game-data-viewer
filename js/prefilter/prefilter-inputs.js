@@ -46,7 +46,46 @@
 	GDV.prefilter.removeFromConditionAndAst = removeFromConditionAndAst;
 	function removeFromConditionAndAst(col) {
 		delete prefilterConditions[col];
-		removeFromPrefilterAst(col);
+		removeNodeWithColumnInAst(col);
+	}
+
+	GDV.prefilter.removeFromConditionAndUi = removeFromConditionAndUi;
+	function removeFromConditionAndUi(col) {
+		delete prefilterConditions[col];
+		GDV.prefilter.clearActiveItemParameters(col);
+	}
+
+	GDV.prefilter.removeNodeWithColumnInAst = removeNodeWithColumnInAst;
+	function removeNodeWithColumnInAst(col) {
+		if (!prefilterAst) return;
+		const path = [];
+		prefilterAst = removeNodeWithColumnInsideAst(prefilterAst, col, path);
+		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
+	}
+
+	GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi = removeNodeWithReferenceInAstConditionsAndUi;
+	function removeNodeWithReferenceInAstConditionsAndUi(targetNode) {
+		if (!prefilterAst) return;
+		const path = [];
+		prefilterAst = removeNodeWithReferenceInsideAst(prefilterAst, targetNode, path);
+		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
+	}
+
+	GDV.prefilter.updateActiveItemParametersInConditionAndAst = updateActiveItemParametersInConditionAndAst;
+	function updateActiveItemParametersInConditionAndAst(form, col) {
+		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const def = colDefs[col];
+		if (!def) return;
+
+		if (isNumericColumn(def)) {
+			updateNumericPrefilter(form, col, def);
+		} else if (isCheckboxColumn(form, col)) {
+			updateCheckboxPrefilter(form, col, def);
+		} else if (isTextColumn(form, col)) {
+			updateTextPrefilter(form, col);
+		} else {
+			removeFromConditionAndAst(col);
+		}
 	}
 
 	GDV.prefilter.toggleSortMode = () => {
@@ -81,23 +120,6 @@
 
 	GDV.prefilter.getSortMode = () => sortMode;
 
-	GDV.prefilter.updatePrefilterForColumn = updatePrefilterForColumn;
-	function updatePrefilterForColumn(form, col) {
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const def = colDefs[col];
-		if (!def) return;
-
-		if (isNumericColumn(def)) {
-			updateNumericPrefilter(form, col, def);
-		} else if (isCheckboxColumn(form, col)) {
-			updateCheckboxPrefilter(form, col, def);
-		} else if (isTextColumn(form, col)) {
-			updateTextPrefilter(form, col);
-		} else {
-			removeFromConditionAndAst(col);
-		}
-	}
-
 	function updateNumericPrefilter(form, col, def) {
 		const [minEl] = getFormElementsByName(form, `${col}__min`);
 		const [maxEl] = getFormElementsByName(form, `${col}__max`);
@@ -105,15 +127,12 @@
 			removeFromConditionAndAst(col);
 			return;
 		}
-
 		let min = minEl?.value === "" ? null : Number(minEl.value);
 		let max = maxEl?.value === "" ? null : Number(maxEl.value);
-
 		if (def.type === "int") {
 			if (min != null) min = Math.round(min);
 			if (max != null) max = Math.round(max);
 		}
-
 		if (min == null && max == null) {
 			removeFromConditionAndAst(col);
 		} else {
@@ -237,18 +256,7 @@
 		return false;
 	}
 
-	function removeFromPrefilterAst(col) {
-		if (!prefilterAst) return;
-
-		const path = [];
-		prefilterAst = removeFromNode(prefilterAst, col, path);
-
-		prefilterAstCurrentNode = path.length
-			? path[path.length - 1]
-			: prefilterAst;
-	}
-
-	function removeFromNode(node, col, path) {
+	function removeNodeWithColumnInsideAst(node, col, path) {
 		if (!node) return null;
 		path.push(node);
 		switch (node.ast_type) {
@@ -261,7 +269,7 @@
 				return node;
 			case "NOT":
 				if (node.child) {
-					node.child = removeFromNode(node.child, col, path);
+					node.child = removeNodeWithColumnInsideAst(node.child, col, path);
 				}
 				if (!node.child) {
 					path.pop();
@@ -276,7 +284,7 @@
 					return node;
 				}
 				node.children = node.children
-					.map(child => removeFromNode(child, col, path))
+					.map(child => removeNodeWithColumnInsideAst(child, col, path))
 					.filter(Boolean);
 				if (node.children.length === 0) {
 					path.pop();
@@ -293,6 +301,78 @@
 				GDV.utils.reportSoftError("Problem removing a filter", "The system encountered an unexpected filter structure while trying to remove a selected filter. Some filters may still appear until refreshed.", null, { nodeType: node.ast_type, node, column: col });
 				path.pop();
 				return node;
+		}
+	}
+
+	function removeNodeWithReferenceInsideAst(node, targetNode, path) {
+		if (!node) return null;
+		path.push(node);
+		switch (node.ast_type) {
+			case "VALUE":
+				if (node === targetNode) {
+					removeAllConditionsInSubtree(node);
+					path.pop();
+					return null;
+				}
+				path.pop();
+				return node;
+			case "NOT":
+				if (node === targetNode) {
+					removeAllConditionsInSubtree(node);
+					path.pop();
+					return null;
+				}
+				if (node.child) node.child = removeNodeWithReferenceInsideAst(node.child, targetNode, path);
+				if (!node.child) {
+					path.pop();
+					return null;
+				}
+				path.pop();
+				return node;
+			case "AND":
+			case "OR":
+				if (node === targetNode) {
+					removeAllConditionsInSubtree(node);
+					path.pop();
+					return null;
+				}
+				if (!node.children) {
+					path.pop();
+					return node;
+				}
+				node.children = node.children.map(child => removeNodeWithReferenceInsideAst(child, targetNode, path)).filter(Boolean);
+				if (node.children.length === 0) {
+					path.pop();
+					return null;
+				}
+				if (node.children.length === 1) {
+					const onlyChild = node.children[0];
+					path.pop();
+					return onlyChild;
+				}
+				path.pop();
+				return node;
+			default:
+				GDV.utils.reportSoftError("Problem removing a filter", "The system encountered an unexpected filter structure while trying to remove a selected filter. Some filters may still appear until refreshed.", null, { nodeType: node.ast_type, node, targetNode });
+				path.pop();
+				return node;
+		}
+	}
+
+	function removeAllConditionsInSubtree(node) {
+		if (!node) return;
+		switch (node.ast_type) {
+			case "VALUE":
+				GDV.prefilter.removeFromConditionAndUi(node.column);
+				return;
+			case "NOT":
+				removeAllConditionsInSubtree(node.child);
+				return;
+			case "AND":
+			case "OR":
+				if (!node.children) return;
+				node.children.forEach(removeAllConditionsInSubtree);
+				return;
 		}
 	}
 })();

@@ -140,10 +140,10 @@
 
 		select.addEventListener("change", () => {
 			updatePrefilterSections(form);
-			const categoryChip = form.querySelector("#prefilter-selected-category");
-			if (categoryChip) {
-				categoryChip.dataset.value = select.value;
-				categoryChip.textContent = select.selectedOptions[0].textContent;
+			const categoryElement = form.querySelector("#prefilter-selected-category");
+			if (categoryElement) {
+				categoryElement.dataset.value = select.value;
+				categoryElement.textContent = select.selectedOptions[0].textContent;
 			}
 		});
 
@@ -212,10 +212,10 @@
 		prefilterLabel.textContent = "Active Prefilters:";
 		leftGroup.appendChild(prefilterLabel);
 
-		const chips = document.createElement("div");
-		chips.id = "prefilter-active-items";
-		chips.className = "prefilter-active-items";
-		leftGroup.appendChild(chips);
+		const activeItems = document.createElement("div");
+		activeItems.id = "prefilter-active-items";
+		activeItems.className = "prefilter-active-items";
+		leftGroup.appendChild(activeItems);
 
 		return leftGroup;
 	}
@@ -303,12 +303,12 @@
 		categoryLabel.textContent = "Category:";
 		categoryWrapper.appendChild(categoryLabel);
 
-		const categoryChip = document.createElement("span");
-		categoryChip.id = "prefilter-selected-category";
-		categoryChip.className = "prefilter-summary-category-value";
-		categoryChip.dataset.value = "__all__";
-		categoryChip.textContent = "All Categories";
-		categoryWrapper.appendChild(categoryChip);
+		const categoryElement = document.createElement("span");
+		categoryElement.id = "prefilter-selected-category";
+		categoryElement.className = "prefilter-summary-category-value";
+		categoryElement.dataset.value = "__all__";
+		categoryElement.textContent = "All Categories";
+		categoryWrapper.appendChild(categoryElement);
 		categoryWrapper.appendChild(createPrefilterSortButton(form));
 		return categoryWrapper;
 	}
@@ -345,18 +345,15 @@
 
 	function createPrefilterSortButton(form) {
 		GDV.prefilter.resetSortMode();
-
 		const btn = document.createElement("button");
 		btn.type = "button";
 		btn.className = "btn";
 		btn.textContent = GDV.prefilter.getSortButtonDisplayText();
-
 		btn.addEventListener("click", () => {
 			GDV.prefilter.toggleSortMode();
 			btn.textContent = GDV.prefilter.getSortButtonDisplayText();
 			sortPrefilterSections(form);
 		});
-
 		return btn;
 	}
 
@@ -647,6 +644,35 @@
 		return astGroup;
 	}
 
+	function createPrefilterAstToolbarIfNeeded(form) {
+		const activeItems = form.querySelector("#prefilter-active-items");
+		if (!activeItems) return null;
+		let toolbar = activeItems.querySelector(".prefilter-ast-toolbar");
+		if (toolbar) return toolbar;
+
+		toolbar = document.createElement("div");
+		toolbar.className = "prefilter-ast-toolbar";
+		activeItems.appendChild(toolbar);
+		return toolbar;
+	}
+
+	function createToolbarContent(node) {
+		const container = document.createElement("div");
+		container.className = "prefilter-ast-toolbar-inner";
+
+		const removeBtn = document.createElement("button");
+		removeBtn.type = "button";
+		removeBtn.className = "btn btn-toolbar";
+		removeBtn.textContent = "Remove Item";
+		removeBtn.addEventListener("click", (e) => {
+			e.stopPropagation();
+			removeNodeAndUpdateAll(node);
+		});
+
+		container.appendChild(removeBtn);
+		return container;
+	}
+
 	function createPrefilterActiveItem(form, node) {
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
@@ -701,69 +727,134 @@
 		removeButton.setAttribute("aria-label", `Remove prefilter for ${col}`);
 		removeButton.addEventListener("click", (e) => {
 			e.stopPropagation();
-			clearPrefilterSectionParameter(form, col, type)
-			updateAllBasedFromFormColumnChanges(form, col);
+			removeColumnWithTypeAndUpdateAll(form, col, type)
 		});
 		return removeButton;
 	};
 
-	function waitForPrefilterFormSubmission(form, resolve) {
-		form.onsubmit = async (e) => {
-			e.preventDefault();
-			const prefilterFromForm = collectPrefilterFromForm();
-			const prefilterConditions = prefilterFromForm.prefilterConditions;
-			const prefilterAst = prefilterFromForm.prefilterAst;
-			if (Object.keys(prefilterConditions).length === 0) {
-				const proceed = await confirmPrefiltersWarning();
-				if (!proceed) return;
-			}
-
-			GDV.state.setPrefilterConditions(prefilterConditions);
-			GDV.state.setPrefilterAst(prefilterAst);
-			GDV.dom.renderMainPagePrefiltersPanel();
-			closePrefilterOverlay();
-			resolve(prefilterConditions);
-		};
+	function removeColumnWithTypeAndUpdateAll(form, col, type) {
+		clearActiveItemParametersWithType(form, col, type);
+		updateAllBasedFromFormActiveItemParameters(form, col);
 	}
 
-	async function confirmPrefiltersWarning() {
-		return await GDV.utils.requestUserConfirmation("No Prefilters Applied", "⚠ You haven't applied any prefilters.\n" + "Loading the full dataset may be very memory-intensive and slow.\n\n" + "Do you want to continue anyway?");
+	function removeNodeAndUpdateAll(node) {
+		GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi(node);
+		const form = document.querySelector(".prefilter-form");
+		updatePrefilterActiveItems(form);
+		updatePrefilterWarning();
 	}
 
-	// Accessibility: trap focus inside overlay and restore on close
-	function showModalAccessibility(overlay, resolve) {
-		const previousActive = document.activeElement;
+	function updateAllBasedFromFormActiveItemParameters(form, col) {
+		GDV.prefilter.updateActiveItemParametersInConditionAndAst(form, col);
+		updatePrefilterActiveItems(form);
+		updatePrefilterWarning();
+	}
 
-		// Focus first focusable element
-		const first = overlay.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-		if (first) first.focus();
+	function updatePrefilterActiveItems(form) {
+		const activeItems = form.querySelector("#prefilter-active-items");
+		if (!activeItems) return;
 
-		function onKeydown(e) {
-			if (e.key === "Escape") {
-				if (previousActive?.focus) previousActive.focus();
-				closePrefilterOverlay(overlay);
-				resolve(null);
-			}
-			if (e.key === "Tab") {
-				const focusables = Array.from(overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((el) => !el.disabled && el.offsetParent !== null);
-				if (!focusables.length) return;
-
-				const idx = focusables.indexOf(document.activeElement);
-				if (e.shiftKey && idx === 0) {
-					e.preventDefault();
-					focusables[focusables.length - 1].focus();
-				} else if (!e.shiftKey && idx === focusables.length - 1) {
-					e.preventDefault();
-					focusables[0].focus();
-				}
-			}
+		const prefilterAst = GDV.prefilter.getPrefilterAst();
+		if (!prefilterAst) {
+			activeItems.replaceChildren();
+			return;
 		}
+		const astNodeElement = renderPrefilterAstNode(form, prefilterAst);
+		activeItems.replaceChildren(astNodeElement || document.createTextNode(""));
+		renderPrefilterAstToolbar(form);
+	}
 
-		overlay.addEventListener("keydown", onKeydown);
-		return () => {
-			overlay.removeEventListener("keydown", onKeydown);
-			if (previousActive?.focus) previousActive.focus();
-		};
+	function renderPrefilterAstToolbar(form) {
+		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
+		if (!prefilterAstCurrentNode) return;
+		const focused = form.querySelector(".is-focused");
+		if (!focused) return;
+		const toolbar = createPrefilterAstToolbarIfNeeded(form);
+		if (!toolbar) return;
+
+		toolbar.replaceChildren(createToolbarContent(prefilterAstCurrentNode));
+		positionPrefilterAstToolbar(toolbar, focused);
+	}
+
+	function positionPrefilterAstToolbar(toolbar, targetEl) {
+		const container = toolbar.parentElement;
+		if (!container) return;
+
+		const containerRect = container.getBoundingClientRect();
+		const targetRect = targetEl.getBoundingClientRect();
+		const toolbarRect = toolbar.getBoundingClientRect();
+		const left = targetRect.left - containerRect.left + 10;
+		const top = targetRect.top - containerRect.top - toolbarRect.height - 10;
+
+		toolbar.style.left = `${left}px`;
+		toolbar.style.top = `${top}px`;
+	}
+
+	function renderPrefilterAstNode(form, node) {
+		if (!node) return null;
+		switch (node.ast_type) {
+			case "VALUE":
+				return createPrefilterActiveItem(form, node);
+			case "NOT": {
+				const container = createPrefilterAstGroup(form, node);
+				container.appendChild(createOperator(form, node, "NOT"));
+				const childEl = renderPrefilterAstNode(form, node.child);
+				if (childEl) container.appendChild(childEl);
+				return container;
+			}
+			case "AND":
+			case "OR": {
+				const container = createPrefilterAstGroup(form, node);
+				node.children.forEach((child, i) => {
+					if (i > 0) container.appendChild(createOperator(form, node, node.ast_type));
+					const childEl = renderPrefilterAstNode(form, child);
+					if (childEl) container.appendChild(childEl);
+				});
+				return container;
+			}
+			default:
+				GDV.utils.reportSoftError("Something went wrong while displaying your filters", "The filter display system encountered an unexpected data format and could not render part of your selected filters. This does not affect your data, only how it is shown.", null, { nodeType: node.ast_type, node });
+				return null;
+		}
+	}
+
+	GDV.prefilter.clearActiveItemParameters = clearActiveItemParameters;
+	function clearActiveItemParameters(col) {
+		const form = document.querySelector(".prefilter-form");
+		const activeItem = form.querySelector(`.prefilter-active-item[data-col="${col}"]`);
+		clearActiveItemParametersWithType(form, col, activeItem.dataset.type);
+	}
+
+	function clearActiveItemParametersWithType(form, col, type) {
+		const colEsc = window.CSS && CSS.escape ? CSS.escape(col) : col;
+		if (type === "checkbox") {
+			form.querySelectorAll(`input[name="${colEsc}"]`).forEach((i) => {
+				i.checked = false;
+			});
+		} else if (type === "range") {
+			const min = form.querySelector(`[name="${colEsc}__min"]`);
+			const max = form.querySelector(`[name="${colEsc}__max"]`);
+			if (min) min.value = "";
+			if (max) max.value = "";
+		} else if (type === "text") {
+			const input = form.querySelector(`input[name="${colEsc}"], textarea[name="${colEsc}"]`);
+			if (input) input.value = "";
+		}
+	}
+
+	function updatePrefilterWarning() {
+		if (!isPrefilterOpen()) return;
+		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+		const hasFilters = Object.keys(prefilterConditions).length > 0;
+		if (hasFilters) {
+			GDV.prefilter.hidePrefilterWarning();
+		} else {
+			GDV.prefilter.showPrefilterWarning();
+		}
+	}
+
+	function isPrefilterOpen() {
+		return !!document.getElementById("prefilterOverlay");
 	}
 
 	function updatePrefilterConditionsRelatedItems(form) {
@@ -911,86 +1002,6 @@
 		});
 	}
 
-	function renderPrefilterAstNode(form, node) {
-		if (!node) return null;
-		switch (node.ast_type) {
-			case "VALUE":
-				return createPrefilterActiveItem(form, node);
-			case "NOT": {
-				const container = createPrefilterAstGroup(form, node);
-				container.appendChild(createOperator(form, node, "NOT"));
-				const childEl = renderPrefilterAstNode(form, node.child);
-				if (childEl) container.appendChild(childEl);
-				return container;
-			}
-			case "AND":
-			case "OR": {
-				const container = createPrefilterAstGroup(form, node);
-				node.children.forEach((child, i) => {
-					if (i > 0) container.appendChild(createOperator(form, node, node.ast_type));
-					const childEl = renderPrefilterAstNode(form, child);
-					if (childEl) container.appendChild(childEl);
-				});
-				return container;
-			}
-			default:
-				GDV.utils.reportSoftError("Something went wrong while displaying your filters", "The filter display system encountered an unexpected data format and could not render part of your selected filters. This does not affect your data, only how it is shown.", null, { nodeType: node.ast_type, node });
-				return null;
-		}
-	}
-
-	function updatePrefilterActiveItems(form) {
-		const activeItems = form.querySelector("#prefilter-active-items");
-		if (!activeItems) return;
-
-		const prefilterAst = GDV.prefilter.getPrefilterAst();
-		if (!prefilterAst) {
-			activeItems.replaceChildren();
-			return;
-		}
-
-		const astNodeElement = renderPrefilterAstNode(form, prefilterAst);
-		activeItems.replaceChildren(astNodeElement || document.createTextNode(""));
-	}
-
-	function updateAllBasedFromFormColumnChanges(form, col) {
-		GDV.prefilter.updatePrefilterForColumn(form, col);
-		updatePrefilterActiveItems(form, col);
-		updatePrefilterWarning();
-	}
-
-	function clearPrefilterSectionParameter(form, col, type) {
-		const colEsc = window.CSS && CSS.escape ? CSS.escape(col) : col;
-		if (type === "checkbox") {
-			form.querySelectorAll(`input[name="${colEsc}"]`).forEach((i) => {
-				i.checked = false;
-			});
-		} else if (type === "range") {
-			const min = form.querySelector(`[name="${colEsc}__min"]`);
-			const max = form.querySelector(`[name="${colEsc}__max"]`);
-			if (min) min.value = "";
-			if (max) max.value = "";
-		} else if (type === "text") {
-			const input = form.querySelector(`input[name="${colEsc}"], textarea[name="${colEsc}"]`);
-			if (input) input.value = "";
-		}
-	}
-
-	function updatePrefilterWarning() {
-		if (!isPrefilterOpen()) return;
-		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-		const hasFilters = Object.keys(prefilterConditions).length > 0;
-		if (hasFilters) {
-			GDV.prefilter.hidePrefilterWarning();
-		} else {
-			GDV.prefilter.showPrefilterWarning();
-		}
-	}
-
-	function isPrefilterOpen() {
-		return !!document.getElementById("prefilterOverlay");
-	}
-
 	function bindPrefilterGridInputs(form) {
 		form.addEventListener("input", (e) => {
 			const input = e.target;
@@ -999,7 +1010,7 @@
 			// Only text/textarea/range inputs
 			if (input.type === "text" || input.tagName.toLowerCase() === "textarea" || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
 				const col = input.name.replace(/__(min|max)$/, "");
-				updateAllBasedFromFormColumnChanges(form, col);
+				updateAllBasedFromFormActiveItemParameters(form, col);
 			}
 		});
 
@@ -1009,7 +1020,7 @@
 
 			// Only checkboxes, selects, or final number input state
 			const col = input.name.replace(/__(min|max)$/, "");
-			updateAllBasedFromFormColumnChanges(form, col);
+			updateAllBasedFromFormActiveItemParameters(form, col);
 		});
 	};
 
@@ -1019,6 +1030,65 @@
 			GDV.prefilter.setPrefilterAstCurrentNode(node);
 			updatePrefilterActiveItems(form);
 		});
+	}
+
+	function waitForPrefilterFormSubmission(form, resolve) {
+		form.onsubmit = async (e) => {
+			e.preventDefault();
+			const prefilterFromForm = collectPrefilterFromForm();
+			const prefilterConditions = prefilterFromForm.prefilterConditions;
+			const prefilterAst = prefilterFromForm.prefilterAst;
+			if (Object.keys(prefilterConditions).length === 0) {
+				const proceed = await confirmPrefiltersWarning();
+				if (!proceed) return;
+			}
+
+			GDV.state.setPrefilterConditions(prefilterConditions);
+			GDV.state.setPrefilterAst(prefilterAst);
+			GDV.dom.renderMainPagePrefiltersPanel();
+			closePrefilterOverlay();
+			resolve(prefilterConditions);
+		};
+	}
+
+	async function confirmPrefiltersWarning() {
+		return await GDV.utils.requestUserConfirmation("No Prefilters Applied", "⚠ You haven't applied any prefilters.\n" + "Loading the full dataset may be very memory-intensive and slow.\n\n" + "Do you want to continue anyway?");
+	}
+
+	// Accessibility: trap focus inside overlay and restore on close
+	function showModalAccessibility(overlay, resolve) {
+		const previousActive = document.activeElement;
+
+		// Focus first focusable element
+		const first = overlay.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+		if (first) first.focus();
+
+		function onKeydown(e) {
+			if (e.key === "Escape") {
+				if (previousActive?.focus) previousActive.focus();
+				closePrefilterOverlay(overlay);
+				resolve(null);
+			}
+			if (e.key === "Tab") {
+				const focusables = Array.from(overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((el) => !el.disabled && el.offsetParent !== null);
+				if (!focusables.length) return;
+
+				const idx = focusables.indexOf(document.activeElement);
+				if (e.shiftKey && idx === 0) {
+					e.preventDefault();
+					focusables[focusables.length - 1].focus();
+				} else if (!e.shiftKey && idx === focusables.length - 1) {
+					e.preventDefault();
+					focusables[0].focus();
+				}
+			}
+		}
+
+		overlay.addEventListener("keydown", onKeydown);
+		return () => {
+			overlay.removeEventListener("keydown", onKeydown);
+			if (previousActive?.focus) previousActive.focus();
+		};
 	}
 
 	function resetPrefilters(form) {
