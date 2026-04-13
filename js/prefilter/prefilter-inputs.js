@@ -27,11 +27,27 @@
 		prefilterAstCurrentNode = prefilterAst;
 	};
 
+	GDV.prefilter.setPrefilterAstCurrentNode = (prefilterAstCurrentNode_) => {
+		prefilterAstCurrentNode = prefilterAstCurrentNode_;
+	};
+
 	GDV.prefilter.resetPrefilterConditionsAndAst = () => {
 		prefilterConditions = {};
 		prefilterAst = null;
 		prefilterAstCurrentNode = null;
 	};
+
+	GDV.prefilter.addToConditionAndAst = addToConditionAndAst;
+	function addToConditionAndAst(col, condition) {
+		prefilterConditions[col] = condition;
+		addToPrefilterAst(col);
+	}
+
+	GDV.prefilter.removeFromConditionAndAst = removeFromConditionAndAst;
+	function removeFromConditionAndAst(col) {
+		delete prefilterConditions[col];
+		removeFromPrefilterAst(col);
+	}
 
 	GDV.prefilter.toggleSortMode = () => {
 		switch (sortMode) {
@@ -65,31 +81,8 @@
 
 	GDV.prefilter.getSortMode = () => sortMode;
 
-	// Delegated input/change binding (single handler per form)
-	GDV.prefilter.bindPrefilterGridInputs = (form) => {
-		form.addEventListener("input", (e) => {
-			const input = e.target;
-			if (!input || input.classList?.contains("prefilter-search-input") || !input.name) return;
-
-			// Only text/textarea/range inputs
-			if (input.type === "text" || input.tagName.toLowerCase() === "textarea" || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
-				const col = input.name.replace(/__(min|max)$/, "");
-				updateAllBasedFromFormColumnChanges(form, col);
-			}
-		});
-
-		form.addEventListener("change", (e) => {
-			const input = e.target;
-			if (!input || input.classList?.contains("prefilter-search-input") || !input.name) return;
-
-			// Only checkboxes, selects, or final number input state
-			const col = input.name.replace(/__(min|max)$/, "");
-			updateAllBasedFromFormColumnChanges(form, col);
-		});
-	};
-
-	GDV.prefilter.updateLivePrefilterForColumn = updateLivePrefilterForColumn;
-	function updateLivePrefilterForColumn(form, col) {
+	GDV.prefilter.updatePrefilterForColumn = updatePrefilterForColumn;
+	function updatePrefilterForColumn(form, col) {
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		const def = colDefs[col];
 		if (!def) return;
@@ -103,93 +96,6 @@
 		} else {
 			removeFromConditionAndAst(col);
 		}
-	}
-
-	GDV.prefilter.updatePrefilterActiveItems = updatePrefilterActiveItems;
-	function updatePrefilterActiveItems(form) {
-		const summary = form.querySelector("#prefilter-active-items");
-		if (!summary) return;
-		if (!prefilterAst) {
-			summary.replaceChildren();
-			return;
-		}
-		const astNodeElement = renderPrefilterAstNode(prefilterAst);
-		summary.replaceChildren(astNodeElement || document.createTextNode(""));
-	}
-
-	function renderPrefilterAstNode(node) {
-		if (!node) return null;
-		switch (node.ast_type) {
-			case "VALUE":
-				return createPrefilterActiveItem(node.column);
-			case "NOT": {
-				const container = document.createElement("span");
-				container.className = "prefilter-ast-group";
-				container.appendChild(createOperator("NOT"));
-				const child = renderPrefilterAstNode(node.child);
-				if (child) container.appendChild(child);
-				return container;
-			}
-			case "AND":
-			case "OR": {
-				const container = document.createElement("span");
-				container.className = "prefilter-ast-group";
-				node.children.forEach((child, i) => {
-					if (i > 0) container.appendChild(createOperator(node.ast_type));
-					const childEl = renderPrefilterAstNode(child);
-					if (childEl) container.appendChild(childEl);
-				});
-				return container;
-			}
-			default:
-				GDV.utils.reportSoftError("Something went wrong while displaying your filters", "The filter display system encountered an unexpected data format and could not render part of your selected filters. This does not affect your data, only how it is shown.", null, { nodeType: node.ast_type, node });
-				return null;
-		}
-	}
-
-	function createOperator(type) {
-		const el = document.createElement("span");
-		el.className = "prefilter-ast-operator";
-		el.textContent = type;
-		return el;
-	}
-
-	function createPrefilterActiveItem(col) {
-		const val = prefilterConditions[col];
-		if (!val) return null;
-
-		const activeItem = document.createElement("span");
-		activeItem.className = "prefilter-active-item";
-		activeItem.dataset.col = col;
-		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
-		activeItem.textContent = `${text} `;
-		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
-		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
-		activeItem.appendChild(GDV.prefilter.renderRemoveButton(col));
-
-		return activeItem;
-	}
-
-	GDV.prefilter.updatePrefilterWarning = updatePrefilterWarning;
-	function updatePrefilterWarning() {
-		if (!isPrefilterOpen()) return;
-
-		const hasFilters = Object.keys(prefilterConditions).length > 0;
-		if (hasFilters) {
-			GDV.prefilter.hidePrefilterWarning();
-		} else {
-			GDV.prefilter.showPrefilterWarning();
-		}
-	}
-
-	function updateAllBasedFromFormColumnChanges(form, col) {
-		updateLivePrefilterForColumn(form, col);
-		updatePrefilterWarning();
-		updatePrefilterActiveItems(form, col);
-	}
-
-	function isPrefilterOpen() {
-		return !!document.getElementById("prefilterOverlay");
 	}
 
 	function updateNumericPrefilter(form, col, def) {
@@ -269,16 +175,6 @@
 
 	function isTextColumn(form, col) {
 		return getFormElementsByName(form, col).some((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
-	}
-
-	function addToConditionAndAst(col, condition) {
-		prefilterConditions[col] = condition;
-		addToPrefilterAst(col);
-	}
-
-	function removeFromConditionAndAst(col) {
-		delete prefilterConditions[col];
-		removeFromPrefilterAst(col);
 	}
 
 	function createDefaultPrefilterAst() {

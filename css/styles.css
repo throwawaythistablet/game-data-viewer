@@ -22,14 +22,14 @@
 	--btn-regular-bg: var(--bg-elevated);
 	--btn-regular-hover: var(--bg-hover);
 	--btn-main-bg: var(--accent);
-	--btn-main-hover: var(--accent-hover);
+	--btn-main-hover: var(--accent-soft);
 	--btn-secondary-bg: rgba(24, 48, 64, 1);
 	--btn-secondary-hover: rgba(48, 96, 128, 1);
 	--btn-danger-bg: rgba(240, 120, 120, 1);
 	--btn-danger-hover: rgba(240, 160, 160, 1);
 
 	--accent: rgba(96, 192, 255, 1);
-	--accent-hover: rgba(128, 216, 255, 1);
+	--accent-soft: rgba(128, 216, 255, 1);
 	--glow: rgba(240, 196, 16, 1);
 	--glow-strong: rgba(240, 196, 16, 0.75);
 	--glow-soft: rgba(240, 196, 16, 0.5);
@@ -39,11 +39,16 @@
 	--warning: rgba(160, 80, 0, 1);
 	--error: rgba(160, 40, 0, 1);
 
-	--red: rgba(160, 32, 32, 1);
-	--yellow: rgba(240, 196, 16, 1);
-	--orange: rgba(240, 120, 16, 1);
+	--red: rgba(160, 40, 40, 1);
+	--yellow: rgba(240, 200, 20, 1);
+	--orange: rgba(240, 120, 20, 1);
 	--blue: rgba(80, 120, 200, 1);
 	--green: rgba(80, 200, 120, 1);
+	--red-soft: rgba(240, 120, 120, 1);
+	--yellow-soft: rgba(255, 255, 100, 1);
+	--orange-soft: rgba(255, 200, 100, 1);
+	--blue-soft: rgba(160, 200, 255, 1);
+	--green-soft: rgba(160, 255, 200, 1);
 }
 
 body.light-theme {
@@ -66,14 +71,14 @@ body.light-theme {
 	--btn-regular-bg: var(--bg-elevated);
 	--btn-regular-hover: var(--bg-hover);
 	--btn-main-bg: var(--accent);
-	--btn-main-hover: var(--accent-hover);
+	--btn-main-hover: var(--accent-soft);
 	--btn-secondary-bg: rgba(176, 208, 240, 1);
 	--btn-secondary-hover: rgba(144, 176, 208, 1);
 	--btn-danger-bg: rgba(240, 120, 120, 1);
 	--btn-danger-hover: rgba(240, 160, 160, 1);
 
 	--accent: rgba(0, 120, 240, 1);
-	--accent-hover: rgba(0, 80, 160, 1);
+	--accent-soft: rgba(0, 80, 160, 1);
 	--glow: rgba(0, 240, 120, 1);
 	--glow-strong: rgba(0, 240, 120, 0.75);
 	--glow-soft: rgba(0, 240, 120, 0.5);
@@ -84,10 +89,15 @@ body.light-theme {
 	--error: rgba(250, 100, 100, 1);
 
 	--red: rgba(240, 160, 160, 1);
-	--yellow: rgba(240, 224, 120, 1);
+	--yellow: rgba(240, 220, 120, 1);
 	--orange: rgba(240, 160, 80, 1);
 	--blue: rgba(160, 160, 240, 1);
-	--blue: rgba(160, 240, 160, 1);
+	--green: rgba(160, 240, 160, 1);
+	--red-soft: rgba(160, 80, 80, 1);
+	--yellow-soft: rgba(160, 140, 40, 1);
+	--orange-soft: rgba(160, 80, 0, 1);
+	--blue-soft: rgba(80, 80, 160, 1);
+	--green-soft: rgba(80, 160, 80, 1);
 }
 
 /* ==========================================================================
@@ -1137,11 +1147,18 @@ td {
 	display: inline-flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 4px;
+	gap: 10px;
+	padding: 8px 10px;
+	margin: 2px 4px;
+	border-radius: 6px;
+	border: 1px solid transparent;
+}
+
+.prefilter-ast-group.is-focused {
+	border: 1px solid var(--green);
 }
 
 .prefilter-ast-operator {
-	margin: 0 4px;
 	font-size: 12px;
 	color: var(--text-muted);
 	opacity: 0.8;
@@ -1151,6 +1168,7 @@ td {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 4px;
+	border: none;
 }
 
 .prefilter-active-item {
@@ -1159,11 +1177,21 @@ td {
 	background: var(--bg-elevated);
 	color: var(--text-main);
 	padding: 4px 10px;
-	margin: 2px 4px;
 	border-radius: 6px;
 	font-size: 13px;
+	border: 2px solid var(--glow-soft);
+	box-shadow: 0 0 3px transparent;
+	cursor: pointer;
+	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+}
+
+.prefilter-active-item:hover {
 	border: 2px solid var(--glow);
-	box-shadow: 0 0 8px var(--glow-strong);
+	box-shadow: 0 0 3px var(--glow-soft);
+}
+
+.prefilter-active-item.is-focused {
+	border: 2px solid var(--green);
 }
 
 .prefilter-active-item .prefilter-remove-btn {
