@@ -42,8 +42,10 @@
 	}
 
 	async function generateTable(file) {
+		const prefilterAst = GDV.state.getPrefilterAst();
 		const prefilterConditions = GDV.state.getPrefilterConditions();
-		const generatedData = await generateDataFromCsv(file, prefilterConditions);
+		const columnDetails = GDV.state.getActiveColumnDetails();
+		const generatedData = await generateDataFromCsv(file, prefilterAst, prefilterConditions, columnDetails);
 		const context = { file, prefilters: prefilterConditions };
 		if (!Array.isArray(generatedData) || generatedData.length === 0) {
 			GDV.utils.reportHardWarning("No results were found.", "The search did not produce any rows after applying the prefilters.", context);
@@ -52,7 +54,7 @@
 		await GDV.datatable.loadTable(generatedData);
 	}
 
-	async function generateDataFromCsv(file, prefilterConditions) {
+	async function generateDataFromCsv(file, prefilterAst, prefilterConditions, columnDetails) {
 		const generatedData = [];
 		const totalSize = file.size;
 		let rowsProcessed = 0;
@@ -72,7 +74,7 @@
 					}
 
 					// Add row if passes prefilters
-					if (!prefilterConditions || Object.keys(prefilterConditions).length === 0 || isRowIncluded(row.data, prefilterConditions)) {
+					if (!prefilterConditions || Object.keys(prefilterConditions).length === 0 || isRowIncluded(row.data, prefilterAst, prefilterConditions, columnDetails)) {
 						generatedData.push(row.data);
 					}
 
@@ -95,21 +97,57 @@
 		});
 	}
 
-	function isRowIncluded(rowData, prefilterConditions) {
-		return isRowIncludedBySimilarityGame(rowData) || isRowIncludedBasedFromPrefilters(rowData, prefilterConditions);
+	function isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails) {
+		return isRowIncludedBySimilarityGame(rowData) || isRowIncludedBasedFromPrefilters(rowData, prefilterAst, prefilterConditions, columnDetails);
 	}
 
 	function isRowIncludedBySimilarityGame(rowData) {
 		return rowData?.key === GDV.state.getSimilarityGame();
 	}
 
-	function isRowIncludedBasedFromPrefilters(rowData, prefilterConditions) {
-		if (!prefilterConditions || Object.keys(prefilterConditions).length === 0) return true;
-		const columnDetails = GDV.state.getActiveColumnDetails();
+	function isRowIncludedBasedFromPrefilters(rowData, prefilterAst, prefilterConditions, columnDetails) {
+		if (!prefilterAst) return true;
+		return evaluatePrefilterAst(rowData, prefilterAst, prefilterConditions, columnDetails);
+	}
 
-		return Object.entries(prefilterConditions).every(([col, criterion]) =>
-			isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetails[col])
-		);
+	// function isRowIncludedBasedFromPrefilters_old(rowData, prefilterAst, prefilterConditions, columnDetails) {
+	// 	if (!prefilterConditions || Object.keys(prefilterConditions).length === 0) return true;
+	// 	return Object.entries(prefilterConditions).every(([col, criterion]) =>
+	// 		isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetails[col])
+	// 	);
+	// }
+
+	function evaluatePrefilterAst(rowData, node, prefilterConditions, columnDetails) {
+		if (!node) return true;
+		switch (node.ast_type) {
+			case "VALUE": {
+				const col = node.column;
+				const criterion = prefilterConditions?.[col];
+				if (!criterion) return true;
+				return isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetails[col]);
+			}
+			case "NOT": {
+				if (!node.child) return true;
+				return !evaluatePrefilterAst(rowData, node.child, prefilterConditions, columnDetails);
+			}
+			case "AND": {
+				if (!node.children || node.children.length === 0) return true;
+				for (let i = 0; i < node.children.length; i++) {
+					if (!evaluatePrefilterAst(rowData, node.children[i], prefilterConditions, columnDetails)) return false;
+				}
+				return true;
+			}
+			case "OR": {
+				if (!node.children || node.children.length === 0) return true;
+				for (let i = 0; i < node.children.length; i++) {
+					if (evaluatePrefilterAst(rowData, node.children[i], prefilterConditions, columnDetails)) return true;
+				}
+				return false;
+			}
+			default:
+				GDV.utils.reportSoftError("Problem evaluating filters", "Unexpected filter structure encountered while evaluating row visibility. Results may be incorrect.", null, { nodeType: node.ast_type, node });
+				return true;
+		}
 	}
 
 	function isRowIncludedForPrefilterCondition(rowData, col, criterion, colDef) {

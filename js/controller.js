@@ -1,17 +1,17 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 262536],
-      ["data/game_column_details.json", 976729],
-      ["data/game_data_part_1.csv", 52432017],
-      ["data/game_data_part_2.csv", 52434217],
-      ["data/game_data_part_3.csv", 52431253],
-      ["data/game_data_part_4.csv", 47486721],
-      ["data/game_keys.json", 1257567],
-      ["data/game_thumbnails.json", 18751139],
-      ["data/tag_quick_search_patterns.json", 1194967],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 262536],
+		["data/game_column_details.json", 976729],
+		["data/game_data_part_1.csv", 52432017],
+		["data/game_data_part_2.csv", 52434217],
+		["data/game_data_part_3.csv", 52431253],
+		["data/game_data_part_4.csv", 47486721],
+		["data/game_keys.json", 1257567],
+		["data/game_thumbnails.json", 18751139],
+		["data/tag_quick_search_patterns.json", 1194967],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -354,7 +354,7 @@
 			appliedListParts.push("Similarity Game");
 		}
 		const appliedList = appliedListParts.join(" & ");
-		return `${appliedList} found in the URL. Applying now and performing automatic search.`
+		return `${appliedList} found in the URL. Applying now and performing an automatic search.`
 	}
 
 	async function loadCsvFromLocalDataFolder() {

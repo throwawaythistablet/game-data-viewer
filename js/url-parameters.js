@@ -10,13 +10,13 @@
 	}
 
 	GDV.urlParameters.encodeDataAsUrlParameters = encodeDataAsUrlParameters;
-	function encodeDataAsUrlParameters(prefilterConditions, similarityGame) {
+	function encodeDataAsUrlParameters(prefilterConditions, prefilterAst, similarityGame) {
 		const parts = [];
 		const pfPart = encodePrefilterConditions(prefilterConditions);
 		if (pfPart) {
 			parts.push(pfPart);
 		}
-		const astPart = encodePrefilterAst(similarityGame);
+		const astPart = encodePrefilterAst(prefilterAst);
 		if (astPart) {
 			parts.push(astPart);
 		}
@@ -54,7 +54,7 @@
 				GDV.utils.reportSoftWarning("Invalid URL Prefilter Abstract Syntax Tree Parameter", "The URL contained an invalid 'ast' parameter and it will be ignored.");
 			}
 		}
-		return normalizeSimilarityGame(astObj);
+		return astObj;
 	}
 
 	function extractSimilarityGame(params) {
