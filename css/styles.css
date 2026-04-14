@@ -1017,7 +1017,7 @@ td {
 
 .prefilter-summary-container {
 	position: sticky;
-	top: 0;
+	top: 32px;
 	background: var(--bg-panel);
 	border: 1px solid var(--border-subtle);
 	border-radius: 6px;
@@ -1027,7 +1027,6 @@ td {
 	font-size: 14px;
 	line-height: 1.4;
 	color: var(--text-main);
-
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
