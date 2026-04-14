@@ -119,6 +119,14 @@
 		prefilterAstCurrentNode = prefilterAst;
 	}
 
+	GDV.prefilter.copyPrefilterAstToClipboard = copyPrefilterAstToClipboard;
+	function copyPrefilterAstToClipboard() {
+		normalizePrefilterAst();
+		const text = serializeNodeToString(prefilterAst);
+		if (!text) return;
+		navigator.clipboard.writeText(text);
+	}
+
 	GDV.prefilter.toggleSortMode = () => {
 		switch (sortMode) {
 			case "usage":
@@ -578,7 +586,6 @@
 				const type = node.ast_type;
 				const children = node.children;
 				const newChildren = [];
-
 				for (let i = 0; i < children.length; i++) {
 					const child = children[i];
 					if (!child) continue;
@@ -609,11 +616,37 @@
 				}
 				if (deduped.length === 0) return null;
 				if (deduped.length === 1) return deduped[0];
-
 				return { ast_type: type, children: deduped };
 			}
 		}
 		return node;
+	}
+
+	function serializeNodeToString(node) {
+		if (!node) return "";
+		switch (node.ast_type) {
+			case "VALUE":
+				return node.column;
+			case "NOT": {
+				const child = serializeNodeToString(node.child);
+				return child ? `NOT(${child})` : "";
+			}
+			case "AND":
+			case "OR": {
+				if (!node.children || node.children.length === 0) return "";
+				let out = `${node.ast_type}(`;
+				for (let i = 0; i < node.children.length; i++) {
+					const child = serializeNodeToString(node.children[i]);
+					if (!child) continue;
+					if (i > 0) out += ", ";
+					out += child;
+				}
+				out += ")";
+				return out;
+			}
+			default:
+				return "";
+		}
 	}
 
 })();

@@ -240,6 +240,7 @@
 	function createPrefiltersSummaryPrefilterButtonsRow(form) {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-buttons";
+		buttonWrapper.appendChild(createAstToClipboardButton(form));
 		buttonWrapper.appendChild(createFixExpressionButton(form));
 		buttonWrapper.appendChild(createPrefiltersResetButton(form));
 		return buttonWrapper;
@@ -345,6 +346,19 @@
 		btn.addEventListener("click", () => {
 			GDV.prefilter.normalizePrefilterAst();
 			updatePrefilterActiveItemsAndWarning(form);
+		});
+		return btn;
+	}
+
+	function createAstToClipboardButton(form) {
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.textContent = "Copy Expression";
+		btn.className = "btn btn-reset";
+		btn.addEventListener("click", () => {
+			GDV.prefilter.copyPrefilterAstToClipboard();
+			updatePrefilterActiveItemsAndWarning(form);
+			GDV.utils.showInfoBanner("Prefilter Expression Copied", "The prefilter expression has been copied to your clipboard.");
 		});
 		return btn;
 	}
