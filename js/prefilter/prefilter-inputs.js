@@ -223,18 +223,13 @@
 		if (astHasColumn(prefilterAst, col)) return;
 		const newNode = { ast_type: "VALUE", column: col };
 		switch (prefilterAstCurrentNode.ast_type) {
-			case "VALUE": {
-				const oldNode = { ast_type: "VALUE", column: prefilterAstCurrentNode.column };
-				prefilterAstCurrentNode.ast_type = "AND";
-				prefilterAstCurrentNode.children = [oldNode, newNode];
-				delete prefilterAstCurrentNode.column;
-				return;
-			}
+			case "VALUE":
 			case "NOT": {
-				const oldNode = { ast_type: "NOT", child: prefilterAstCurrentNode.child };
-				prefilterAstCurrentNode.ast_type = "AND";
-				prefilterAstCurrentNode.children = [oldNode, newNode];
-				delete prefilterAstCurrentNode.child;
+				const targetNode = prefilterAstCurrentNode;
+				const wrapperNode = { ast_type: "AND", children: [targetNode, newNode] };
+				replaceAstNode(prefilterAst, targetNode, wrapperNode);
+				if (prefilterAst === targetNode) prefilterAst = wrapperNode;
+				prefilterAstCurrentNode = wrapperNode;
 				return;
 			}
 			case "AND":
@@ -249,10 +244,33 @@
 		}
 	}
 
+	function replaceAstNode(node, targetNode, replacementNode) {
+		if (!node) return false;
+		if (node.ast_type === "NOT") {
+			if (node.child === targetNode) {
+				node.child = replacementNode;
+				return true;
+			}
+			return replaceAstNode(node.child, targetNode, replacementNode);
+		}
+		if (node.ast_type === "AND" || node.ast_type === "OR") {
+			if (!node.children) return false;
+			for (let i = 0; i < node.children.length; i++) {
+				if (node.children[i] === targetNode) {
+					node.children[i] = replacementNode;
+					return true;
+				}
+				if (replaceAstNode(node.children[i], targetNode, replacementNode)) return true;
+			}
+		}
+		return false;
+	}
+
 	function astHasColumn(node, col) {
 		if (!node) return false;
 		if (node.ast_type === "VALUE") return node.column === col;
-		if (node.ast_type === "AND") return node.children.some(child => astHasColumn(child, col));
+		if (node.ast_type === "NOT") return astHasColumn(node.child, col);
+		if (node.ast_type === "AND" || node.ast_type === "OR") return node.children.some(child => astHasColumn(child, col));
 		return false;
 	}
 
