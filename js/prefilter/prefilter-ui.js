@@ -222,18 +222,26 @@
 	function createPrefiltersSummaryRight(form, resolve, cleanupFocus) {
 		const rightGroup = document.createElement("div");
 		rightGroup.className = "prefilter-summary-right";
-		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(form, resolve, cleanupFocus));
+		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus));
+		rightGroup.appendChild(createPrefiltersSummaryPrefilterButtonsRow(form));
 		rightGroup.appendChild(createPrefilterSimilarityRow());
 		rightGroup.appendChild(createPrefiltersSummaryCategoryRow(form));
 		return rightGroup;
 	}
 
-	function createPrefiltersSummaryActionButtonsRow(form, resolve, cleanupFocus) {
+	function createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus) {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-buttons";
-		buttonWrapper.appendChild(createPrefiltersResetButton(form));
 		buttonWrapper.appendChild(createPrefiltersCloseButton(resolve, cleanupFocus));
 		buttonWrapper.appendChild(createPrefilterSubmitButton("Generate Table"));
+		return buttonWrapper;
+	}
+
+	function createPrefiltersSummaryPrefilterButtonsRow(form) {
+		const buttonWrapper = document.createElement("div");
+		buttonWrapper.className = "prefilter-summary-buttons";
+		buttonWrapper.appendChild(createFixExpressionButton(form));
+		buttonWrapper.appendChild(createPrefiltersResetButton(form));
 		return buttonWrapper;
 	}
 
@@ -326,6 +334,18 @@
 		btn.textContent = "Reset Prefilters";
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => resetPrefilters(form));
+		return btn;
+	}
+
+	function createFixExpressionButton(form) {
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.textContent = "Fix Expression";
+		btn.className = "btn btn-reset";
+		btn.addEventListener("click", () => {
+			GDV.prefilter.normalizePrefilterAst();
+			updatePrefilterActiveItemsAndWarning(form);
+		});
 		return btn;
 	}
 

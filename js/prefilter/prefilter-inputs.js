@@ -113,6 +113,11 @@
 		moveNodeOutOfGroupInAst(node);
 	}
 
+	GDV.prefilter.normalizePrefilterAst = normalizePrefilterAst;
+	function normalizePrefilterAst() {
+		prefilterAst = normalizeNode(prefilterAst);
+	}
+
 	GDV.prefilter.toggleSortMode = () => {
 		switch (sortMode) {
 			case "usage":
@@ -252,7 +257,7 @@
 			case "NOT": {
 				const targetNode = prefilterAstCurrentNode;
 				const wrapperNode = { ast_type: "AND", children: [targetNode, newNode] };
-				replaceAstNode(prefilterAst, targetNode, wrapperNode);
+				replaceNode(prefilterAst, targetNode, wrapperNode);
 				if (prefilterAst === targetNode) prefilterAst = wrapperNode;
 				prefilterAstCurrentNode = wrapperNode;
 				return;
@@ -434,7 +439,7 @@
 		return node;
 	}
 
-	function replaceAstNode(node, targetNode, replacementNode) {
+	function replaceNode(node, targetNode, replacementNode) {
 		if (!node || !targetNode) return false;
 		if (node === targetNode) return false;
 		if (node.ast_type === "NOT") {
@@ -442,7 +447,7 @@
 				node.child = replacementNode;
 				return true;
 			}
-			return replaceAstNode(node.child, targetNode, replacementNode);
+			return replaceNode(node.child, targetNode, replacementNode);
 		}
 		if (node.ast_type === "AND" || node.ast_type === "OR") {
 			if (!node.children) return false;
@@ -451,7 +456,7 @@
 					node.children[i] = replacementNode;
 					return true;
 				}
-				if (replaceAstNode(node.children[i], targetNode, replacementNode)) return true;
+				if (replaceNode(node.children[i], targetNode, replacementNode)) return true;
 			}
 		}
 		return false;
@@ -467,7 +472,7 @@
 			prefilterAstCurrentNode = transformedNode;
 			return;
 		}
-		replaceAstNode(prefilterAst, targetNode, transformedNode);
+		replaceNode(prefilterAst, targetNode, transformedNode);
 		if (prefilterAstCurrentNode === targetNode) {
 			prefilterAstCurrentNode = transformedNode;
 		}
@@ -551,6 +556,63 @@
 			}
 		}
 		return traversalNode;
+	}
+
+	function normalizeNode(node) {
+		if (!node) return null;
+
+		switch (node.ast_type) {
+			case "VALUE":
+				return node;
+			case "NOT": {
+				if (!node.child) return null;
+				const child = normalizeNode(node.child);
+				if (!child) return null;
+				if (child.ast_type === "NOT") return normalizeNode(child.child);
+				return { ast_type: "NOT", child };
+			}
+			case "AND":
+			case "OR": {
+				if (!node.children) return null;
+				const type = node.ast_type;
+				const children = node.children;
+				const newChildren = [];
+
+				for (let i = 0; i < children.length; i++) {
+					const child = children[i];
+					if (!child) continue;
+					const normalized = normalizeNode(child);
+					if (!normalized) continue;
+					if (normalized.ast_type === type) {
+						const inner = normalized.children;
+						if (inner) {
+							for (let j = 0; j < inner.length; j++) {
+								const innerChild = inner[j];
+								if (innerChild) newChildren.push(innerChild);
+							}
+						}
+						continue;
+					}
+					newChildren.push(normalized);
+				}
+				const deduped = [];
+				for (let i = 0; i < newChildren.length; i++) {
+					let exists = false;
+					for (let j = 0; j < deduped.length; j++) {
+						if (deduped[j] === newChildren[i]) {
+							exists = true;
+							break;
+						}
+					}
+					if (!exists) deduped.push(newChildren[i]);
+				}
+				if (deduped.length === 0) return null;
+				if (deduped.length === 1) return deduped[0];
+
+				return { ast_type: type, children: deduped };
+			}
+		}
+		return node;
 	}
 
 })();
