@@ -891,14 +891,14 @@
 		positionPrefilterAstToolbar(toolbar, focused);
 	}
 
-	function positionPrefilterAstToolbar(toolbar, targetEl) {
+	function positionPrefilterAstToolbar(toolbar, targetElement) {
 		const container = toolbar.parentElement;
 		if (!container) return;
 
 		const containerRect = container.getBoundingClientRect();
-		const targetRect = targetEl.getBoundingClientRect();
+		const targetRect = targetElement.getBoundingClientRect();
 		const toolbarRect = toolbar.getBoundingClientRect();
-		const left = targetRect.left - containerRect.left + 10;
+		const left = targetRect.left - containerRect.left;
 		const top = targetRect.top - containerRect.top - toolbarRect.height - 10;
 
 		toolbar.style.left = `${left}px`;

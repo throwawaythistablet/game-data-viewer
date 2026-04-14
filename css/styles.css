@@ -3,6 +3,7 @@
    ========================================================================== */
 
 :root {
+	--bg-main-rgb-numbers: 16, 16, 16;
 	--bg-main: rgba(16, 16, 16, 1);
 	--bg-overlay: rgba(16, 16, 16, 0.9);
 	--bg-panel: rgba(32, 32, 32, 1);
@@ -30,6 +31,7 @@
 
 	--accent: rgba(96, 192, 255, 1);
 	--accent-soft: rgba(128, 216, 255, 1);
+	--glow-rgb-numbers: 240, 196, 16;
 	--glow: rgba(240, 196, 16, 1);
 	--glow-strong: rgba(240, 196, 16, 0.75);
 	--glow-soft: rgba(240, 196, 16, 0.5);
@@ -52,6 +54,7 @@
 }
 
 body.light-theme {
+	--bg-main-rgb-numbers: 240, 240, 240;
 	--bg-main: rgba(240, 240, 240, 1);
 	--bg-overlay: rgba(240, 240, 240, 0.9);
 	--bg-panel: rgba(224, 224, 224, 1);
@@ -79,6 +82,7 @@ body.light-theme {
 
 	--accent: rgba(0, 120, 240, 1);
 	--accent-soft: rgba(0, 80, 160, 1);
+	--glow-rgb-numbers: 0, 240, 120;
 	--glow: rgba(0, 240, 120, 1);
 	--glow-strong: rgba(0, 240, 120, 0.75);
 	--glow-soft: rgba(0, 240, 120, 0.5);
@@ -1200,27 +1204,17 @@ td {
 	pointer-events: auto;
 	padding: 3px;
 	border-radius: 12px;
-	background: rgba(255, 235, 80, 0.16);
-	border: 1px solid rgba(255, 255, 160, 0.75);
-	box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06) inset, 0 0 28px rgba(255, 235, 80, 0.45);
+	background: rgba(var(--glow-rgb-numbers), 0.10);
+	border: 1px solid rgba(var(--glow-rgb-numbers), 1);
+	box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 28px rgba(var(--glow-rgb-numbers), 0.4);
 	transform: translateY(-16px) scale(0.70);
 	opacity: 0;
 	animation: prefilter-toolbar-pop 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.prefilter-ast-toolbar::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 12px;
-	pointer-events: none;
-	background: radial-gradient(circle at top left, rgba(255, 255, 200, 0.55), rgba(255, 235, 80, 0.12) 45%, rgba(0, 0, 0, 0.10));
-	opacity: 0.9;
-}
-
 .prefilter-ast-toolbar-inner {
-	background: rgba(18, 16, 6, 0.35);
-	border: 1px solid rgba(255, 255, 160, 0.35);
+	background: rgba(var(--bg-main-rgb-numbers), 0.10);
+	border: 1px solid rgba(var(--glow-rgb-numbers), 0.8);
 	border-radius: 9px;
 	padding: 3px;
 	display: flex;
@@ -1229,27 +1223,27 @@ td {
 }
 
 .btn-toolbar {
-	background: rgba(255, 235, 80, 0.28);
+	background: rgba(var(--glow-rgb-numbers), 0.4);
 	color: var(--text-main);
-	border: 1px solid rgba(255, 255, 200, 0.65);
+	border: 1px solid rgba(255, 255, 255, 0.6);
 	padding: 4px 8px;
 	border-radius: 7px;
 	font-size: 11px;
 	font-weight: 700;
-	box-shadow: 0 5px 0 rgba(0, 0, 0, 0.55);
+	box-shadow: 0 5px 0 rgba(0, 0, 0, 0.4);
 	transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .btn-toolbar:hover {
-	background: rgba(255, 245, 140, 0.45);
-	border-color: rgba(255, 255, 220, 1);
+	background: rgba(var(--glow-rgb-numbers), 0.8);
+	border-color: rgba(255, 255, 255, 1);
 	transform: translateY(-2px);
-	box-shadow: 0 10px 0 rgba(0, 0, 0, 0.75);
+	box-shadow: 0 10px 0 rgba(0, 0, 0, 0.8);
 }
 
 .btn-toolbar:active {
 	transform: translateY(1px);
-	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+	box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
 }
 
 @keyframes prefilter-toolbar-pop {
