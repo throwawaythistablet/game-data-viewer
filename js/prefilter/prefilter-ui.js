@@ -659,18 +659,67 @@
 	function createToolbarContent(node) {
 		const container = document.createElement("div");
 		container.className = "prefilter-ast-toolbar-inner";
-
-		const removeBtn = document.createElement("button");
-		removeBtn.type = "button";
-		removeBtn.className = "btn btn-toolbar";
-		removeBtn.textContent = "Remove Item";
-		removeBtn.addEventListener("click", (e) => {
-			e.stopPropagation();
-			removeNodeAndUpdateAll(node);
-		});
-
-		container.appendChild(removeBtn);
+		container.appendChild(createToolbarRemoveButton(node));
+		container.appendChild(createToolbarNotButton(node));
+		container.appendChild(createToolbarAndButton(node));
+		container.appendChild(createToolbarOrButton(node));
 		return container;
+	}
+
+	function createToolbarRemoveButton(node) {
+		const removeButton = document.createElement("button");
+		removeButton.type = "button";
+		removeButton.className = "btn btn-toolbar";
+		removeButton.textContent = "Remove Item";
+		removeButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi(node);
+			const form = document.querySelector(".prefilter-form");
+			updatePrefilterActiveItemsAndWarning(form);
+		});
+		return removeButton;
+	}
+
+	function createToolbarNotButton(node) {
+		const notButton = document.createElement("button");
+		notButton.type = "button";
+		notButton.className = "btn btn-toolbar";
+		notButton.textContent = "Not";
+		notButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			GDV.prefilter.applyNotToNode(node);
+			const form = document.querySelector(".prefilter-form");
+			updatePrefilterActiveItemsAndWarning(form);
+		});
+		return notButton;
+	}
+
+	function createToolbarAndButton(node) {
+		const andButton = document.createElement("button");
+		andButton.type = "button";
+		andButton.className = "btn btn-toolbar";
+		andButton.textContent = "And";
+		andButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			GDV.prefilter.applyAndToNode(node);
+			const form = document.querySelector(".prefilter-form");
+			updatePrefilterActiveItemsAndWarning(form);
+		});
+		return andButton;
+	}
+
+	function createToolbarOrButton(node) {
+		const orButton = document.createElement("button");
+		orButton.type = "button";
+		orButton.className = "btn btn-toolbar";
+		orButton.textContent = "Or";
+		orButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			GDV.prefilter.applyOrToNode(node);
+			const form = document.querySelector(".prefilter-form");
+			updatePrefilterActiveItemsAndWarning(form);
+		});
+		return orButton;
 	}
 
 	function createPrefilterActiveItem(form, node) {
@@ -741,18 +790,15 @@
 
 	function removeColumnWithTypeAndUpdateAll(form, col, type) {
 		clearActiveItemParametersWithType(form, col, type);
-		updateAllBasedFromFormActiveItemParameters(form, col);
+		updateAllBasedFromActiveItemParametersChanges(form, col);
 	}
 
-	function removeNodeAndUpdateAll(node) {
-		GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi(node);
-		const form = document.querySelector(".prefilter-form");
-		updatePrefilterActiveItems(form);
-		updatePrefilterWarning();
-	}
-
-	function updateAllBasedFromFormActiveItemParameters(form, col) {
+	function updateAllBasedFromActiveItemParametersChanges(form, col) {
 		GDV.prefilter.updateActiveItemParametersInConditionAndAst(form, col);
+		updatePrefilterActiveItemsAndWarning(form);
+	}
+
+	function updatePrefilterActiveItemsAndWarning(form) {
 		updatePrefilterActiveItems(form);
 		updatePrefilterWarning();
 	}
@@ -870,8 +916,7 @@
 
 	function updatePrefilterConditionsRelatedItems(form) {
 		GDV.prefilter.setPrefilterConditionsAndAst(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst());
-		updatePrefilterActiveItems(form);
-		updatePrefilterWarning();
+		updatePrefilterActiveItemsAndWarning(form);
 	}
 
 	GDV.prefilter.updatePrefilterSectionsDebounced = updatePrefilterSectionsDebounced;
@@ -1021,7 +1066,7 @@
 			// Only text/textarea/range inputs
 			if (input.type === "text" || input.tagName.toLowerCase() === "textarea" || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
 				const col = input.name.replace(/__(min|max)$/, "");
-				updateAllBasedFromFormActiveItemParameters(form, col);
+				updateAllBasedFromActiveItemParametersChanges(form, col);
 			}
 		});
 
@@ -1031,7 +1076,7 @@
 
 			// Only checkboxes, selects, or final number input state
 			const col = input.name.replace(/__(min|max)$/, "");
-			updateAllBasedFromFormActiveItemParameters(form, col);
+			updateAllBasedFromActiveItemParametersChanges(form, col);
 		});
 	};
 
@@ -1136,8 +1181,7 @@
 
 		// Reset and update
 		GDV.prefilter.resetPrefilterConditionsAndAst();
-		updatePrefilterActiveItems(form);
-		updatePrefilterWarning();
+		updatePrefilterActiveItemsAndWarning(form);
 	}
 
 	function resetPrefilterCategory(form) {

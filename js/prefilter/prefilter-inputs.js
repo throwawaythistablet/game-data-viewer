@@ -76,7 +76,6 @@
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		const def = colDefs[col];
 		if (!def) return;
-
 		if (isNumericColumn(def)) {
 			updateNumericPrefilter(form, col, def);
 		} else if (isCheckboxColumn(form, col)) {
@@ -85,6 +84,54 @@
 			updateTextPrefilter(form, col);
 		} else {
 			removeFromConditionAndAst(col);
+		}
+	}
+
+	GDV.prefilter.applyNotToNode = applyNotToNode;
+	function applyNotToNode(node) {
+		if (!prefilterAst || !node) return;
+		const targetNode = node;
+		const transformedNode = convertNodeToNot(targetNode);
+		if (prefilterAst === targetNode) {
+			prefilterAst = transformedNode;
+			prefilterAstCurrentNode = transformedNode;
+			return;
+		}
+		replaceAstNode(prefilterAst, targetNode, transformedNode);
+		if (prefilterAstCurrentNode === targetNode) {
+			prefilterAstCurrentNode = transformedNode;
+		}
+	}
+
+	GDV.prefilter.applyAndToNode = applyAndToNode;
+	function applyAndToNode(node) {
+		if (!prefilterAst || !node) return;
+		const targetNode = node;
+		const transformedNode = convertNodeToAnd(targetNode);
+		if (prefilterAst === targetNode) {
+			prefilterAst = transformedNode;
+			prefilterAstCurrentNode = transformedNode;
+			return;
+		}
+		replaceAstNode(prefilterAst, targetNode, transformedNode);
+		if (prefilterAstCurrentNode === targetNode) {
+			prefilterAstCurrentNode = transformedNode;
+		}
+	}
+
+	GDV.prefilter.applyOrToNode = applyOrToNode;
+	function applyOrToNode(node) {
+		if (!prefilterAst || !node) return;
+		const targetNode = node;
+		const transformedNode = convertNodeToOr(targetNode);
+		if (prefilterAst === targetNode) {
+			prefilterAst = transformedNode;
+			prefilterAstCurrentNode = transformedNode;
+			return;
+		}
+		replaceAstNode(prefilterAst, targetNode, transformedNode);
+		if (prefilterAstCurrentNode === targetNode) {
+			prefilterAstCurrentNode = transformedNode;
 		}
 	}
 
@@ -244,28 +291,6 @@
 		}
 	}
 
-	function replaceAstNode(node, targetNode, replacementNode) {
-		if (!node) return false;
-		if (node.ast_type === "NOT") {
-			if (node.child === targetNode) {
-				node.child = replacementNode;
-				return true;
-			}
-			return replaceAstNode(node.child, targetNode, replacementNode);
-		}
-		if (node.ast_type === "AND" || node.ast_type === "OR") {
-			if (!node.children) return false;
-			for (let i = 0; i < node.children.length; i++) {
-				if (node.children[i] === targetNode) {
-					node.children[i] = replacementNode;
-					return true;
-				}
-				if (replaceAstNode(node.children[i], targetNode, replacementNode)) return true;
-			}
-		}
-		return false;
-	}
-
 	function astHasColumn(node, col) {
 		if (!node) return false;
 		if (node.ast_type === "VALUE") return node.column === col;
@@ -393,4 +418,62 @@
 				return;
 		}
 	}
+
+	function convertNodeToNot(node) {
+		if (node.ast_type === "NOT") {
+			return node.child || null;
+		}
+		return { ast_type: "NOT", child: node };
+	}
+
+	function convertNodeToAnd(node) {
+		if (!node) return node;
+		if (node.ast_type === "AND") return node;
+		if (node.ast_type === "VALUE" || node.ast_type === "NOT") {
+			return { ast_type: "AND", children: [node] };
+		}
+		if (node.ast_type === "OR") {
+			node.ast_type = "AND";
+			return node;
+		}
+		return node;
+	}
+
+	function convertNodeToOr(node) {
+		if (!node) return node;
+		if (node.ast_type === "OR") return node;
+		if (node.ast_type === "VALUE" || node.ast_type === "NOT") {
+			return { ast_type: "AND", children: [node] };
+		}
+		if (node.ast_type === "AND") {
+			node.ast_type = "OR";
+			return node;
+		}
+		return node;
+	}
+
+	function replaceAstNode(node, targetNode, replacementNode) {
+		if (!node || !targetNode) return false;
+		if (node === targetNode) return false;
+		if (node.ast_type === "NOT") {
+			if (node.child === targetNode) {
+				node.child = replacementNode;
+				return true;
+			}
+			return replaceAstNode(node.child, targetNode, replacementNode);
+		}
+		if (node.ast_type === "AND" || node.ast_type === "OR") {
+			if (!node.children) return false;
+			for (let i = 0; i < node.children.length; i++) {
+				if (node.children[i] === targetNode) {
+					node.children[i] = replacementNode;
+					return true;
+				}
+				if (replaceAstNode(node.children[i], targetNode, replacementNode)) return true;
+			}
+		}
+		return false;
+	}
+
+
 })();
