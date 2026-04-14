@@ -95,74 +95,68 @@
 		});
 	}
 
-	function isRowIncluded(rowData, prefilter) {
-		return isRowIncludedBySimilarityGame(rowData) || isRowIncludedBasedFromPrefilters(rowData, prefilter);
+	function isRowIncluded(rowData, prefilterConditions) {
+		return isRowIncludedBySimilarityGame(rowData) || isRowIncludedBasedFromPrefilters(rowData, prefilterConditions);
 	}
 
 	function isRowIncludedBySimilarityGame(rowData) {
-		const keyValue = rowData?.key;
-		return keyValue === GDV.state.getSimilarityGame();
+		return rowData?.key === GDV.state.getSimilarityGame();
 	}
 
-	function isRowIncludedBasedFromPrefilters(rowData, prefilter) {
-		if (!prefilter || Object.keys(prefilter).length === 0) return true;
+	function isRowIncludedBasedFromPrefilters(rowData, prefilterConditions) {
+		if (!prefilterConditions || Object.keys(prefilterConditions).length === 0) return true;
+		const columnDetails = GDV.state.getActiveColumnDetails();
+
+		return Object.entries(prefilterConditions).every(([col, criterion]) =>
+			isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetails[col])
+		);
+	}
+
+	function isRowIncludedForPrefilterCondition(rowData, col, criterion, colDef) {
+		if (!colDef) return true;
+
 		const normalize = (v) => (v == null ? "" : typeof v === "string" ? v.trim() : v);
+		const rawVal = rowData[col];
+		const val = normalize(rawVal);
 
-		return Object.entries(prefilter).every(([col, criterion]) => {
-			const colDef = GDV.state.getActiveColumnDetails()[col];
-			if (!colDef) return true;
+		if (colDef.type === "tag") {
+			if (!Array.isArray(criterion.choices)) return true;
+			return criterion.choices.includes(Number(val));
+		}
 
-			const rawVal = rowData[col];
-			const val = normalize(rawVal);
+		if (colDef.type === "bool") {
+			if (!Array.isArray(criterion.choices)) return true;
+			const rowBool = normalizeBool(val);
+			if (rowBool === null) return true;
+			return criterion.choices.map(normalizeBool).includes(rowBool);
+		}
 
-			// Numeric
-			if (colDef.type === "int" || colDef.type === "float") {
-				const num = Number(val);
-				if (Number.isNaN(num)) return true;
-				if (criterion.min != null && num < criterion.min) return false;
-				if (criterion.max != null && num > criterion.max) return false;
-				if (Array.isArray(criterion.choices) && criterion.choices.length > 0) {
-					if (!criterion.choices.includes(num)) return false;
-				}
-				return true;
-			}
-
-			// Tag: 0 or 1
-			if (colDef.type === "tag") {
-				if (!Array.isArray(criterion.choices)) return true;
-				return criterion.choices.includes(Number(val));
-			}
-
-			// Boolean
-			if (colDef.type === "bool") {
-				if (!Array.isArray(criterion.choices)) return true;
-
-				const rowBool = normalizeBool(val);
-				if (rowBool === null) return true;
-
-				return criterion.choices.map(normalizeBool).includes(rowBool);
-			}
-
-			// Any type with choices
-			if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
-				if (!Array.isArray(criterion.choices)) return true;
-				if (criterion.choices.length === 0) return false;
-				let typedVal = val;
-				if (colDef.type === "int") typedVal = parseInt(val, 10);
-				if (colDef.type === "float") typedVal = parseFloat(val);
-				if (colDef.type === "bool") typedVal = normalizeBool(val);
-				if (!criterion.choices.includes(typedVal)) return false;
-				return true;
-			}
-
-			// Text search
-			if (criterion.text && Array.isArray(criterion.text)) {
-				const lowerVal = String(val).toLowerCase();
-				return criterion.text.some((t) => lowerVal.includes(String(t).toLowerCase()));
-			}
-
+		if (colDef.type === "int" || colDef.type === "float") {
+			const num = Number(val);
+			if (Number.isNaN(num)) return true;
+			if (criterion.min != null && num < criterion.min) return false;
+			if (criterion.max != null && num > criterion.max) return false;
+			if (Array.isArray(criterion.choices) && criterion.choices.length > 0 && !criterion.choices.includes(num)) return false;
 			return true;
-		});
+		}
+
+		if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
+			if (!Array.isArray(criterion.choices)) return true;
+			if (criterion.choices.length === 0) return false;
+			let typedVal = val;
+			if (colDef.type === "int") typedVal = parseInt(val, 10);
+			if (colDef.type === "float") typedVal = parseFloat(val);
+			if (colDef.type === "bool") typedVal = normalizeBool(val);
+			if (!criterion.choices.includes(typedVal)) return false;
+			return true;
+		}
+
+		if (criterion.text && Array.isArray(criterion.text)) {
+			const lowerVal = String(val).toLowerCase();
+			return criterion.text.some((t) => lowerVal.includes(String(t).toLowerCase()));
+		}
+
+		return true;
 	}
 
 	// Normalize boolean values from strings/CSV/etc
