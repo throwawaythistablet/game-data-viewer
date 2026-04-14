@@ -184,7 +184,6 @@
 		return container;
 	}
 
-	// Active summary
 	function replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus) {
 		const oldSummary = form.querySelector(".prefilter-summary-container");
 		const newSummary = createPrefiltersSummary(form, resolve, cleanupFocus);
@@ -663,6 +662,8 @@
 		container.appendChild(createToolbarNotButton(node));
 		container.appendChild(createToolbarAndButton(node));
 		container.appendChild(createToolbarOrButton(node));
+		container.appendChild(createToolbarMoveInButton(node));
+		container.appendChild(createToolbarMoveOutButton(node));
 		return container;
 	}
 
@@ -716,6 +717,34 @@
 		orButton.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyOrToNode(node);
+			const form = document.querySelector(".prefilter-form");
+			updatePrefilterActiveItemsAndWarning(form);
+		});
+		return orButton;
+	}
+
+	function createToolbarMoveInButton(node) {
+		const orButton = document.createElement("button");
+		orButton.type = "button";
+		orButton.className = "btn btn-toolbar";
+		orButton.textContent = "Move In";
+		orButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			GDV.prefilter.moveNodeIntoGroup(node);
+			const form = document.querySelector(".prefilter-form");
+			updatePrefilterActiveItemsAndWarning(form);
+		});
+		return orButton;
+	}
+
+	function createToolbarMoveOutButton(node) {
+		const orButton = document.createElement("button");
+		orButton.type = "button";
+		orButton.className = "btn btn-toolbar";
+		orButton.textContent = "Move Out";
+		orButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			GDV.prefilter.moveNodeOutOfGroup(node);
 			const form = document.querySelector(".prefilter-form");
 			updatePrefilterActiveItemsAndWarning(form);
 		});

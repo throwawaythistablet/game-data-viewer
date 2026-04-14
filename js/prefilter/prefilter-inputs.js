@@ -89,50 +89,27 @@
 
 	GDV.prefilter.applyNotToNode = applyNotToNode;
 	function applyNotToNode(node) {
-		if (!prefilterAst || !node) return;
-		const targetNode = node;
-		const transformedNode = convertNodeToNot(targetNode);
-		if (prefilterAst === targetNode) {
-			prefilterAst = transformedNode;
-			prefilterAstCurrentNode = transformedNode;
-			return;
-		}
-		replaceAstNode(prefilterAst, targetNode, transformedNode);
-		if (prefilterAstCurrentNode === targetNode) {
-			prefilterAstCurrentNode = transformedNode;
-		}
+		applyOperationToNode(node, convertNodeToNot);
 	}
 
 	GDV.prefilter.applyAndToNode = applyAndToNode;
 	function applyAndToNode(node) {
-		if (!prefilterAst || !node) return;
-		const targetNode = node;
-		const transformedNode = convertNodeToAnd(targetNode);
-		if (prefilterAst === targetNode) {
-			prefilterAst = transformedNode;
-			prefilterAstCurrentNode = transformedNode;
-			return;
-		}
-		replaceAstNode(prefilterAst, targetNode, transformedNode);
-		if (prefilterAstCurrentNode === targetNode) {
-			prefilterAstCurrentNode = transformedNode;
-		}
+		applyOperationToNode(node, convertNodeToAnd);
 	}
 
 	GDV.prefilter.applyOrToNode = applyOrToNode;
 	function applyOrToNode(node) {
-		if (!prefilterAst || !node) return;
-		const targetNode = node;
-		const transformedNode = convertNodeToOr(targetNode);
-		if (prefilterAst === targetNode) {
-			prefilterAst = transformedNode;
-			prefilterAstCurrentNode = transformedNode;
-			return;
-		}
-		replaceAstNode(prefilterAst, targetNode, transformedNode);
-		if (prefilterAstCurrentNode === targetNode) {
-			prefilterAstCurrentNode = transformedNode;
-		}
+		applyOperationToNode(node, convertNodeToOr);
+	}
+
+	GDV.prefilter.moveNodeIntoGroup = moveNodeIntoGroup;
+	function moveNodeIntoGroup(node) {
+		applyOperationToNode(node, wrapNodeWithAnd);
+	}
+
+	GDV.prefilter.moveNodeOutOfGroup = moveNodeOutOfGroup;
+	function moveNodeOutOfGroup(node) {
+		moveNodeOutOfGroupInAst(node);
 	}
 
 	GDV.prefilter.toggleSortMode = () => {
@@ -419,6 +396,10 @@
 		}
 	}
 
+	function wrapNodeWithAnd(node) {
+		return { ast_type: "AND", children: [node] };
+	}
+
 	function convertNodeToNot(node) {
 		if (node.ast_type === "NOT") {
 			return node.child || null;
@@ -475,5 +456,65 @@
 		return false;
 	}
 
+	function applyOperationToNode(node, operationFunction) {
+		if (!prefilterAst || !node || typeof operationFunction !== "function") return;
+		const targetNode = node;
+		const transformedNode = operationFunction(targetNode);
+		if (!transformedNode) return;
+		if (prefilterAst === targetNode) {
+			prefilterAst = transformedNode;
+			prefilterAstCurrentNode = transformedNode;
+			return;
+		}
+		replaceAstNode(prefilterAst, targetNode, transformedNode);
+		if (prefilterAstCurrentNode === targetNode) {
+			prefilterAstCurrentNode = transformedNode;
+		}
+	}
+
+	function moveNodeOutOfGroupInAst(node) {
+		if (!prefilterAst || !node) return;
+		const rebuilt = moveOutOfGroup(prefilterAst, node);
+		if (!rebuilt) return;
+		prefilterAst = rebuilt;
+		return rebuilt;
+	}
+
+	function moveOutOfGroup(traversalNode, targetNode) {
+		if (!traversalNode) return null;
+		if (traversalNode === targetNode) return targetNode;
+		switch (traversalNode.ast_type) {
+			case "VALUE":
+				return traversalNode;
+			case "NOT": {
+				const child = traversalNode.child;
+				if (!child) return traversalNode;
+				const newChild = moveOutOfGroup(child, targetNode);
+				if (newChild === targetNode) return targetNode;
+				return { ast_type: "NOT", child: newChild };
+			}
+			case "AND":
+			case "OR": {
+				if (!traversalNode.children) return traversalNode;
+				const children = traversalNode.children;
+				for (let i = 0; i < children.length; i++) {
+					const child = children[i];
+					if (!child) continue;
+					if (child === targetNode) {
+						children.splice(i, 1);
+						return { ast_type: "AND", children: [targetNode, traversalNode] };
+					}
+					const updated = moveOutOfGroup(child, targetNode);
+					if (updated === targetNode) {
+						children.splice(i, 1);
+						return { ast_type: "AND", children: [targetNode, traversalNode] };
+					}
+					children[i] = updated;
+				}
+				return traversalNode;
+			}
+		}
+		return traversalNode;
+	}
 
 })();
