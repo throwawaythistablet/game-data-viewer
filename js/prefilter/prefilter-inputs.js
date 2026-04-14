@@ -105,6 +105,7 @@
 	GDV.prefilter.moveNodeIntoGroup = moveNodeIntoGroup;
 	function moveNodeIntoGroup(node) {
 		applyOperationToNode(node, wrapNodeWithAnd);
+		prefilterAstCurrentNode = prefilterAstCurrentNode.children[0]
 	}
 
 	GDV.prefilter.moveNodeOutOfGroup = moveNodeOutOfGroup;
@@ -488,10 +489,9 @@
 				return traversalNode;
 			case "NOT": {
 				const child = traversalNode.child;
-				if (!child) return traversalNode;
-				const newChild = moveOutOfGroup(child, targetNode);
-				if (newChild === targetNode) return targetNode;
-				return { ast_type: "NOT", child: newChild };
+				if (!child) return null;
+				traversalNode.child = moveOutOfGroup(child, targetNode);
+				return traversalNode;
 			}
 			case "AND":
 			case "OR": {
@@ -500,16 +500,52 @@
 				for (let i = 0; i < children.length; i++) {
 					const child = children[i];
 					if (!child) continue;
+					if (child.ast_type === "AND" || child.ast_type === "OR") {
+						const grandChildren = child.children;
+						if (grandChildren.length === 1) {
+							const grandChild = grandChildren[0];
+							if (grandChild === targetNode) {
+								traversalNode.children.push(targetNode);
+								traversalNode.children.splice(i, 1);
+								return traversalNode;
+							}
+						}
+						for (let j = 0; j < grandChildren.length; j++) {
+							const grandChild = grandChildren[j];
+							if (grandChild === targetNode) {
+								traversalNode.children.push(targetNode);
+								traversalNode.children[i].children.splice(j, 1);
+								return traversalNode;
+							}
+						}
+					}
+				}
+				if (children.length === 1) {
+					const child = children[0];
+					if (!child) return null;
+					if (child === targetNode) return targetNode;
+					const newChild = moveOutOfGroup(child, targetNode);
+					traversalNode.children[0] = newChild;
+					if (newChild === targetNode) return targetNode;
+					return traversalNode;
+				}
+				for (let i = 0; i < children.length; i++) {
+					const child = children[i];
+					if (!child) continue;
 					if (child === targetNode) {
+						if (children.length === 2) return traversalNode;
+						const newChildren = [traversalNode, targetNode];
 						children.splice(i, 1);
-						return { ast_type: "AND", children: [targetNode, traversalNode] };
+						return { ast_type: "AND", children: newChildren };
 					}
-					const updated = moveOutOfGroup(child, targetNode);
-					if (updated === targetNode) {
+					const newChild = moveOutOfGroup(child, targetNode);
+					if (newChild === targetNode) {
+						if (children.length === 2) return traversalNode;
+						const newChildren = [traversalNode, targetNode];
 						children.splice(i, 1);
-						return { ast_type: "AND", children: [targetNode, traversalNode] };
+						return { ast_type: "AND", children: newChildren };
 					}
-					children[i] = updated;
+					children[i] = newChild;
 				}
 				return traversalNode;
 			}

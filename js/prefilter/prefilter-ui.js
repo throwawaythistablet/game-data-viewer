@@ -847,6 +847,7 @@
 	}
 
 	function renderPrefilterAstNode(form, node) {
+		const prefilterAst = GDV.prefilter.getPrefilterAst();
 		if (!node) return null;
 		switch (node.ast_type) {
 			case "VALUE":
@@ -863,13 +864,13 @@
 			case "AND":
 			case "OR": {
 				const container = createPrefilterAstGroup(form, node);
-				container.appendChild(createAstParenthesis("("));
+				if (prefilterAst !== node) container.appendChild(createAstParenthesis("("));
 				node.children.forEach((child, i) => {
 					if (i > 0) container.appendChild(createAstOperator(form, node, node.ast_type));
 					const childEl = renderPrefilterAstNode(form, child);
 					if (childEl) container.appendChild(childEl);
 				});
-				container.appendChild(createAstParenthesis(")"));
+				if (prefilterAst !== node) container.appendChild(createAstParenthesis(")"));
 				return container;
 			}
 			default:
