@@ -95,8 +95,8 @@
 		});
 	}
 
-	function isRowIncluded(row, prefilter) {
-		return isRowIncludedBySimilarityGame(row) || isRowIncludedBasedFromPrefilters(row, prefilter);
+	function isRowIncluded(rowData, prefilter) {
+		return isRowIncludedBySimilarityGame(rowData) || isRowIncludedBasedFromPrefilters(rowData, prefilter);
 	}
 
 	function isRowIncludedBySimilarityGame(rowData) {

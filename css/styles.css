@@ -1140,7 +1140,59 @@ td {
 }
 
 .prefilter-ast-group.is-focused {
-	border: 2px solid var(--glow);
+	border: 2px solid var(--glow-soft);
+	box-shadow: 0 0 3px var(--glow-soft);
+}
+
+.prefilter-ast-operator {
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.prefilter-ast-paren {
+	font-size: 14px;
+	color: var(--text-muted);
+}
+
+.prefilter-active-item {
+	display: inline-flex;
+	align-items: center;
+	background: var(--bg-elevated);
+	color: var(--text-main);
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 13px;
+	border: 2px solid var(--green-soft);
+	box-shadow: 0 0 3px transparent;
+	cursor: pointer;
+	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+}
+
+.prefilter-active-item:hover {
+	border: 2px solid var(--green);
+	box-shadow: 0 0 3px var(--green-soft);
+}
+
+.prefilter-active-item.is-focused {
+	border: 2px solid var(--glow-soft);
+	box-shadow: 0 0 3px var(--glow-soft);
+}
+
+.prefilter-active-item .prefilter-remove-btn {
+	background: transparent;
+	border: none;
+	margin-left: 6px;
+	cursor: pointer;
+	font-weight: bold;
+	color: var(--danger);
+	font-size: 14px;
+	line-height: 1;
+}
+
+.prefilter-active-item .prefilter-remove-btn:hover {
+	color: var(--glow-strong);
+	transform: scale(1.2);
+	transition: transform 0.15s ease;
 }
 
 .prefilter-ast-toolbar {
@@ -1211,53 +1263,6 @@ td {
 		opacity: 1;
 		transform: translateY(-16px) scale(1);
 	}
-}
-
-.prefilter-ast-operator {
-	font-size: 12px;
-	color: var(--text-muted);
-	opacity: 0.8;
-}
-
-.prefilter-active-item {
-	display: inline-flex;
-	align-items: center;
-	background: var(--bg-elevated);
-	color: var(--text-main);
-	padding: 4px 10px;
-	border-radius: 6px;
-	font-size: 13px;
-	border: 2px solid var(--green-soft);
-	box-shadow: 0 0 3px transparent;
-	cursor: pointer;
-	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
-}
-
-.prefilter-active-item:hover {
-	border: 2px solid var(--green);
-	box-shadow: 0 0 3px var(--green-soft);
-}
-
-.prefilter-active-item.is-focused {
-	border: 2px solid var(--glow);
-	box-shadow: 0 0 3px var(--glow-soft);
-}
-
-.prefilter-active-item .prefilter-remove-btn {
-	background: transparent;
-	border: none;
-	margin-left: 6px;
-	cursor: pointer;
-	font-weight: bold;
-	color: var(--danger);
-	font-size: 14px;
-	line-height: 1;
-}
-
-.prefilter-active-item .prefilter-remove-btn:hover {
-	color: var(--glow-strong);
-	transform: scale(1.2);
-	transition: transform 0.15s ease;
 }
 
 .prefilter-loading-indicator {

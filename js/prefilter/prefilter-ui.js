@@ -696,12 +696,19 @@
 		return activeItem;
 	}
 
-	function createOperator(form, node, type) {
+	function createAstOperator(form, node, type) {
 		const operator = document.createElement("span");
 		operator.className = "prefilter-ast-operator";
 		operator.textContent = type;
 		bindPrefilterAstNodeFocus(form, operator, node)
 		return operator;
+	}
+
+	function createAstParenthesis(text) {
+		const el = document.createElement("span");
+		el.className = "prefilter-ast-paren";
+		el.textContent = text;
+		return el;
 	}
 
 	function collectPrefilterFromForm() {
@@ -764,6 +771,38 @@
 		renderPrefilterAstToolbar(form);
 	}
 
+	function renderPrefilterAstNode(form, node) {
+		if (!node) return null;
+		switch (node.ast_type) {
+			case "VALUE":
+				return createPrefilterActiveItem(form, node);
+			case "NOT": {
+				const container = createPrefilterAstGroup(form, node);
+				container.appendChild(createAstParenthesis("("));
+				container.appendChild(createAstOperator(form, node, "NOT"));
+				const childEl = renderPrefilterAstNode(form, node.child);
+				if (childEl) container.appendChild(childEl);
+				container.appendChild(createAstParenthesis(")"));
+				return container;
+			}
+			case "AND":
+			case "OR": {
+				const container = createPrefilterAstGroup(form, node);
+				container.appendChild(createAstParenthesis("("));
+				node.children.forEach((child, i) => {
+					if (i > 0) container.appendChild(createAstOperator(form, node, node.ast_type));
+					const childEl = renderPrefilterAstNode(form, child);
+					if (childEl) container.appendChild(childEl);
+				});
+				container.appendChild(createAstParenthesis(")"));
+				return container;
+			}
+			default:
+				GDV.utils.reportSoftError("Something went wrong while displaying your filters", "The filter display system encountered an unexpected data format and could not render part of your selected filters. This does not affect your data, only how it is shown.", null, { nodeType: node.ast_type, node });
+				return null;
+		}
+	}
+
 	function renderPrefilterAstToolbar(form) {
 		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
 		if (!prefilterAstCurrentNode) return;
@@ -788,34 +827,6 @@
 
 		toolbar.style.left = `${left}px`;
 		toolbar.style.top = `${top}px`;
-	}
-
-	function renderPrefilterAstNode(form, node) {
-		if (!node) return null;
-		switch (node.ast_type) {
-			case "VALUE":
-				return createPrefilterActiveItem(form, node);
-			case "NOT": {
-				const container = createPrefilterAstGroup(form, node);
-				container.appendChild(createOperator(form, node, "NOT"));
-				const childEl = renderPrefilterAstNode(form, node.child);
-				if (childEl) container.appendChild(childEl);
-				return container;
-			}
-			case "AND":
-			case "OR": {
-				const container = createPrefilterAstGroup(form, node);
-				node.children.forEach((child, i) => {
-					if (i > 0) container.appendChild(createOperator(form, node, node.ast_type));
-					const childEl = renderPrefilterAstNode(form, child);
-					if (childEl) container.appendChild(childEl);
-				});
-				return container;
-			}
-			default:
-				GDV.utils.reportSoftError("Something went wrong while displaying your filters", "The filter display system encountered an unexpected data format and could not render part of your selected filters. This does not affect your data, only how it is shown.", null, { nodeType: node.ast_type, node });
-				return null;
-		}
 	}
 
 	GDV.prefilter.clearActiveItemParameters = clearActiveItemParameters;
