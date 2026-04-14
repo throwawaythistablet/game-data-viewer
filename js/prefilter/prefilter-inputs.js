@@ -116,6 +116,7 @@
 	GDV.prefilter.normalizePrefilterAst = normalizePrefilterAst;
 	function normalizePrefilterAst() {
 		prefilterAst = normalizeNode(prefilterAst);
+		prefilterAstCurrentNode = prefilterAst;
 	}
 
 	GDV.prefilter.toggleSortMode = () => {
