@@ -208,7 +208,7 @@
 
 		const prefilterLabel = document.createElement("span");
 		prefilterLabel.className = "prefilter-summary-label";
-		prefilterLabel.textContent = "Active Prefilters:";
+		prefilterLabel.textContent = "Prefilter Expression:";
 		leftGroup.appendChild(prefilterLabel);
 
 		const activeItems = document.createElement("div");
@@ -784,7 +784,7 @@
 
 	function createAstParenthesis(text) {
 		const el = document.createElement("span");
-		el.className = "prefilter-ast-paren";
+		el.className = "prefilter-ast-parenthesis";
 		el.textContent = text;
 		return el;
 	}

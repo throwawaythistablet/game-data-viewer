@@ -1142,9 +1142,14 @@ td {
 	border: 1px solid transparent;
 }
 
+.prefilter-ast-group:hover {
+	background: rgba(var(--glow-rgb-numbers), 0.05);
+}
+
 .prefilter-ast-group.is-focused {
-	border: 2px solid var(--glow-soft);
-	box-shadow: 0 0 3px var(--glow-soft);
+	background: rgba(var(--glow-rgb-numbers), 0.10);
+	border: 2px solid var(--glow);
+	box-shadow: 0 0 3px var(--glow-strong);
 }
 
 .prefilter-ast-operator {
@@ -1152,7 +1157,7 @@ td {
 	color: var(--text-muted);
 }
 
-.prefilter-ast-paren {
+.prefilter-ast-parenthesis {
 	font-size: 14px;
 	color: var(--text-muted);
 }
@@ -1160,7 +1165,7 @@ td {
 .prefilter-active-item {
 	display: inline-flex;
 	align-items: center;
-	background: var(--bg-elevated);
+	background: transparent;
 	color: var(--text-main);
 	padding: 4px 10px;
 	border-radius: 6px;
@@ -1177,8 +1182,9 @@ td {
 }
 
 .prefilter-active-item.is-focused {
-	border: 2px solid var(--glow-soft);
-	box-shadow: 0 0 3px var(--glow-soft);
+	background: rgba(var(--glow-rgb-numbers), 0.10);
+	border: 2px solid var(--glow);
+	box-shadow: 0 0 3px var(--glow-strong);
 }
 
 .prefilter-active-item .prefilter-remove-btn {
@@ -1209,6 +1215,8 @@ td {
 	box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 28px rgba(var(--glow-rgb-numbers), 0.4);
 	transform: translateY(-16px) scale(0.70);
 	opacity: 0;
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
 	animation: prefilter-toolbar-pop 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
