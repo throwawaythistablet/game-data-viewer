@@ -691,15 +691,6 @@
 		return container;
 	}
 
-	function createPrefilterAstGroup(form, node) {
-		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
-		const astGroup = document.createElement("span");
-		astGroup.className = "prefilter-ast-group";
-		if (node === prefilterAstCurrentNode) astGroup.classList.add("is-focused");
-		bindPrefilterAstNodeFocus(form, astGroup, node)
-		return astGroup;
-	}
-
 	function createPrefilterAstToolbarIfNeeded(form) {
 		const activeItems = form.querySelector("#prefilter-active-items");
 		if (!activeItems) return null;
@@ -711,6 +702,66 @@
 		activeItems.appendChild(toolbar);
 		return toolbar;
 	}
+
+	function createPrefilterAstGroup(form, node) {
+		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
+		const astGroup = document.createElement("span");
+		astGroup.className = "prefilter-ast-group";
+		if (node === prefilterAstCurrentNode) astGroup.classList.add("is-focused");
+		bindPrefilterAstNodeFocus(form, astGroup, node)
+		return astGroup;
+	}
+
+	function createPrefilterActiveItem(form, node) {
+		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
+		const col = node.column;
+		const val = prefilterConditions[col];
+		if (!val) return null;
+
+		const activeItem = document.createElement("span");
+		activeItem.className = "prefilter-active-item";
+		activeItem.dataset.col = col;
+		if (node === prefilterAstCurrentNode) {
+			activeItem.classList.add("is-focused");
+		}
+		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
+		activeItem.textContent = `${text} `;
+		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
+		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
+		activeItem.appendChild(createPrefilterActiveItemRemoveButton(form, col, activeItem.dataset.type));
+		bindPrefilterAstNodeFocus(form, activeItem, node)
+
+		return activeItem;
+	}
+
+	function createAstOperator(form, node, type) {
+		const operator = document.createElement("span");
+		operator.className = "prefilter-ast-operator";
+		operator.textContent = type;
+		bindPrefilterAstNodeFocus(form, operator, node)
+		return operator;
+	}
+
+	function createAstParenthesis(text) {
+		const el = document.createElement("span");
+		el.className = "prefilter-ast-parenthesis";
+		el.textContent = text;
+		return el;
+	}
+
+	function createPrefilterActiveItemRemoveButton(form, col, type) {
+		const removeButton = document.createElement("button");
+		removeButton.type = "button";
+		removeButton.className = "prefilter-remove-btn";
+		removeButton.textContent = "×";
+		removeButton.setAttribute("aria-label", `Remove prefilter for ${col}`);
+		removeButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			removeColumnWithTypeAndUpdateAll(form, col, type)
+		});
+		return removeButton;
+	};
 
 	function createToolbarContent(form, node) {
 		const container = document.createElement("div");
@@ -802,57 +853,6 @@
 		return button;
 	}
 
-	function createPrefilterActiveItem(form, node) {
-		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
-		const col = node.column;
-		const val = prefilterConditions[col];
-		if (!val) return null;
-
-		const activeItem = document.createElement("span");
-		activeItem.className = "prefilter-active-item";
-		activeItem.dataset.col = col;
-		if (node === prefilterAstCurrentNode) {
-			activeItem.classList.add("is-focused");
-		}
-		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
-		activeItem.textContent = `${text} `;
-		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
-		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
-		activeItem.appendChild(createPrefilterActiveItemRemoveButton(form, col, activeItem.dataset.type));
-		bindPrefilterAstNodeFocus(form, activeItem, node)
-
-		return activeItem;
-	}
-
-	function createAstOperator(form, node, type) {
-		const operator = document.createElement("span");
-		operator.className = "prefilter-ast-operator";
-		operator.textContent = type;
-		bindPrefilterAstNodeFocus(form, operator, node)
-		return operator;
-	}
-
-	function createAstParenthesis(text) {
-		const el = document.createElement("span");
-		el.className = "prefilter-ast-parenthesis";
-		el.textContent = text;
-		return el;
-	}
-
-	function createPrefilterActiveItemRemoveButton(form, col, type) {
-		const removeButton = document.createElement("button");
-		removeButton.type = "button";
-		removeButton.className = "prefilter-remove-btn";
-		removeButton.textContent = "×";
-		removeButton.setAttribute("aria-label", `Remove prefilter for ${col}`);
-		removeButton.addEventListener("click", (e) => {
-			e.stopPropagation();
-			removeColumnWithTypeAndUpdateAll(form, col, type)
-		});
-		return removeButton;
-	};
-
 	function removeColumnWithTypeAndUpdateAll(form, col, type) {
 		clearActiveItemParametersWithType(form, col, type);
 		updateAllBasedFromActiveItemParametersChanges(form, col);
@@ -877,16 +877,16 @@
 			activeItems.replaceChildren();
 			return;
 		}
-		const astNodeElement = renderPrefilterAstNode(form, prefilterAst, prefilterAst);
-		if (astNodeElement) {
-			activeItems.replaceChildren(astNodeElement);
+		const prefilterAstDisplay = createPrefilterAstDisplay(form, prefilterAst, prefilterAst);
+		if (prefilterAstDisplay) {
+			activeItems.replaceChildren(prefilterAstDisplay);
 		} else {
 			activeItems.replaceChildren();
 		}
 		renderPrefilterAstToolbar(form);
 	}
 
-	function renderPrefilterAstNode(form, node, root) {
+	function createPrefilterAstDisplay(form, node, root) {
 		if (!node) return null;
 		switch (node.ast_type) {
 			case "VALUE":
@@ -895,7 +895,7 @@
 				const container = createPrefilterAstGroup(form, node);
 				container.appendChild(createAstParenthesis("("));
 				container.appendChild(createAstOperator(form, node, "NOT"));
-				const childEl = renderPrefilterAstNode(form, node.child, root);
+				const childEl = createPrefilterAstDisplay(form, node.child, root);
 				if (childEl) container.appendChild(childEl);
 				container.appendChild(createAstParenthesis(")"));
 				return container;
@@ -906,7 +906,7 @@
 				if (node !== root) container.appendChild(createAstParenthesis("("));
 				node.children.forEach((child, i) => {
 					if (i > 0) container.appendChild(createAstOperator(form, node, node.ast_type));
-					const childEl = renderPrefilterAstNode(form, child, root);
+					const childEl = createPrefilterAstDisplay(form, child, root);
 					if (childEl) container.appendChild(childEl);
 				});
 				if (node !== root) container.appendChild(createAstParenthesis(")"));

@@ -172,16 +172,9 @@
 		prefilterlabel.textContent = "Last Searched Prefilters:";
 		container.appendChild(prefilterlabel);
 
-		for (const [col, val] of Object.entries(prefilterConditions)) {
-			const text = GDV.prefilter.getPrefilterDisplayText(col, val);
-			if (!text) continue;
-
-			const span = document.createElement("span");
-			span.className = "prefilter-active-item";
-			span.title = GDV.datatable.getColumnDescription(col);
-			span.textContent = text;
-			container.appendChild(span);
-		}
+		const prefilterAst = GDV.prefilter.getPrefilterAst();
+		const prefilterAstDisplay = createStaticPrefilterAstDisplay(prefilterAst, prefilterAst);
+		container.appendChild(prefilterAstDisplay);
 	};
 
 	GDV.dom.createHighlightFromValue = (val, colName) => {
@@ -388,6 +381,75 @@
 			}
 		});
 		return shareBtn;
+	}
+
+	function createStaticPrefilterAstDisplay(node, root) {
+		if (!node) return null;
+		switch (node.ast_type) {
+			case "VALUE":
+				return createPrefilterActiveItem(node);
+			case "NOT": {
+				const container = createPrefilterAstGroup();
+				container.appendChild(createAstParenthesis("("));
+				container.appendChild(createAstOperator("NOT"));
+				const childEl = createStaticPrefilterAstDisplay(node.child, root);
+				if (childEl) container.appendChild(childEl);
+				container.appendChild(createAstParenthesis(")"));
+				return container;
+			}
+			case "AND":
+			case "OR": {
+				const container = createPrefilterAstGroup();
+				if (node !== root) container.appendChild(createAstParenthesis("("));
+				node.children.forEach((child, i) => {
+					if (i > 0) container.appendChild(createAstOperator(node.ast_type));
+					const childEl = createStaticPrefilterAstDisplay(child, root);
+					if (childEl) container.appendChild(childEl);
+				});
+				if (node !== root) container.appendChild(createAstParenthesis(")"));
+				return container;
+			}
+			default:
+				GDV.utils.reportSoftError("Something went wrong while displaying your filters", "The filter display system encountered an unexpected data format and could not render part of your selected filters. This does not affect your data, only how it is shown.", null, { nodeType: node.ast_type, node });
+				return null;
+		}
+	}
+
+	function createPrefilterAstGroup() {
+		const astGroup = document.createElement("span");
+		astGroup.className = "prefilter-ast-group";
+		return astGroup;
+	}
+
+	function createPrefilterActiveItem(node) {
+		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+		const col = node.column;
+		const val = prefilterConditions[col];
+		if (!val) return null;
+
+		const activeItem = document.createElement("span");
+		activeItem.className = "prefilter-active-item";
+		activeItem.dataset.col = col;
+		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
+		activeItem.textContent = `${text} `;
+		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
+		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
+
+		return activeItem;
+	}
+
+	function createAstOperator(type) {
+		const operator = document.createElement("span");
+		operator.className = "prefilter-ast-operator";
+		operator.textContent = type;
+		return operator;
+	}
+
+	function createAstParenthesis(text) {
+		const el = document.createElement("span");
+		el.className = "prefilter-ast-parenthesis";
+		el.textContent = text;
+		return el;
 	}
 
 	// Search button
