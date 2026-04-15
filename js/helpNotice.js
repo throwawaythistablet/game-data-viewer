@@ -29,8 +29,32 @@
                 ✅ <strong>Use Prefilters</strong> – Apply checkboxes, ranges, or text inputs to reduce the dataset before loading.
                 Combine tags for more precise results (for example: <em>site: female protagonist</em> + <em>text search: 2D CG</em>).
                 </li>
-                <li>
-                ⏳ <strong>Generate Table</strong> – Click <em>Generate Table</em> to create a new table using your selected prefilters. 
+                <li> 
+                ⚙️ <strong>Expression Builder</strong> – Prefilters form a connected logical expression instead of isolated items.
+                    <br>
+                    When you add an item, it becomes part of a single expression that determines what data is shown. Each item contributes to the expression and can be adjusted in how it relates to other items.
+                    <br>
+                    Each item has controls that define how it behaves within the expression:
+                    <ul>
+                    <li><strong>Remove</strong> – Removes the selected item from the expression</li>
+                    <li><strong>NOT</strong> – Inverts the selected item (excludes matches instead of including them)</li>
+                    <li><strong>AND</strong> – Requires the selected item to be grouped together with others</li>
+                    <li><strong>OR</strong> – Allows alternative matching within the same expression branch</li>
+                    <li><strong>Group In</strong> – Moves the selected item into a subexpression</li>
+                    <li><strong>Group Out</strong> – Moves the selected item out of its current subexpression</li>
+                    </ul>
+                    The system automatically maintains the structure of the full expression as items are modified, so you only need to focus on how each item relates within the expression.
+                    <br>
+                    <strong>📋 Expression Tools (Copy / Paste / Fix)</strong>
+                    <ul>
+                        <li><strong>Copy Prefilters</strong> – Copies your full filter setup (conditions + expression structure) to clipboard</li>
+                        <li><strong>Paste Prefilters</strong> – Restores a saved setup from clipboard (invalid or outdated setups will be rejected)</li>
+                        <li><strong>Fix Expression</strong> – Cleans up messy or broken logic without changing what your filters mean</li>
+                    </ul>
+                    These tools let you save, reuse, and repair complex filter setups without rebuilding them manually.
+                </li>
+                <li> 
+                ⏳ <strong>Generate Table</strong> – Click <em>Generate Table</em> to create a new table using your selected prefilters.
                 A warning appears if no prefilters are selected.
                 </li>
                 <li>
