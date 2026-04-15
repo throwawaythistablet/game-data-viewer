@@ -27,14 +27,18 @@
 		prefilterAstCurrentNode = prefilterAst;
 	};
 
-	GDV.prefilter.setPrefilterAstCurrentNode = (prefilterAstCurrentNode_) => {
-		prefilterAstCurrentNode = prefilterAstCurrentNode_;
+	GDV.prefilter.resetPrefilterConditions = () => {
+		prefilterConditions = {};
 	};
 
 	GDV.prefilter.resetPrefilterConditionsAndAst = () => {
 		prefilterConditions = {};
 		prefilterAst = null;
 		prefilterAstCurrentNode = null;
+	};
+
+	GDV.prefilter.setPrefilterAstCurrentNode = (prefilterAstCurrentNode_) => {
+		prefilterAstCurrentNode = prefilterAstCurrentNode_;
 	};
 
 	GDV.prefilter.addToConditionAndAst = addToConditionAndAst;
@@ -84,6 +88,15 @@
 			updateTextPrefilter(form, col);
 		} else {
 			removeFromConditionAndAst(col);
+		}
+	}
+
+	GDV.prefilter.applyPrefilterConditionsToForm = applyPrefilterConditionsToForm;
+	function applyPrefilterConditionsToForm(form) {
+		if (!form) return;
+		for (const col in prefilterConditions) {
+			const prefilterCondition = prefilterConditions[col];
+			applyPrefilterConditionToField(form, col, prefilterCondition);
 		}
 	}
 
@@ -243,6 +256,48 @@
 
 	function isTextColumn(form, col) {
 		return getFormElementsByName(form, col).some((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
+	}
+
+	function applyPrefilterConditionToField(form, col, condition) {
+		if (condition == null) return;
+		if (condition.min != null || condition.max != null) {
+			applyNumericToForm(form, col, condition);
+			return;
+		}
+		if (condition.choices) {
+			applyCheckboxToForm(form, col, condition);
+			return;
+		}
+		if (condition.text) {
+			applyTextToForm(form, col, condition);
+			return;
+		}
+	}
+
+	function applyNumericToForm(form, col, condition) {
+		const [minEl] = getFormElementsByName(form, `${col}__min`);
+		const [maxEl] = getFormElementsByName(form, `${col}__max`);
+		if (minEl) minEl.value = condition.min ?? "";
+		if (maxEl) maxEl.value = condition.max ?? "";
+	}
+
+	function applyCheckboxToForm(form, col, condition) {
+		const checkboxes = getFormElementsByName(form, col).filter(e => e.type === "checkbox");
+		if (!checkboxes.length) return;
+		const selected = new Set(condition.choices || []);
+		for (const cb of checkboxes) {
+			cb.checked = selected.has(convertCheckboxValue(cb.value, condition.type));
+		}
+	}
+
+	function applyTextToForm(form, col, condition) {
+		const inputs = getFormElementsByName(form, col)
+			.filter(e =>
+				e.tagName.toLowerCase() === "input" ||
+				e.tagName.toLowerCase() === "textarea"
+			);
+		if (!inputs.length) return;
+		inputs[0].value = condition.text?.[0] ?? "";
 	}
 
 	function createDefaultPrefilterAst() {
