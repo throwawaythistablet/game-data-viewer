@@ -213,10 +213,12 @@
 	}
 
 	function getFormElementsByName(form, name) {
-		const el = form.elements[name];
-		if (!el) return [];
-		if (el instanceof RadioNodeList || Array.isArray(el)) return Array.from(el);
-		return [el];
+		const elements = form.elements?.[name];
+		if (!elements) return [];
+		if (elements instanceof RadioNodeList) {
+			return Array.from(elements);
+		}
+		return [elements];
 	}
 
 	function convertCheckboxValue(val, type) {
@@ -577,7 +579,6 @@
 
 	function normalizeNode(node) {
 		if (!node) return null;
-
 		switch (node.ast_type) {
 			case "VALUE":
 				return node;
@@ -630,32 +631,26 @@
 		return node;
 	}
 
-	function serializeNodeToString(node) {
+	function convertAstNodeToString(node) {
 		if (!node) return "";
-
 		switch (node.ast_type) {
 			case "VALUE":
 				return node.column || "";
-
 			case "NOT": {
-				const child = serializeNodeToString(node.child);
+				const child = convertAstNodeToString(node.child);
 				return child ? `NOT(${child})` : "";
 			}
-
 			case "AND":
 			case "OR": {
 				if (!node.children || !node.children.length) return "";
-
 				const parts = [];
 				for (let i = 0; i < node.children.length; i++) {
-					const childText = serializeNodeToString(node.children[i]);
+					const childText = convertAstNodeToString(node.children[i]);
 					if (childText) parts.push(childText);
 				}
-
 				if (!parts.length) return "";
 				return `${node.ast_type}(${parts.join(", ")})`;
 			}
-
 			default:
 				return "";
 		}
@@ -663,59 +658,46 @@
 
 	function convertStringToAst(text) {
 		if (!text || typeof text !== "string") return null;
-
 		text = text.trim();
 		if (!text) return null;
-
 		let i = 0;
-
 		function skipWhitespace() {
 			while (i < text.length && /\s/.test(text[i])) i++;
 		}
-
 		function readWord() {
 			skipWhitespace();
 			const start = i;
-
 			while (i < text.length) {
 				const c = text[i];
 				if (c === "(" || c === ")" || c === "," || /\s/.test(c)) break;
 				i++;
 			}
-
 			return text.slice(start, i).trim();
 		}
-
 		function parseValue() {
 			skipWhitespace();
 			const start = i;
 			let depth = 0;
-
 			while (i < text.length) {
 				const c = text[i];
-
 				if (c === "(") {
 					depth++;
 					i++;
 					continue;
 				}
-
 				if (c === ")") {
 					if (depth === 0) break;
 					depth--;
 					i++;
 					continue;
 				}
-
 				if (c === "," && depth === 0) break;
-
 				i++;
 			}
 			const raw = text.slice(start, i).trim();
 			if (!raw) return null;
 			return { ast_type: "VALUE", column: raw };
 		}
-
 		function parseExpression() {
 			skipWhitespace();
 			const start = i;
@@ -761,7 +743,7 @@
 	}
 
 	function serializePrefilters() {
-		const astText = serializeNodeToString(prefilterAst);
+		const astText = convertAstNodeToString(prefilterAst);
 		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
 		return `---EXPRESSION---\n${astText}\n\n---CONDITIONS---\n${conditionsText}`;
 	}
