@@ -378,6 +378,7 @@
 		btn.textContent = "Paste Prefilters";
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", async () => {
+			hidePrefilterWarning();
 			GDV.prefilter.resetPrefilterConditionsAndAst();
 			await GDV.prefilter.pastePrefiltersFromClipboard();
 			GDV.prefilter.applyPrefilterConditionsToForm(form);
@@ -779,7 +780,7 @@
 		const button = document.createElement("button");
 		button.type = "button";
 		button.className = "btn btn-toolbar";
-		button.textContent = "Remove Item";
+		button.textContent = "Remove";
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi(node);
@@ -831,7 +832,7 @@
 		const button = document.createElement("button");
 		button.type = "button";
 		button.className = "btn btn-toolbar";
-		button.textContent = "Move In";
+		button.textContent = "Group In";
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeIntoGroup(node);
@@ -844,7 +845,7 @@
 		const button = document.createElement("button");
 		button.type = "button";
 		button.className = "btn btn-toolbar";
-		button.textContent = "Move Out";
+		button.textContent = "Group Out";
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeOutOfGroup(node);
@@ -975,9 +976,9 @@
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 		const hasFilters = Object.keys(prefilterConditions).length > 0;
 		if (hasFilters) {
-			GDV.prefilter.hidePrefilterWarning();
+			hidePrefilterWarning();
 		} else {
-			GDV.prefilter.showPrefilterWarning();
+			showPrefilterWarning();
 		}
 	}
 
