@@ -113,7 +113,7 @@
 		}
 
 		const filterName = GDV.utils.normalizeFilterName(colName);
-		const pattern = GDV.state.getTagFullPatterns()?.[filterName]?.pattern;
+		const pattern = GDV.state.getTagQuickSearchPatterns()?.[filterName]?.pattern;
 		const patternDesc = pattern ? `Regex pattern:\n${pattern}` : "";
 
 		return [description, patternDesc].filter(Boolean).join("\n");

@@ -51,7 +51,7 @@
 		if (params.ast) {
 			astObj = decodeBase64UrlJson(params.ast);
 			if (astObj === null) {
-				GDV.utils.reportSoftWarning("Invalid URL Prefilter Abstract Syntax Tree Parameter", "The URL contained an invalid 'ast' parameter and it will be ignored.");
+				GDV.utils.reportSoftWarning("Invalid URL Prefilter Expression Parameter", "The URL contained an invalid 'ast' parameter and it will be ignored.");
 			}
 		}
 		return astObj;

@@ -2,7 +2,7 @@
 	let activeCsvFile = null;
 	let activeColumnDetails = {};
 	let activeColumnCategories = {};
-	let activeTagFullPatterns = {};
+	let activeTagQuickSearchPatterns = {};
 	let gamesFolderHandle = null;
 	let dataFolderHandle = null;
 	let activeGameKeys = null;
@@ -24,7 +24,7 @@
 
 	GDV.state.getColumnCategories = () => activeColumnCategories;
 
-	GDV.state.getTagFullPatterns = () => activeTagFullPatterns;
+	GDV.state.getTagQuickSearchPatterns = () => activeTagQuickSearchPatterns;
 
 	GDV.state.getThumbnails = () => activeThumbnails;
 
@@ -40,8 +40,8 @@
 		activeColumnCategories = columnCategories;
 	};
 
-	GDV.state.setTagFullPatterns = (tagFullPatterns) => {
-		activeTagFullPatterns = tagFullPatterns;
+	GDV.state.setTagQuickSearchPatterns = (tagQuickSearchPatterns) => {
+		activeTagQuickSearchPatterns = tagQuickSearchPatterns;
 	};
 
 	GDV.state.setThumbnails = (thumbnails) => {

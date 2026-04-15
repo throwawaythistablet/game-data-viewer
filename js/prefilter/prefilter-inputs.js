@@ -763,17 +763,17 @@
 	function serializePrefilters() {
 		const astText = serializeNodeToString(prefilterAst);
 		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
-		return `---AST---\n${astText}\n\n---CONDITIONS---\n${conditionsText}`;
+		return `---EXPRESSION---\n${astText}\n\n---CONDITIONS---\n${conditionsText}`;
 	}
 
 	async function deserializePrefilters(text) {
 		if (!text || typeof text !== "string") return;
-		const astMarker = "---AST---";
+		const astMarker = "---EXPRESSION---";
 		const conditionsMarker = "---CONDITIONS---";
 		const astIndex = text.indexOf(astMarker);
 		const conditionsIndex = text.indexOf(conditionsMarker);
 		if (astIndex === -1 || conditionsIndex === -1) {
-			GDV.utils.reportSoftError("Invalid clipboard format", "Clipboard is missing AST or CONDITIONS sections.");
+			GDV.utils.reportSoftError("Invalid clipboard format", "Clipboard is missing EXPRESSION or CONDITIONS sections.");
 			return;
 		}
 		const astText = text.slice(astIndex + astMarker.length, conditionsIndex).trim();
@@ -787,7 +787,7 @@
 		}
 		const parsedAst = convertStringToAst(astText);
 		if (!parsedAst) {
-			GDV.utils.reportSoftError("Invalid AST format", "Could not parse AST expression from clipboard.");
+			GDV.utils.reportSoftError("Invalid EXPRESSION format", "Could not parse expression from clipboard.");
 			return;
 		}
 		prefilterAst = normalizeNode(parsedAst);

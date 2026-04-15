@@ -61,7 +61,7 @@
 		columnCategories.textContent = fileName || "(None)";
 	};
 
-	GDV.dom.setTagFullPatterns = (fileName) => {
+	GDV.dom.setTagQuickSearchPatterns = (fileName) => {
 		tagPatternsDisplay.textContent = fileName || "(None)";
 	};
 

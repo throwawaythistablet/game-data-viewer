@@ -25,7 +25,7 @@
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
 				replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
 				updatePrefilterConditionsRelatedItems(form);
-				waitForPrefilterFormSubmission(form, resolve);
+				waitForPrefilterFormSubmission(form, resolve, cleanupFocus);
 			});
 		} catch (err) {
 			GDV.utils.reportSoftWarning("Prefilter UI Failure", "Prefilter overlay failed to initialize, continuing without prefiltering.", err);
@@ -147,7 +147,7 @@
 		});
 
 		select.addEventListener("change", () => {
-			updatePrefilterSections(form);
+			filterPrefilterSections(form);
 			const categoryElement = form.querySelector("#prefilter-selected-category");
 			if (categoryElement) {
 				categoryElement.dataset.value = select.value;
@@ -367,7 +367,7 @@
 		btn.addEventListener("click", () => {
 			GDV.prefilter.copyPrefiltersToClipboard();
 			updatePrefilterActiveItemsAndWarning(form);
-			GDV.utils.showInfoBanner("Prefilter Expression Copied", "The prefilter expression has been copied to your clipboard.");
+			GDV.utils.showInfoBanner("Prefilters Copied", "The prefilter expression and conditions have been copied to your clipboard.");
 		});
 		return btn;
 	}
@@ -472,7 +472,7 @@
 
 		showMoreBtn.addEventListener("click", () => {
 			maxVisibleSections += visibleSectionsBatchSize;
-			updatePrefilterSections(form);
+			filterPrefilterSections(form);
 		});
 
 		indicator.appendChild(showMoreBtn);
@@ -710,100 +710,94 @@
 		return toolbar;
 	}
 
-	function createToolbarContent(node) {
+	function createToolbarContent(form, node) {
 		const container = document.createElement("div");
 		container.className = "prefilter-ast-toolbar-inner";
-		container.appendChild(createToolbarRemoveButton(node));
-		container.appendChild(createToolbarNotButton(node));
-		container.appendChild(createToolbarAndButton(node));
-		container.appendChild(createToolbarOrButton(node));
-		container.appendChild(createToolbarMoveInButton(node));
-		container.appendChild(createToolbarMoveOutButton(node));
+		container.appendChild(createToolbarRemoveButton(form, node));
+		container.appendChild(createToolbarNotButton(form, node));
+		container.appendChild(createToolbarAndButton(form, node));
+		container.appendChild(createToolbarOrButton(form, node));
+		container.appendChild(createToolbarMoveInButton(form, node));
+		container.appendChild(createToolbarMoveOutButton(form, node));
 		return container;
 	}
 
-	function createToolbarRemoveButton(node) {
-		const removeButton = document.createElement("button");
-		removeButton.type = "button";
-		removeButton.className = "btn btn-toolbar";
-		removeButton.textContent = "Remove Item";
-		removeButton.addEventListener("click", (e) => {
+	function createToolbarRemoveButton(form, node) {
+		const button = document.createElement("button");
+		button.type = "button";
+		button.className = "btn btn-toolbar";
+		button.textContent = "Remove Item";
+		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi(node);
-			const form = document.querySelector(".prefilter-form");
 			updatePrefilterActiveItemsAndWarning(form);
 		});
-		return removeButton;
+		return button;
 	}
 
-	function createToolbarNotButton(node) {
-		const notButton = document.createElement("button");
-		notButton.type = "button";
-		notButton.className = "btn btn-toolbar";
-		notButton.textContent = "Not";
-		notButton.addEventListener("click", (e) => {
+	function createToolbarNotButton(form, node) {
+		const button = document.createElement("button");
+		button.type = "button";
+		button.className = "btn btn-toolbar";
+		button.textContent = "Not";
+		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyNotToNode(node);
-			const form = document.querySelector(".prefilter-form");
 			updatePrefilterActiveItemsAndWarning(form);
 		});
-		return notButton;
+		return button;
 	}
 
-	function createToolbarAndButton(node) {
-		const andButton = document.createElement("button");
-		andButton.type = "button";
-		andButton.className = "btn btn-toolbar";
-		andButton.textContent = "And";
-		andButton.addEventListener("click", (e) => {
+	function createToolbarAndButton(form, node) {
+		const button = document.createElement("button");
+		button.type = "button";
+		button.className = "btn btn-toolbar";
+		button.textContent = "And";
+		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyAndToNode(node);
-			const form = document.querySelector(".prefilter-form");
 			updatePrefilterActiveItemsAndWarning(form);
 		});
-		return andButton;
+		return button;
 	}
 
-	function createToolbarOrButton(node) {
-		const orButton = document.createElement("button");
-		orButton.type = "button";
-		orButton.className = "btn btn-toolbar";
-		orButton.textContent = "Or";
-		orButton.addEventListener("click", (e) => {
+	function createToolbarOrButton(form, node) {
+		const button = document.createElement("button");
+		button.type = "button";
+		button.className = "btn btn-toolbar";
+		button.textContent = "Or";
+		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyOrToNode(node);
-			const form = document.querySelector(".prefilter-form");
 			updatePrefilterActiveItemsAndWarning(form);
 		});
-		return orButton;
+		return button;
 	}
 
-	function createToolbarMoveInButton(node) {
-		const orButton = document.createElement("button");
-		orButton.type = "button";
-		orButton.className = "btn btn-toolbar";
-		orButton.textContent = "Move In";
-		orButton.addEventListener("click", (e) => {
+	function createToolbarMoveInButton(form, node) {
+		const button = document.createElement("button");
+		button.type = "button";
+		button.className = "btn btn-toolbar";
+		button.textContent = "Move In";
+		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeIntoGroup(node);
-			const form = document.querySelector(".prefilter-form");
 			updatePrefilterActiveItemsAndWarning(form);
 		});
-		return orButton;
+		return button;
 	}
 
-	function createToolbarMoveOutButton(node) {
-		const orButton = document.createElement("button");
-		orButton.type = "button";
-		orButton.className = "btn btn-toolbar";
-		orButton.textContent = "Move Out";
-		orButton.addEventListener("click", (e) => {
+	function createToolbarMoveOutButton(form, node) {
+		const button = document.createElement("button");
+		button.type = "button";
+		button.className = "btn btn-toolbar";
+		button.textContent = "Move Out";
+		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeOutOfGroup(node);
-			const form = document.querySelector(".prefilter-form");
 			updatePrefilterActiveItemsAndWarning(form);
 		});
-		return orButton;
+		return button;
 	}
 
 	function createPrefilterActiveItem(form, node) {
@@ -844,21 +838,6 @@
 		return el;
 	}
 
-	function collectPrefilterFromForm() {
-		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-		const prefilterAst = GDV.prefilter.getPrefilterAst();
-		if (typeof structuredClone === "function") {
-			return {
-				prefilterConditions: structuredClone(prefilterConditions),
-				prefilterAst: structuredClone(prefilterAst)
-			};
-		}
-		return {
-			prefilterConditions: JSON.parse(JSON.stringify(prefilterConditions)),
-			prefilterAst: JSON.parse(JSON.stringify(prefilterAst))
-		};
-	}
-
 	function createPrefilterActiveItemRemoveButton(form, col, type) {
 		const removeButton = document.createElement("button");
 		removeButton.type = "button";
@@ -896,13 +875,16 @@
 			activeItems.replaceChildren();
 			return;
 		}
-		const astNodeElement = renderPrefilterAstNode(form, prefilterAst);
-		activeItems.replaceChildren(astNodeElement || document.createTextNode(""));
+		const astNodeElement = renderPrefilterAstNode(form, prefilterAst, prefilterAst);
+		if (astNodeElement) {
+			activeItems.replaceChildren(astNodeElement);
+		} else {
+			activeItems.replaceChildren();
+		}
 		renderPrefilterAstToolbar(form);
 	}
 
-	function renderPrefilterAstNode(form, node) {
-		const prefilterAst = GDV.prefilter.getPrefilterAst();
+	function renderPrefilterAstNode(form, node, root) {
 		if (!node) return null;
 		switch (node.ast_type) {
 			case "VALUE":
@@ -911,7 +893,7 @@
 				const container = createPrefilterAstGroup(form, node);
 				container.appendChild(createAstParenthesis("("));
 				container.appendChild(createAstOperator(form, node, "NOT"));
-				const childEl = renderPrefilterAstNode(form, node.child);
+				const childEl = renderPrefilterAstNode(form, node.child, root);
 				if (childEl) container.appendChild(childEl);
 				container.appendChild(createAstParenthesis(")"));
 				return container;
@@ -919,13 +901,13 @@
 			case "AND":
 			case "OR": {
 				const container = createPrefilterAstGroup(form, node);
-				if (prefilterAst !== node) container.appendChild(createAstParenthesis("("));
+				if (node !== root) container.appendChild(createAstParenthesis("("));
 				node.children.forEach((child, i) => {
 					if (i > 0) container.appendChild(createAstOperator(form, node, node.ast_type));
-					const childEl = renderPrefilterAstNode(form, child);
+					const childEl = renderPrefilterAstNode(form, child, root);
 					if (childEl) container.appendChild(childEl);
 				});
-				if (prefilterAst !== node) container.appendChild(createAstParenthesis(")"));
+				if (node !== root) container.appendChild(createAstParenthesis(")"));
 				return container;
 			}
 			default:
@@ -942,7 +924,7 @@
 		const toolbar = createPrefilterAstToolbarIfNeeded(form);
 		if (!toolbar) return;
 
-		toolbar.replaceChildren(createToolbarContent(prefilterAstCurrentNode));
+		toolbar.replaceChildren(createToolbarContent(form, prefilterAstCurrentNode));
 		positionPrefilterAstToolbar(toolbar, focused);
 	}
 
@@ -963,7 +945,9 @@
 	GDV.prefilter.clearActiveItemParameters = clearActiveItemParameters;
 	function clearActiveItemParameters(col) {
 		const form = document.querySelector(".prefilter-form");
+		if (!form) return;
 		const activeItem = form.querySelector(`.prefilter-active-item[data-col="${col}"]`);
+		if (!activeItem) return;
 		clearActiveItemParametersWithType(form, col, activeItem.dataset.type);
 	}
 
@@ -985,7 +969,7 @@
 	}
 
 	function updatePrefilterWarning() {
-		if (!isPrefilterOpen()) return;
+		if (!doesPrefilterOverlayExist()) return;
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 		const hasFilters = Object.keys(prefilterConditions).length > 0;
 		if (hasFilters) {
@@ -995,7 +979,7 @@
 		}
 	}
 
-	function isPrefilterOpen() {
+	function doesPrefilterOverlayExist() {
 		return !!document.getElementById("prefilterOverlay");
 	}
 
@@ -1129,7 +1113,7 @@
 		const filterName = GDV.utils.normalizeFilterName(colName);
 		const columnDetails = GDV.state.getActiveColumnDetails()?.[filterName];
 		const description = columnDetails?.description?.toLowerCase() || "";
-		const tagPatterns = GDV.state.getTagFullPatterns()?.[filterName];
+		const tagPatterns = GDV.state.getTagQuickSearchPatterns()?.[filterName];
 		const regexStr = tagPatterns?.pattern?.toLowerCase() || "";
 		const regex = tagPatterns?.regex || null;
 
@@ -1173,12 +1157,11 @@
 		});
 	}
 
-	function waitForPrefilterFormSubmission(form, resolve) {
+	function waitForPrefilterFormSubmission(form, resolve, cleanupFocus) {
 		form.onsubmit = async (e) => {
 			e.preventDefault();
-			const prefilterFromForm = collectPrefilterFromForm();
-			const prefilterConditions = prefilterFromForm.prefilterConditions;
-			const prefilterAst = prefilterFromForm.prefilterAst;
+			const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+			const prefilterAst = GDV.prefilter.getPrefilterAst();
 			if (Object.keys(prefilterConditions).length === 0) {
 				const proceed = await confirmPrefiltersWarning();
 				if (!proceed) return;
@@ -1187,6 +1170,8 @@
 			GDV.state.setPrefilterConditions(prefilterConditions);
 			GDV.state.setPrefilterAst(prefilterAst);
 			GDV.dom.renderMainPagePrefiltersPanel();
+
+			if (cleanupFocus) cleanupFocus();
 			closePrefilterOverlay();
 			resolve(prefilterConditions);
 		};
@@ -1273,7 +1258,7 @@
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		if (categorySelect) {
 			categorySelect.value = "__all__";
-			updatePrefilterSections(form);
+			filterPrefilterSections(form);
 		}
 	}
 	function getCategoryInForm(form) {
