@@ -119,12 +119,20 @@
 		prefilterAstCurrentNode = prefilterAst;
 	}
 
-	GDV.prefilter.copyPrefilterAstToClipboard = copyPrefilterAstToClipboard;
-	function copyPrefilterAstToClipboard() {
+	GDV.prefilter.copyPrefiltersToClipboard = copyPrefiltersToClipboard;
+	function copyPrefiltersToClipboard() {
 		normalizePrefilterAst();
-		const text = serializeNodeToString(prefilterAst);
-		if (!text) return;
-		navigator.clipboard.writeText(text);
+		navigator.clipboard.writeText(serializePrefilters());
+	}
+
+	GDV.prefilter.pastePrefiltersFromClipboard = pastePrefiltersFromClipboard;
+	async function pastePrefiltersFromClipboard() {
+		try {
+			const text = await navigator.clipboard.readText();
+			deserializePrefilters(text);
+		} catch (err) {
+			GDV.utils.reportSoftError("Clipboard read failed", "Could not access clipboard content.", err);
+		}
 	}
 
 	GDV.prefilter.toggleSortMode = () => {
@@ -624,29 +632,167 @@
 
 	function serializeNodeToString(node) {
 		if (!node) return "";
+
 		switch (node.ast_type) {
 			case "VALUE":
-				return node.column;
+				return node.column || "";
+
 			case "NOT": {
 				const child = serializeNodeToString(node.child);
 				return child ? `NOT(${child})` : "";
 			}
+
 			case "AND":
 			case "OR": {
-				if (!node.children || node.children.length === 0) return "";
-				let out = `${node.ast_type}(`;
+				if (!node.children || !node.children.length) return "";
+
+				const parts = [];
 				for (let i = 0; i < node.children.length; i++) {
-					const child = serializeNodeToString(node.children[i]);
-					if (!child) continue;
-					if (i > 0) out += ", ";
-					out += child;
+					const childText = serializeNodeToString(node.children[i]);
+					if (childText) parts.push(childText);
 				}
-				out += ")";
-				return out;
+
+				if (!parts.length) return "";
+				return `${node.ast_type}(${parts.join(", ")})`;
 			}
+
 			default:
 				return "";
 		}
+	}
+
+	function convertStringToAst(text) {
+		if (!text || typeof text !== "string") return null;
+
+		text = text.trim();
+		if (!text) return null;
+
+		let i = 0;
+
+		function skipWhitespace() {
+			while (i < text.length && /\s/.test(text[i])) i++;
+		}
+
+		function readWord() {
+			skipWhitespace();
+			const start = i;
+
+			while (i < text.length) {
+				const c = text[i];
+				if (c === "(" || c === ")" || c === "," || /\s/.test(c)) break;
+				i++;
+			}
+
+			return text.slice(start, i).trim();
+		}
+
+		function parseValue() {
+			skipWhitespace();
+			const start = i;
+			let depth = 0;
+
+			while (i < text.length) {
+				const c = text[i];
+
+				if (c === "(") {
+					depth++;
+					i++;
+					continue;
+				}
+
+				if (c === ")") {
+					if (depth === 0) break;
+					depth--;
+					i++;
+					continue;
+				}
+
+				if (c === "," && depth === 0) break;
+
+				i++;
+			}
+			const raw = text.slice(start, i).trim();
+			if (!raw) return null;
+			return { ast_type: "VALUE", column: raw };
+		}
+
+		function parseExpression() {
+			skipWhitespace();
+			const start = i;
+			const name = readWord();
+			if (name === "AND" || name === "OR" || name === "NOT") {
+				skipWhitespace();
+				if (text[i] === "(") {
+					i++;
+					if (name === "NOT") {
+						const child = parseExpression();
+						skipWhitespace();
+						if (text[i] === ")") i++;
+						return child ? { ast_type: "NOT", child } : null;
+					}
+					const children = [];
+					while (i < text.length) {
+						skipWhitespace();
+						if (text[i] === ")") {
+							i++;
+							break;
+						}
+						const child = parseExpression();
+						if (child) children.push(child);
+						skipWhitespace();
+						if (text[i] === ",") {
+							i++;
+							continue;
+						}
+						if (text[i] === ")") {
+							i++;
+							break;
+						}
+					}
+					return { ast_type: name, children };
+				}
+			}
+			i = start;
+			return parseValue();
+		}
+		const ast = parseExpression();
+		if (!ast) return null;
+		return ast;
+	}
+
+	function serializePrefilters() {
+		const astText = serializeNodeToString(prefilterAst);
+		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
+		return `---AST---\n${astText}\n\n---CONDITIONS---\n${conditionsText}`;
+	}
+
+	async function deserializePrefilters(text) {
+		if (!text || typeof text !== "string") return;
+		const astMarker = "---AST---";
+		const conditionsMarker = "---CONDITIONS---";
+		const astIndex = text.indexOf(astMarker);
+		const conditionsIndex = text.indexOf(conditionsMarker);
+		if (astIndex === -1 || conditionsIndex === -1) {
+			GDV.utils.reportSoftError("Invalid clipboard format", "Clipboard is missing AST or CONDITIONS sections.");
+			return;
+		}
+		const astText = text.slice(astIndex + astMarker.length, conditionsIndex).trim();
+		const conditionsText = text.slice(conditionsIndex + conditionsMarker.length).trim();
+		let parsedConditions;
+		try {
+			parsedConditions = JSON.parse(conditionsText);
+		} catch (err) {
+			GDV.utils.reportSoftError("Invalid CONDITIONS JSON", "Could not parse filter conditions from clipboard.", err);
+			return;
+		}
+		const parsedAst = convertStringToAst(astText);
+		if (!parsedAst) {
+			GDV.utils.reportSoftError("Invalid AST format", "Could not parse AST expression from clipboard.");
+			return;
+		}
+		prefilterAst = normalizeNode(parsedAst);
+		prefilterAstCurrentNode = prefilterAst;
+		prefilterConditions = parsedConditions;
 	}
 
 })();

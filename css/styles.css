@@ -892,6 +892,16 @@ td {
 	margin-right: 8px;
 }
 
+.prefilter-search-summary-group {
+	position: sticky;
+	top: 0;
+	background: rgba(var(--bg-main-rgb-numbers), 0.80);
+	border: 1px solid var(--border-subtle);
+	border-radius: 6px;
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+}
+
 /* Container for search + category dropdown */
 .prefilter-search-category-group {
 	display: flex;
@@ -1020,8 +1030,6 @@ td {
 }
 
 .prefilter-summary-container {
-	position: sticky;
-	top: 32px;
 	background: var(--bg-panel);
 	border: 1px solid var(--border-subtle);
 	border-radius: 6px;

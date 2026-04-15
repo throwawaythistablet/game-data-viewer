@@ -72,8 +72,7 @@
 		const form = document.createElement("form");
 		form.className = "prefilter-form";
 		overlay.appendChild(form);
-		form.appendChild(createPrefilterSearchAndCategoryGroup(form));
-		form.appendChild(createPrefiltersSummary(form, null, null));
+		form.appendChild(createPrefilterSearchAndSummaryGroup(form));
 		form.appendChild(createPrefilterGrid(GDV.state.getPrefilterConditions()));
 		form.appendChild(createPrefilterLimitIndicator(form));
 		updatePrefilterSections(form);
@@ -97,6 +96,15 @@
 		overlay.setAttribute("aria-labelledby", "prefilterOverlayHeading");
 
 		return overlay;
+	}
+
+	// Category drop down and search box
+	function createPrefilterSearchAndSummaryGroup(form) {
+		const container = document.createElement("div");
+		container.className = "prefilter-search-summary-group";
+		container.appendChild(createPrefilterSearchAndCategoryGroup(form));
+		container.appendChild(createPrefiltersSummary(form, null, null));
+		return container;
 	}
 
 	// Category drop down and search box
@@ -240,7 +248,8 @@
 	function createPrefiltersSummaryPrefilterButtonsRow(form) {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-buttons";
-		buttonWrapper.appendChild(createAstToClipboardButton(form));
+		buttonWrapper.appendChild(createCopyClipboardButton(form));
+		buttonWrapper.appendChild(createPasteClipboardButton(form));
 		buttonWrapper.appendChild(createFixExpressionButton(form));
 		buttonWrapper.appendChild(createPrefiltersResetButton(form));
 		return buttonWrapper;
@@ -350,15 +359,27 @@
 		return btn;
 	}
 
-	function createAstToClipboardButton(form) {
+	function createCopyClipboardButton(form) {
 		const btn = document.createElement("button");
 		btn.type = "button";
-		btn.textContent = "Copy Expression";
+		btn.textContent = "Copy Prefilters";
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => {
-			GDV.prefilter.copyPrefilterAstToClipboard();
+			GDV.prefilter.copyPrefiltersToClipboard();
 			updatePrefilterActiveItemsAndWarning(form);
 			GDV.utils.showInfoBanner("Prefilter Expression Copied", "The prefilter expression has been copied to your clipboard.");
+		});
+		return btn;
+	}
+
+	function createPasteClipboardButton(form) {
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.textContent = "Paste Prefilters";
+		btn.className = "btn btn-reset";
+		btn.addEventListener("click", async () => {
+			await GDV.prefilter.pastePrefiltersFromClipboard();
+			updatePrefilterActiveItemsAndWarning(form);
 		});
 		return btn;
 	}
