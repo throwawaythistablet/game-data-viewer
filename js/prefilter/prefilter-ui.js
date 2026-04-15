@@ -378,10 +378,10 @@
 		btn.textContent = "Paste Prefilters";
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", async () => {
-			GDV.prefilter.resetPrefilterConditions();
+			GDV.prefilter.resetPrefilterConditionsAndAst();
 			await GDV.prefilter.pastePrefiltersFromClipboard();
 			GDV.prefilter.applyPrefilterConditionsToForm(form);
-			updatePrefilterActiveItemsAndWarning(form);
+			updatePrefilterActiveItems(form);
 		});
 		return btn;
 	}

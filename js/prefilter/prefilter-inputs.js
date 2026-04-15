@@ -27,10 +27,6 @@
 		prefilterAstCurrentNode = prefilterAst;
 	};
 
-	GDV.prefilter.resetPrefilterConditions = () => {
-		prefilterConditions = {};
-	};
-
 	GDV.prefilter.resetPrefilterConditionsAndAst = () => {
 		prefilterConditions = {};
 		prefilterAst = null;
@@ -797,6 +793,41 @@
 		return ast;
 	}
 
+	function validatePrefilterConditions(conditions, colDefs) {
+		if (!conditions || typeof conditions !== "object") {
+			return ["Invalid conditions object"];
+		}
+		const warnings = [];
+		for (const col in conditions) {
+			if (!colDefs[col]) {
+				warnings.push(`Condition name is not recognized: "${col}"`);
+			}
+		}
+		return warnings;
+	}
+
+	function validatePrefilterAst(ast, colDefs) {
+		const warnings = [];
+		function walk(node) {
+			if (!node) return;
+			if (node.ast_type === "VALUE") {
+				if (!colDefs[node.column]) {
+					warnings.push(`Name in expression is not recognized: ${node.column}`);
+				}
+				return;
+			}
+			if (node.ast_type === "NOT") {
+				walk(node.child);
+				return;
+			}
+			if (node.ast_type === "AND" || node.ast_type === "OR") {
+				node.children?.forEach(walk);
+			}
+		}
+		walk(ast);
+		return warnings;
+	}
+
 	function serializePrefilters() {
 		const astText = convertAstNodeToString(prefilterAst);
 		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
@@ -810,7 +841,7 @@
 		const astIndex = text.indexOf(astMarker);
 		const conditionsIndex = text.indexOf(conditionsMarker);
 		if (astIndex === -1 || conditionsIndex === -1) {
-			GDV.utils.reportSoftError("Invalid clipboard format", "Clipboard is missing EXPRESSION or CONDITIONS sections.");
+			GDV.utils.reportSoftWarning("Invalid clipboard format", "Clipboard is missing EXPRESSION or CONDITIONS sections.");
 			return;
 		}
 		const astText = text.slice(astIndex + astMarker.length, conditionsIndex).trim();
@@ -819,12 +850,24 @@
 		try {
 			parsedConditions = JSON.parse(conditionsText);
 		} catch (err) {
-			GDV.utils.reportSoftError("Invalid CONDITIONS JSON", "Could not parse filter conditions from clipboard.", err);
+			GDV.utils.reportSoftWarning("Invalid CONDITIONS JSON", "Could not parse filter conditions from clipboard.", err);
 			return;
 		}
 		const parsedAst = convertStringToAst(astText);
 		if (!parsedAst) {
-			GDV.utils.reportSoftError("Invalid EXPRESSION format", "Could not parse expression from clipboard.");
+			GDV.utils.reportSoftWarning("Invalid EXPRESSION format", "Could not parse expression from clipboard.");
+			return;
+		}
+		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const conditionWarnings = validatePrefilterConditions(parsedConditions, colDefs);
+		const astWarnings = validatePrefilterAst(parsedAst, colDefs);
+		if (conditionWarnings.length || astWarnings.length) {
+			for (const w of conditionWarnings) {
+				GDV.utils.reportSoftWarning("Invalid prefilter condition found", w);
+			}
+			for (const w of astWarnings) {
+				GDV.utils.reportSoftWarning("Invalid prefilter expression found", w);
+			}
 			return;
 		}
 		prefilterAst = normalizeNode(parsedAst);
