@@ -247,9 +247,9 @@
 	function createPrefiltersSummaryPrefilterButtonsRow(form) {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-buttons";
+		buttonWrapper.appendChild(createFixExpressionButton(form));
 		buttonWrapper.appendChild(createCopyClipboardButton(form));
 		buttonWrapper.appendChild(createPasteClipboardButton(form));
-		buttonWrapper.appendChild(createFixExpressionButton(form));
 		buttonWrapper.appendChild(createPrefiltersResetButton(form));
 		return buttonWrapper;
 	}
@@ -782,7 +782,7 @@
 		button.textContent = "Remove";
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
-			GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi(node);
+			GDV.prefilter.removeFromAstConditionsAndUi(node);
 			updatePrefilterActiveItemsAndWarning(form);
 		});
 		return button;

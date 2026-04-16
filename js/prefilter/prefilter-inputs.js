@@ -40,13 +40,13 @@
 	GDV.prefilter.addToConditionAndAst = addToConditionAndAst;
 	function addToConditionAndAst(col, condition) {
 		prefilterConditions[col] = condition;
-		addToPrefilterAst(col);
+		addColumnToAst(col);
 	}
 
 	GDV.prefilter.removeFromConditionAndAst = removeFromConditionAndAst;
 	function removeFromConditionAndAst(col) {
 		delete prefilterConditions[col];
-		removeNodeWithColumnInAst(col);
+		removeColumnFromAst(col);
 	}
 
 	GDV.prefilter.removeFromConditionAndUi = removeFromConditionAndUi;
@@ -55,19 +55,19 @@
 		GDV.prefilter.clearActiveItemParameters(col);
 	}
 
-	GDV.prefilter.removeNodeWithColumnInAst = removeNodeWithColumnInAst;
-	function removeNodeWithColumnInAst(col) {
+	GDV.prefilter.removeColumnFromAst = removeColumnFromAst;
+	function removeColumnFromAst(col) {
 		if (!prefilterAst) return;
 		const path = [];
-		prefilterAst = removeNodeWithColumnInsideAst(prefilterAst, col, path);
+		prefilterAst = removeNodeWithColumn(prefilterAst, col, path);
 		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
 	}
 
-	GDV.prefilter.removeNodeWithReferenceInAstConditionsAndUi = removeNodeWithReferenceInAstConditionsAndUi;
-	function removeNodeWithReferenceInAstConditionsAndUi(targetNode) {
+	GDV.prefilter.removeFromAstConditionsAndUi = removeFromAstConditionsAndUi;
+	function removeFromAstConditionsAndUi(targetNode) {
 		if (!prefilterAst) return;
 		const path = [];
-		prefilterAst = removeNodeWithReferenceInsideAst(prefilterAst, targetNode, path);
+		prefilterAst = removeNodeFromAstConditionsAndUi(prefilterAst, targetNode, path);
 		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
 	}
 
@@ -314,21 +314,34 @@
 		};
 	}
 
-	function addToPrefilterAst(col) {
+	function addColumnToAst(column) {
+		const newNode = { ast_type: "VALUE", column };
 		if (!prefilterAst) {
-			prefilterAst = { ast_type: "VALUE", column: col };
+			prefilterAst = newNode;
 			prefilterAstCurrentNode = prefilterAst;
 			return;
 		}
-		if (astHasColumn(prefilterAst, col)) return;
-		const newNode = { ast_type: "VALUE", column: col };
+		if (astHasColumn(prefilterAst, column)) return;
 		switch (prefilterAstCurrentNode.ast_type) {
-			case "VALUE":
+			case "VALUE": {
+				const parentNode = getParentNode(prefilterAst, prefilterAstCurrentNode);
+				if (parentNode && (parentNode.ast_type === "AND" || parentNode.ast_type === "OR")) {
+					parentNode.children.push(newNode);
+					prefilterAstCurrentNode = newNode;
+					return;
+				}
+				const targetNode = prefilterAstCurrentNode;
+				const wrapperNode = { ast_type: "AND", children: [targetNode, newNode] };
+				if (replaceNodeInAst(targetNode, wrapperNode)) {
+					prefilterAstCurrentNode = newNode;
+				}
+				return;
+			}
 			case "NOT": {
 				const targetNode = prefilterAstCurrentNode;
 				const wrapperNode = { ast_type: "AND", children: [targetNode, newNode] };
 				if (replaceNodeInAst(targetNode, wrapperNode)) {
-					prefilterAstCurrentNode = wrapperNode;
+					prefilterAstCurrentNode = newNode;
 				}
 				return;
 			}
@@ -339,7 +352,7 @@
 				return;
 			}
 			default:
-				GDV.utils.reportSoftError("Problem updating your filters", "The filter system received an unexpected internal structure while trying to update your active filters. Your changes may not have been fully applied visually.", null, { nodeType: prefilterAstCurrentNode.ast_type, node: prefilterAstCurrentNode, column: col });
+				GDV.utils.reportSoftError("Problem updating your filters", "The filter system received an unexpected internal structure while trying to update your active filters. Your changes may not have been fully applied visually.", null, { nodeType: prefilterAstCurrentNode.ast_type, node: prefilterAstCurrentNode, column: column });
 				return;
 		}
 	}
@@ -352,7 +365,7 @@
 		return false;
 	}
 
-	function removeNodeWithColumnInsideAst(node, col, path) {
+	function removeNodeWithColumn(node, col, path) {
 		if (!node) return null;
 		path.push(node);
 		switch (node.ast_type) {
@@ -365,7 +378,7 @@
 				return node;
 			case "NOT":
 				if (node.child) {
-					node.child = removeNodeWithColumnInsideAst(node.child, col, path);
+					node.child = removeNodeWithColumn(node.child, col, path);
 				}
 				if (!node.child) {
 					path.pop();
@@ -380,7 +393,7 @@
 					return node;
 				}
 				node.children = node.children
-					.map(child => removeNodeWithColumnInsideAst(child, col, path))
+					.map(child => removeNodeWithColumn(child, col, path))
 					.filter(Boolean);
 				if (node.children.length === 0) {
 					path.pop();
@@ -400,13 +413,13 @@
 		}
 	}
 
-	function removeNodeWithReferenceInsideAst(node, targetNode, path) {
+	function removeNodeFromAstConditionsAndUi(node, targetNode, path) {
 		if (!node) return null;
 		path.push(node);
 		switch (node.ast_type) {
 			case "VALUE":
 				if (node === targetNode) {
-					removeAllConditionsInSubtree(node);
+					removeAllConditionsAndUiInSubtree(node);
 					path.pop();
 					return null;
 				}
@@ -414,11 +427,11 @@
 				return node;
 			case "NOT":
 				if (node === targetNode) {
-					removeAllConditionsInSubtree(node);
+					removeAllConditionsAndUiInSubtree(node);
 					path.pop();
 					return null;
 				}
-				if (node.child) node.child = removeNodeWithReferenceInsideAst(node.child, targetNode, path);
+				if (node.child) node.child = removeNodeFromAstConditionsAndUi(node.child, targetNode, path);
 				if (!node.child) {
 					path.pop();
 					return null;
@@ -428,7 +441,7 @@
 			case "AND":
 			case "OR":
 				if (node === targetNode) {
-					removeAllConditionsInSubtree(node);
+					removeAllConditionsAndUiInSubtree(node);
 					path.pop();
 					return null;
 				}
@@ -436,7 +449,7 @@
 					path.pop();
 					return node;
 				}
-				node.children = node.children.map(child => removeNodeWithReferenceInsideAst(child, targetNode, path)).filter(Boolean);
+				node.children = node.children.map(child => removeNodeFromAstConditionsAndUi(child, targetNode, path)).filter(Boolean);
 				if (node.children.length === 0) {
 					path.pop();
 					return null;
@@ -455,19 +468,19 @@
 		}
 	}
 
-	function removeAllConditionsInSubtree(node) {
+	function removeAllConditionsAndUiInSubtree(node) {
 		if (!node) return;
 		switch (node.ast_type) {
 			case "VALUE":
 				GDV.prefilter.removeFromConditionAndUi(node.column);
 				return;
 			case "NOT":
-				removeAllConditionsInSubtree(node.child);
+				removeAllConditionsAndUiInSubtree(node.child);
 				return;
 			case "AND":
 			case "OR":
 				if (!node.children) return;
-				node.children.forEach(removeAllConditionsInSubtree);
+				node.children.forEach(removeAllConditionsAndUiInSubtree);
 				return;
 		}
 	}
@@ -507,6 +520,28 @@
 			return { ast_type: "AND", children: [node] };
 		}
 		return node;
+	}
+
+	function getParentNode(node, targetNode) {
+		if (!node || !targetNode) return null;
+		if (node === targetNode) return null;
+		if (node.ast_type === "NOT") {
+			if (node.child === targetNode) {
+				return node;
+			}
+			return getParentNode(node.child, targetNode);
+		}
+		if (node.ast_type === "AND" || node.ast_type === "OR") {
+			if (!node.children) return null;
+			for (let i = 0; i < node.children.length; i++) {
+				if (node.children[i] === targetNode) {
+					return node;
+				}
+				const parentNode = getParentNode(node.children[i], targetNode)
+				if (parentNode) return parentNode;
+			}
+		}
+		return null;
 	}
 
 	function replaceNodeInAst(targetNode, replacementNode) {
