@@ -1044,8 +1044,9 @@
 			const colName = section.dataset.col;
 			const matchesSearch = tokens.length === 0 || sectionMatchesTokens(colName, tokens);
 			const matchesCategory = category === "__all__" || (colCategories[category] || []).includes(colName);
+			const notSimilarityScore = colName !== GDV.datatable.getSimilarityScoreName();
 
-			if (matchesSearch && matchesCategory) {
+			if (matchesSearch && matchesCategory && notSimilarityScore) {
 				visibleCount++;
 				if (visibleCount > maxVisibleSections) {
 					section.style.display = "none";

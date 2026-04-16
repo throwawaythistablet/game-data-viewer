@@ -5,6 +5,12 @@
 	let overlayMoveScheduled = false;
 	let lastMouseEvent = null;
 	let similarGameRow = null;
+	const similarityScoreName = "similarity_score";
+
+	GDV.datatable.getSimilarityScoreName = getSimilarityScoreName;
+	function getSimilarityScoreName() {
+		return similarityScoreName;
+	}
 
 	GDV.datatable.loadTable = async (parsedData) => {
 		populateSimilarityColumn(parsedData);
@@ -164,7 +170,7 @@
 			"__thumbnail__",
 			"__view_images__",
 			"key",
-			"similarity_score",
+			getSimilarityScoreName(),
 			"site_std_version",
 			"site_version",
 			"site_last_update_date",
@@ -218,7 +224,7 @@
 	}
 
 	function buildColumns(columnNamesInTable, columnDetails, searchedPrefilters) {
-		const specialKeys = ["key", "similarity_score"];
+		const specialKeys = ["key", getSimilarityScoreName()];
 		const prefilterKeys = Object.keys(searchedPrefilters).filter((k) => k !== "key");
 
 		const normalColumns = columnNamesInTable.filter((k) => shouldIncludeColumn(k, columnDetails, searchedPrefilters));
@@ -1013,7 +1019,7 @@
 	}
 
 	function getDefaultSortColumnName() {
-		return GDV.state.getSimilarityGame() ? "similarity_score" : "bayesian_rating";
+		return GDV.state.getSimilarityGame() ? getSimilarityScoreName() : "bayesian_rating";
 	}
 
 	// Small helper for hyperlink nodes
