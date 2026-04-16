@@ -129,12 +129,9 @@
 
 	function createTableColumns(parsedData) {
 		if (!parsedData || !parsedData.length) return [];
-
 		const columnNames = Object.keys(parsedData[0]);
-		const prefilterConditions = GDV.state.getPrefilterConditions() || {};
 		const columnDetails = GDV.state.getActiveColumnDetails();
-
-		const columns = buildColumns(columnNames, columnDetails, prefilterConditions);
+		const columns = buildDataColumns(columnNames, columnDetails);
 
 		const thumbnailColumn = buildThumbnailColumn();
 		if (thumbnailColumn) {
@@ -145,7 +142,6 @@
 		if (viewImagesColumn) {
 			columns.unshift(viewImagesColumn);
 		}
-
 		return columns;
 	}
 
@@ -223,14 +219,15 @@
 		csvTableElement.show();
 	}
 
-	function buildColumns(columnNamesInTable, columnDetails, searchedPrefilters) {
+	function buildDataColumns(columnNamesInTable, columnDetails) {
+		const prefilterConditions = GDV.state.getPrefilterConditions();
+		const prefilterAst = GDV.state.getPrefilterAst();
 		const specialKeys = ["key", getSimilarityScoreName()];
-		const prefilterKeys = Object.keys(searchedPrefilters).filter((k) => k !== "key");
+		const prefilterKeys = collectColumnsFromAst(prefilterAst).filter(col => col !== "key");
 
-		const normalColumns = columnNamesInTable.filter((k) => shouldIncludeColumn(k, columnDetails, searchedPrefilters));
-		const prefilterColumns = columnNamesInTable.filter((col) => prefilterKeys.includes(col));
+		const normalColumns = columnNamesInTable.filter((k) => shouldIncludeColumn(k, columnDetails, prefilterConditions));
+		const prefilterColumns = prefilterKeys.filter(col => columnNamesInTable.includes(col));
 		const specialColumns = columnNamesInTable.filter((col) => specialKeys.includes(col));
-
 		const resultKeys = [...specialColumns, ...prefilterColumns, ...normalColumns.filter((col) => !specialColumns.includes(col) && !prefilterColumns.includes(col))];
 
 		return resultKeys.map((columnName) => ({
@@ -243,6 +240,34 @@
 			white_highlight: prefilterColumns.includes(columnName),
 			yellow_highlight: specialColumns.includes(columnName),
 		}));
+	}
+
+	function collectColumnsFromAst(node) {
+		const result = [];
+		function traverse(n) {
+			if (!n) return;
+			switch (n.ast_type) {
+				case "VALUE":
+					if (n.column != null) {
+						result.push(n.column);
+					}
+					return;
+				case "NOT":
+					traverse(n.child);
+					return;
+				case "AND":
+				case "OR":
+					if (!n.children) return;
+					for (let i = 0; i < n.children.length; i++) {
+						traverse(n.children[i]);
+					}
+					return;
+				default:
+					return;
+			}
+		}
+		traverse(node);
+		return result;
 	}
 
 	function buildThumbnailColumn() {
@@ -278,9 +303,9 @@
 		};
 	}
 
-	function shouldIncludeColumn(key, columnDetails, searchedPrefilters) {
+	function shouldIncludeColumn(key, columnDetails, prefilterConditions) {
 		const colDef = columnDetails[key];
-		return !colDef || colDef.type !== "tag" || key in searchedPrefilters;
+		return !colDef || colDef.type !== "tag" || key in prefilterConditions;
 	}
 
 	function destroyExistingTable() {
