@@ -36,7 +36,7 @@
 	}
 
 	async function finishTableGenerationUi() {
-		GDV.dom.renderMainPagePrefiltersPanel();
+		GDV.dom.refreshMainPagePrefiltersPanel();
 		GDV.dom.showMainPrefiltersPanelSection();
 		await GDV.loading.finishLoading();
 	}

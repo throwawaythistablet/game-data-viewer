@@ -1213,13 +1213,13 @@
 
 	function setSimilarityGame(gameName) {
 		GDV.state.setSimilarityGame(gameName);
-		GDV.dom.renderMainPagePrefiltersPanel();
+		GDV.dom.refreshMainPanelSimilarityGameSection();
 	}
 
 	function resetSimilarityGame() {
 		similarGameRow = null;
 		GDV.state.resetSimilarityGame();
-		GDV.dom.renderMainPagePrefiltersPanel();
+		GDV.dom.refreshMainPanelSimilarityGameSection();
 	}
 
 	// Delegated event listeners for thumbnails

@@ -138,43 +138,16 @@
 		setTimeout(() => el.remove(), 300);
 	}
 
-	GDV.dom.renderMainPagePrefiltersPanel = () => {
+	GDV.dom.refreshMainPagePrefiltersPanel = () => {
 		const marker = document.getElementById("mainPrefiltersPanelSection");
 		if (!marker) return;
-
-		while (marker.firstChild) marker.removeChild(marker.firstChild);
-
-		const prefilterConditions = GDV.state.getPrefilterConditions();
-		const similarityGame = GDV.state.getSimilarityGame();
-		if (!prefilterConditions || Object.keys(prefilterConditions).length === 0) return;
-
 		const container = document.createElement("div");
 		container.id = "mainPrefiltersPanel";
 		container.className = "prefilter-main-panel";
-		marker.appendChild(container);
 		container.appendChild(createShareUrlButton());
-
-		if (similarityGame) {
-			const similarGamelabel = document.createElement("span");
-			similarGamelabel.className = "prefilter-main-panel-label";
-			similarGamelabel.textContent = "Similarity Score compared with:";
-			container.appendChild(similarGamelabel);
-
-			const similarGameValue = document.createElement("span");
-			similarGameValue.className = "prefilter-active-item";
-			similarGameValue.title = similarityGame;
-			similarGameValue.textContent = similarityGame;
-			container.appendChild(similarGameValue);
-		}
-
-		const prefilterlabel = document.createElement("span");
-		prefilterlabel.className = "prefilter-main-panel-label";
-		prefilterlabel.textContent = "Prefilters:";
-		container.appendChild(prefilterlabel);
-
-		const prefilterAst = GDV.prefilter.getPrefilterAst();
-		const prefilterAstDisplay = createStaticPrefilterAstDisplay(prefilterAst, prefilterAst);
-		container.appendChild(prefilterAstDisplay);
+		container.appendChild(createMainPanelSimilarityGameSection());
+		container.appendChild(createLastSearchedPrefiltersSection());
+		marker.replaceChildren(container);
 	};
 
 	GDV.dom.createHighlightFromValue = (val, colName) => {
@@ -381,6 +354,69 @@
 			}
 		});
 		return shareBtn;
+	}
+
+	GDV.dom.refreshMainPanelSimilarityGameAndLastSearchPrefilters = refreshMainPanelSimilarityGameAndLastSearchPrefilters;
+	function refreshMainPanelSimilarityGameAndLastSearchPrefilters(form) {
+		refreshMainPanelSimilarityGameSection(form);
+		refreshLastSearchedPrefiltersSection(form);
+	}
+
+	GDV.dom.refreshMainPanelSimilarityGameSection = refreshMainPanelSimilarityGameSection;
+	function refreshMainPanelSimilarityGameSection(form) {
+		const container = form.querySelector(".prefilter-main-panel-similarity-game");
+		if (!container) return;
+		container.replaceChildren();
+		addSimilarityGameSectionElements(container);
+	}
+
+	function createMainPanelSimilarityGameSection() {
+		const container = document.createElement("div");
+		container.className = "prefilter-main-panel-similarity-game";
+		addSimilarityGameSectionElements(container);
+		return container;
+	}
+
+	function addSimilarityGameSectionElements(container) {
+		const similarityGame = GDV.state.getSimilarityGame();
+		if (!similarityGame) return;
+
+		const similarGamelabel = document.createElement("span");
+		similarGamelabel.className = "prefilter-main-panel-label";
+		similarGamelabel.textContent = "Similarity Score compared with:";
+		container.appendChild(similarGamelabel);
+
+		const similarGameValue = document.createElement("span");
+		similarGameValue.className = "prefilter-active-item";
+		similarGameValue.title = similarityGame;
+		similarGameValue.textContent = similarityGame;
+		container.appendChild(similarGameValue);
+	}
+
+	GDV.dom.refreshLastSearchedPrefiltersSection = refreshLastSearchedPrefiltersSection;
+	function refreshLastSearchedPrefiltersSection(form) {
+		const container = form.querySelector(".prefilter-main-panel-last-searched");
+		if (!container) return;
+		container.replaceChildren();
+		addSimilarityGameSectionElements(container);
+	}
+
+	function createLastSearchedPrefiltersSection() {
+		const container = document.createElement("div");
+		container.className = "prefilter-main-panel-last-searched";
+		addLastSearchedPrefiltersSection(container);
+		return container;
+	}
+
+	function addLastSearchedPrefiltersSection(container) {
+		const prefilterlabel = document.createElement("span");
+		prefilterlabel.className = "prefilter-main-panel-label";
+		prefilterlabel.textContent = "Last Searched Prefilters:";
+		container.appendChild(prefilterlabel);
+
+		const prefilterAst = GDV.prefilter.getPrefilterAst();
+		const prefilterAstDisplay = createStaticPrefilterAstDisplay(prefilterAst, prefilterAst);
+		container.appendChild(prefilterAstDisplay);
 	}
 
 	function createStaticPrefilterAstDisplay(node, root) {

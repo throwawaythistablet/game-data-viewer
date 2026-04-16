@@ -1183,7 +1183,6 @@
 
 	function finalizeAndClose() {
 		updateStateBeforeClosing();
-		GDV.dom.renderMainPagePrefiltersPanel();
 		hidePrefilterWarning();
 		closePrefilterOverlay();
 	}
