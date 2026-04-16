@@ -893,11 +893,11 @@
 				return createPrefilterActiveItem(form, node);
 			case "NOT": {
 				const container = createPrefilterAstGroup(form, node);
-				container.appendChild(createAstParenthesis("("));
 				container.appendChild(createAstOperator(form, node, "NOT"));
+				if (node.child.ast_type === "VALUE" || node.child.ast_type === "NOT") container.appendChild(createAstParenthesis("("));
 				const childEl = createPrefilterAstDisplay(form, node.child, root);
 				if (childEl) container.appendChild(childEl);
-				container.appendChild(createAstParenthesis(")"));
+				if (node.child.ast_type === "VALUE" || node.child.ast_type === "NOT") container.appendChild(createAstParenthesis(")"));
 				return container;
 			}
 			case "AND":

@@ -327,9 +327,9 @@
 			case "NOT": {
 				const targetNode = prefilterAstCurrentNode;
 				const wrapperNode = { ast_type: "AND", children: [targetNode, newNode] };
-				replaceNode(prefilterAst, targetNode, wrapperNode);
-				if (prefilterAst === targetNode) prefilterAst = wrapperNode;
-				prefilterAstCurrentNode = wrapperNode;
+				if (replaceNodeInAst(targetNode, wrapperNode)) {
+					prefilterAstCurrentNode = wrapperNode;
+				}
 				return;
 			}
 			case "AND":
@@ -486,12 +486,12 @@
 	function convertNodeToAnd(node) {
 		if (!node) return node;
 		if (node.ast_type === "AND") return node;
-		if (node.ast_type === "VALUE" || node.ast_type === "NOT") {
-			return { ast_type: "AND", children: [node] };
-		}
 		if (node.ast_type === "OR") {
 			node.ast_type = "AND";
 			return node;
+		}
+		if (node.ast_type === "VALUE" || node.ast_type === "NOT") {
+			return { ast_type: "AND", children: [node] };
 		}
 		return node;
 	}
@@ -499,14 +499,23 @@
 	function convertNodeToOr(node) {
 		if (!node) return node;
 		if (node.ast_type === "OR") return node;
-		if (node.ast_type === "VALUE" || node.ast_type === "NOT") {
-			return { ast_type: "AND", children: [node] };
-		}
 		if (node.ast_type === "AND") {
 			node.ast_type = "OR";
 			return node;
 		}
+		if (node.ast_type === "VALUE" || node.ast_type === "NOT") {
+			return { ast_type: "AND", children: [node] };
+		}
 		return node;
+	}
+
+	function replaceNodeInAst(targetNode, replacementNode) {
+		const isReplaced = replaceNode(prefilterAst, targetNode, replacementNode);
+		if (prefilterAst === targetNode) {
+			prefilterAst = replacementNode;
+			return true;
+		}
+		return isReplaced;
 	}
 
 	function replaceNode(node, targetNode, replacementNode) {
@@ -537,13 +546,7 @@
 		const targetNode = node;
 		const transformedNode = operationFunction(targetNode);
 		if (!transformedNode) return;
-		if (prefilterAst === targetNode) {
-			prefilterAst = transformedNode;
-			prefilterAstCurrentNode = transformedNode;
-			return;
-		}
-		replaceNode(prefilterAst, targetNode, transformedNode);
-		if (prefilterAstCurrentNode === targetNode) {
+		if (replaceNodeInAst(targetNode, transformedNode)) {
 			prefilterAstCurrentNode = transformedNode;
 		}
 	}

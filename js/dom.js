@@ -428,11 +428,11 @@
 				return createPrefilterActiveItem(node);
 			case "NOT": {
 				const container = createPrefilterAstGroup();
-				container.appendChild(createAstParenthesis("("));
 				container.appendChild(createAstOperator("NOT"));
+				if (node.child.ast_type === "VALUE" || node.child.ast_type === "NOT") container.appendChild(createAstParenthesis("("));
 				const childEl = createStaticPrefilterAstDisplay(node.child, root);
 				if (childEl) container.appendChild(childEl);
-				container.appendChild(createAstParenthesis(")"));
+				if (node.child.ast_type === "VALUE" || node.child.ast_type === "NOT") container.appendChild(createAstParenthesis(")"));
 				return container;
 			}
 			case "AND":
