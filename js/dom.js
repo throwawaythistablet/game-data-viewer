@@ -169,7 +169,7 @@
 
 		const prefilterlabel = document.createElement("span");
 		prefilterlabel.className = "prefilter-main-panel-label";
-		prefilterlabel.textContent = "Last Searched Prefilters:";
+		prefilterlabel.textContent = "Prefilters:";
 		container.appendChild(prefilterlabel);
 
 		const prefilterAst = GDV.prefilter.getPrefilterAst();

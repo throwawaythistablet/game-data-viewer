@@ -57,7 +57,6 @@
 	}
 
 	function closePrefilterOverlay() {
-		hidePrefilterWarning();
 		if (prefilterOverlay?.overlay) {
 			prefilterOverlay.overlay.style.display = "none";
 		}
@@ -394,7 +393,7 @@
 		btn.className = "btn btn-danger btn-close";
 		btn.addEventListener("click", () => {
 			if (cleanupFocus) cleanupFocus();
-			closePrefilterOverlay();
+			finalizeAndClose();
 			resolve(null);
 		});
 		return btn;
@@ -1165,20 +1164,28 @@
 		form.onsubmit = async (e) => {
 			e.preventDefault();
 			const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-			const prefilterAst = GDV.prefilter.getPrefilterAst();
 			if (Object.keys(prefilterConditions).length === 0) {
 				const proceed = await confirmPrefiltersWarning();
 				if (!proceed) return;
 			}
-
-			GDV.state.setPrefilterConditions(prefilterConditions);
-			GDV.state.setPrefilterAst(prefilterAst);
-			GDV.dom.renderMainPagePrefiltersPanel();
-
 			if (cleanupFocus) cleanupFocus();
-			closePrefilterOverlay();
+			finalizeAndClose();
 			resolve(prefilterConditions);
 		};
+	}
+
+	function updateStateBeforeClosing() {
+		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+		const prefilterAst = GDV.prefilter.getPrefilterAst();
+		GDV.state.setPrefilterConditions(prefilterConditions);
+		GDV.state.setPrefilterAst(prefilterAst);
+	}
+
+	function finalizeAndClose() {
+		updateStateBeforeClosing();
+		GDV.dom.renderMainPagePrefiltersPanel();
+		hidePrefilterWarning();
+		closePrefilterOverlay();
 	}
 
 	async function confirmPrefiltersWarning() {
@@ -1196,7 +1203,7 @@
 		function onKeydown(e) {
 			if (e.key === "Escape") {
 				if (previousActive?.focus) previousActive.focus();
-				closePrefilterOverlay(overlay);
+				finalizeAndClose();
 				resolve(null);
 			}
 			if (e.key === "Tab") {
