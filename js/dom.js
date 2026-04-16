@@ -414,9 +414,11 @@
 		prefilterlabel.textContent = "Last Searched Prefilters:";
 		container.appendChild(prefilterlabel);
 
-		const prefilterAst = GDV.prefilter.getPrefilterAst();
+		const prefilterAst = GDV.state.getPrefilterAst();
 		const prefilterAstDisplay = createStaticPrefilterAstDisplay(prefilterAst, prefilterAst);
-		container.appendChild(prefilterAstDisplay);
+		if (prefilterAstDisplay) {
+			container.appendChild(prefilterAstDisplay);
+		}
 	}
 
 	function createStaticPrefilterAstDisplay(node, root) {
@@ -458,7 +460,7 @@
 	}
 
 	function createPrefilterActiveItem(node) {
-		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const col = node.column;
 		const val = prefilterConditions[col];
 		if (!val) return null;
