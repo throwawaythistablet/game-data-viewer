@@ -1198,18 +1198,21 @@
 
 	function getValueOfColumnFromRowElement(el, colName) {
 		const dt = csvTableElement.DataTable();
-		const tr = el.closest("tr"); // native DOM closest
-		if (!tr) return null;
+		const tr = el.closest("tr");
+		if (!tr || !colName) return null;
 
 		const rowData = dt.row(tr).data();
 		if (!rowData) return null;
 
+		// Case 1: object row (key-based)
+		if (typeof rowData === "object" && !Array.isArray(rowData)) {
+			return rowData[colName] ?? null;
+		}
+		// Case 2: array row (index-based)
 		const colIdx = findIndexOfColumnByNameInTable(colName);
 		if (colIdx == null) return null;
 
-		const value = rowData[colIdx];
-		if (!value) return null;
-		return value;
+		return rowData[colIdx] ?? null;
 	}
 
 	function toFileUrl(path) {
