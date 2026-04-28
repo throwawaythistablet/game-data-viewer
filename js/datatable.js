@@ -7,6 +7,8 @@
 	let similarGameRow = null;
 	const similarityScoreName = "similarity_score";
 
+	bindPreviewOverlayGlobalCleanup();
+
 	GDV.datatable.getSimilarityScoreName = getSimilarityScoreName;
 	function getSimilarityScoreName() {
 		return similarityScoreName;
@@ -1129,6 +1131,17 @@
 		startPreviewSlideshow(previewImages, previewImg);
 	}
 
+	function hidePreviewOverlay() {
+		const overlay = document.getElementById("previewOverlay");
+		const previewImg = document.getElementById("previewImage");
+
+		if (overlay) overlay.style.display = "none";
+		if (previewImg) previewImg.src = "";
+
+		stopPreviewSlideshow();
+		currentPreviewIndex = 0;
+	}
+
 	function movePreviewOverlay(e) {
 		const overlay = document.getElementById("previewOverlay");
 		const previewImg = document.getElementById("previewImage");
@@ -1168,6 +1181,15 @@
 			previewTimer = null;
 		}
 		currentPreviewIndex = 0; // reset index
+	}
+
+	function bindPreviewOverlayGlobalCleanup() {
+		window.addEventListener("blur", hidePreviewOverlay);
+		document.addEventListener("visibilitychange", () => {
+			if (document.hidden) {
+				hidePreviewOverlay();
+			}
+		});
 	}
 
 	function clearTableRangeFilters() {
