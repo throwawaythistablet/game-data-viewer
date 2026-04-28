@@ -863,19 +863,53 @@
 		const table = document.querySelector("#csvTable");
 		if (!table) return;
 
-		const headerRow = table.querySelector("thead tr:first-child"); // column headers
-		const filtersRow = table.querySelector("tr.filters"); // filters row
+		const headerRow = table.querySelector("thead tr:first-child");
+		const filtersRow = table.querySelector("tr.filters");
 
 		if (!headerRow || !filtersRow) return;
-
 		let isHoverHeader = false;
 		let isHoverFilters = false;
 		let isFocusInside = false;
+		let collapseTimer = null;
+		const COLLAPSE_DELAY = 2000;
+
+		function computeShouldExpand() {
+			return isHoverHeader || isHoverFilters || isFocusInside;
+		}
+
+		function applyExpandedState() {
+			filtersRow.classList.add("is-expanded");
+			filtersRow.classList.remove("is-collapsed");
+		}
+
+		function applyCollapsedState() {
+			filtersRow.classList.remove("is-expanded");
+			filtersRow.classList.add("is-collapsed");
+		}
+
+		function cancelCollapseTimer() {
+			if (!collapseTimer) return;
+			clearTimeout(collapseTimer);
+			collapseTimer = null;
+		}
+
+		function scheduleCollapse() {
+			if (collapseTimer) return;
+			collapseTimer = setTimeout(() => {
+				collapseTimer = null;
+				if (!computeShouldExpand()) {
+					applyCollapsedState();
+				}
+			}, COLLAPSE_DELAY);
+		}
 
 		function updateFiltersState() {
-			const shouldExpand = isHoverHeader || isHoverFilters || isFocusInside;
-			filtersRow.classList.toggle("is-expanded", shouldExpand);
-			filtersRow.classList.toggle("is-collapsed", !shouldExpand);
+			if (computeShouldExpand()) {
+				cancelCollapseTimer();
+				applyExpandedState();
+			} else {
+				scheduleCollapse();
+			}
 		}
 
 		// Hover on headers
@@ -883,16 +917,18 @@
 			isHoverHeader = true;
 			updateFiltersState();
 		});
+
 		headerRow.addEventListener("mouseleave", () => {
 			isHoverHeader = false;
 			updateFiltersState();
 		});
 
-		// Hover on filters row itself (hover buffer)
+		// Hover on filters row
 		filtersRow.addEventListener("mouseenter", () => {
 			isHoverFilters = true;
 			updateFiltersState();
 		});
+
 		filtersRow.addEventListener("mouseleave", () => {
 			isHoverFilters = false;
 			updateFiltersState();
@@ -903,15 +939,16 @@
 			isFocusInside = true;
 			updateFiltersState();
 		});
-		filtersRow.addEventListener("focusout", (e) => {
-			const newTarget = e.relatedTarget;
-			if (!filtersRow.contains(newTarget)) {
-				isFocusInside = false;
+
+		filtersRow.addEventListener("focusout", () => {
+			// let focus settle before checking final state
+			setTimeout(() => {
+				isFocusInside = filtersRow.contains(document.activeElement);
 				updateFiltersState();
-			}
+			}, 0);
 		});
 
-		// Start collapsed
+		// initial state
 		updateFiltersState();
 	}
 
@@ -1204,10 +1241,12 @@
 		const rowData = dt.row(tr).data();
 		if (!rowData) return null;
 
+		// In this implementation, DataTables row data is always array-based (DOM-sourced, not object mode).
 		// Case 1: object row (key-based)
-		if (typeof rowData === "object" && !Array.isArray(rowData)) {
-			return rowData[colName] ?? null;
-		}
+		// if (typeof rowData === "object" && !Array.isArray(rowData)) {
+		// 	return rowData[colName] ?? null;
+		// }
+
 		// Case 2: array row (index-based)
 		const colIdx = findIndexOfColumnByNameInTable(colName);
 		if (colIdx == null) return null;
