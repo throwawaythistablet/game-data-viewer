@@ -2,15 +2,16 @@
 	// FILE_PATH_TO_SIZE_MAP START
     const filePathToSizeMap = new Map([
       ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 262536],
-      ["data/game_column_details.json", 976891],
-      ["data/game_data_part_1.csv", 52434541],
-      ["data/game_data_part_2.csv", 52432236],
-      ["data/game_data_part_3.csv", 52430461],
-      ["data/game_data_part_4.csv", 49940446],
+      ["data/game_column_categories.json", 269287],
+      ["data/game_column_details.json", 1112614],
+      ["data/game_data_part_1.csv", 52431822],
+      ["data/game_data_part_2.csv", 52432108],
+      ["data/game_data_part_3.csv", 52429369],
+      ["data/game_data_part_4.csv", 52433763],
+      ["data/game_data_part_5.csv", 25038777],
       ["data/game_keys.json", 1267972],
       ["data/game_thumbnails.json", 18944649],
-      ["data/tag_quick_search_patterns.json", 1194967],
+      ["data/tag_quick_search_patterns.json", 1576399],
     ]);
 	// FILE_PATH_TO_SIZE_MAP END
 
