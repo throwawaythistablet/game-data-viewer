@@ -331,6 +331,7 @@
 			// Header cell
 			const th = document.createElement("th");
 			th.textContent = col.title;
+			th.dataset.columnKey = col.data;
 			if (col.white_highlight) {
 				th.classList.add("white-highlight");
 			} else if (col.yellow_highlight) {
@@ -340,6 +341,7 @@
 
 			// Filter cell
 			const filterTh = document.createElement("th");
+			filterTh.dataset.columnKey = col.data;
 			if (col.white_highlight) {
 				filterTh.classList.add("white-highlight");
 			} else if (col.yellow_highlight) {
@@ -1038,7 +1040,6 @@
 			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot sort by "${columnName}": the column index is missing or invalid.`);
 			return;
 		}
-
 		const dt = csvTableElement.DataTable();
 		dt.order([[columnIndex, order]]).draw();
 	}
@@ -1172,15 +1173,18 @@
 
 	function findIndexOfColumnByNameInTable(colName) {
 		const dt = csvTableElement.DataTable();
+		if (!colName) return null;
+		const target = colName.toLowerCase();
 		const colIdx = dt
 			.columns()
 			.indexes()
 			.toArray()
 			.find((i) => {
-				const headerText = dt.column(i).header().textContent.trim().toLowerCase();
-				return headerText === colName;
+				const header = dt.column(i).header();
+				const key = header?.dataset?.columnKey;
+				return key && key.toLowerCase() === target;
 			});
-		return colIdx;
+		return colIdx ?? null;
 	}
 
 	function findIndexOfColumnByNameInColumns(columns, colName) {
