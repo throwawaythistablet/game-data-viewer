@@ -1038,26 +1038,33 @@
 
 		let visibleCount = 0;
 		let hiddenPastLimit = 0;
-
+		const toShow = [];
+		const toHide = [];
 		prefilterSections.forEach((section) => {
 			const colName = section.dataset.col;
 			const matchesSearch = tokens.length === 0 || sectionMatchesTokens(colName, tokens);
 			const matchesCategory = category === "__all__" || (colCategories[category] || []).includes(colName);
 			const notSimilarityScore = colName !== GDV.datatable.getSimilarityScoreName();
-
 			if (matchesSearch && matchesCategory && notSimilarityScore) {
 				visibleCount++;
 				if (visibleCount > maxVisibleSections) {
-					section.style.display = "none";
+					toHide.push(section);
 					hiddenPastLimit++;
 				} else {
-					section.style.display = "";
+					toShow.push(section);
 				}
 			} else {
-				section.style.display = "none";
+				toHide.push(section);
 			}
 		});
 
+		// Apply DOM updates in batches (reduces layout thrash)
+		toShow.forEach((el) => {
+			el.style.display = "";
+		});
+		toHide.forEach((el) => {
+			el.style.display = "none";
+		});
 		updatePrefilterLimitIndicator(form, hiddenPastLimit);
 	}
 
