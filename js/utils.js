@@ -161,18 +161,30 @@
 		const max = Math.max(Math.abs(a), Math.abs(b));
 		if (max === 0) return 1;
 		return Math.max(0, 1 - (Math.abs(a - b) / max));
-	}
+	};
 
 	GDV.utils.getSimilarityRatio = (a, b) => {
 		if (a === 0 && b === 0) return 1;
 		const aa = Math.abs(a);
 		const bb = Math.abs(b);
 		return Math.min(aa, bb) / Math.max(aa, bb);
-	}
+	};
 
 	GDV.utils.normalizeFilterName = (columnName) => {
 		return columnName.includes(": ") ? columnName.split(": ")[1] : columnName;
-	}
+	};
+
+	GDV.utils.downloadBlob = (blob, filename) => {
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+
+		a.remove();
+		URL.revokeObjectURL(url);
+	};
 
 	function createErrorMessage(error) {
 		if (!error?.message) return "";
