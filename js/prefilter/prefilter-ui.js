@@ -482,7 +482,6 @@
 		});
 
 		indicator.appendChild(showMoreBtn);
-		form.appendChild(indicator);
 		return indicator;
 	}
 
