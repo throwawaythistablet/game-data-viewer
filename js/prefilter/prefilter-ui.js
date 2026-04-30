@@ -3,6 +3,8 @@
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleSectionsBatchSize = 99;
 	let prefilterOverlay = null;
+	let prefilterSections = null;
+	let prefilterSectionArray = null;
 	let maxVisibleSections = visibleSectionsBatchSize;
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
@@ -421,6 +423,8 @@
 		for (const [col, colDef] of Object.entries(colDefs)) {
 			grid.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
 		}
+		prefilterSections = grid.querySelectorAll(".prefilter-section");
+		prefilterSectionArray = Array.from(prefilterSections);
 		return grid;
 	}
 
@@ -1006,22 +1010,20 @@
 
 	function sortPrefilterSections(form) {
 		const grid = form.querySelector(".prefilter-grid");
-		const sections = form.querySelectorAll(".prefilter-section");
-		const sectionArray = Array.from(sections);
 		const sortMode = GDV.prefilter.getSortMode();
 		switch (sortMode) {
 			case "alpha":
-				sortPrefilterSectionsAlphabetically(sectionArray);
+				sortPrefilterSectionsAlphabetically(prefilterSectionArray);
 				break;
 			case "nearest":
-				sortPrefilterSectionsByNearestMatch(form, sectionArray);
+				sortPrefilterSectionsByNearestMatch(form, prefilterSectionArray);
 				break;
 			default:
-				sortPrefilterSectionsByUsage(sectionArray);
+				sortPrefilterSectionsByUsage(prefilterSectionArray);
 		}
 
 		const fragment = document.createDocumentFragment();
-		sectionArray.forEach((section) => {
+		prefilterSectionArray.forEach((section) => {
 			fragment.appendChild(section);
 		});
 		grid.appendChild(fragment);
@@ -1031,7 +1033,6 @@
 		const searchText = getSearchTextInForm(form);
 		const category = getCategoryInForm(form);
 		const colCategories = GDV.state.getColumnCategories() || {};
-		const sections = form.querySelectorAll(".prefilter-section");
 
 		// Tokenize search input: lowercase, split by spaces, remove empty tokens
 		const tokens = searchText.trim().toLowerCase().split(/\s+/).filter((t) => t.length > 0);
@@ -1039,7 +1040,7 @@
 		let visibleCount = 0;
 		let hiddenPastLimit = 0;
 
-		sections.forEach((section) => {
+		prefilterSections.forEach((section) => {
 			const colName = section.dataset.col;
 			const matchesSearch = tokens.length === 0 || sectionMatchesTokens(colName, tokens);
 			const matchesCategory = category === "__all__" || (colCategories[category] || []).includes(colName);
@@ -1088,28 +1089,33 @@
 
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		const colOrder = Object.keys(colDefs);
+		const orderMap = new Map(colOrder.map((col, i) => [col, i]));
+		const sortingInfo = new Map();
 
-		const distanceCache = new Map();
 		for (const section of sectionArray) {
 			const colName = section.dataset.col;
-			const dist = GDV.utils.computeNearestMatchDistance(colName, searchText);
-			distanceCache.set(colName, dist);
+			sortingInfo.set(section, {
+				dist: GDV.utils.computeNearestMatchDistance(colName, searchText),
+				order: orderMap.get(colName)
+			});
 		}
 
 		sectionArray.sort((a, b) => {
-			const distA = distanceCache.get(a.dataset.col);
-			const distB = distanceCache.get(b.dataset.col);
-			if (distA !== distB) return distA - distB;
-			const usageA = colOrder.indexOf(a.dataset.col);
-			const usageB = colOrder.indexOf(b.dataset.col);
-			return usageA - usageB;
+			const A = sortingInfo.get(a);
+			const B = sortingInfo.get(b);
+			if (A.dist !== B.dist) return A.dist - B.dist;
+			return A.order - B.order;
 		});
 	}
 
 	function sortPrefilterSectionsByUsage(sectionArray) {
 		const colDefs = GDV.state.getActiveColumnDetails() || {};
 		const colOrder = Object.keys(colDefs);
-		sectionArray.sort((a, b) => colOrder.indexOf(a.dataset.col) - colOrder.indexOf(b.dataset.col));
+		const orderMap = new Map(colOrder.map((col, i) => [col, i]));
+
+		sectionArray.sort((a, b) => {
+			return orderMap.get(a.dataset.col) - orderMap.get(b.dataset.col);
+		});
 	}
 
 	function sectionMatchesTokens(colName, tokens) {
