@@ -1,18 +1,18 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 269285],
-      ["data/game_column_details.json", 1112966],
-      ["data/game_data_part_1.csv", 52437769],
-      ["data/game_data_part_2.csv", 52429582],
-      ["data/game_data_part_3.csv", 52432286],
-      ["data/game_data_part_4.csv", 52430906],
-      ["data/game_data_part_5.csv", 24930414],
-      ["data/game_keys.json", 1267384],
-      ["data/game_thumbnails.json", 18944649],
-      ["data/tag_quick_search_patterns.json", 1576399],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 269285],
+		["data/game_column_details.json", 1112966],
+		["data/game_data_part_1.csv", 52437769],
+		["data/game_data_part_2.csv", 52429582],
+		["data/game_data_part_3.csv", 52432286],
+		["data/game_data_part_4.csv", 52430906],
+		["data/game_data_part_5.csv", 24930414],
+		["data/game_keys.json", 1267384],
+		["data/game_thumbnails.json", 18944649],
+		["data/tag_quick_search_patterns.json", 1576399],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -317,16 +317,23 @@
 	}
 
 	async function applyUrlPrefiltersOrPrompt() {
-		const { prefilterConditions = null, prefilterAst = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
-		const activeCsv = GDV.state.getActiveCsvFile();
-		let applied = false;
+		let { prefilterConditions = null, prefilterAst = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
+		const hasConditions = prefilterConditions && Object.keys(prefilterConditions).length > 0;
+		let hasAst = prefilterAst && (typeof prefilterAst === "object") && Object.keys(prefilterAst).length > 0;
+		const hasSimilarityGame = !!similarityGame;
+		const bannerMessage = getUrlParameterMessage(hasConditions, hasAst, hasSimilarityGame);
+		if (hasConditions && !hasAst) {
+			prefilterAst = GDV.prefilter.createPrefilterAstFromConditions(prefilterConditions);
+			hasAst = true;
+		}
+		if (!GDV.prefilter.arePrefiltersCorrect(prefilterConditions, prefilterAst)) {
+			({ prefilterConditions, prefilterAst } = GDV.prefilter.repairPrefilterConditionsAndAst(prefilterConditions, prefilterAst));
+		}
 
-		if (prefilterConditions && Object.keys(prefilterConditions).length) {
+		let applied = false;
+		if (hasConditions || hasAst) {
 			applied = true;
 			GDV.state.setPrefilterConditions(prefilterConditions);
-		}
-		if (prefilterAst && Object.keys(prefilterAst).length) {
-			applied = true;
 			GDV.state.setPrefilterAst(prefilterAst);
 		}
 		if (similarityGame) {
@@ -334,24 +341,24 @@
 			const nearestGame = GDV.utils.findNearestGameKey(similarityGame);
 			GDV.state.setSimilarityGame(nearestGame);
 		}
-
+		const activeCsv = GDV.state.getActiveCsvFile();
 		if (applied) {
-			GDV.utils.showInfoBanner("URL Parameters Detected", getUrlParameterMessage(prefilterConditions, prefilterAst, similarityGame));
+			GDV.utils.showInfoBanner("URL Parameters Detected", bannerMessage);
 			await GDV.tableGenerator.runTableGeneration(activeCsv);
 		} else {
 			await GDV.tableGenerator.showPrefiltersAndGenerateTable(activeCsv);
 		}
 	}
 
-	function getUrlParameterMessage(prefilterConditions, prefilterAst, similarityGame) {
+	function getUrlParameterMessage(hasConditions, hasAst, hasSimilarityGame) {
 		const appliedListParts = [];
-		if (prefilterConditions && Object.keys(prefilterConditions).length) {
+		if (hasConditions) {
 			appliedListParts.push("Prefilter Conditions");
 		}
-		if (prefilterAst) {
+		if (hasAst) {
 			appliedListParts.push("Prefilter Expression");
 		}
-		if (similarityGame) {
+		if (hasSimilarityGame) {
 			appliedListParts.push("Similarity Game");
 		}
 		const appliedList = appliedListParts.join(" & ");

@@ -28,6 +28,7 @@
 		return parts.join("&");
 	}
 
+	GDV.urlParameters.extractPrefilterConditions = extractPrefilterConditions;
 	function extractPrefilterConditions(params) {
 		let pfObj = null;
 		if (params.pf) {
@@ -173,28 +174,20 @@
 
 				case "str": {
 					// Comma-separated choices
-					const choices = val
-						.split(",")
-						.map((s) => s.trim())
-						.filter(Boolean);
+					const choices = val.split(",").map((s) => s.trim()).filter(Boolean);
 
 					// Optional: validate against allowed choices
 					const validChoices = colDef.choices.length ? choices.filter((c) => colDef.choices.includes(c)) : choices;
-
 					prefilterConditions[colName] = { type: "str", choices: validChoices };
 					break;
 				}
 
 				case "tag": {
 					// Numeric tag values
-					const tags = val
-						.split(",")
-						.map(Number)
-						.filter((n) => !Number.isNaN(n));
+					const tags = val.split(",").map(Number).filter((n) => !Number.isNaN(n));
 
 					// Optional: validate against min/max
 					const validTags = tags.filter((n) => n >= colDef.min && n <= colDef.max);
-
 					prefilterConditions[colName] = { type: "tag", choices: validTags };
 					break;
 				}
@@ -256,87 +249,52 @@
 	}
 
 	function validatePrefilterConditions(prefilterConditions) {
-		if (!prefilterConditions || typeof prefilterConditions !== "object") return false;
-
-		for (const col in prefilterConditions) {
-			const val = prefilterConditions[col];
-			const colDef = GDV.state.getActiveColumnDetails()[col];
-
-			if (!colDef) {
-				GDV.utils.reportSoftWarning("Unknown Column During Validation", `Cannot validate unknown column '${col}'.`);
-				continue; // skip unknown columns
-			}
-
-			switch (colDef.type) {
-				case "float":
-				case "int": {
-					if ((val.min !== null && typeof val.min !== "number") || (val.max !== null && typeof val.max !== "number")) {
-						GDV.utils.reportSoftWarning("Invalid Range Values", `The prefilter for column '${col}' has invalid range values.`);
-						return false;
-					}
-					// Optional: check against column min/max
-					if (colDef.min !== undefined && val.min !== null && val.min < colDef.min) {
-						GDV.utils.reportSoftWarning("Prefilter Minimum Below Allowed", `The minimum value for column '${col}' is below the allowed range.`);
-						return false;
-					}
-					if (colDef.max !== undefined && val.max !== null && val.max > colDef.max) {
-						GDV.utils.reportSoftWarning("Prefilter Maximum Above Allowed", `The maximum value for column '${col}' is above the allowed range.`);
-						return false;
-					}
-					break;
-				}
-
-				case "str": {
-					if (!Array.isArray(val.choices)) {
-						GDV.utils.reportSoftWarning("Invalid Choices Array", `The prefilter for column '${col}' contains an invalid choices array.`);
-						return false;
-					}
-					// Optional: ensure all choices exist in columnDef.choices
-					if (colDef.choices.length && !val.choices.every((c) => colDef.choices.includes(c))) {
-						GDV.utils.reportSoftWarning("Invalid String Choices", `Some string choices for column '${col}' are invalid and will be ignored.`);
-						return false;
-					}
-					break;
-				}
-
-				case "tag": {
-					if (!Array.isArray(val.choices)) {
-						GDV.utils.reportSoftWarning("Invalid Tag Choices Array", `The prefilter for column '${col}' contains an invalid tag choices array.`);
-						return false;
-					}
-					// Optional: check tags against min/max
-					if (colDef.min !== undefined && colDef.max !== undefined) {
-						if (!val.choices.every((n) => typeof n === "number" && n >= colDef.min && n <= colDef.max)) {
-							GDV.utils.reportSoftWarning("Tag Choices Out of Bounds", `Some tag choices for column '${col}' are outside the allowed range and will be ignored.`);
-							return false;
-						}
-					}
-					break;
-				}
-
-				case "bool": {
-					if (!Array.isArray(val.choices)) {
-						GDV.utils.reportSoftWarning("Invalid Boolean Choices Array", `The prefilter for column '${col}' contains an invalid boolean choices array.`);
-						return false;
-					}
-					if (!val.choices.every((b) => b === true || b === false)) {
-						GDV.utils.reportSoftWarning("Invalid Boolean Value", `One or more boolean values for column '${col}' are invalid.`);
-						return false;
-					}
-					break;
-				}
-
-				default: {
-					// text tokens
-					if (!Array.isArray(val.text)) {
-						GDV.utils.reportSoftWarning("Invalid Text Tokens", `The prefilter for column '${col}' contains invalid text tokens.`);
-						return false;
-					}
-					break;
-				}
-			}
+		const warnings = [];
+		if (!prefilterConditions || typeof prefilterConditions !== "object" || Array.isArray(prefilterConditions)) {
+			GDV.utils.reportSoftWarning("Prefilter validation issue", "Invalid conditions object");
+			return false;
 		}
+		for (const [col, val] of Object.entries(prefilterConditions)) {
+			if (!val || typeof val !== "object" || Array.isArray(val)) {
+				warnings.push(`"${col}" is not a valid condition object`);
+				continue;
+			}
+			// Numeric
+			if (val.min != null || val.max != null || val.type === "int" || val.type === "float") {
+				if (val.min != null && !Number.isFinite(val.min)) {
+					warnings.push(`"${col}" has invalid min`);
+				}
+				if (val.max != null && !Number.isFinite(val.max)) {
+					warnings.push(`"${col}" has invalid max`);
+				}
+				if (val.min != null && val.max != null && val.min > val.max) {
+					warnings.push(`"${col}" min > max`);
+				}
 
+				continue;
+			}
+			// Choices
+			if (Array.isArray(val.choices)) {
+				if (!val.choices.every(c => typeof c === "string" || typeof c === "number" || typeof c === "boolean")) {
+					warnings.push(`"${col}" has invalid choices`);
+				}
+				continue;
+			}
+			// Text
+			if (val.text != null) {
+				if (!Array.isArray(val.text) || !val.text.every(t => typeof t === "string")) {
+					warnings.push(`"${col}" has invalid text tokens`);
+				}
+				continue;
+			}
+			// Unknown shape
+			warnings.push(`"${col}" has unknown condition structure`);
+		}
+		// SINGLE BANNER OUTPUT (your rule)
+		if (warnings.length > 0) {
+			GDV.utils.reportSoftWarning("Prefilter validation issues", warnings.join("\n"));
+			return false;
+		}
 		return true;
 	}
 

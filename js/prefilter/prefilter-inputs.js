@@ -130,6 +130,30 @@
 		prefilterAstCurrentNode = prefilterAst;
 	}
 
+	GDV.prefilter.createPrefilterAstFromConditions = createPrefilterAstFromConditions;
+	function createPrefilterAstFromConditions(prefilterConditions) {
+		if (!prefilterConditions || typeof prefilterConditions !== "object") {
+			return null;
+		}
+		const columns = Object.keys(prefilterConditions);
+		if (columns.length === 0) {
+			return null;
+		}
+		if (columns.length === 1) {
+			return {
+				ast_type: "VALUE",
+				column: columns[0]
+			};
+		}
+		return {
+			ast_type: "AND",
+			children: columns.map((col) => ({
+				ast_type: "VALUE",
+				column: col
+			}))
+		};
+	}
+
 	GDV.prefilter.collectColumnsFromAst = collectColumnsFromAst;
 	function collectColumnsFromAst(node) {
 		const result = [];
@@ -178,6 +202,93 @@
 			return false;
 		}
 		return true;
+	}
+
+	GDV.prefilter.repairPrefilterConditionsAndAst = repairPrefilterConditionsAndAst;
+	function repairPrefilterConditionsAndAst(prefilterConditions, prefilterAst) {
+		const colDefs = GDV.state.getActiveColumnDetails() || {};
+
+		// --- 1. CLEAN CONDITIONS (schema-level validation only)
+		const cleanConditions = {};
+		for (const col in (prefilterConditions || {})) {
+			if (colDefs[col]) {
+				cleanConditions[col] = prefilterConditions[col];
+			}
+		}
+
+		// --- 2. CLEAN AST (must exist in cleaned conditions)
+		function cleanAst(node) {
+			if (!node) return null;
+
+			switch (node.ast_type) {
+				case "VALUE":
+					return cleanConditions[node.column] ? node : null;
+				case "NOT": {
+					const child = cleanAst(node.child);
+					if (!child) return null;
+					return { ast_type: "NOT", child };
+				}
+				case "AND":
+				case "OR": {
+					if (!node.children) return null;
+					const children = [];
+					for (let i = 0; i < node.children.length; i++) {
+						const cleaned = cleanAst(node.children[i]);
+						if (cleaned) children.push(cleaned);
+					}
+					if (children.length === 0) return null;
+					if (children.length === 1) return children[0];
+
+					return { ast_type: node.ast_type, children };
+				}
+
+				default:
+					return null;
+			}
+		}
+		let cleanAstRoot = cleanAst(prefilterAst);
+
+		// --- 3. COLLECT AST COLUMNS (reuse existing utility)
+		const astColumns = new Set(collectColumnsFromAst(cleanAstRoot));
+
+		// --- 4. FIND MISSING CONDITIONS (present in conditions but not AST)
+		const missingNodes = [];
+		for (const col in cleanConditions) {
+			if (!astColumns.has(col)) {
+				missingNodes.push({
+					ast_type: "VALUE",
+					column: col
+				});
+			}
+		}
+
+		// --- 5. INJECT MISSING NODES INTO AST
+		if (missingNodes.length > 0) {
+			if (!cleanAstRoot) {
+				cleanAstRoot =
+					missingNodes.length === 1
+						? missingNodes[0]
+						: { ast_type: "AND", children: missingNodes };
+
+			} else if (cleanAstRoot.ast_type === "AND") {
+				cleanAstRoot.children.push(...missingNodes);
+
+			} else {
+				cleanAstRoot = {
+					ast_type: "AND",
+					children: [cleanAstRoot, ...missingNodes]
+				};
+			}
+		}
+
+		// --- 6. NORMALIZE FINAL AST
+		cleanAstRoot = normalizeNode(cleanAstRoot);
+
+		// --- 7. RETURN REPAIRED STATE
+		return {
+			prefilterConditions: cleanConditions,
+			prefilterAst: cleanAstRoot
+		};
 	}
 
 	GDV.prefilter.copyPrefiltersToClipboard = copyPrefiltersToClipboard;
@@ -926,17 +1037,15 @@
 	function validatePrefilterConsistency(conditions, ast) {
 		const warnings = [];
 		const astColumns = collectColumnsFromAst(ast);
-		const filteredAstColumns = astColumns.filter((c) => c !== "key");
 		const conditionColumns = Object.keys(conditions || {});
 		const conditionSet = new Set(conditionColumns);
-		const astSet = new Set(filteredAstColumns);
-		// AST → Conditions mismatch
-		for (const col of filteredAstColumns) {
+		const astSet = new Set(astColumns);
+
+		for (const col of astColumns) {
 			if (!conditionSet.has(col)) {
 				warnings.push(`Expression references "${col}" but no condition exists for it`);
 			}
 		}
-		// Conditions → AST mismatch
 		for (const col of conditionColumns) {
 			if (!astSet.has(col)) {
 				warnings.push(`Condition "${col}" exists but is not used in the expression`);
