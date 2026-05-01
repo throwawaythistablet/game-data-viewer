@@ -225,7 +225,7 @@
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const prefilterAst = GDV.state.getPrefilterAst();
 		const specialKeys = ["key", getSimilarityScoreName()];
-		const prefilterKeys = collectColumnsFromAst(prefilterAst).filter(col => col !== "key");
+		const prefilterKeys = GDV.prefilter.collectColumnsFromAst(prefilterAst).filter(col => col !== "key");
 
 		const normalColumns = columnNamesInTable.filter((k) => shouldIncludeColumn(k, columnDetails, prefilterConditions));
 		const prefilterColumns = prefilterKeys.filter(col => columnNamesInTable.includes(col));
@@ -242,34 +242,6 @@
 			white_highlight: prefilterColumns.includes(columnName),
 			yellow_highlight: specialColumns.includes(columnName),
 		}));
-	}
-
-	function collectColumnsFromAst(node) {
-		const result = [];
-		function traverse(n) {
-			if (!n) return;
-			switch (n.ast_type) {
-				case "VALUE":
-					if (n.column != null) {
-						result.push(n.column);
-					}
-					return;
-				case "NOT":
-					traverse(n.child);
-					return;
-				case "AND":
-				case "OR":
-					if (!n.children) return;
-					for (let i = 0; i < n.children.length; i++) {
-						traverse(n.children[i]);
-					}
-					return;
-				default:
-					return;
-			}
-		}
-		traverse(node);
-		return result;
 	}
 
 	function buildThumbnailColumn() {

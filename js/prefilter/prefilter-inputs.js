@@ -130,6 +130,56 @@
 		prefilterAstCurrentNode = prefilterAst;
 	}
 
+	GDV.prefilter.collectColumnsFromAst = collectColumnsFromAst;
+	function collectColumnsFromAst(node) {
+		const result = [];
+		function traverse(n) {
+			if (!n) return;
+			switch (n.ast_type) {
+				case "VALUE":
+					if (n.column != null) {
+						result.push(n.column);
+					}
+					return;
+				case "NOT":
+					traverse(n.child);
+					return;
+				case "AND":
+				case "OR":
+					if (!n.children) return;
+					for (let i = 0; i < n.children.length; i++) {
+						traverse(n.children[i]);
+					}
+					return;
+				default:
+					return;
+			}
+		}
+		traverse(node);
+		return result;
+	}
+
+	GDV.prefilter.arePrefiltersCorrect = arePrefiltersCorrect;
+	function arePrefiltersCorrect(conditions, ast) {
+		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const conditionWarnings = validatePrefilterConditions(conditions, colDefs);
+		const astWarnings = validatePrefilterAst(ast, colDefs);
+		const consistencyWarnings = validatePrefilterConsistency(conditions, ast);
+		if (conditionWarnings.length || astWarnings.length || consistencyWarnings.length) {
+			for (const w of conditionWarnings) {
+				GDV.utils.reportSoftWarning("Invalid prefilter condition found", w);
+			}
+			for (const w of astWarnings) {
+				GDV.utils.reportSoftWarning("Invalid prefilter expression found", w);
+			}
+			for (const w of consistencyWarnings) {
+				GDV.utils.reportSoftWarning("Prefilter mismatch detected", w);
+			}
+			return false;
+		}
+		return true;
+	}
+
 	GDV.prefilter.copyPrefiltersToClipboard = copyPrefiltersToClipboard;
 	function copyPrefiltersToClipboard() {
 		normalizePrefilterAst();
@@ -873,6 +923,28 @@
 		return warnings;
 	}
 
+	function validatePrefilterConsistency(conditions, ast) {
+		const warnings = [];
+		const astColumns = collectColumnsFromAst(ast);
+		const filteredAstColumns = astColumns.filter((c) => c !== "key");
+		const conditionColumns = Object.keys(conditions || {});
+		const conditionSet = new Set(conditionColumns);
+		const astSet = new Set(filteredAstColumns);
+		// AST → Conditions mismatch
+		for (const col of filteredAstColumns) {
+			if (!conditionSet.has(col)) {
+				warnings.push(`Expression references "${col}" but no condition exists for it`);
+			}
+		}
+		// Conditions → AST mismatch
+		for (const col of conditionColumns) {
+			if (!astSet.has(col)) {
+				warnings.push(`Condition "${col}" exists but is not used in the expression`);
+			}
+		}
+		return warnings;
+	}
+
 	function serializePrefilters() {
 		const astText = convertAstNodeToString(prefilterAst);
 		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
@@ -903,16 +975,7 @@
 			GDV.utils.reportSoftWarning("Invalid EXPRESSION format", "Could not parse expression from clipboard.");
 			return;
 		}
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const conditionWarnings = validatePrefilterConditions(parsedConditions, colDefs);
-		const astWarnings = validatePrefilterAst(parsedAst, colDefs);
-		if (conditionWarnings.length || astWarnings.length) {
-			for (const w of conditionWarnings) {
-				GDV.utils.reportSoftWarning("Invalid prefilter condition found", w);
-			}
-			for (const w of astWarnings) {
-				GDV.utils.reportSoftWarning("Invalid prefilter expression found", w);
-			}
+		if (!arePrefiltersCorrect(parsedConditions, parsedAst)) {
 			return;
 		}
 		prefilterAst = normalizeNode(parsedAst);
