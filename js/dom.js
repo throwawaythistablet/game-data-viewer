@@ -357,14 +357,14 @@
 	}
 
 	GDV.dom.refreshMainPanelSimilarityGameAndLastSearchPrefilters = refreshMainPanelSimilarityGameAndLastSearchPrefilters;
-	function refreshMainPanelSimilarityGameAndLastSearchPrefilters(form) {
-		refreshMainPanelSimilarityGameSection(form);
-		refreshLastSearchedPrefiltersSection(form);
+	function refreshMainPanelSimilarityGameAndLastSearchPrefilters() {
+		refreshMainPanelSimilarityGameSection();
+		refreshLastSearchedPrefiltersSection();
 	}
 
 	GDV.dom.refreshMainPanelSimilarityGameSection = refreshMainPanelSimilarityGameSection;
-	function refreshMainPanelSimilarityGameSection(form) {
-		const container = form.querySelector(".prefilter-main-panel-similarity-game");
+	function refreshMainPanelSimilarityGameSection() {
+		const container = document.querySelector(".prefilter-main-panel-similarity-game");
 		if (!container) return;
 		container.replaceChildren();
 		addSimilarityGameSectionElements(container);
@@ -394,8 +394,8 @@
 	}
 
 	GDV.dom.refreshLastSearchedPrefiltersSection = refreshLastSearchedPrefiltersSection;
-	function refreshLastSearchedPrefiltersSection(form) {
-		const container = form.querySelector(".prefilter-main-panel-last-searched");
+	function refreshLastSearchedPrefiltersSection() {
+		const container = document.querySelector(".prefilter-main-panel-last-searched");
 		if (!container) return;
 		container.replaceChildren();
 		addSimilarityGameSectionElements(container);
