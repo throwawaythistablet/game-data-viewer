@@ -75,7 +75,8 @@
 		overlay.appendChild(form);
 		form.appendChild(createPrefilterSearchAndSummaryGroup(form));
 		form.appendChild(createPrefilterGrid(GDV.state.getPrefilterConditions()));
-		form.appendChild(createPrefilterLimitIndicator(form));
+		form.appendChild(createPrefilterGridLimitIndicator(form));
+		form.appendChild(createPrefilterGridNoResultsDisplay());
 		updatePrefilterSections(form);
 
 		bindPrefilterGridInputs(form);
@@ -105,6 +106,7 @@
 		container.className = "prefilter-search-summary-group";
 		container.appendChild(createPrefilterSearchAndCategoryGroup(form));
 		container.appendChild(createPrefiltersSummary(form, null, null));
+		container.appendChild(createPrefilterGridLoadingIndicator());
 		return container;
 	}
 
@@ -183,7 +185,7 @@
 
 		// Input event handler
 		const handler = () => {
-			updatePrefilterSectionsDebounced(form);
+			handlePrefilterGridSearchInput(form);
 		};
 
 		input.addEventListener("input", handler);
@@ -415,7 +417,24 @@
 		return btn;
 	}
 
-	// Grid
+	function createPrefilterGridLoadingIndicator() {
+		const loader = document.createElement("div");
+		loader.className = "prefilter-grid-loading-indicator";
+		loader.setAttribute("role", "status");
+		loader.setAttribute("aria-live", "polite");
+		loader.style.display = "none";
+
+		const spinner = document.createElement("div");
+		spinner.className = "prefilter-grid-loading-spinner";
+		const text = document.createElement("span");
+		text.className = "prefilter-grid-loading-text";
+		text.textContent = "Searching prefilters…";
+
+		loader.appendChild(spinner);
+		loader.appendChild(text);
+		return loader;
+	}
+
 	function createPrefilterGrid(prefill) {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
@@ -459,9 +478,9 @@
 		return section;
 	}
 
-	function createPrefilterLimitIndicator(form) {
+	function createPrefilterGridLimitIndicator(form) {
 		const indicator = document.createElement("div");
-		indicator.className = "prefilter-limit-indicator";
+		indicator.className = "prefilter-grid-limit-indicator";
 		indicator.dataset.hiddenPastLimit = 0;
 
 		const textSpan = document.createElement("span");
@@ -483,6 +502,14 @@
 
 		indicator.appendChild(showMoreBtn);
 		return indicator;
+	}
+
+	function createPrefilterGridNoResultsDisplay() {
+		const element = document.createElement("div");
+		element.className = "prefilter-grid-no-results";
+		element.textContent = "No matching prefilters found.";
+		element.style.display = "none";
+		return element;
 	}
 
 	// Tag checkboxes
@@ -993,18 +1020,41 @@
 		updatePrefilterActiveItemsAndWarning(form);
 	}
 
-	GDV.prefilter.updatePrefilterSectionsDebounced = updatePrefilterSectionsDebounced;
-	function updatePrefilterSectionsDebounced(form) {
-		updatePrefilterSectionsDebouncedInternal(form);
+	function handlePrefilterGridSearchInput(form) {
+		startPrefilterGridLoading(form);
+		requestAnimationFrame(() => {
+			schedulePrefilterGridUpdate(form);
+		});
 	}
-	const updatePrefilterSectionsDebouncedInternal = GDV.utils.debounce((form) => {
+
+	const schedulePrefilterGridUpdate = GDV.utils.debounce((form) => {
 		updatePrefilterSections(form);
+		requestAnimationFrame(() => {
+			stopPrefilterGridLoading(form);
+		});
 	});
 
 	function updatePrefilterSections(form) {
 		sortPrefilterSections(form);
 		filterPrefilterSections(form);
 		GDV.prefilter.setSearchText(getSearchTextInForm(form));
+	}
+
+	function startPrefilterGridLoading(form) {
+		const loader = form.querySelector(".prefilter-grid-loading-indicator");
+		if (loader) loader.style.display = "";
+
+		const grid = form.querySelector(".prefilter-grid");
+		if (grid) grid.style.display = "none";
+		hidePrefilterGridIndicators(form);
+	}
+
+	function stopPrefilterGridLoading(form) {
+		const loader = form.querySelector(".prefilter-grid-loading-indicator");
+		if (loader) loader.style.display = "none";
+
+		const grid = form.querySelector(".prefilter-grid");
+		if (grid) grid.style.display = "";
 	}
 
 	function sortPrefilterSections(form) {
@@ -1032,10 +1082,7 @@
 		const searchText = getSearchTextInForm(form);
 		const category = getCategoryInForm(form);
 		const colCategories = GDV.state.getColumnCategories() || {};
-
-		// Tokenize search input: lowercase, split by spaces, remove empty tokens
-		const tokens = searchText.trim().toLowerCase().split(/\s+/).filter((t) => t.length > 0);
-
+		const tokens = searchText.trim().toLowerCase().split(/\s+/).filter((t) => t.length > 0); // Tokenize search input: lowercase, split by spaces, remove empty tokens
 		let visibleCount = 0;
 		let hiddenPastLimit = 0;
 		const toShow = [];
@@ -1065,11 +1112,12 @@
 		toHide.forEach((el) => {
 			el.style.display = "none";
 		});
-		updatePrefilterLimitIndicator(form, hiddenPastLimit);
+		updatePrefilterGridLimitIndicator(form, hiddenPastLimit);
+		updatePrefilterGridNoResults(form, visibleCount);
 	}
 
-	function updatePrefilterLimitIndicator(form, hiddenPastLimit) {
-		const indicator = form.querySelector(".prefilter-limit-indicator");
+	function updatePrefilterGridLimitIndicator(form, hiddenPastLimit) {
+		const indicator = form.querySelector(".prefilter-grid-limit-indicator");
 		if (!indicator) return;
 
 		const count = Math.max(0, hiddenPastLimit | 0); // ensure valid non-negative int
@@ -1080,6 +1128,21 @@
 
 		// Hide indicator if nothing is hidden
 		indicator.style.display = count > 0 ? "" : "none";
+	}
+
+	function updatePrefilterGridNoResults(form, visibleCount) {
+		const noResults = form.querySelector(".prefilter-grid-no-results");
+		if (!noResults) return;
+		const hasResults = visibleCount > 0;
+		noResults.style.display = hasResults ? "none" : "";
+	}
+
+	function hidePrefilterGridIndicators(form) {
+		const indicator = form.querySelector(".prefilter-grid-limit-indicator");
+		if (indicator) indicator.style.display = "none"
+
+		const noResults = form.querySelector(".prefilter-grid-no-results");
+		if (noResults) noResults.style.display = "none"
 	}
 
 	function sortPrefilterSectionsAlphabetically(sectionArray) {
