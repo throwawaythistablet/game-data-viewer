@@ -66,6 +66,7 @@
 				header: true,
 				skipEmptyLines: true,
 				worker: true,
+				newline: "", // Important to handle line endings
 				step: function (row) {
 					if (GDV.loading.isLoadingCancelled()) {
 						this.abort(); // stops PapaParse
