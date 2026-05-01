@@ -114,7 +114,9 @@
 	GDV.prefilter.moveNodeIntoGroup = moveNodeIntoGroup;
 	function moveNodeIntoGroup(node) {
 		applyOperationToNode(node, wrapNodeWithAnd);
-		prefilterAstCurrentNode = prefilterAstCurrentNode.children[0]
+		if (prefilterAstCurrentNode?.children?.length) {
+			prefilterAstCurrentNode = prefilterAstCurrentNode.children[0];
+		}
 	}
 
 	GDV.prefilter.moveNodeOutOfGroup = moveNodeOutOfGroup;
@@ -224,10 +226,15 @@
 	function getFormElementsByName(form, name) {
 		const elements = form.elements?.[name];
 		if (!elements) return [];
-		if (elements instanceof RadioNodeList) {
+		// If it's a single element → it will have tagName
+		if (elements.tagName) {
+			return [elements];
+		}
+		// Otherwise assume it's a collection (RadioNodeList / HTMLCollection / etc.)
+		if (typeof elements.length === "number") {
 			return Array.from(elements);
 		}
-		return [elements];
+		return [];
 	}
 
 	function convertCheckboxValue(val, type) {
@@ -517,7 +524,7 @@
 			return node;
 		}
 		if (node.ast_type === "VALUE" || node.ast_type === "NOT") {
-			return { ast_type: "AND", children: [node] };
+			return { ast_type: "OR", children: [node] };
 		}
 		return node;
 	}
