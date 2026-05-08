@@ -374,8 +374,7 @@
 			const fileHandle = await dataFolderHandle.getFileHandle(filename).catch(() => null);
 			if (!fileHandle) break;
 			const file = await fileHandle.getFile();
-			// Keep as Blob/File instead of converting to string
-			chunks.push(file);
+			chunks.push(file); // Keep as Blob/File instead of converting to string
 			partIndex++;
 		}
 		if (partIndex === 1) {
