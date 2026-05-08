@@ -1,18 +1,18 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 285554],
-      ["data/game_column_details.json", 1142120],
-      ["data/game_data_part_1.csv", 52433623],
-      ["data/game_data_part_2.csv", 52435805],
-      ["data/game_data_part_3.csv", 52437747],
-      ["data/game_data_part_4.csv", 52435255],
-      ["data/game_data_part_5.csv", 32375488],
-      ["data/game_keys.json", 1275682],
-      ["data/game_thumbnails.json", 19129651],
-      ["data/tag_quick_search_patterns.json", 1604779],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 285554],
+		["data/game_column_details.json", 1142120],
+		["data/game_data_part_1.csv", 52433623],
+		["data/game_data_part_2.csv", 52435805],
+		["data/game_data_part_3.csv", 52437747],
+		["data/game_data_part_4.csv", 52435255],
+		["data/game_data_part_5.csv", 32375488],
+		["data/game_keys.json", 1275682],
+		["data/game_thumbnails.json", 19129651],
+		["data/tag_quick_search_patterns.json", 1604779],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -221,8 +221,8 @@
 					GDV.utils.reportHardError("CSV Load Failed", "An unexpected error occurred while loading a CSV chunk.");
 					return;
 				}
-				const text = await response.text();
-				chunks.push(text);
+				const blob = await response.blob();
+				chunks.push(blob);
 			} catch (err) {
 				GDV.utils.reportHardError("CSV Load Failed", "An unexpected error occurred while loading a CSV chunk.", err);
 				return;
@@ -374,9 +374,8 @@
 			const fileHandle = await dataFolderHandle.getFileHandle(filename).catch(() => null);
 			if (!fileHandle) break;
 			const file = await fileHandle.getFile();
-			// ⚠️ Still loads full file into memory per chunk (fine unless each part is huge)
-			const text = await file.text();
-			chunks.push(text);
+			// Keep as Blob/File instead of converting to string
+			chunks.push(file);
 			partIndex++;
 		}
 		if (partIndex === 1) {
