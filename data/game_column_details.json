@@ -896,7 +896,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10700,
+    "tag_count": 10699,
     "description": "Tag automatically detected through text or regex scanning: 'action'"
   },
   "text search: simple": {
@@ -1655,7 +1655,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7939,
+    "tag_count": 7938,
     "description": "Tag automatically detected in the author’s genre description: 'action'"
   },
   "author: family": {
@@ -1919,7 +1919,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7239,
+    "tag_count": 7238,
     "description": "Tag automatically detected through text or regex scanning: 'fetish'"
   },
   "site: handjob": {
@@ -2227,7 +2227,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6701,
+    "tag_count": 6700,
     "description": "Tag automatically detected through text or regex scanning: 'erotic'"
   },
   "text search: anime": {
@@ -2997,7 +2997,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5259,
+    "tag_count": 5258,
     "description": "Tag automatically detected through text or regex scanning: 'realism'"
   },
   "author: rpg": {
@@ -3242,17 +3242,6 @@
     "tag_count": 4941,
     "description": "Tag automatically detected through text or regex scanning: 'incest'"
   },
-  "text search: dark themes": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4931,
-    "description": "Tag automatically detected through text or regex scanning: 'dark themes'"
-  },
   "author: rape": {
     "type": "tag",
     "choices": [
@@ -3263,6 +3252,17 @@
     "max": 1,
     "tag_count": 4930,
     "description": "Tag automatically detected in the author’s genre description: 'rape'"
+  },
+  "text search: dark themes": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4930,
+    "description": "Tag automatically detected through text or regex scanning: 'dark themes'"
   },
   "text search: growth": {
     "type": "tag",
@@ -3602,7 +3602,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4638,
+    "tag_count": 4637,
     "description": "Tag automatically detected through text or regex scanning: 'weapons'"
   },
   "text search: cheating": {
@@ -4878,7 +4878,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3293,
+    "tag_count": 3292,
     "description": "Tag automatically detected through text or regex scanning: 'shooter'"
   },
   "text search: crazy": {
@@ -5857,7 +5857,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2680,
+    "tag_count": 2679,
     "description": "Tag automatically detected in the author’s genre description: 'weapons'"
   },
   "text search: intrigue": {
@@ -8651,7 +8651,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1739,
+    "tag_count": 1738,
     "description": "Tag automatically detected in the author’s genre description: 'shooter'"
   },
   "forum recommendation: cartoon": {
@@ -8863,17 +8863,6 @@
     "tag_count": 1686,
     "description": "Tag automatically detected in the author’s genre description: 'harassment'"
   },
-  "text search: camming": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1682,
-    "description": "Tag automatically detected through text or regex scanning: 'camming'"
-  },
   "text search: graphic violence": {
     "type": "tag",
     "choices": [
@@ -8884,6 +8873,17 @@
     "max": 1,
     "tag_count": 1682,
     "description": "Tag automatically detected through text or regex scanning: 'graphic violence'"
+  },
+  "text search: camming": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1681,
+    "description": "Tag automatically detected through text or regex scanning: 'camming'"
   },
   "text search: holy person": {
     "type": "tag",
@@ -9963,17 +9963,6 @@
     "tag_count": 1441,
     "description": "Tag automatically detected in the author’s genre description: 'touching'"
   },
-  "text search: gaming consoles": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1441,
-    "description": "Tag automatically detected through text or regex scanning: 'gaming consoles'"
-  },
   "author: building": {
     "type": "tag",
     "choices": [
@@ -9995,6 +9984,17 @@
     "max": 1,
     "tag_count": 1440,
     "description": "Tag automatically detected in the author’s genre description: 'war'"
+  },
+  "text search: gaming consoles": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1440,
+    "description": "Tag automatically detected through text or regex scanning: 'gaming consoles'"
   },
   "text search: dark fantasy": {
     "type": "tag",
@@ -11456,7 +11456,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1190,
+    "tag_count": 1189,
     "description": "Tag automatically detected through text or regex scanning: 'guns'"
   },
   "forum recommendation: incomplete": {
@@ -12570,17 +12570,6 @@
     "tag_count": 1032,
     "description": "Tag automatically detected through text or regex scanning: 'goblin'"
   },
-  "text search: begging": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1027,
-    "description": "Tag automatically detected through text or regex scanning: 'begging'"
-  },
   "text search: smut": {
     "type": "tag",
     "choices": [
@@ -12591,6 +12580,17 @@
     "max": 1,
     "tag_count": 1027,
     "description": "Tag automatically detected through text or regex scanning: 'smut'"
+  },
+  "text search: begging": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1026,
+    "description": "Tag automatically detected through text or regex scanning: 'begging'"
   },
   "author: country": {
     "type": "tag",
@@ -12713,17 +12713,6 @@
     "tag_count": 1013,
     "description": "Tag automatically detected in the author’s genre description: 'accident'"
   },
-  "text search: noon": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1011,
-    "description": "Tag automatically detected through text or regex scanning: 'noon'"
-  },
   "text search: small woman": {
     "type": "tag",
     "choices": [
@@ -12756,6 +12745,17 @@
     "max": 1,
     "tag_count": 1010,
     "description": "Tag automatically detected through text or regex scanning: 'mountain'"
+  },
+  "text search: noon": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1009,
+    "description": "Tag automatically detected through text or regex scanning: 'noon'"
   },
   "author: rage": {
     "type": "tag",
@@ -13879,17 +13879,6 @@
     "tag_count": 870,
     "description": "Tag automatically detected through text or regex scanning: 'side scroller'"
   },
-  "author: camming": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 867,
-    "description": "Tag automatically detected in the author’s genre description: 'camming'"
-  },
   "text search: cloning": {
     "type": "tag",
     "choices": [
@@ -13900,6 +13889,17 @@
     "max": 1,
     "tag_count": 867,
     "description": "Tag automatically detected through text or regex scanning: 'cloning'"
+  },
+  "author: camming": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 866,
+    "description": "Tag automatically detected in the author’s genre description: 'camming'"
   },
   "author: curse": {
     "type": "tag",
@@ -19511,17 +19511,6 @@
     "tag_count": 439,
     "description": "Tag automatically detected through text or regex scanning: 'dice'"
   },
-  "author: guns": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 438,
-    "description": "Tag automatically detected in the author’s genre description: 'guns'"
-  },
   "author: arpg": {
     "type": "tag",
     "choices": [
@@ -19532,6 +19521,17 @@
     "max": 1,
     "tag_count": 437,
     "description": "Tag automatically detected in the author’s genre description: 'arpg'"
+  },
+  "author: guns": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 437,
+    "description": "Tag automatically detected in the author’s genre description: 'guns'"
   },
   "author: female and female": {
     "type": "tag",
@@ -25880,17 +25880,6 @@
     "tag_count": 210,
     "description": "Tag automatically detected in forum recommendation threads: 'the four seasons'"
   },
-  "text search: body art": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 210,
-    "description": "Tag automatically detected through text or regex scanning: 'body art'"
-  },
   "author: bisexual": {
     "type": "tag",
     "choices": [
@@ -25923,6 +25912,17 @@
     "max": 1,
     "tag_count": 209,
     "description": "Tag automatically detected in the author’s genre description: 'male demon'"
+  },
+  "text search: body art": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 209,
+    "description": "Tag automatically detected through text or regex scanning: 'body art'"
   },
   "text search: hotwife": {
     "type": "tag",
@@ -28718,17 +28718,6 @@
     "tag_count": 152,
     "description": "Tag automatically detected in the author’s genre description: 'cam girl'"
   },
-  "author: domme": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 152,
-    "description": "Tag automatically detected in the author’s genre description: 'domme'"
-  },
   "author: pronouns": {
     "type": "tag",
     "choices": [
@@ -28761,6 +28750,17 @@
     "max": 1,
     "tag_count": 152,
     "description": "Tag automatically detected through text or regex scanning: 'sandwich'"
+  },
+  "author: domme": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 151,
+    "description": "Tag automatically detected in the author’s genre description: 'domme'"
   },
   "author: thigh job": {
     "type": "tag",
@@ -28905,17 +28905,6 @@
     "tag_count": 147,
     "description": "Tag automatically detected through text or regex scanning: 'cuckquean'"
   },
-  "text search: feminist": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 147,
-    "description": "Tag automatically detected through text or regex scanning: 'feminist'"
-  },
   "text search: stolen love": {
     "type": "tag",
     "choices": [
@@ -29003,6 +28992,17 @@
     "max": 1,
     "tag_count": 146,
     "description": "Tag automatically detected through text or regex scanning: 'cyrillic text'"
+  },
+  "text search: feminist": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 146,
+    "description": "Tag automatically detected through text or regex scanning: 'feminist'"
   },
   "text search: metroidvania": {
     "type": "tag",
@@ -31974,17 +31974,6 @@
     "tag_count": 98,
     "description": "Tag automatically detected through text or regex scanning: 'keyboard only'"
   },
-  "author: body art": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 97,
-    "description": "Tag automatically detected in the author’s genre description: 'body art'"
-  },
   "author: body worship": {
     "type": "tag",
     "choices": [
@@ -32094,6 +32083,17 @@
     "max": 1,
     "tag_count": 97,
     "description": "Tag automatically detected through text or regex scanning: 'tower defense'"
+  },
+  "author: body art": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 96,
+    "description": "Tag automatically detected in the author’s genre description: 'body art'"
   },
   "author: dragon ball": {
     "type": "tag",
