@@ -258,7 +258,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 22920,
+    "tag_count": 22917,
     "description": "Tag automatically detected in the author’s genre description: 'adult themes'"
   },
   "text search: interactive gameplay": {
@@ -467,7 +467,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 15867,
+    "tag_count": 15868,
     "description": "Tag automatically detected in the author’s genre description: 'interactive gameplay'"
   },
   "text search: big tits": {
@@ -489,7 +489,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 15569,
+    "tag_count": 15570,
     "description": "Tag automatically detected in the author’s genre description: 'ass'"
   },
   "author: male protagonist": {
@@ -500,7 +500,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 15553,
+    "tag_count": 15554,
     "description": "Tag automatically detected in the author’s genre description: 'male protagonist'"
   },
   "site: oral sex": {
@@ -555,7 +555,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 15061,
+    "tag_count": 15062,
     "description": "Tag automatically detected in the author’s genre description: 'vagina'"
   },
   "text search: multiple routes": {
@@ -588,7 +588,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 14784,
+    "tag_count": 14785,
     "description": "Tag automatically detected in the author’s genre description: 'tits'"
   },
   "author: vaginal play": {
@@ -599,7 +599,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 14546,
+    "tag_count": 14547,
     "description": "Tag automatically detected in the author’s genre description: 'vaginal play'"
   },
   "author: vaginal sex": {
@@ -610,7 +610,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 14520,
+    "tag_count": 14521,
     "description": "Tag automatically detected in the author’s genre description: 'vaginal sex'"
   },
   "text search: beautiful": {
@@ -632,7 +632,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 14309,
+    "tag_count": 14310,
     "description": "Tag automatically detected in the author’s genre description: 'oral'"
   },
   "author: oral play": {
@@ -643,7 +643,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 14044,
+    "tag_count": 14045,
     "description": "Tag automatically detected in the author’s genre description: 'oral play'"
   },
   "author: oral sex": {
@@ -654,7 +654,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 14018,
+    "tag_count": 14019,
     "description": "Tag automatically detected in the author’s genre description: 'oral sex'"
   },
   "author: blow job": {
@@ -665,7 +665,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 13971,
+    "tag_count": 13972,
     "description": "Tag automatically detected in the author’s genre description: 'blow job'"
   },
   "text search: 2d cg": {
@@ -698,7 +698,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 13147,
+    "tag_count": 13148,
     "description": "Tag automatically detected in the author’s genre description: 'big tits'"
   },
   "author: animations": {
@@ -767,17 +767,6 @@
     "tag_count": 12210,
     "description": "Tag automatically detected through text or regex scanning: 'big ass'"
   },
-  "text search: lust": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 11786,
-    "description": "Tag automatically detected through text or regex scanning: 'lust'"
-  },
   "site: big ass": {
     "type": "tag",
     "choices": [
@@ -810,6 +799,17 @@
     "max": 1,
     "tag_count": 11713,
     "description": "Tag automatically detected through text or regex scanning: 'additional'"
+  },
+  "text search: lust": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 11551,
+    "description": "Tag automatically detected through text or regex scanning: 'lust'"
   },
   "author: 2d cg": {
     "type": "tag",
@@ -863,7 +863,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10800,
+    "tag_count": 10802,
     "description": "Tag automatically detected through text or regex scanning: 'family'"
   },
   "text search: character selection": {
@@ -888,17 +888,6 @@
     "tag_count": 10702,
     "description": "Tag automatically detected through text or regex scanning: 'manage things'"
   },
-  "text search: action": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 10699,
-    "description": "Tag automatically detected through text or regex scanning: 'action'"
-  },
   "text search: simple": {
     "type": "tag",
     "choices": [
@@ -918,8 +907,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10682,
+    "tag_count": 10681,
     "description": "Tag automatically detected through text or regex scanning: 'choose your own adventure'"
+  },
+  "text search: action": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 10672,
+    "description": "Tag automatically detected through text or regex scanning: 'action'"
   },
   "text search: character focused": {
     "type": "tag",
@@ -984,7 +984,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10098,
+    "tag_count": 10099,
     "description": "Tag automatically detected in the author’s genre description: 'big ass'"
   },
   "text search: group": {
@@ -995,7 +995,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 10022,
+    "tag_count": 10026,
     "description": "Tag automatically detected through text or regex scanning: 'group'"
   },
   "text search: female protagonist": {
@@ -1105,7 +1105,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9653,
+    "tag_count": 9654,
     "description": "Tag automatically detected in the author’s genre description: 'cum'"
   },
   "author: multiple routes": {
@@ -1116,7 +1116,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9615,
+    "tag_count": 9616,
     "description": "Tag automatically detected in the author’s genre description: 'multiple routes'"
   },
   "text search: housing": {
@@ -1138,7 +1138,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9531,
+    "tag_count": 9532,
     "description": "Tag automatically detected through text or regex scanning: 'clothes'"
   },
   "author: additional": {
@@ -1237,7 +1237,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 9148,
+    "tag_count": 9149,
     "description": "Tag automatically detected through text or regex scanning: 'fantasy world'"
   },
   "text search: quest": {
@@ -1281,7 +1281,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8847,
+    "tag_count": 8848,
     "description": "Tag automatically detected in the author’s genre description: 'cumming inside'"
   },
   "text search: clicking": {
@@ -1446,7 +1446,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8349,
+    "tag_count": 8350,
     "description": "Tag automatically detected in the author’s genre description: '3d cg'"
   },
   "author: monster": {
@@ -1490,7 +1490,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8284,
+    "tag_count": 8283,
     "description": "Tag automatically detected through text or regex scanning: 'lore'"
   },
   "author: cg": {
@@ -1523,7 +1523,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8233,
+    "tag_count": 8234,
     "description": "Tag automatically detected in the author’s genre description: 'anal'"
   },
   "text search: humor": {
@@ -1545,7 +1545,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 8195,
+    "tag_count": 8199,
     "description": "Tag automatically detected through text or regex scanning: 'domination'"
   },
   "text search: human settlements": {
@@ -1647,17 +1647,6 @@
     "tag_count": 7952,
     "description": "Tag automatically detected through text or regex scanning: 'grindy'"
   },
-  "author: action": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7938,
-    "description": "Tag automatically detected in the author’s genre description: 'action'"
-  },
   "author: family": {
     "type": "tag",
     "choices": [
@@ -1668,6 +1657,17 @@
     "max": 1,
     "tag_count": 7932,
     "description": "Tag automatically detected in the author’s genre description: 'family'"
+  },
+  "author: action": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7924,
+    "description": "Tag automatically detected in the author’s genre description: 'action'"
   },
   "text search: face": {
     "type": "tag",
@@ -1699,7 +1699,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7850,
+    "tag_count": 7849,
     "description": "Tag automatically detected through text or regex scanning: 'character archetypes'"
   },
   "text search: character design": {
@@ -1765,7 +1765,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7528,
+    "tag_count": 7529,
     "description": "Tag automatically detected in the author’s genre description: 'anal play'"
   },
   "text search: forced": {
@@ -1798,7 +1798,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7434,
+    "tag_count": 7436,
     "description": "Tag automatically detected in the author’s genre description: 'group'"
   },
   "text search: h scene": {
@@ -1820,7 +1820,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7410,
+    "tag_count": 7411,
     "description": "Tag automatically detected in the author’s genre description: 'fantasy world'"
   },
   "text search: rpg": {
@@ -1886,7 +1886,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7270,
+    "tag_count": 7271,
     "description": "Tag automatically detected in the author’s genre description: 'female protagonist'"
   },
   "author: old person": {
@@ -1919,7 +1919,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7238,
+    "tag_count": 7237,
     "description": "Tag automatically detected through text or regex scanning: 'fetish'"
   },
   "site: handjob": {
@@ -1941,7 +1941,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7191,
+    "tag_count": 7192,
     "description": "Tag automatically detected in the author’s genre description: 'anal sex'"
   },
   "text search: rape word": {
@@ -1966,6 +1966,17 @@
     "tag_count": 7159,
     "description": "Tag automatically detected through text or regex scanning: 'multiple views'"
   },
+  "text search: cartoon": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7157,
+    "description": "Tag automatically detected through text or regex scanning: 'cartoon'"
+  },
   "text search: weird": {
     "type": "tag",
     "choices": [
@@ -1976,17 +1987,6 @@
     "max": 1,
     "tag_count": 7156,
     "description": "Tag automatically detected through text or regex scanning: 'weird'"
-  },
-  "text search: cartoon": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7151,
-    "description": "Tag automatically detected through text or regex scanning: 'cartoon'"
   },
   "text search: translation": {
     "type": "tag",
@@ -2007,19 +2007,8 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7091,
+    "tag_count": 7086,
     "description": "Tag automatically detected through text or regex scanning: 'occult'"
-  },
-  "author: lust": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7081,
-    "description": "Tag automatically detected in the author’s genre description: 'lust'"
   },
   "author: fighting": {
     "type": "tag",
@@ -2040,7 +2029,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 7006,
+    "tag_count": 7007,
     "description": "Tag automatically detected through text or regex scanning: 'group sex'"
   },
   "text search: simulation": {
@@ -2076,6 +2065,17 @@
     "tag_count": 6977,
     "description": "Tag automatically detected through text or regex scanning: 'tit play'"
   },
+  "author: lust": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6971,
+    "description": "Tag automatically detected in the author’s genre description: 'lust'"
+  },
   "text search: pop culture franchise": {
     "type": "tag",
     "choices": [
@@ -2095,7 +2095,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6867,
+    "tag_count": 6868,
     "description": "Tag automatically detected in the author’s genre description: 'lgbt'"
   },
   "author: hand play": {
@@ -2219,17 +2219,6 @@
     "tag_count": 6711,
     "description": "Tag automatically detected in the author’s genre description: 'management'"
   },
-  "text search: erotic": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 6700,
-    "description": "Tag automatically detected through text or regex scanning: 'erotic'"
-  },
   "text search: anime": {
     "type": "tag",
     "choices": [
@@ -2238,7 +2227,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6681,
+    "tag_count": 6688,
     "description": "Tag automatically detected through text or regex scanning: 'anime'"
   },
   "text search: 2d game": {
@@ -2293,7 +2282,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6487,
+    "tag_count": 6486,
     "description": "Tag automatically detected through text or regex scanning: 'beautiful woman'"
   },
   "author: beautiful": {
@@ -2304,7 +2293,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6479,
+    "tag_count": 6478,
     "description": "Tag automatically detected in the author’s genre description: 'beautiful'"
   },
   "text search: tit job": {
@@ -2370,7 +2359,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6342,
+    "tag_count": 6343,
     "description": "Tag automatically detected in the author’s genre description: 'groping'"
   },
   "author: teasing": {
@@ -2381,8 +2370,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6303,
+    "tag_count": 6304,
     "description": "Tag automatically detected in the author’s genre description: 'teasing'"
+  },
+  "text search: erotic": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6294,
+    "description": "Tag automatically detected through text or regex scanning: 'erotic'"
   },
   "author: human settlements": {
     "type": "tag",
@@ -2403,7 +2403,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6286,
+    "tag_count": 6290,
     "description": "Tag automatically detected through text or regex scanning: 'dick'"
   },
   "author: school": {
@@ -2502,7 +2502,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6047,
+    "tag_count": 6048,
     "description": "Tag automatically detected in the author’s genre description: 'domination'"
   },
   "author: visual novel": {
@@ -2524,7 +2524,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 6040,
+    "tag_count": 6041,
     "description": "Tag automatically detected in the author’s genre description: 'endings'"
   },
   "author: 2d": {
@@ -2612,7 +2612,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5839,
+    "tag_count": 5838,
     "description": "Tag automatically detected in the author’s genre description: 'choose your own adventure'"
   },
   "site: japanese game": {
@@ -2667,7 +2667,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5729,
+    "tag_count": 5728,
     "description": "Tag automatically detected through text or regex scanning: 'sex toys'"
   },
   "site: group sex": {
@@ -2777,7 +2777,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5531,
+    "tag_count": 5530,
     "description": "Tag automatically detected in the author’s genre description: 'beautiful person'"
   },
   "site: adventure": {
@@ -2799,7 +2799,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5493,
+    "tag_count": 5494,
     "description": "Tag automatically detected in the author’s genre description: 'clothes'"
   },
   "forum recommendation: favorite": {
@@ -2920,7 +2920,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5338,
+    "tag_count": 5339,
     "description": "Tag automatically detected in the author’s genre description: 'group sex'"
   },
   "text search: rpg maker": {
@@ -2953,7 +2953,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 5291,
+    "tag_count": 5290,
     "description": "Tag automatically detected in the author’s genre description: 'lore'"
   },
   "text search: orgasm": {
@@ -3217,7 +3217,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4967,
+    "tag_count": 4968,
     "description": "Tag automatically detected through text or regex scanning: 'ai'"
   },
   "author: neto genres": {
@@ -3239,8 +3239,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4941,
+    "tag_count": 4942,
     "description": "Tag automatically detected through text or regex scanning: 'incest'"
+  },
+  "text search: dark themes": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4931,
+    "description": "Tag automatically detected through text or regex scanning: 'dark themes'"
   },
   "author: rape": {
     "type": "tag",
@@ -3252,17 +3263,6 @@
     "max": 1,
     "tag_count": 4930,
     "description": "Tag automatically detected in the author’s genre description: 'rape'"
-  },
-  "text search: dark themes": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4930,
-    "description": "Tag automatically detected through text or regex scanning: 'dark themes'"
   },
   "text search: growth": {
     "type": "tag",
@@ -3374,17 +3374,6 @@
     "tag_count": 4820,
     "description": "Tag automatically detected in the author’s genre description: 'rape word'"
   },
-  "text search: female domination": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4793,
-    "description": "Tag automatically detected through text or regex scanning: 'female domination'"
-  },
   "text search: virgin": {
     "type": "tag",
     "choices": [
@@ -3395,6 +3384,17 @@
     "max": 1,
     "tag_count": 4791,
     "description": "Tag automatically detected through text or regex scanning: 'virgin'"
+  },
+  "text search: female domination": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4789,
+    "description": "Tag automatically detected through text or regex scanning: 'female domination'"
   },
   "author: unlock": {
     "type": "tag",
@@ -3415,7 +3415,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4781,
+    "tag_count": 4782,
     "description": "Tag automatically detected in the author’s genre description: 'sandbox'"
   },
   "text search: discomforting": {
@@ -3558,7 +3558,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4669,
+    "tag_count": 4670,
     "description": "Tag automatically detected in the author’s genre description: 'lesbian'"
   },
   "text search: body attributes": {
@@ -3591,19 +3591,8 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4657,
+    "tag_count": 4652,
     "description": "Tag automatically detected in forum recommendation threads: 'adult themes'"
-  },
-  "text search: weapons": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4637,
-    "description": "Tag automatically detected through text or regex scanning: 'weapons'"
   },
   "text search: cheating": {
     "type": "tag",
@@ -3657,8 +3646,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4621,
+    "tag_count": 4609,
     "description": "Tag automatically detected through text or regex scanning: 'pregnancy'"
+  },
+  "text search: weapons": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4589,
+    "description": "Tag automatically detected through text or regex scanning: 'weapons'"
   },
   "author: simulation": {
     "type": "tag",
@@ -3748,6 +3748,17 @@
     "tag_count": 4451,
     "description": "Tag automatically detected through text or regex scanning: 'ugly'"
   },
+  "text search: anime franchise": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 4434,
+    "description": "Tag automatically detected through text or regex scanning: 'anime franchise'"
+  },
   "site: voyeurism": {
     "type": "tag",
     "choices": [
@@ -3769,17 +3780,6 @@
     "max": 1,
     "tag_count": 4433,
     "description": "Tag automatically detected through text or regex scanning: 'netorare'"
-  },
-  "text search: anime franchise": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4432,
-    "description": "Tag automatically detected through text or regex scanning: 'anime franchise'"
   },
   "text search: slut": {
     "type": "tag",
@@ -3866,7 +3866,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4319,
+    "tag_count": 4320,
     "description": "Tag automatically detected in the author’s genre description: 'multiple endings'"
   },
   "text search: random generation": {
@@ -4042,7 +4042,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 4111,
+    "tag_count": 4112,
     "description": "Tag automatically detected in the author’s genre description: 'toys'"
   },
   "text search: repetitive": {
@@ -4152,7 +4152,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3998,
+    "tag_count": 3999,
     "description": "Tag automatically detected through text or regex scanning: 'atmospheric'"
   },
   "text search: dress up": {
@@ -4372,7 +4372,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3767,
+    "tag_count": 3766,
     "description": "Tag automatically detected through text or regex scanning: 'body of water'"
   },
   "text search: demon": {
@@ -4526,7 +4526,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3584,
+    "tag_count": 3582,
     "description": "Tag automatically detected through text or regex scanning: 'bondage'"
   },
   "author: multiple females": {
@@ -4870,17 +4870,6 @@
     "tag_count": 3309,
     "description": "Tag automatically detected in the author’s genre description: 'incest'"
   },
-  "text search: shooter": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3292,
-    "description": "Tag automatically detected through text or regex scanning: 'shooter'"
-  },
   "text search: crazy": {
     "type": "tag",
     "choices": [
@@ -5013,6 +5002,17 @@
     "tag_count": 3233,
     "description": "Tag automatically detected in the author’s genre description: 'virgin'"
   },
+  "text search: shooter": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3232,
+    "description": "Tag automatically detected through text or regex scanning: 'shooter'"
+  },
   "text search: huge person": {
     "type": "tag",
     "choices": [
@@ -5065,7 +5065,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3200,
+    "tag_count": 3196,
     "description": "Tag automatically detected in the author’s genre description: 'pregnancy'"
   },
   "text search: trainer": {
@@ -5134,6 +5134,17 @@
     "tag_count": 3157,
     "description": "Tag automatically detected through text or regex scanning: 'series'"
   },
+  "author: pop culture franchise": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3154,
+    "description": "Tag automatically detected in the author’s genre description: 'pop culture franchise'"
+  },
   "text search: pain": {
     "type": "tag",
     "choices": [
@@ -5144,17 +5155,6 @@
     "max": 1,
     "tag_count": 3154,
     "description": "Tag automatically detected through text or regex scanning: 'pain'"
-  },
-  "author: pop culture franchise": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3153,
-    "description": "Tag automatically detected in the author’s genre description: 'pop culture franchise'"
   },
   "author: multiple protagonist": {
     "type": "tag",
@@ -5244,17 +5244,6 @@
     "tag_count": 3082,
     "description": "Tag automatically detected in the author’s genre description: 'humor'"
   },
-  "author: erotic": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 3079,
-    "description": "Tag automatically detected in the author’s genre description: 'erotic'"
-  },
   "text search: trans": {
     "type": "tag",
     "choices": [
@@ -5274,7 +5263,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 3041,
+    "tag_count": 3040,
     "description": "Tag automatically detected through text or regex scanning: 'culture'"
   },
   "author: demo": {
@@ -5398,6 +5387,17 @@
     "tag_count": 2952,
     "description": "Tag automatically detected through text or regex scanning: 'dirty'"
   },
+  "author: erotic": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2938,
+    "description": "Tag automatically detected in the author’s genre description: 'erotic'"
+  },
   "text search: remake": {
     "type": "tag",
     "choices": [
@@ -5494,7 +5494,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2872,
+    "tag_count": 2873,
     "description": "Tag automatically detected in the author’s genre description: 'cheating'"
   },
   "text search: urination": {
@@ -5585,6 +5585,17 @@
     "tag_count": 2810,
     "description": "Tag automatically detected through text or regex scanning: 'kinetic novel'"
   },
+  "text search: athletic": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2804,
+    "description": "Tag automatically detected through text or regex scanning: 'athletic'"
+  },
   "author: minorities": {
     "type": "tag",
     "choices": [
@@ -5593,7 +5604,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2798,
+    "tag_count": 2799,
     "description": "Tag automatically detected in the author’s genre description: 'minorities'"
   },
   "author: anime": {
@@ -5604,19 +5615,8 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2796,
+    "tag_count": 2797,
     "description": "Tag automatically detected in the author’s genre description: 'anime'"
-  },
-  "text search: athletic": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2794,
-    "description": "Tag automatically detected through text or regex scanning: 'athletic'"
   },
   "author: penetration": {
     "type": "tag",
@@ -5626,7 +5626,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2793,
+    "tag_count": 2794,
     "description": "Tag automatically detected in the author’s genre description: 'penetration'"
   },
   "author: magic": {
@@ -5849,17 +5849,6 @@
     "tag_count": 2688,
     "description": "Tag automatically detected in the author’s genre description: 'ai'"
   },
-  "author: weapons": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2679,
-    "description": "Tag automatically detected in the author’s genre description: 'weapons'"
-  },
   "text search: intrigue": {
     "type": "tag",
     "choices": [
@@ -5915,7 +5904,7 @@
     "tag_count": 2664,
     "description": "Tag automatically detected in the author’s genre description: 'dungeon'"
   },
-  "text search: restraints": {
+  "author: weapons": {
     "type": "tag",
     "choices": [
       0,
@@ -5923,8 +5912,8 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2657,
-    "description": "Tag automatically detected through text or regex scanning: 'restraints'"
+    "tag_count": 2663,
+    "description": "Tag automatically detected in the author’s genre description: 'weapons'"
   },
   "text search: paranormal": {
     "type": "tag",
@@ -5936,6 +5925,17 @@
     "max": 1,
     "tag_count": 2655,
     "description": "Tag automatically detected through text or regex scanning: 'paranormal'"
+  },
+  "text search: restraints": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2655,
+    "description": "Tag automatically detected through text or regex scanning: 'restraints'"
   },
   "forum recommendation: incest": {
     "type": "tag",
@@ -6168,17 +6168,6 @@
     "tag_count": 2496,
     "description": "Tag automatically detected through text or regex scanning: 'caught'"
   },
-  "text search: harassment": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2496,
-    "description": "Tag automatically detected through text or regex scanning: 'harassment'"
-  },
   "text search: feet": {
     "type": "tag",
     "choices": [
@@ -6189,6 +6178,17 @@
     "max": 1,
     "tag_count": 2495,
     "description": "Tag automatically detected through text or regex scanning: 'feet'"
+  },
+  "text search: harassment": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2495,
+    "description": "Tag automatically detected through text or regex scanning: 'harassment'"
   },
   "author: engrish": {
     "type": "tag",
@@ -6297,7 +6297,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2450,
+    "tag_count": 2451,
     "description": "Tag automatically detected through text or regex scanning: 'dubious consent'"
   },
   "text search: flying": {
@@ -6407,7 +6407,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2418,
+    "tag_count": 2417,
     "description": "Tag automatically detected through text or regex scanning: 'depression'"
   },
   "text search: bath": {
@@ -6432,17 +6432,6 @@
     "tag_count": 2410,
     "description": "Tag automatically detected through text or regex scanning: 'torture'"
   },
-  "author: beautiful woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2409,
-    "description": "Tag automatically detected in the author’s genre description: 'beautiful woman'"
-  },
   "author: collection": {
     "type": "tag",
     "choices": [
@@ -6464,6 +6453,17 @@
     "max": 1,
     "tag_count": 2409,
     "description": "Tag assigned by the official site: 'interracial'"
+  },
+  "author: beautiful woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2408,
+    "description": "Tag automatically detected in the author’s genre description: 'beautiful woman'"
   },
   "site: futa/trans": {
     "type": "tag",
@@ -6528,7 +6528,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2381,
+    "tag_count": 2380,
     "description": "Tag automatically detected through text or regex scanning: 'furry'"
   },
   "text search: japanese text": {
@@ -6563,17 +6563,6 @@
     "max": 1,
     "tag_count": 2373,
     "description": "Tag automatically detected through text or regex scanning: 'drink'"
-  },
-  "text search: body customization": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2368,
-    "description": "Tag automatically detected through text or regex scanning: 'body customization'"
   },
   "author: mini games": {
     "type": "tag",
@@ -6739,6 +6728,17 @@
     "max": 1,
     "tag_count": 2319,
     "description": "Tag automatically detected through text or regex scanning: 'kingdom'"
+  },
+  "text search: body customization": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2310,
+    "description": "Tag automatically detected through text or regex scanning: 'body customization'"
   },
   "text search: morning": {
     "type": "tag",
@@ -7015,6 +7015,17 @@
     "tag_count": 2225,
     "description": "Tag automatically detected in the author’s genre description: 'lewd'"
   },
+  "author: cartoon": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2220,
+    "description": "Tag automatically detected in the author’s genre description: 'cartoon'"
+  },
   "author: foot job": {
     "type": "tag",
     "choices": [
@@ -7037,17 +7048,6 @@
     "tag_count": 2218,
     "description": "Tag automatically detected through text or regex scanning: 'sitting'"
   },
-  "author: cartoon": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2217,
-    "description": "Tag automatically detected in the author’s genre description: 'cartoon'"
-  },
   "text search: teacher": {
     "type": "tag",
     "choices": [
@@ -7056,7 +7056,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2217,
+    "tag_count": 2218,
     "description": "Tag automatically detected through text or regex scanning: 'teacher'"
   },
   "author: multiple penetration": {
@@ -7067,7 +7067,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2213,
+    "tag_count": 2214,
     "description": "Tag automatically detected in the author’s genre description: 'multiple penetration'"
   },
   "site: tentacles": {
@@ -7125,17 +7125,6 @@
     "tag_count": 2201,
     "description": "Tag automatically detected in the author’s genre description: 'turn based combat'"
   },
-  "text search: undead": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2201,
-    "description": "Tag automatically detected through text or regex scanning: 'undead'"
-  },
   "text search: love of monsters": {
     "type": "tag",
     "choices": [
@@ -7144,7 +7133,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2199,
+    "tag_count": 2198,
     "description": "Tag automatically detected through text or regex scanning: 'love of monsters'"
   },
   "text search: religion": {
@@ -7155,8 +7144,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2199,
+    "tag_count": 2198,
     "description": "Tag automatically detected through text or regex scanning: 'religion'"
+  },
+  "text search: undead": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2193,
+    "description": "Tag automatically detected through text or regex scanning: 'undead'"
   },
   "text search: cards": {
     "type": "tag",
@@ -7265,7 +7265,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2152,
+    "tag_count": 2153,
     "description": "Tag automatically detected in the author’s genre description: 'racial'"
   },
   "text search: mature man": {
@@ -7289,17 +7289,6 @@
     "max": 1,
     "tag_count": 2144,
     "description": "Tag automatically detected in the author’s genre description: 'trainer'"
-  },
-  "text search: lusty woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2139,
-    "description": "Tag automatically detected through text or regex scanning: 'lusty woman'"
   },
   "site: ai cg": {
     "type": "tag",
@@ -7344,6 +7333,17 @@
     "max": 1,
     "tag_count": 2128,
     "description": "Tag automatically detected through text or regex scanning: 'talk options'"
+  },
+  "text search: lusty woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2126,
+    "description": "Tag automatically detected through text or regex scanning: 'lusty woman'"
   },
   "author: slave": {
     "type": "tag",
@@ -7433,17 +7433,6 @@
     "tag_count": 2088,
     "description": "Tag assigned by the official site: 'netorare'"
   },
-  "text search: nympho": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2086,
-    "description": "Tag automatically detected through text or regex scanning: 'nympho'"
-  },
   "text search: game franchise": {
     "type": "tag",
     "choices": [
@@ -7452,7 +7441,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2084,
+    "tag_count": 2083,
     "description": "Tag automatically detected through text or regex scanning: 'game franchise'"
   },
   "author: puzzle": {
@@ -7463,8 +7452,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 2079,
+    "tag_count": 2080,
     "description": "Tag automatically detected in the author’s genre description: 'puzzle'"
+  },
+  "text search: nympho": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2077,
+    "description": "Tag automatically detected through text or regex scanning: 'nympho'"
   },
   "forum recommendation: places": {
     "type": "tag",
@@ -7477,17 +7477,6 @@
     "tag_count": 2072,
     "description": "Tag automatically detected in forum recommendation threads: 'places'"
   },
-  "author: dad": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 2062,
-    "description": "Tag automatically detected in the author’s genre description: 'dad'"
-  },
   "text search: daughter": {
     "type": "tag",
     "choices": [
@@ -7498,6 +7487,17 @@
     "max": 1,
     "tag_count": 2062,
     "description": "Tag automatically detected through text or regex scanning: 'daughter'"
+  },
+  "author: dad": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2061,
+    "description": "Tag automatically detected in the author’s genre description: 'dad'"
   },
   "author: sister": {
     "type": "tag",
@@ -7881,7 +7881,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1944,
+    "tag_count": 1945,
     "description": "Tag automatically detected in the author’s genre description: 'interracial'"
   },
   "text search: machine": {
@@ -8046,7 +8046,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1913,
+    "tag_count": 1912,
     "description": "Tag automatically detected through text or regex scanning: 'beach'"
   },
   "author: burning": {
@@ -8211,7 +8211,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1857,
+    "tag_count": 1856,
     "description": "Tag automatically detected in the author’s genre description: 'culture'"
   },
   "text search: beta": {
@@ -8255,7 +8255,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1844,
+    "tag_count": 1845,
     "description": "Tag automatically detected through text or regex scanning: 'underwear'"
   },
   "text search: alcohol use": {
@@ -8313,6 +8313,17 @@
     "tag_count": 1819,
     "description": "Tag automatically detected in the author’s genre description: 'violence'"
   },
+  "author: dick": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1817,
+    "description": "Tag automatically detected in the author’s genre description: 'dick'"
+  },
   "author: master": {
     "type": "tag",
     "choices": [
@@ -8323,17 +8334,6 @@
     "max": 1,
     "tag_count": 1814,
     "description": "Tag automatically detected in the author’s genre description: 'master'"
-  },
-  "author: dick": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1811,
-    "description": "Tag automatically detected in the author’s genre description: 'dick'"
   },
   "text search: ugly bastard": {
     "type": "tag",
@@ -8511,17 +8511,6 @@
     "tag_count": 1772,
     "description": "Tag automatically detected through text or regex scanning: 'assistant'"
   },
-  "text search: chaste": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1769,
-    "description": "Tag automatically detected through text or regex scanning: 'chaste'"
-  },
   "author: phone": {
     "type": "tag",
     "choices": [
@@ -8554,6 +8543,17 @@
     "max": 1,
     "tag_count": 1758,
     "description": "Tag automatically detected through text or regex scanning: 'nerd'"
+  },
+  "text search: chaste": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1756,
+    "description": "Tag automatically detected through text or regex scanning: 'chaste'"
   },
   "text search: village": {
     "type": "tag",
@@ -8599,6 +8599,17 @@
     "tag_count": 1746,
     "description": "Tag assigned by the official site: 'prostitution'"
   },
+  "author: anime franchise": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1744,
+    "description": "Tag automatically detected in the author’s genre description: 'anime franchise'"
+  },
   "text search: manipulative person": {
     "type": "tag",
     "choices": [
@@ -8621,17 +8632,6 @@
     "tag_count": 1744,
     "description": "Tag automatically detected through text or regex scanning: 'shower'"
   },
-  "author: anime franchise": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1743,
-    "description": "Tag automatically detected in the author’s genre description: 'anime franchise'"
-  },
   "author: inventory": {
     "type": "tag",
     "choices": [
@@ -8642,17 +8642,6 @@
     "max": 1,
     "tag_count": 1741,
     "description": "Tag automatically detected in the author’s genre description: 'inventory'"
-  },
-  "author: shooter": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1738,
-    "description": "Tag automatically detected in the author’s genre description: 'shooter'"
   },
   "forum recommendation: cartoon": {
     "type": "tag",
@@ -8730,6 +8719,17 @@
     "max": 1,
     "tag_count": 1722,
     "description": "Tag automatically detected in the author’s genre description: 'linear storytelling'"
+  },
+  "author: shooter": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1714,
+    "description": "Tag automatically detected in the author’s genre description: 'shooter'"
   },
   "text search: relaxing": {
     "type": "tag",
@@ -8863,6 +8863,17 @@
     "tag_count": 1686,
     "description": "Tag automatically detected in the author’s genre description: 'harassment'"
   },
+  "text search: camming": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1686,
+    "description": "Tag automatically detected through text or regex scanning: 'camming'"
+  },
   "text search: graphic violence": {
     "type": "tag",
     "choices": [
@@ -8873,17 +8884,6 @@
     "max": 1,
     "tag_count": 1682,
     "description": "Tag automatically detected through text or regex scanning: 'graphic violence'"
-  },
-  "text search: camming": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1681,
-    "description": "Tag automatically detected through text or regex scanning: 'camming'"
   },
   "text search: holy person": {
     "type": "tag",
@@ -9212,7 +9212,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1593,
+    "tag_count": 1592,
     "description": "Tag automatically detected through text or regex scanning: 'body modifications'"
   },
   "text search: innocent girl": {
@@ -9324,6 +9324,17 @@
     "max": 1,
     "tag_count": 1572,
     "description": "Tag automatically detected in forum recommendation threads: 'fetish'"
+  },
+  "text search: chat": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1572,
+    "description": "Tag automatically detected through text or regex scanning: 'chat'"
   },
   "site: sci-fi": {
     "type": "tag",
@@ -9454,7 +9465,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1536,
+    "tag_count": 1537,
     "description": "Tag automatically detected through text or regex scanning: 'masochism'"
   },
   "author: drugs": {
@@ -9511,6 +9522,17 @@
     "max": 1,
     "tag_count": 1519,
     "description": "Tag automatically detected through text or regex scanning: 'giant'"
+  },
+  "text search: good ending": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1517,
+    "description": "Tag automatically detected through text or regex scanning: 'good ending'"
   },
   "site: urination": {
     "type": "tag",
@@ -9652,7 +9674,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1485,
+    "tag_count": 1484,
     "description": "Tag automatically detected in the author’s genre description: 'religion'"
   },
   "site: furry": {
@@ -9754,17 +9776,6 @@
     "tag_count": 1470,
     "description": "Tag automatically detected in the author’s genre description: 'difficulty mode'"
   },
-  "text search: chat": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1470,
-    "description": "Tag automatically detected through text or regex scanning: 'chat'"
-  },
   "text search: heroic": {
     "type": "tag",
     "choices": [
@@ -9773,7 +9784,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1467,
+    "tag_count": 1466,
     "description": "Tag automatically detected through text or regex scanning: 'heroic'"
   },
   "text search: stomach": {
@@ -9817,7 +9828,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1457,
+    "tag_count": 1456,
     "description": "Tag automatically detected through text or regex scanning: 'embarrassment'"
   },
   "text search: stealth": {
@@ -9919,6 +9930,17 @@
     "tag_count": 1447,
     "description": "Tag automatically detected in forum recommendation threads: 'sixty nine'"
   },
+  "text search: gaming consoles": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1447,
+    "description": "Tag automatically detected through text or regex scanning: 'gaming consoles'"
+  },
   "text search: small man": {
     "type": "tag",
     "choices": [
@@ -9984,17 +10006,6 @@
     "max": 1,
     "tag_count": 1440,
     "description": "Tag automatically detected in the author’s genre description: 'war'"
-  },
-  "text search: gaming consoles": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1440,
-    "description": "Tag automatically detected through text or regex scanning: 'gaming consoles'"
   },
   "text search: dark fantasy": {
     "type": "tag",
@@ -10117,17 +10128,6 @@
     "tag_count": 1420,
     "description": "Tag automatically detected through text or regex scanning: 'succubus'"
   },
-  "text search: place of worship": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1419,
-    "description": "Tag automatically detected through text or regex scanning: 'place of worship'"
-  },
   "author: blackmail": {
     "type": "tag",
     "choices": [
@@ -10138,6 +10138,17 @@
     "max": 1,
     "tag_count": 1418,
     "description": "Tag automatically detected in the author’s genre description: 'blackmail'"
+  },
+  "text search: place of worship": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1418,
+    "description": "Tag automatically detected through text or regex scanning: 'place of worship'"
   },
   "author: military": {
     "type": "tag",
@@ -10422,7 +10433,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1357,
+    "tag_count": 1359,
     "description": "Tag automatically detected through text or regex scanning: 'princess'"
   },
   "text search: blonde": {
@@ -10458,6 +10469,17 @@
     "tag_count": 1352,
     "description": "Tag automatically detected in forum recommendation threads: 'honey select'"
   },
+  "text search: power plays": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1351,
+    "description": "Tag automatically detected through text or regex scanning: 'power plays'"
+  },
   "forum recommendation: female protagonist": {
     "type": "tag",
     "choices": [
@@ -10468,17 +10490,6 @@
     "max": 1,
     "tag_count": 1350,
     "description": "Tag automatically detected in forum recommendation threads: 'female protagonist'"
-  },
-  "text search: power plays": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1350,
-    "description": "Tag automatically detected through text or regex scanning: 'power plays'"
   },
   "author: lactation": {
     "type": "tag",
@@ -10744,6 +10755,17 @@
     "tag_count": 1293,
     "description": "Tag assigned by the official site: 'blackmail'"
   },
+  "text search: sadism and masochism": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1292,
+    "description": "Tag automatically detected through text or regex scanning: 'sadism and masochism'"
+  },
   "text search: side quest": {
     "type": "tag",
     "choices": [
@@ -10776,17 +10798,6 @@
     "max": 1,
     "tag_count": 1291,
     "description": "Tag automatically detected in forum recommendation threads: 'animations'"
-  },
-  "text search: sadism and masochism": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1291,
-    "description": "Tag automatically detected through text or regex scanning: 'sadism and masochism'"
   },
   "text search: island": {
     "type": "tag",
@@ -10953,6 +10964,17 @@
     "tag_count": 1254,
     "description": "Tag automatically detected in the author’s genre description: 'club'"
   },
+  "text search: elves": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1254,
+    "description": "Tag automatically detected through text or regex scanning: 'elves'"
+  },
   "text search: crying": {
     "type": "tag",
     "choices": [
@@ -10963,17 +10985,6 @@
     "max": 1,
     "tag_count": 1253,
     "description": "Tag automatically detected through text or regex scanning: 'crying'"
-  },
-  "text search: elves": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1253,
-    "description": "Tag automatically detected through text or regex scanning: 'elves'"
   },
   "text search: political": {
     "type": "tag",
@@ -11547,17 +11558,6 @@
     "tag_count": 1178,
     "description": "Tag automatically detected in the author’s genre description: 'huge person'"
   },
-  "forum recommendation: lust": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1176,
-    "description": "Tag automatically detected in forum recommendation threads: 'lust'"
-  },
   "text search: vore": {
     "type": "tag",
     "choices": [
@@ -11731,7 +11731,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1155,
+    "tag_count": 1156,
     "description": "Tag automatically detected in the author’s genre description: 'dubious consent'"
   },
   "text search: light hearted": {
@@ -11755,6 +11755,17 @@
     "max": 1,
     "tag_count": 1146,
     "description": "Tag automatically detected in the author’s genre description: 'exclusive'"
+  },
+  "forum recommendation: lust": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1146,
+    "description": "Tag automatically detected in forum recommendation threads: 'lust'"
   },
   "site: drugs": {
     "type": "tag",
@@ -12152,17 +12163,6 @@
     "tag_count": 1082,
     "description": "Tag automatically detected through text or regex scanning: 'redhead'"
   },
-  "text search: chaste woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1081,
-    "description": "Tag automatically detected through text or regex scanning: 'chaste woman'"
-  },
   "text search: russian": {
     "type": "tag",
     "choices": [
@@ -12239,6 +12239,17 @@
     "max": 1,
     "tag_count": 1076,
     "description": "Tag automatically detected in forum recommendation threads: 'quest'"
+  },
+  "text search: chaste woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1074,
+    "description": "Tag automatically detected through text or regex scanning: 'chaste woman'"
   },
   "text search: gangbang": {
     "type": "tag",
@@ -12391,7 +12402,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1057,
+    "tag_count": 1056,
     "description": "Tag automatically detected through text or regex scanning: 'roleplay'"
   },
   "author: innocent": {
@@ -12449,17 +12460,6 @@
     "tag_count": 1046,
     "description": "Tag automatically detected in forum recommendation threads: 'character focused'"
   },
-  "text search: breeding": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1046,
-    "description": "Tag automatically detected through text or regex scanning: 'breeding'"
-  },
   "author: sadism": {
     "type": "tag",
     "choices": [
@@ -12493,17 +12493,6 @@
     "tag_count": 1039,
     "description": "Tag automatically detected in the author’s genre description: 'beta'"
   },
-  "author: place of worship": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1039,
-    "description": "Tag automatically detected in the author’s genre description: 'place of worship'"
-  },
   "text search: quiz and trivia": {
     "type": "tag",
     "choices": [
@@ -12514,6 +12503,17 @@
     "max": 1,
     "tag_count": 1039,
     "description": "Tag automatically detected through text or regex scanning: 'quiz and trivia'"
+  },
+  "author: place of worship": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1038,
+    "description": "Tag automatically detected in the author’s genre description: 'place of worship'"
   },
   "author: big beautiful woman": {
     "type": "tag",
@@ -12581,17 +12581,6 @@
     "tag_count": 1027,
     "description": "Tag automatically detected through text or regex scanning: 'smut'"
   },
-  "text search: begging": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1026,
-    "description": "Tag automatically detected through text or regex scanning: 'begging'"
-  },
   "author: country": {
     "type": "tag",
     "choices": [
@@ -12658,6 +12647,17 @@
     "tag_count": 1019,
     "description": "Tag automatically detected through text or regex scanning: 'revealing outfits'"
   },
+  "text search: breeding": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1016,
+    "description": "Tag automatically detected through text or regex scanning: 'breeding'"
+  },
   "text search: hypnosis": {
     "type": "tag",
     "choices": [
@@ -12680,6 +12680,17 @@
     "tag_count": 1015,
     "description": "Tag automatically detected in the author’s genre description: 'kissing'"
   },
+  "text search: power dynamics": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1015,
+    "description": "Tag automatically detected through text or regex scanning: 'power dynamics'"
+  },
   "text search: centered on art": {
     "type": "tag",
     "choices": [
@@ -12690,17 +12701,6 @@
     "max": 1,
     "tag_count": 1014,
     "description": "Tag automatically detected through text or regex scanning: 'centered on art'"
-  },
-  "text search: power dynamics": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1014,
-    "description": "Tag automatically detected through text or regex scanning: 'power dynamics'"
   },
   "author: accident": {
     "type": "tag",
@@ -12723,17 +12723,6 @@
     "max": 1,
     "tag_count": 1011,
     "description": "Tag automatically detected through text or regex scanning: 'small woman'"
-  },
-  "text search: infestation": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1010,
-    "description": "Tag automatically detected through text or regex scanning: 'infestation'"
   },
   "text search: mountain": {
     "type": "tag",
@@ -12787,7 +12776,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 1004,
+    "tag_count": 1005,
     "description": "Tag automatically detected through text or regex scanning: 'casual sex'"
   },
   "text search: russia": {
@@ -12944,17 +12933,6 @@
     "tag_count": 984,
     "description": "Tag automatically detected in the author’s genre description: 'timing and rhythm'"
   },
-  "text search: good ending": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 984,
-    "description": "Tag automatically detected through text or regex scanning: 'good ending'"
-  },
   "text search: peeking": {
     "type": "tag",
     "choices": [
@@ -12965,6 +12943,17 @@
     "max": 1,
     "tag_count": 984,
     "description": "Tag automatically detected through text or regex scanning: 'peeking'"
+  },
+  "text search: cheat available": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 981,
+    "description": "Tag automatically detected through text or regex scanning: 'cheat available'"
   },
   "author: marriage": {
     "type": "tag",
@@ -12987,6 +12976,17 @@
     "max": 1,
     "tag_count": 978,
     "description": "Tag automatically detected through text or regex scanning: 'cumming outside'"
+  },
+  "text search: muscular person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 977,
+    "description": "Tag automatically detected through text or regex scanning: 'muscular person'"
   },
   "author: gift": {
     "type": "tag",
@@ -13141,17 +13141,6 @@
     "max": 1,
     "tag_count": 955,
     "description": "Tag automatically detected in the author’s genre description: 'bestiality'"
-  },
-  "text search: muscular person": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 952,
-    "description": "Tag automatically detected through text or regex scanning: 'muscular person'"
   },
   "author: caught": {
     "type": "tag",
@@ -13362,17 +13351,6 @@
     "tag_count": 928,
     "description": "Tag automatically detected through text or regex scanning: 'loser'"
   },
-  "text search: pool": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 925,
-    "description": "Tag automatically detected through text or regex scanning: 'pool'"
-  },
   "author: underwear": {
     "type": "tag",
     "choices": [
@@ -13381,7 +13359,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 924,
+    "tag_count": 925,
     "description": "Tag automatically detected in the author’s genre description: 'underwear'"
   },
   "text search: pain play": {
@@ -13392,8 +13370,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 924,
+    "tag_count": 925,
     "description": "Tag automatically detected through text or regex scanning: 'pain play'"
+  },
+  "text search: pool": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 925,
+    "description": "Tag automatically detected through text or regex scanning: 'pool'"
   },
   "forum recommendation: humiliation": {
     "type": "tag",
@@ -13450,17 +13439,6 @@
     "tag_count": 920,
     "description": "Tag automatically detected through text or regex scanning: 'swimsuit'"
   },
-  "author: lusty woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 918,
-    "description": "Tag automatically detected in the author’s genre description: 'lusty woman'"
-  },
   "text search: futa protagonist": {
     "type": "tag",
     "choices": [
@@ -13483,6 +13461,17 @@
     "tag_count": 913,
     "description": "Tag automatically detected in the author’s genre description: 'holy person'"
   },
+  "author: lusty woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 912,
+    "description": "Tag automatically detected in the author’s genre description: 'lusty woman'"
+  },
   "text search: hotel": {
     "type": "tag",
     "choices": [
@@ -13493,6 +13482,17 @@
     "max": 1,
     "tag_count": 912,
     "description": "Tag automatically detected through text or regex scanning: 'hotel'"
+  },
+  "text search: begging": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 911,
+    "description": "Tag automatically detected through text or regex scanning: 'begging'"
   },
   "text search: invisibility": {
     "type": "tag",
@@ -13582,7 +13582,7 @@
     "tag_count": 902,
     "description": "Tag automatically detected in the author’s genre description: 'plot twist'"
   },
-  "text search: mistress": {
+  "author: chat": {
     "type": "tag",
     "choices": [
       0,
@@ -13590,8 +13590,8 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 902,
-    "description": "Tag automatically detected through text or regex scanning: 'mistress'"
+    "tag_count": 900,
+    "description": "Tag automatically detected in the author’s genre description: 'chat'"
   },
   "author: dark fantasy": {
     "type": "tag",
@@ -13603,17 +13603,6 @@
     "max": 1,
     "tag_count": 900,
     "description": "Tag automatically detected in the author’s genre description: 'dark fantasy'"
-  },
-  "text search: tattoos": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 895,
-    "description": "Tag automatically detected through text or regex scanning: 'tattoos'"
   },
   "author: alcohol use": {
     "type": "tag",
@@ -13647,6 +13636,17 @@
     "max": 1,
     "tag_count": 894,
     "description": "Tag automatically detected through text or regex scanning: 'dildos'"
+  },
+  "text search: tattoos": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 894,
+    "description": "Tag automatically detected through text or regex scanning: 'tattoos'"
   },
   "author: enemy units": {
     "type": "tag",
@@ -13747,17 +13747,6 @@
     "tag_count": 884,
     "description": "Tag automatically detected in forum recommendation threads: 'bondage'"
   },
-  "text search: cheat available": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 884,
-    "description": "Tag automatically detected through text or regex scanning: 'cheat available'"
-  },
   "author: achievements": {
     "type": "tag",
     "choices": [
@@ -13835,6 +13824,28 @@
     "tag_count": 874,
     "description": "Tag automatically detected in the author’s genre description: 'imprisoned'"
   },
+  "text search: magical realm": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 873,
+    "description": "Tag automatically detected through text or regex scanning: 'magical realm'"
+  },
+  "text search: mistress": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 873,
+    "description": "Tag automatically detected through text or regex scanning: 'mistress'"
+  },
   "author: slice of life": {
     "type": "tag",
     "choices": [
@@ -13846,17 +13857,6 @@
     "tag_count": 872,
     "description": "Tag automatically detected in the author’s genre description: 'slice of life'"
   },
-  "text search: magical realm": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 872,
-    "description": "Tag automatically detected through text or regex scanning: 'magical realm'"
-  },
   "text search: beautiful background": {
     "type": "tag",
     "choices": [
@@ -13867,6 +13867,17 @@
     "max": 1,
     "tag_count": 871,
     "description": "Tag automatically detected through text or regex scanning: 'beautiful background'"
+  },
+  "author: camming": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 870,
+    "description": "Tag automatically detected in the author’s genre description: 'camming'"
   },
   "text search: side scroller": {
     "type": "tag",
@@ -13889,17 +13900,6 @@
     "max": 1,
     "tag_count": 867,
     "description": "Tag automatically detected through text or regex scanning: 'cloning'"
-  },
-  "author: camming": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 866,
-    "description": "Tag automatically detected in the author’s genre description: 'camming'"
   },
   "author: curse": {
     "type": "tag",
@@ -14044,17 +14044,6 @@
     "tag_count": 852,
     "description": "Tag automatically detected in the author’s genre description: 'long game'"
   },
-  "text search: celebrities": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 851,
-    "description": "Tag automatically detected through text or regex scanning: 'celebrities'"
-  },
   "author: summer": {
     "type": "tag",
     "choices": [
@@ -14099,6 +14088,17 @@
     "tag_count": 849,
     "description": "Tag automatically detected through text or regex scanning: 'multiple languages'"
   },
+  "text search: athletic woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 848,
+    "description": "Tag automatically detected through text or regex scanning: 'athletic woman'"
+  },
   "author: queen": {
     "type": "tag",
     "choices": [
@@ -14121,17 +14121,6 @@
     "tag_count": 846,
     "description": "Tag automatically detected in the author’s genre description: 'witch'"
   },
-  "text search: athletic woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 846,
-    "description": "Tag automatically detected through text or regex scanning: 'athletic woman'"
-  },
   "author: princess": {
     "type": "tag",
     "choices": [
@@ -14142,17 +14131,6 @@
     "max": 1,
     "tag_count": 844,
     "description": "Tag automatically detected in the author’s genre description: 'princess'"
-  },
-  "author: chat": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 842,
-    "description": "Tag automatically detected in the author’s genre description: 'chat'"
   },
   "author: competition": {
     "type": "tag",
@@ -14176,6 +14154,17 @@
     "tag_count": 840,
     "description": "Tag automatically detected in forum recommendation threads: 'renpy'"
   },
+  "text search: different haircuts": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 839,
+    "description": "Tag automatically detected through text or regex scanning: 'different haircuts'"
+  },
   "text search: eye contact": {
     "type": "tag",
     "choices": [
@@ -14186,17 +14175,6 @@
     "max": 1,
     "tag_count": 838,
     "description": "Tag automatically detected through text or regex scanning: 'eye contact'"
-  },
-  "text search: different haircuts": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 837,
-    "description": "Tag automatically detected through text or regex scanning: 'different haircuts'"
   },
   "text search: husbando": {
     "type": "tag",
@@ -14261,7 +14239,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 834,
+    "tag_count": 835,
     "description": "Tag automatically detected in the author’s genre description: 'elves'"
   },
   "forum recommendation: beast": {
@@ -14374,6 +14352,17 @@
     "tag_count": 824,
     "description": "Tag automatically detected in forum recommendation threads: 'bdsm'"
   },
+  "text search: celebrities": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 824,
+    "description": "Tag automatically detected through text or regex scanning: 'celebrities'"
+  },
   "text search: smelling": {
     "type": "tag",
     "choices": [
@@ -14439,17 +14428,6 @@
     "max": 1,
     "tag_count": 819,
     "description": "Tag automatically detected in the author’s genre description: 'game franchise'"
-  },
-  "text search: gore": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 816,
-    "description": "Tag automatically detected through text or regex scanning: 'gore'"
   },
   "text search: multiple orgasms": {
     "type": "tag",
@@ -14539,6 +14517,17 @@
     "tag_count": 810,
     "description": "Tag automatically detected in forum recommendation threads: 'secret'"
   },
+  "text search: infestation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 810,
+    "description": "Tag automatically detected through text or regex scanning: 'infestation'"
+  },
   "text search: sex slave": {
     "type": "tag",
     "choices": [
@@ -14571,17 +14560,6 @@
     "max": 1,
     "tag_count": 807,
     "description": "Tag automatically detected through text or regex scanning: 'warrior'"
-  },
-  "author: body customization": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 805,
-    "description": "Tag automatically detected in the author’s genre description: 'body customization'"
   },
   "text search: orc": {
     "type": "tag",
@@ -14626,6 +14604,17 @@
     "max": 1,
     "tag_count": 802,
     "description": "Tag automatically detected in forum recommendation threads: 'softcore content'"
+  },
+  "text search: gore": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 802,
+    "description": "Tag automatically detected through text or regex scanning: 'gore'"
   },
   "site: futa/trans protagonist": {
     "type": "tag",
@@ -14912,6 +14901,17 @@
     "max": 1,
     "tag_count": 776,
     "description": "Tag automatically detected in the author’s genre description: 'heroic'"
+  },
+  "author: body customization": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 774,
+    "description": "Tag automatically detected in the author’s genre description: 'body customization'"
   },
   "text search: supernatural": {
     "type": "tag",
@@ -15394,7 +15394,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 727,
+    "tag_count": 728,
     "description": "Tag automatically detected through text or regex scanning: 'honey select'"
   },
   "text search: sacrifice": {
@@ -15429,6 +15429,17 @@
     "max": 1,
     "tag_count": 726,
     "description": "Tag automatically detected in forum recommendation threads: 'forced'"
+  },
+  "text search: white person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 726,
+    "description": "Tag automatically detected through text or regex scanning: 'white person'"
   },
   "author: modern": {
     "type": "tag",
@@ -15661,17 +15672,6 @@
     "tag_count": 713,
     "description": "Tag automatically detected through text or regex scanning: 'orgy'"
   },
-  "author: nympho": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 711,
-    "description": "Tag automatically detected in the author’s genre description: 'nympho'"
-  },
   "author: impregnation": {
     "type": "tag",
     "choices": [
@@ -15682,6 +15682,17 @@
     "max": 1,
     "tag_count": 709,
     "description": "Tag automatically detected in the author’s genre description: 'impregnation'"
+  },
+  "author: nympho": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 707,
+    "description": "Tag automatically detected in the author’s genre description: 'nympho'"
   },
   "forum recommendation: exploitation": {
     "type": "tag",
@@ -16134,17 +16145,6 @@
     "tag_count": 662,
     "description": "Tag automatically detected through text or regex scanning: 'sissification'"
   },
-  "text search: gender customization": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 661,
-    "description": "Tag automatically detected through text or regex scanning: 'gender customization'"
-  },
   "author: psychological": {
     "type": "tag",
     "choices": [
@@ -16307,7 +16307,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 652,
+    "tag_count": 651,
     "description": "Tag automatically detected through text or regex scanning: 'scalies'"
   },
   "author: three females": {
@@ -16562,6 +16562,17 @@
     "max": 1,
     "tag_count": 635,
     "description": "Tag automatically detected through text or regex scanning: 'cinematic'"
+  },
+  "text search: gender customization": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 635,
+    "description": "Tag automatically detected through text or regex scanning: 'gender customization'"
   },
   "text search: grandma": {
     "type": "tag",
@@ -17267,6 +17278,17 @@
     "tag_count": 583,
     "description": "Tag automatically detected through text or regex scanning: 'hugs'"
   },
+  "text search: koikatsu": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 582,
+    "description": "Tag automatically detected through text or regex scanning: 'koikatsu'"
+  },
   "text search: bush": {
     "type": "tag",
     "choices": [
@@ -17288,17 +17310,6 @@
     "max": 1,
     "tag_count": 580,
     "description": "Tag automatically detected through text or regex scanning: 'finger job'"
-  },
-  "text search: koikatsu": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 580,
-    "description": "Tag automatically detected through text or regex scanning: 'koikatsu'"
   },
   "text search: male and male": {
     "type": "tag",
@@ -17410,6 +17421,17 @@
     "tag_count": 571,
     "description": "Tag automatically detected through text or regex scanning: 'cat girl'"
   },
+  "author: magical realm": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 570,
+    "description": "Tag automatically detected in the author’s genre description: 'magical realm'"
+  },
   "author: pixel art": {
     "type": "tag",
     "choices": [
@@ -17431,17 +17453,6 @@
     "max": 1,
     "tag_count": 570,
     "description": "Tag automatically detected in forum recommendation threads: 'restraints'"
-  },
-  "author: magical realm": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 569,
-    "description": "Tag automatically detected in the author’s genre description: 'magical realm'"
   },
   "author: brothel management": {
     "type": "tag",
@@ -17476,6 +17487,17 @@
     "tag_count": 566,
     "description": "Tag automatically detected in the author’s genre description: 'huge woman'"
   },
+  "text search: coercive sex": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 565,
+    "description": "Tag automatically detected through text or regex scanning: 'coercive sex'"
+  },
   "author: hypnosis": {
     "type": "tag",
     "choices": [
@@ -17497,17 +17519,6 @@
     "max": 1,
     "tag_count": 564,
     "description": "Tag automatically detected in the author’s genre description: 'timed events'"
-  },
-  "text search: coercive sex": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 564,
-    "description": "Tag automatically detected through text or regex scanning: 'coercive sex'"
   },
   "author: sitting": {
     "type": "tag",
@@ -17751,17 +17762,6 @@
     "tag_count": 548,
     "description": "Tag automatically detected in the author’s genre description: 'estranged'"
   },
-  "author: infestation": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 548,
-    "description": "Tag automatically detected in the author’s genre description: 'infestation'"
-  },
   "forum recommendation: money": {
     "type": "tag",
     "choices": [
@@ -18001,8 +18001,19 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 533,
+    "tag_count": 534,
     "description": "Tag automatically detected in the author’s genre description: 'power plays'"
+  },
+  "text search: greek person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 533,
+    "description": "Tag automatically detected through text or regex scanning: 'greek person'"
   },
   "text search: contraception": {
     "type": "tag",
@@ -18014,17 +18025,6 @@
     "max": 1,
     "tag_count": 532,
     "description": "Tag automatically detected through text or regex scanning: 'contraception'"
-  },
-  "author: celebrities": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 529,
-    "description": "Tag automatically detected in the author’s genre description: 'celebrities'"
   },
   "author: leader": {
     "type": "tag",
@@ -18100,7 +18100,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 525,
+    "tag_count": 524,
     "description": "Tag automatically detected through text or regex scanning: 'blush'"
   },
   "author: babies": {
@@ -18133,7 +18133,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 522,
+    "tag_count": 521,
     "description": "Tag automatically detected through text or regex scanning: 'taboo love'"
   },
   "text search: tsundere": {
@@ -18190,6 +18190,17 @@
     "max": 1,
     "tag_count": 520,
     "description": "Tag automatically detected through text or regex scanning: 'wasd'"
+  },
+  "author: celebrities": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 519,
+    "description": "Tag automatically detected in the author’s genre description: 'celebrities'"
   },
   "author: forgiveness": {
     "type": "tag",
@@ -18521,17 +18532,6 @@
     "tag_count": 500,
     "description": "Tag automatically detected through text or regex scanning: 'necrophilia'"
   },
-  "author: breeding": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 499,
-    "description": "Tag automatically detected in the author’s genre description: 'breeding'"
-  },
   "author: multiple languages": {
     "type": "tag",
     "choices": [
@@ -18609,6 +18609,17 @@
     "tag_count": 493,
     "description": "Tag automatically detected in forum recommendation threads: 'nsfw'"
   },
+  "author: breeding": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 491,
+    "description": "Tag automatically detected in the author’s genre description: 'breeding'"
+  },
   "forum recommendation: sadism": {
     "type": "tag",
     "choices": [
@@ -18664,6 +18675,17 @@
     "tag_count": 490,
     "description": "Tag automatically detected through text or regex scanning: 'nobility'"
   },
+  "author: mistress": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 489,
+    "description": "Tag automatically detected in the author’s genre description: 'mistress'"
+  },
   "text search: embarrassed naked female": {
     "type": "tag",
     "choices": [
@@ -18708,17 +18730,6 @@
     "tag_count": 487,
     "description": "Tag automatically detected in forum recommendation threads: 'submission'"
   },
-  "author: mistress": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 486,
-    "description": "Tag automatically detected in the author’s genre description: 'mistress'"
-  },
   "text search: stepmom": {
     "type": "tag",
     "choices": [
@@ -18729,17 +18740,6 @@
     "max": 1,
     "tag_count": 486,
     "description": "Tag automatically detected through text or regex scanning: 'stepmom'"
-  },
-  "text search: chaste man": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 485,
-    "description": "Tag automatically detected through text or regex scanning: 'chaste man'"
   },
   "text search: high score": {
     "type": "tag",
@@ -18850,6 +18850,17 @@
     "max": 1,
     "tag_count": 481,
     "description": "Tag automatically detected through text or regex scanning: 'bss'"
+  },
+  "text search: chaste man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 481,
+    "description": "Tag automatically detected through text or regex scanning: 'chaste man'"
   },
   "text search: route dependent": {
     "type": "tag",
@@ -19235,6 +19246,17 @@
     "max": 1,
     "tag_count": 453,
     "description": "Tag automatically detected in the author’s genre description: 'cumming outside'"
+  },
+  "author: infestation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 453,
+    "description": "Tag automatically detected in the author’s genre description: 'infestation'"
   },
   "text search: swallow": {
     "type": "tag",
@@ -19632,7 +19654,7 @@
     "tag_count": 433,
     "description": "Tag automatically detected through text or regex scanning: 'werewolf'"
   },
-  "author: roleplay": {
+  "author: cheat available": {
     "type": "tag",
     "choices": [
       0,
@@ -19641,7 +19663,7 @@
     "min": 0,
     "max": 1,
     "tag_count": 432,
-    "description": "Tag automatically detected in the author’s genre description: 'roleplay'"
+    "description": "Tag automatically detected in the author’s genre description: 'cheat available'"
   },
   "author: submissive": {
     "type": "tag",
@@ -19664,6 +19686,17 @@
     "max": 1,
     "tag_count": 432,
     "description": "Tag automatically detected through text or regex scanning: 'collar'"
+  },
+  "author: roleplay": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 431,
+    "description": "Tag automatically detected in the author’s genre description: 'roleplay'"
   },
   "forum recommendation: male domination": {
     "type": "tag",
@@ -20105,6 +20138,17 @@
     "tag_count": 409,
     "description": "Tag automatically detected through text or regex scanning: 'whipping'"
   },
+  "author: power dynamics": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 408,
+    "description": "Tag automatically detected in the author’s genre description: 'power dynamics'"
+  },
   "text search: punk genres": {
     "type": "tag",
     "choices": [
@@ -20115,17 +20159,6 @@
     "max": 1,
     "tag_count": 408,
     "description": "Tag automatically detected through text or regex scanning: 'punk genres'"
-  },
-  "author: power dynamics": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 407,
-    "description": "Tag automatically detected in the author’s genre description: 'power dynamics'"
   },
   "text search: new game plus": {
     "type": "tag",
@@ -20413,17 +20446,6 @@
     "tag_count": 395,
     "description": "Tag automatically detected in the author’s genre description: 'sissification'"
   },
-  "text search: domme": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 395,
-    "description": "Tag automatically detected through text or regex scanning: 'domme'"
-  },
   "text search: spaceship": {
     "type": "tag",
     "choices": [
@@ -20490,17 +20512,6 @@
     "tag_count": 393,
     "description": "Tag automatically detected in the author’s genre description: 'multiple love interests'"
   },
-  "author: chaste": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 391,
-    "description": "Tag automatically detected in the author’s genre description: 'chaste'"
-  },
   "text search: curvy woman": {
     "type": "tag",
     "choices": [
@@ -20544,6 +20555,17 @@
     "max": 1,
     "tag_count": 390,
     "description": "Tag automatically detected in the author’s genre description: 'scalies'"
+  },
+  "author: chaste": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 389,
+    "description": "Tag automatically detected in the author’s genre description: 'chaste'"
   },
   "text search: mafia": {
     "type": "tag",
@@ -20720,17 +20742,6 @@
     "max": 1,
     "tag_count": 382,
     "description": "Tag automatically detected through text or regex scanning: 'plant girl'"
-  },
-  "author: cheat available": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 381,
-    "description": "Tag automatically detected in the author’s genre description: 'cheat available'"
   },
   "author: quiz and trivia": {
     "type": "tag",
@@ -21127,6 +21138,17 @@
     "max": 1,
     "tag_count": 367,
     "description": "Tag automatically detected through text or regex scanning: 'chastity'"
+  },
+  "text search: domme": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 366,
+    "description": "Tag automatically detected through text or regex scanning: 'domme'"
   },
   "text search: short clothes": {
     "type": "tag",
@@ -21689,17 +21711,6 @@
     "tag_count": 344,
     "description": "Tag automatically detected through text or regex scanning: 'aura'"
   },
-  "author: gender customization": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 343,
-    "description": "Tag automatically detected in the author’s genre description: 'gender customization'"
-  },
   "text search: sauna": {
     "type": "tag",
     "choices": [
@@ -22008,6 +22019,17 @@
     "tag_count": 329,
     "description": "Tag automatically detected in the author’s genre description: 'eggs'"
   },
+  "author: greek person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 329,
+    "description": "Tag automatically detected in the author’s genre description: 'greek person'"
+  },
   "author: multiple orgasms": {
     "type": "tag",
     "choices": [
@@ -22062,6 +22084,17 @@
     "max": 1,
     "tag_count": 327,
     "description": "Tag automatically detected through text or regex scanning: 'worms'"
+  },
+  "author: gender customization": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 326,
+    "description": "Tag automatically detected in the author’s genre description: 'gender customization'"
   },
   "author: young adult": {
     "type": "tag",
@@ -22151,17 +22184,6 @@
     "tag_count": 324,
     "description": "Tag automatically detected through text or regex scanning: 'hot spring'"
   },
-  "author: gore": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 323,
-    "description": "Tag automatically detected in the author’s genre description: 'gore'"
-  },
   "site: scat": {
     "type": "tag",
     "choices": [
@@ -22238,6 +22260,17 @@
     "max": 1,
     "tag_count": 321,
     "description": "Tag automatically detected in the author’s genre description: 'paradise'"
+  },
+  "text search: muscular woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 321,
+    "description": "Tag automatically detected through text or regex scanning: 'muscular woman'"
   },
   "forum recommendation: revealing outfits": {
     "type": "tag",
@@ -22481,6 +22514,17 @@
     "tag_count": 316,
     "description": "Tag automatically detected through text or regex scanning: 'massage place'"
   },
+  "author: gore": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 315,
+    "description": "Tag automatically detected in the author’s genre description: 'gore'"
+  },
   "author: memory game": {
     "type": "tag",
     "choices": [
@@ -22524,6 +22568,17 @@
     "max": 1,
     "tag_count": 314,
     "description": "Tag automatically detected in the author’s genre description: 'good and evil'"
+  },
+  "author: good ending": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 314,
+    "description": "Tag automatically detected in the author’s genre description: 'good ending'"
   },
   "forum recommendation: small person": {
     "type": "tag",
@@ -23570,6 +23625,17 @@
     "tag_count": 275,
     "description": "Tag automatically detected in the author’s genre description: 'shocking'"
   },
+  "text search: muscular man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 275,
+    "description": "Tag automatically detected through text or regex scanning: 'muscular man'"
+  },
   "author: doggy style": {
     "type": "tag",
     "choices": [
@@ -23746,17 +23812,6 @@
     "tag_count": 269,
     "description": "Tag automatically detected in the author’s genre description: 'tragedy'"
   },
-  "forum recommendation: breeding": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 268,
-    "description": "Tag automatically detected in forum recommendation threads: 'breeding'"
-  },
   "forum recommendation: html engine": {
     "type": "tag",
     "choices": [
@@ -23922,6 +23977,17 @@
     "tag_count": 263,
     "description": "Tag automatically detected through text or regex scanning: 'free use'"
   },
+  "text search: gyaru": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 263,
+    "description": "Tag automatically detected through text or regex scanning: 'gyaru'"
+  },
   "text search: heterosexual": {
     "type": "tag",
     "choices": [
@@ -23943,6 +24009,17 @@
     "max": 1,
     "tag_count": 262,
     "description": "Tag automatically detected in the author’s genre description: 'break up'"
+  },
+  "author: muscular person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 262,
+    "description": "Tag automatically detected in the author’s genre description: 'muscular person'"
   },
   "text search: pony girl": {
     "type": "tag",
@@ -24175,17 +24252,6 @@
     "tag_count": 255,
     "description": "Tag automatically detected through text or regex scanning: 'justice system'"
   },
-  "text search: muscular woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 255,
-    "description": "Tag automatically detected through text or regex scanning: 'muscular woman'"
-  },
   "text search: public use": {
     "type": "tag",
     "choices": [
@@ -24240,17 +24306,6 @@
     "max": 1,
     "tag_count": 254,
     "description": "Tag automatically detected through text or regex scanning: 'spa'"
-  },
-  "author: muscular person": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 253,
-    "description": "Tag automatically detected in the author’s genre description: 'muscular person'"
   },
   "forum recommendation: traveling": {
     "type": "tag",
@@ -24307,17 +24362,6 @@
     "tag_count": 252,
     "description": "Tag automatically detected through text or regex scanning: 'fiancee'"
   },
-  "text search: gyaru": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 252,
-    "description": "Tag automatically detected through text or regex scanning: 'gyaru'"
-  },
   "text search: parasites": {
     "type": "tag",
     "choices": [
@@ -24372,6 +24416,17 @@
     "max": 1,
     "tag_count": 251,
     "description": "Tag automatically detected through text or regex scanning: 'immortal'"
+  },
+  "text search: pregnant with monsters": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 251,
+    "description": "Tag automatically detected through text or regex scanning: 'pregnant with monsters'"
   },
   "author: hot spring": {
     "type": "tag",
@@ -24747,17 +24802,6 @@
     "tag_count": 240,
     "description": "Tag automatically detected in the author’s genre description: 'netorase'"
   },
-  "forum recommendation: erotic": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 240,
-    "description": "Tag automatically detected in forum recommendation threads: 'erotic'"
-  },
   "forum recommendation: urination": {
     "type": "tag",
     "choices": [
@@ -25000,6 +25044,17 @@
     "tag_count": 235,
     "description": "Tag automatically detected through text or regex scanning: 'taxes'"
   },
+  "text search: white man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 235,
+    "description": "Tag automatically detected through text or regex scanning: 'white man'"
+  },
   "author: spaceship": {
     "type": "tag",
     "choices": [
@@ -25198,17 +25253,6 @@
     "tag_count": 229,
     "description": "Tag automatically detected through text or regex scanning: 'lovecraft'"
   },
-  "author: begging": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 227,
-    "description": "Tag automatically detected in the author’s genre description: 'begging'"
-  },
   "forum recommendation: gore": {
     "type": "tag",
     "choices": [
@@ -25219,6 +25263,17 @@
     "max": 1,
     "tag_count": 227,
     "description": "Tag automatically detected in forum recommendation threads: 'gore'"
+  },
+  "text search: shapeshifter": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 227,
+    "description": "Tag automatically detected through text or regex scanning: 'shapeshifter'"
   },
   "text search: thigh job": {
     "type": "tag",
@@ -25472,17 +25527,6 @@
     "max": 1,
     "tag_count": 221,
     "description": "Tag automatically detected through text or regex scanning: 'delusion'"
-  },
-  "text search: pregnant with monsters": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 221,
-    "description": "Tag automatically detected through text or regex scanning: 'pregnant with monsters'"
   },
   "text search: surreal": {
     "type": "tag",
@@ -25770,6 +25814,17 @@
     "tag_count": 212,
     "description": "Tag automatically detected in the author’s genre description: 'repulsive'"
   },
+  "author: white person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 212,
+    "description": "Tag automatically detected in the author’s genre description: 'white person'"
+  },
   "text search: dark humor": {
     "type": "tag",
     "choices": [
@@ -25913,17 +25968,6 @@
     "tag_count": 209,
     "description": "Tag automatically detected in the author’s genre description: 'male demon'"
   },
-  "text search: body art": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 209,
-    "description": "Tag automatically detected through text or regex scanning: 'body art'"
-  },
   "text search: hotwife": {
     "type": "tag",
     "choices": [
@@ -25967,6 +26011,17 @@
     "max": 1,
     "tag_count": 209,
     "description": "Tag automatically detected through text or regex scanning: 'shovel ware'"
+  },
+  "text search: body art": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 208,
+    "description": "Tag automatically detected through text or regex scanning: 'body art'"
   },
   "text search: in laws": {
     "type": "tag",
@@ -26154,17 +26209,6 @@
     "max": 1,
     "tag_count": 205,
     "description": "Tag automatically detected through text or regex scanning: 'partner is stolen'"
-  },
-  "text search: shapeshifter": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 205,
-    "description": "Tag automatically detected through text or regex scanning: 'shapeshifter'"
   },
   "text search: speculum": {
     "type": "tag",
@@ -26419,6 +26463,17 @@
     "tag_count": 200,
     "description": "Tag automatically detected through text or regex scanning: 'incubus'"
   },
+  "text search: sex illness": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 200,
+    "description": "Tag automatically detected through text or regex scanning: 'sex illness'"
+  },
   "author: urban": {
     "type": "tag",
     "choices": [
@@ -26429,6 +26484,17 @@
     "max": 1,
     "tag_count": 199,
     "description": "Tag automatically detected in the author’s genre description: 'urban'"
+  },
+  "forum recommendation: erotic": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 199,
+    "description": "Tag automatically detected in forum recommendation threads: 'erotic'"
   },
   "forum recommendation: furry": {
     "type": "tag",
@@ -26451,17 +26517,6 @@
     "max": 1,
     "tag_count": 199,
     "description": "Tag automatically detected in forum recommendation threads: 'patreon subscribestar'"
-  },
-  "text search: sex illness": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 199,
-    "description": "Tag automatically detected through text or regex scanning: 'sex illness'"
   },
   "text search: stranded": {
     "type": "tag",
@@ -26947,6 +27002,17 @@
     "tag_count": 190,
     "description": "Tag automatically detected in the author’s genre description: 'asian person'"
   },
+  "author: begging": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 190,
+    "description": "Tag automatically detected in the author’s genre description: 'begging'"
+  },
   "author: multiple races": {
     "type": "tag",
     "choices": [
@@ -27178,17 +27244,6 @@
     "tag_count": 186,
     "description": "Tag automatically detected through text or regex scanning: 'freckles'"
   },
-  "text search: weapon wielding protagonist": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 186,
-    "description": "Tag automatically detected through text or regex scanning: 'weapon wielding protagonist'"
-  },
   "author: buttplug": {
     "type": "tag",
     "choices": [
@@ -27343,7 +27398,7 @@
     "tag_count": 183,
     "description": "Tag assigned by the official site: 'possession'"
   },
-  "text search: guro": {
+  "text search: weapon wielding protagonist": {
     "type": "tag",
     "choices": [
       0,
@@ -27352,7 +27407,7 @@
     "min": 0,
     "max": 1,
     "tag_count": 183,
-    "description": "Tag automatically detected through text or regex scanning: 'guro'"
+    "description": "Tag automatically detected through text or regex scanning: 'weapon wielding protagonist'"
   },
   "author: swallow": {
     "type": "tag",
@@ -27882,6 +27937,17 @@
     "tag_count": 171,
     "description": "Tag automatically detected through text or regex scanning: 'dick expansion'"
   },
+  "text search: feminism": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 171,
+    "description": "Tag automatically detected through text or regex scanning: 'feminism'"
+  },
   "text search: south east asian": {
     "type": "tag",
     "choices": [
@@ -28024,6 +28090,17 @@
     "max": 1,
     "tag_count": 168,
     "description": "Tag automatically detected in the author’s genre description: 'womb'"
+  },
+  "text search: guro": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 168,
+    "description": "Tag automatically detected through text or regex scanning: 'guro'"
   },
   "text search: headpats": {
     "type": "tag",
@@ -28255,17 +28332,6 @@
     "max": 1,
     "tag_count": 161,
     "description": "Tag automatically detected in the author’s genre description: 'brown'"
-  },
-  "author: good ending": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 161,
-    "description": "Tag automatically detected in the author’s genre description: 'good ending'"
   },
   "author: road trip": {
     "type": "tag",
@@ -28597,6 +28663,17 @@
     "tag_count": 156,
     "description": "Tag automatically detected through text or regex scanning: 'slugs'"
   },
+  "author: domme": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 155,
+    "description": "Tag automatically detected in the author’s genre description: 'domme'"
+  },
   "text search: ass expansion": {
     "type": "tag",
     "choices": [
@@ -28607,6 +28684,17 @@
     "max": 1,
     "tag_count": 155,
     "description": "Tag automatically detected through text or regex scanning: 'ass expansion'"
+  },
+  "text search: happily ever after": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 155,
+    "description": "Tag automatically detected through text or regex scanning: 'happily ever after'"
   },
   "text search: mental health": {
     "type": "tag",
@@ -28750,17 +28838,6 @@
     "max": 1,
     "tag_count": 152,
     "description": "Tag automatically detected through text or regex scanning: 'sandwich'"
-  },
-  "author: domme": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 151,
-    "description": "Tag automatically detected in the author’s genre description: 'domme'"
   },
   "author: thigh job": {
     "type": "tag",
@@ -28992,28 +29069,6 @@
     "max": 1,
     "tag_count": 146,
     "description": "Tag automatically detected through text or regex scanning: 'cyrillic text'"
-  },
-  "text search: feminist": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 146,
-    "description": "Tag automatically detected through text or regex scanning: 'feminist'"
-  },
-  "text search: metroidvania": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 146,
-    "description": "Tag automatically detected through text or regex scanning: 'metroidvania'"
   },
   "author: bush": {
     "type": "tag",
@@ -29399,6 +29454,17 @@
     "max": 1,
     "tag_count": 139,
     "description": "Tag automatically detected through text or regex scanning: 'dna'"
+  },
+  "text search: metroidvania": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 139,
+    "description": "Tag automatically detected through text or regex scanning: 'metroidvania'"
   },
   "text search: south asian": {
     "type": "tag",
@@ -30027,6 +30093,17 @@
     "tag_count": 125,
     "description": "Tag automatically detected in the author’s genre description: 'pokemon'"
   },
+  "author: pregnant with monsters": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 125,
+    "description": "Tag automatically detected in the author’s genre description: 'pregnant with monsters'"
+  },
   "text search: old europe": {
     "type": "tag",
     "choices": [
@@ -30478,6 +30555,17 @@
     "tag_count": 119,
     "description": "Tag automatically detected through text or regex scanning: 'blasphemy'"
   },
+  "text search: feminist": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 119,
+    "description": "Tag automatically detected through text or regex scanning: 'feminist'"
+  },
   "text search: valentines": {
     "type": "tag",
     "choices": [
@@ -30543,6 +30631,17 @@
     "max": 1,
     "tag_count": 117,
     "description": "Tag automatically detected in the author’s genre description: 'fiancee'"
+  },
+  "author: shapeshifter": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 117,
+    "description": "Tag automatically detected in the author’s genre description: 'shapeshifter'"
   },
   "author: tomboy": {
     "type": "tag",
@@ -30808,6 +30907,17 @@
     "tag_count": 113,
     "description": "Tag automatically detected through text or regex scanning: 'one piece franchise'"
   },
+  "author: koikatsu": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 112,
+    "description": "Tag automatically detected in the author’s genre description: 'koikatsu'"
+  },
   "forum recommendation: weird": {
     "type": "tag",
     "choices": [
@@ -30939,39 +31049,6 @@
     "max": 1,
     "tag_count": 110,
     "description": "Tag automatically detected in the author’s genre description: 'bss'"
-  },
-  "author: koikatsu": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 110,
-    "description": "Tag automatically detected in the author’s genre description: 'koikatsu'"
-  },
-  "author: pregnant with monsters": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 110,
-    "description": "Tag automatically detected in the author’s genre description: 'pregnant with monsters'"
-  },
-  "author: shapeshifter": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 110,
-    "description": "Tag automatically detected in the author’s genre description: 'shapeshifter'"
   },
   "author: tsundere": {
     "type": "tag",
@@ -31490,6 +31567,17 @@
     "tag_count": 103,
     "description": "Tag automatically detected in the author’s genre description: 'mouse only'"
   },
+  "author: muscular woman": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 103,
+    "description": "Tag automatically detected in the author’s genre description: 'muscular woman'"
+  },
   "author: public use": {
     "type": "tag",
     "choices": [
@@ -31743,17 +31831,6 @@
     "tag_count": 100,
     "description": "Tag automatically detected in the author’s genre description: 'racing'"
   },
-  "author: weapon wielding protagonist": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 100,
-    "description": "Tag automatically detected in the author’s genre description: 'weapon wielding protagonist'"
-  },
   "forum recommendation: cards": {
     "type": "tag",
     "choices": [
@@ -31930,6 +32007,17 @@
     "tag_count": 98,
     "description": "Tag automatically detected in the author’s genre description: 'brood mother'"
   },
+  "author: coercive sex": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 98,
+    "description": "Tag automatically detected in the author’s genre description: 'coercive sex'"
+  },
   "author: drowning": {
     "type": "tag",
     "choices": [
@@ -31951,6 +32039,17 @@
     "max": 1,
     "tag_count": 98,
     "description": "Tag automatically detected in the author’s genre description: 'enema play'"
+  },
+  "author: weapon wielding protagonist": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 98,
+    "description": "Tag automatically detected in the author’s genre description: 'weapon wielding protagonist'"
   },
   "text search: japanese man": {
     "type": "tag",
@@ -31984,17 +32083,6 @@
     "max": 1,
     "tag_count": 97,
     "description": "Tag automatically detected in the author’s genre description: 'body worship'"
-  },
-  "author: coercive sex": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 97,
-    "description": "Tag automatically detected in the author’s genre description: 'coercive sex'"
   },
   "author: cultivation": {
     "type": "tag",
@@ -32084,17 +32172,6 @@
     "tag_count": 97,
     "description": "Tag automatically detected through text or regex scanning: 'tower defense'"
   },
-  "author: body art": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 96,
-    "description": "Tag automatically detected in the author’s genre description: 'body art'"
-  },
   "author: dragon ball": {
     "type": "tag",
     "choices": [
@@ -32128,6 +32205,17 @@
     "tag_count": 96,
     "description": "Tag automatically detected in the author’s genre description: 'free use'"
   },
+  "author: gyaru": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 96,
+    "description": "Tag automatically detected in the author’s genre description: 'gyaru'"
+  },
   "author: stereotypes": {
     "type": "tag",
     "choices": [
@@ -32160,6 +32248,17 @@
     "max": 1,
     "tag_count": 96,
     "description": "Tag automatically detected through text or regex scanning: 'star trek'"
+  },
+  "author: body art": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 95,
+    "description": "Tag automatically detected in the author’s genre description: 'body art'"
   },
   "author: justice system": {
     "type": "tag",
@@ -32436,6 +32535,17 @@
     "tag_count": 92,
     "description": "Tag automatically detected in the author’s genre description: 'lovecraft'"
   },
+  "forum recommendation: breeding": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 92,
+    "description": "Tag automatically detected in forum recommendation threads: 'breeding'"
+  },
   "text search: empires location": {
     "type": "tag",
     "choices": [
@@ -32468,17 +32578,6 @@
     "max": 1,
     "tag_count": 92,
     "description": "Tag automatically detected through text or regex scanning: 'tomb raider'"
-  },
-  "author: gyaru": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 91,
-    "description": "Tag automatically detected in the author’s genre description: 'gyaru'"
   },
   "author: stomach expansion": {
     "type": "tag",
@@ -33393,17 +33492,6 @@
     "tag_count": 81,
     "description": "Tag automatically detected in the author’s genre description: 'hunter x hunter'"
   },
-  "author: muscular woman": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 81,
-    "description": "Tag automatically detected in the author’s genre description: 'muscular woman'"
-  },
   "author: toilet play": {
     "type": "tag",
     "choices": [
@@ -33458,6 +33546,17 @@
     "max": 1,
     "tag_count": 81,
     "description": "Tag automatically detected through text or regex scanning: 'nier automata'"
+  },
+  "text search: russian person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 81,
+    "description": "Tag automatically detected through text or regex scanning: 'russian person'"
   },
   "text search: transgender transformation": {
     "type": "tag",
@@ -34416,17 +34515,6 @@
     "tag_count": 70,
     "description": "Tag automatically detected through text or regex scanning: 'disney princesses'"
   },
-  "author: chaste man": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 69,
-    "description": "Tag automatically detected in the author’s genre description: 'chaste man'"
-  },
   "author: foreign character": {
     "type": "tag",
     "choices": [
@@ -34503,6 +34591,17 @@
     "max": 1,
     "tag_count": 69,
     "description": "Tag automatically detected through text or regex scanning: 'virt a mate'"
+  },
+  "author: chaste man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 68,
+    "description": "Tag automatically detected in the author’s genre description: 'chaste man'"
   },
   "author: ear job": {
     "type": "tag",
@@ -35120,6 +35219,17 @@
     "tag_count": 63,
     "description": "Tag automatically detected through text or regex scanning: 'mummy'"
   },
+  "text search: norse person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 63,
+    "description": "Tag automatically detected through text or regex scanning: 'norse person'"
+  },
   "text search: pointed ears": {
     "type": "tag",
     "choices": [
@@ -35273,6 +35383,17 @@
     "max": 1,
     "tag_count": 61,
     "description": "Tag automatically detected in the author’s genre description: 'stepdad'"
+  },
+  "author: white man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 61,
+    "description": "Tag automatically detected in the author’s genre description: 'white man'"
   },
   "forum recommendation: cannibalism": {
     "type": "tag",
@@ -35483,17 +35604,6 @@
     "tag_count": 59,
     "description": "Tag automatically detected through text or regex scanning: 'baby maker'"
   },
-  "text search: genshin": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 59,
-    "description": "Tag automatically detected through text or regex scanning: 'genshin'"
-  },
   "text search: soul mate": {
     "type": "tag",
     "choices": [
@@ -35625,6 +35735,17 @@
     "max": 1,
     "tag_count": 58,
     "description": "Tag automatically detected through text or regex scanning: 'driving simulator'"
+  },
+  "text search: genshin": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 58,
+    "description": "Tag automatically detected through text or regex scanning: 'genshin'"
   },
   "text search: homecoming": {
     "type": "tag",
@@ -36087,6 +36208,17 @@
     "max": 1,
     "tag_count": 54,
     "description": "Tag automatically detected in the author’s genre description: 'mass effect'"
+  },
+  "author: muscular man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 54,
+    "description": "Tag automatically detected in the author’s genre description: 'muscular man'"
   },
   "author: onahole": {
     "type": "tag",
@@ -36814,17 +36946,6 @@
     "tag_count": 48,
     "description": "Tag automatically detected in the author’s genre description: 'fat man'"
   },
-  "author: guro": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 48,
-    "description": "Tag automatically detected in the author’s genre description: 'guro'"
-  },
   "author: hrpg": {
     "type": "tag",
     "choices": [
@@ -37308,17 +37429,6 @@
     "max": 1,
     "tag_count": 45,
     "description": "Tag automatically detected through text or regex scanning: 'love of clowns'"
-  },
-  "text search: male pregnancy": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 45,
-    "description": "Tag automatically detected through text or regex scanning: 'male pregnancy'"
   },
   "text search: tragic character": {
     "type": "tag",
@@ -37958,6 +38068,17 @@
     "tag_count": 40,
     "description": "Tag automatically detected in the author’s genre description: 'female perspective'"
   },
+  "author: guro": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 40,
+    "description": "Tag automatically detected in the author’s genre description: 'guro'"
+  },
   "author: hermaphrodite": {
     "type": "tag",
     "choices": [
@@ -38420,6 +38541,17 @@
     "tag_count": 37,
     "description": "Tag automatically detected in forum recommendation threads: 'princess'"
   },
+  "text search: biting fetish": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 37,
+    "description": "Tag automatically detected through text or regex scanning: 'biting fetish'"
+  },
   "text search: body fluids consumption": {
     "type": "tag",
     "choices": [
@@ -38441,6 +38573,17 @@
     "max": 1,
     "tag_count": 37,
     "description": "Tag automatically detected through text or regex scanning: 'prolapse'"
+  },
+  "text search: russian man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 37,
+    "description": "Tag automatically detected through text or regex scanning: 'russian man'"
   },
   "text search: tongue play": {
     "type": "tag",
@@ -38607,17 +38750,6 @@
     "tag_count": 36,
     "description": "Tag automatically detected in forum recommendation threads: 'no protagonist'"
   },
-  "text search: biting fetish": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 36,
-    "description": "Tag automatically detected through text or regex scanning: 'biting fetish'"
-  },
   "text search: democracy": {
     "type": "tag",
     "choices": [
@@ -38639,6 +38771,17 @@
     "max": 1,
     "tag_count": 36,
     "description": "Tag automatically detected through text or regex scanning: 'girlfriend experience'"
+  },
+  "text search: italian person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 36,
+    "description": "Tag automatically detected through text or regex scanning: 'italian person'"
   },
   "author: homecoming": {
     "type": "tag",
@@ -38794,6 +38937,17 @@
     "tag_count": 35,
     "description": "Tag automatically detected through text or regex scanning: 'otoko no ko'"
   },
+  "text search: spanish person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 35,
+    "description": "Tag automatically detected through text or regex scanning: 'spanish person'"
+  },
   "text search: torture gore": {
     "type": "tag",
     "choices": [
@@ -38915,17 +39069,6 @@
     "tag_count": 34,
     "description": "Tag automatically detected in forum recommendation threads: 'character customization'"
   },
-  "forum recommendation: infestation": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 34,
-    "description": "Tag automatically detected in forum recommendation threads: 'infestation'"
-  },
   "forum recommendation: lusty woman": {
     "type": "tag",
     "choices": [
@@ -38981,7 +39124,7 @@
     "tag_count": 34,
     "description": "Tag automatically detected through text or regex scanning: 'psychedelic'"
   },
-  "author: male pregnancy": {
+  "author: norse person": {
     "type": "tag",
     "choices": [
       0,
@@ -38990,7 +39133,7 @@
     "min": 0,
     "max": 1,
     "tag_count": 33,
-    "description": "Tag automatically detected in the author’s genre description: 'male pregnancy'"
+    "description": "Tag automatically detected in the author’s genre description: 'norse person'"
   },
   "author: republic": {
     "type": "tag",
@@ -39982,6 +40125,17 @@
     "tag_count": 28,
     "description": "Tag automatically detected through text or regex scanning: 'kama sutra'"
   },
+  "text search: male pregnancy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 28,
+    "description": "Tag automatically detected through text or regex scanning: 'male pregnancy'"
+  },
   "author: chainsaw man": {
     "type": "tag",
     "choices": [
@@ -40058,6 +40212,17 @@
     "max": 1,
     "tag_count": 27,
     "description": "Tag automatically detected in the author’s genre description: 'no inhibition'"
+  },
+  "author: russian person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 27,
+    "description": "Tag automatically detected in the author’s genre description: 'russian person'"
   },
   "author: sonic": {
     "type": "tag",
@@ -40818,6 +40983,17 @@
     "tag_count": 23,
     "description": "Tag automatically detected in the author’s genre description: 'clingy'"
   },
+  "author: feminism": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 23,
+    "description": "Tag automatically detected in the author’s genre description: 'feminism'"
+  },
   "author: fraud": {
     "type": "tag",
     "choices": [
@@ -40850,6 +41026,17 @@
     "max": 1,
     "tag_count": 23,
     "description": "Tag automatically detected in the author’s genre description: 'lust potion'"
+  },
+  "author: male pregnancy": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 23,
+    "description": "Tag automatically detected in the author’s genre description: 'male pregnancy'"
   },
   "author: no sharing": {
     "type": "tag",
@@ -41390,6 +41577,17 @@
     "tag_count": 21,
     "description": "Tag automatically detected in forum recommendation threads: 'greek gods'"
   },
+  "forum recommendation: greek person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 21,
+    "description": "Tag automatically detected in forum recommendation threads: 'greek person'"
+  },
   "forum recommendation: morning": {
     "type": "tag",
     "choices": [
@@ -41532,6 +41730,17 @@
     "max": 1,
     "tag_count": 20,
     "description": "Tag automatically detected in the author’s genre description: 'baby maker'"
+  },
+  "author: biting fetish": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 20,
+    "description": "Tag automatically detected in the author’s genre description: 'biting fetish'"
   },
   "author: blacked": {
     "type": "tag",
@@ -41819,17 +42028,6 @@
     "tag_count": 19,
     "description": "Tag automatically detected in the author’s genre description: 'active time battle'"
   },
-  "author: biting fetish": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 19,
-    "description": "Tag automatically detected in the author’s genre description: 'biting fetish'"
-  },
   "author: body fluids consumption": {
     "type": "tag",
     "choices": [
@@ -41940,6 +42138,17 @@
     "tag_count": 19,
     "description": "Tag automatically detected in forum recommendation threads: 'boring'"
   },
+  "forum recommendation: feminism": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 19,
+    "description": "Tag automatically detected in forum recommendation threads: 'feminism'"
+  },
   "forum recommendation: feminist": {
     "type": "tag",
     "choices": [
@@ -41950,6 +42159,17 @@
     "max": 1,
     "tag_count": 19,
     "description": "Tag automatically detected in forum recommendation threads: 'feminist'"
+  },
+  "forum recommendation: infestation": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 19,
+    "description": "Tag automatically detected in forum recommendation threads: 'infestation'"
   },
   "forum recommendation: innocent girl": {
     "type": "tag",
@@ -41972,17 +42192,6 @@
     "max": 1,
     "tag_count": 19,
     "description": "Tag automatically detected in forum recommendation threads: 'monarch'"
-  },
-  "forum recommendation: noon": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 19,
-    "description": "Tag automatically detected in forum recommendation threads: 'noon'"
   },
   "forum recommendation: redemption": {
     "type": "tag",
@@ -42732,17 +42941,6 @@
     "tag_count": 16,
     "description": "Tag automatically detected in the author’s genre description: 'cervix'"
   },
-  "author: feminist": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 16,
-    "description": "Tag automatically detected in the author’s genre description: 'feminist'"
-  },
   "author: kuudere": {
     "type": "tag",
     "choices": [
@@ -42841,6 +43039,17 @@
     "max": 1,
     "tag_count": 16,
     "description": "Tag automatically detected in forum recommendation threads: 'military units'"
+  },
+  "forum recommendation: noon": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 16,
+    "description": "Tag automatically detected in forum recommendation threads: 'noon'"
   },
   "forum recommendation: partner sharing": {
     "type": "tag",
@@ -43270,6 +43479,17 @@
     "max": 1,
     "tag_count": 14,
     "description": "Tag automatically detected in the author’s genre description: 'esports'"
+  },
+  "author: happily ever after": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 14,
+    "description": "Tag automatically detected in the author’s genre description: 'happily ever after'"
   },
   "author: identity theft": {
     "type": "tag",
@@ -43821,6 +44041,17 @@
     "tag_count": 13,
     "description": "Tag automatically detected through text or regex scanning: 'south east asian woman'"
   },
+  "text search: spanish man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 13,
+    "description": "Tag automatically detected through text or regex scanning: 'spanish man'"
+  },
   "text search: virtual pets": {
     "type": "tag",
     "choices": [
@@ -43930,6 +44161,17 @@
     "max": 1,
     "tag_count": 12,
     "description": "Tag automatically detected in the author’s genre description: 'iray renders'"
+  },
+  "author: italian person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 12,
+    "description": "Tag automatically detected in the author’s genre description: 'italian person'"
   },
   "author: knotting": {
     "type": "tag",
@@ -44239,6 +44481,17 @@
     "tag_count": 11,
     "description": "Tag automatically detected in the author’s genre description: 'dommy daddy'"
   },
+  "author: feminist": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 11,
+    "description": "Tag automatically detected in the author’s genre description: 'feminist'"
+  },
   "author: gameboy": {
     "type": "tag",
     "choices": [
@@ -44403,6 +44656,17 @@
     "max": 1,
     "tag_count": 11,
     "description": "Tag automatically detected in the author’s genre description: 'south east asian person'"
+  },
+  "author: spanish person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 11,
+    "description": "Tag automatically detected in the author’s genre description: 'spanish person'"
   },
   "author: stolen art": {
     "type": "tag",
@@ -45614,6 +45878,17 @@
     "tag_count": 9,
     "description": "Tag automatically detected through text or regex scanning: 'foreign object'"
   },
+  "text search: italian man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 9,
+    "description": "Tag automatically detected through text or regex scanning: 'italian man'"
+  },
   "text search: nakige": {
     "type": "tag",
     "choices": [
@@ -45646,17 +45921,6 @@
     "max": 1,
     "tag_count": 9,
     "description": "Tag automatically detected through text or regex scanning: 'spanish woman'"
-  },
-  "text search: thigh changes": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 9,
-    "description": "Tag automatically detected through text or regex scanning: 'thigh changes'"
   },
   "text search: tongue job": {
     "type": "tag",
@@ -45735,6 +45999,17 @@
     "tag_count": 8,
     "description": "Tag automatically detected in the author’s genre description: 'hair bangs'"
   },
+  "author: hair locks": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 8,
+    "description": "Tag automatically detected in the author’s genre description: 'hair locks'"
+  },
   "author: hatsune miku": {
     "type": "tag",
     "choices": [
@@ -45811,6 +46086,17 @@
     "max": 1,
     "tag_count": 8,
     "description": "Tag automatically detected in the author’s genre description: 'oyakodon'"
+  },
+  "author: russian man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 8,
+    "description": "Tag automatically detected in the author’s genre description: 'russian man'"
   },
   "author: straight hair": {
     "type": "tag",
@@ -46021,6 +46307,17 @@
     "tag_count": 8,
     "description": "Tag automatically detected through text or regex scanning: 'chloroform'"
   },
+  "text search: hair locks": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 8,
+    "description": "Tag automatically detected through text or regex scanning: 'hair locks'"
+  },
   "text search: personality excretion": {
     "type": "tag",
     "choices": [
@@ -46197,17 +46494,6 @@
     "tag_count": 7,
     "description": "Tag automatically detected in the author’s genre description: 'gender fluid'"
   },
-  "author: hair locks": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7,
-    "description": "Tag automatically detected in the author’s genre description: 'hair locks'"
-  },
   "author: italian woman": {
     "type": "tag",
     "choices": [
@@ -46307,17 +46593,6 @@
     "tag_count": 7,
     "description": "Tag automatically detected in forum recommendation threads: 'discomforting'"
   },
-  "forum recommendation: domme": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7,
-    "description": "Tag automatically detected in forum recommendation threads: 'domme'"
-  },
   "forum recommendation: drawing": {
     "type": "tag",
     "choices": [
@@ -46394,17 +46669,6 @@
     "max": 1,
     "tag_count": 7,
     "description": "Tag automatically detected in forum recommendation threads: 'lactation'"
-  },
-  "forum recommendation: mistress": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7,
-    "description": "Tag automatically detected in forum recommendation threads: 'mistress'"
   },
   "forum recommendation: movie or tv": {
     "type": "tag",
@@ -46538,17 +46802,6 @@
     "tag_count": 7,
     "description": "Tag automatically detected through text or regex scanning: 'footsies'"
   },
-  "text search: hair locks": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 7,
-    "description": "Tag automatically detected through text or regex scanning: 'hair locks'"
-  },
   "text search: kamige": {
     "type": "tag",
     "choices": [
@@ -46559,6 +46812,17 @@
     "max": 1,
     "tag_count": 7,
     "description": "Tag automatically detected through text or regex scanning: 'kamige'"
+  },
+  "text search: thigh changes": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 7,
+    "description": "Tag automatically detected through text or regex scanning: 'thigh changes'"
   },
   "text search: webbing": {
     "type": "tag",
@@ -46703,17 +46967,6 @@
     "tag_count": 6,
     "description": "Tag automatically detected in the author’s genre description: 'stolen kiss'"
   },
-  "author: thigh changes": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 6,
-    "description": "Tag automatically detected in the author’s genre description: 'thigh changes'"
-  },
   "author: underage drinking": {
     "type": "tag",
     "choices": [
@@ -46801,6 +47054,17 @@
     "max": 1,
     "tag_count": 6,
     "description": "Tag automatically detected in forum recommendation threads: 'cum eating'"
+  },
+  "forum recommendation: domme": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6,
+    "description": "Tag automatically detected in forum recommendation threads: 'domme'"
   },
   "forum recommendation: elves": {
     "type": "tag",
@@ -46900,6 +47164,17 @@
     "max": 1,
     "tag_count": 6,
     "description": "Tag automatically detected in forum recommendation threads: 'kagura games'"
+  },
+  "forum recommendation: mistress": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6,
+    "description": "Tag automatically detected in forum recommendation threads: 'mistress'"
   },
   "forum recommendation: mmo": {
     "type": "tag",
@@ -47021,6 +47296,17 @@
     "max": 1,
     "tag_count": 6,
     "description": "Tag automatically detected through text or regex scanning: 'hair buns'"
+  },
+  "text search: hair updos": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 6,
+    "description": "Tag automatically detected through text or regex scanning: 'hair updos'"
   },
   "text search: prison school": {
     "type": "tag",
@@ -47164,6 +47450,17 @@
     "max": 1,
     "tag_count": 5,
     "description": "Tag automatically detected in the author’s genre description: 'south east asian woman'"
+  },
+  "author: thigh changes": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 5,
+    "description": "Tag automatically detected in the author’s genre description: 'thigh changes'"
   },
   "author: tongue job": {
     "type": "tag",
@@ -47759,17 +48056,6 @@
     "tag_count": 4,
     "description": "Tag automatically detected through text or regex scanning: 'hagmaxxing'"
   },
-  "text search: hair updos": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 4,
-    "description": "Tag automatically detected through text or regex scanning: 'hair updos'"
-  },
   "text search: otoge": {
     "type": "tag",
     "choices": [
@@ -47879,6 +48165,17 @@
     "max": 1,
     "tag_count": 3,
     "description": "Tag automatically detected in the author’s genre description: 'hair buns'"
+  },
+  "author: italian man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3,
+    "description": "Tag automatically detected in the author’s genre description: 'italian man'"
   },
   "author: josei": {
     "type": "tag",
@@ -48386,6 +48683,28 @@
     "tag_count": 3,
     "description": "Tag automatically detected in forum recommendation threads: 'villain'"
   },
+  "forum recommendation: white man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3,
+    "description": "Tag automatically detected in forum recommendation threads: 'white man'"
+  },
+  "forum recommendation: white person": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 3,
+    "description": "Tag automatically detected in forum recommendation threads: 'white person'"
+  },
   "text search: chyna": {
     "type": "tag",
     "choices": [
@@ -48814,6 +49133,17 @@
     "max": 1,
     "tag_count": 2,
     "description": "Tag automatically detected in the author’s genre description: 'pig slut'"
+  },
+  "author: spanish man": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 2,
+    "description": "Tag automatically detected in the author’s genre description: 'spanish man'"
   },
   "author: spanish woman": {
     "type": "tag",
