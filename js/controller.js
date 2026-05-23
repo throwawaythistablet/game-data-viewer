@@ -1,19 +1,19 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 354312],
-      ["data/game_column_details.json", 1164748],
-      ["data/game_data_part_1.csv", 41947158],
-      ["data/game_data_part_2.csv", 41951298],
-      ["data/game_data_part_3.csv", 41944269],
-      ["data/game_data_part_4.csv", 41946253],
-      ["data/game_data_part_5.csv", 41948805],
-      ["data/game_data_part_6.csv", 38760056],
-      ["data/game_keys.json", 1286019],
-      ["data/game_thumbnails.json", 19301499],
-      ["data/tag_quick_search_patterns.json", 1701782],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 354312],
+		["data/game_column_details.json", 1164748],
+		["data/game_data_part_1.csv", 41947158],
+		["data/game_data_part_2.csv", 41951298],
+		["data/game_data_part_3.csv", 41944269],
+		["data/game_data_part_4.csv", 41946253],
+		["data/game_data_part_5.csv", 41948805],
+		["data/game_data_part_6.csv", 38760056],
+		["data/game_keys.json", 1286019],
+		["data/game_thumbnails.json", 19301499],
+		["data/tag_quick_search_patterns.json", 1701782],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
