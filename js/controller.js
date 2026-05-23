@@ -232,7 +232,8 @@
 		const blob = new Blob(chunks, { type: "text/csv" });
 		const file = new File([blob], "game_data.csv", { type: "text/csv" });
 		setActiveCsvFile(file);
-		// GDV.utils.downloadBlob(blob, "game_data.csv"); // for debugging if needed
+		// GDV.utils.downloadBlob(blob, "game_data.csv"); // debug if needed
+		// GDV.utils.downloadBlob(GDV.state.getActiveCsvFile(), "game_data.csv"); // console debug
 	}
 
 	async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
