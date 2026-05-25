@@ -348,6 +348,8 @@
 		}
 		let min = minEl?.value === "" ? null : Number(minEl.value);
 		let max = maxEl?.value === "" ? null : Number(maxEl.value);
+		if (Number.isNaN(min)) min = null;
+		if (Number.isNaN(max)) max = null;
 		if (def.type === "int") {
 			if (min != null) min = Math.round(min);
 			if (max != null) max = Math.round(max);

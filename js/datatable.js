@@ -4,7 +4,6 @@
 	let currentPreviewIndex = 0;
 	let overlayMoveScheduled = false;
 	let lastMouseEvent = null;
-	let similarGameRow = null;
 	const similarityScoreName = "similarity_score";
 
 	bindPreviewOverlayGlobalCleanup();
@@ -15,7 +14,6 @@
 	}
 
 	GDV.datatable.loadTable = async (parsedData) => {
-		populateSimilarityColumn(parsedData);
 		const columns = createTableColumns(parsedData);
 		await renderCsvTable(parsedData, columns);
 	};
@@ -145,69 +143,6 @@
 			columns.unshift(viewImagesColumn);
 		}
 		return columns;
-	}
-
-	function populateSimilarityColumn(data) {
-		const referenceKey = GDV.state.getSimilarityGame();
-		if (!referenceKey) return;
-
-		// Find the reference row for similarity
-		similarGameRow = structuredClone(
-			data.find((row) => String(row.key) === referenceKey)
-		);
-		if (!similarGameRow) return;
-
-		// Populate similarity scores for all rows
-		data.forEach((row) => {
-			row.similarity_score = computeRowSimilarityPercent(similarGameRow, row);
-		});
-	}
-
-	function computeRowSimilarityPercent(similarGameRow, row) {
-		const IGNORE_COLS = new Set([
-			"__thumbnail__",
-			"__view_images__",
-			"key",
-			getSimilarityScoreName(),
-			"site_std_version",
-			"site_version",
-			"site_last_update_date",
-			"site_release_date",
-			"url",
-			"platforms",
-			"title"
-		]);
-
-		const compareKeys = Object.keys(similarGameRow).filter((k) => !IGNORE_COLS.has(k));
-
-		let score = 0;
-		let total = 0;
-
-		compareKeys.forEach((col) => {
-			const a = similarGameRow[col];
-			const b = row[col];
-			if (a == null || b == null) return;
-			const na = parseFloat(a);
-			const nb = parseFloat(b);
-
-			let similarity = 0;
-
-			// ✅ Numeric similarity
-			if (!Number.isNaN(na) && !Number.isNaN(nb)) {
-				similarity = GDV.utils.getNormalizedDifference(na, nb);
-			} else {
-				// String compare (exact)
-				const sa = String(a).trim().toLowerCase();
-				const sb = String(b).trim().toLowerCase();
-				similarity = sa === sb ? 1 : 0;
-			}
-			score += similarity;
-			total++;
-		});
-
-		return total === 0
-			? "0.00"
-			: ((score / total) * 100).toFixed(2);
 	}
 
 	async function renderCsvTable(data, columns) {
@@ -373,7 +308,7 @@
 
 			// Actual rows processed so far
 			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 50, 90, rowsProcessed, totalRows);
+			await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 80, 90, rowsProcessed, totalRows);
 			await GDV.utils.yieldToBrowserTimeout();
 		}
 	}
