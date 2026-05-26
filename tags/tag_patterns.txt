@@ -2480,7 +2480,7 @@
   (r"regex", r"__young_word__", r"(young)"),
   (r"regex", r"_s_sentiment_pattern_art_s_", r"\b(<< __ART_CG__ >>|<< __ANIMATIONS__ >>)\w*"),
   (r"regex", r"_s_sentiment_pattern_content_s_", r"\b<< __CONTENT__ >>\w*"),
-  (r"regex", r"_s_sentiment_pattern_gameplay_s_", r"(<< __GAMEPLAY_STRICT__ >>|<< __DIFFICULTY_MODE__ >>|<< __RPG_GAME__ >>|<< __TURN_BASED_COMBAT__ >>|<< __PLATFORMER__ >>|<< __SANDBOX__ >>|<< __MINI_GAMES__ >>|<< __PUZZLE__ >>|<< __GRINDY__ >>)"),
+  (r"regex", r"_s_sentiment_pattern_gameplay_s_", r"\b(<< __GAMEPLAY_STRICT__ >>|<< __DIFFICULTY_MODE__ >>|<< __RPG_GAME__ >>|<< __TURN_BASED_COMBAT__ >>|<< __PLATFORMER__ >>|<< __SANDBOX__ >>|<< __MINI_GAMES__ >>|<< __PUZZLE__ >>|<< __GRINDY__ >>)\w*"),
   (r"regex", r"_s_sentiment_pattern_story_s_", r"\b<< __STORY__ >>\w*"),
   (r"regex", r"_v_abortion_strict_v_", r"\b<< __ABORTION_STRICT__ >>\w*"),
   (r"regex", r"_v_accidental_flashing_v_", r"\b<< __ACCIDENTAL_FLASHING__ >>\w*"),
