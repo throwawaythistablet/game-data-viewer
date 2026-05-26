@@ -118,8 +118,8 @@
 						GDV.loading.updateLoadingStepProgress("Generating Row Data...", 0, 50, bytesProcessed, totalSize);
 					}
 				},
-				complete: () => {
-					GDV.loading.updateLoadingDirectUpdate("Row Data Generated.", 50);
+				complete: async () => {
+					await GDV.loading.updateLoadingDirectUpdate("Row Data Generated.", 50);
 					resolve(rowsData);
 				},
 				error: (err) => {
