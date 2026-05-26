@@ -63,11 +63,11 @@
 			similarityGameRowData = null;
 			if (hasSimilarityScoreCondition) {
 				const rowsDataWithoutScore = await getRowsDataFromCsv(file, filterDetails);
-				putSimilarityScores(rowsDataWithoutScore, similarityGameRowData);
-				rowsData = filterRowsData(rowsDataWithoutScore, filterDetails);
+				await putSimilarityScores(rowsDataWithoutScore, similarityGameRowData);
+				rowsData = await filterRowsData(rowsDataWithoutScore, filterDetails);
 			} else {
 				rowsData = await getRowsDataFromCsv(file, filterDetails);
-				putSimilarityScores(rowsData, similarityGameRowData);
+				await putSimilarityScores(rowsData, similarityGameRowData);
 			}
 		} else {
 			rowsData = await getRowsDataFromCsv(file, filterDetails);
@@ -120,7 +120,6 @@
 				},
 				complete: () => {
 					GDV.loading.updateLoadingDirectUpdate("Row Data Generated.", 50);
-					GDV.utils.yieldToBrowserTimeout(100);
 					resolve(rowsData);
 				},
 				error: (err) => {
@@ -130,7 +129,7 @@
 		});
 	}
 
-	function putSimilarityScores(rowsData, similarityGameRowData) {
+	async function putSimilarityScores(rowsData, similarityGameRowData) {
 		if (!Array.isArray(rowsData) || !similarityGameRowData) {
 			return;
 		}
@@ -139,14 +138,13 @@
 			const rowData = rowsData[i];
 			rowData[similarityScoreName] = computeRowSimilarityPercent(similarityGameRowData, rowData);
 			if (i % ROW_THROTTLE === 0) {
-				GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 60, i, rowsData.length);
+				await GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 60, i, rowsData.length);
 			}
 		}
-		GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", 60);
-		GDV.utils.yieldToBrowserTimeout(100);
+		await GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", 60);
 	}
 
-	function filterRowsData(rowsData, filterDetails) {
+	async function filterRowsData(rowsData, filterDetails) {
 		if (!Array.isArray(rowsData)) {
 			return [];
 		}
@@ -162,11 +160,10 @@
 				filteredRowsData.push(rowData);
 			}
 			if (i % ROW_THROTTLE === 0) {
-				GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", 60, 70, i, rowsData.length);
+				await GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", 60, 70, i, rowsData.length);
 			}
 		}
-		GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", 70);
-		GDV.utils.yieldToBrowserTimeout(100);
+		await GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", 70);
 		return filteredRowsData;
 	}
 
