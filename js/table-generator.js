@@ -1,5 +1,11 @@
 (() => {
 	const CSV_ROW_THROTTLE = 500;
+	const similarityScoreName = "similarity_score";
+
+	GDV.tableGenerator.getSimilarityScoreName = getSimilarityScoreName;
+	function getSimilarityScoreName() {
+		return similarityScoreName;
+	}
 
 	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file) => {
 		if (!file) return false;
@@ -113,7 +119,7 @@
 		let rowsProcessed = 0;
 		let bytesProcessed = 0;
 		const hasNoPrefilters = !prefilterConditions || Object.keys(prefilterConditions).length === 0 || !prefilterAst;
-		const hasSimilarityScore = !!prefilterConditions?.similarity_score;
+		const hasSimilarityScore = !!prefilterConditions?.[getSimilarityScoreName()];
 
 		return new Promise((resolve, reject) => {
 			Papa.parse(file, {
@@ -130,13 +136,13 @@
 
 					if (similarityGameRowData) {
 						if (hasSimilarityScore) {
-							const completedRowData = { ...row.data, similarity_score: computeRowSimilarityPercent(similarityGameRowData, row.data) };
+							const completedRowData = { ...row.data, [getSimilarityScoreName()]: computeRowSimilarityPercent(similarityGameRowData, row.data) };
 							if (hasNoPrefilters || isRowIncluded(completedRowData, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
 								generatedData.push(completedRowData);
 							}
 						} else {
 							if (hasNoPrefilters || isRowIncluded(row.data, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
-								const completedRowData = { ...row.data, similarity_score: computeRowSimilarityPercent(similarityGameRowData, row.data) };
+								const completedRowData = { ...row.data, [getSimilarityScoreName()]: computeRowSimilarityPercent(similarityGameRowData, row.data) };
 								generatedData.push(completedRowData);
 							}
 						}
@@ -268,7 +274,7 @@
 	function computeRowSimilarityPercent(similarGameRowData, rowData) {
 		const IGNORE_COLS = new Set([
 			"key",
-			GDV.datatable.getSimilarityScoreName(),
+			getSimilarityScoreName(),
 			"site_std_version",
 			"site_version",
 			"site_last_update_date",
