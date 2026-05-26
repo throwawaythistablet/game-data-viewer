@@ -301,9 +301,9 @@
 
 			// Actual rows processed so far
 			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 70, 90, rowsProcessed, totalRows);
-			await GDV.utils.yieldToBrowserTimeout(100);
+			await GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 80, 90, rowsProcessed, totalRows);
 		}
+		await GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 90);
 	}
 
 	function initializeDataTableWithOptions(columns) {
@@ -381,8 +381,8 @@
 			addColumnFilterItems(container, column, colName, colDef, colIdx);
 
 			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
-			await GDV.utils.yieldToBrowserTimeout(100);
 		}
+		await GDV.loading.updateLoadingDirectUpdate("Finalizing Results...", 99);
 
 		bindTableSortingButtons();
 		setupFiltersExpandCollapse();

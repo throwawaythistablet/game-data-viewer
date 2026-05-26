@@ -138,10 +138,10 @@
 			const rowData = rowsData[i];
 			rowData[similarityScoreName] = computeRowSimilarityPercent(similarityGameRowData, rowData);
 			if (i % ROW_THROTTLE === 0) {
-				await GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 60, i, rowsData.length);
+				await GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 70, i, rowsData.length);
 			}
 		}
-		await GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", 60);
+		await GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", 70);
 	}
 
 	async function filterRowsData(rowsData, filterDetails) {
@@ -160,10 +160,10 @@
 				filteredRowsData.push(rowData);
 			}
 			if (i % ROW_THROTTLE === 0) {
-				await GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", 60, 70, i, rowsData.length);
+				await GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", 70, 80, i, rowsData.length);
 			}
 		}
-		await GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", 70);
+		await GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", 80);
 		return filteredRowsData;
 	}
 
