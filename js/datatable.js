@@ -154,13 +154,12 @@
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const prefilterAst = GDV.state.getPrefilterAst();
 		const specialKeys = ["key", GDV.tableGenerator.getSimilarityScoreName()];
-		const prefilterKeys = GDV.prefilter.collectColumnsFromAst(prefilterAst).filter(col => col !== "key");
+		const prefilterKeys = GDV.prefilter.collectColumnsFromAst(prefilterAst).filter((col) => !specialKeys.includes(col));
 
 		const normalColumns = columnNamesInTable.filter((k) => shouldIncludeColumn(k, columnDetails, prefilterConditions));
 		const prefilterColumns = prefilterKeys.filter(col => columnNamesInTable.includes(col));
 		const specialColumns = columnNamesInTable.filter((col) => specialKeys.includes(col));
 		const resultKeys = [...specialColumns, ...prefilterColumns, ...normalColumns.filter((col) => !specialColumns.includes(col) && !prefilterColumns.includes(col))];
-
 		return resultKeys.map((columnName) => ({
 			title: columnName,
 			data: columnName,
@@ -302,8 +301,8 @@
 
 			// Actual rows processed so far
 			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 80, 90, rowsProcessed, totalRows);
-			await GDV.utils.yieldToBrowserTimeout();
+			await GDV.loading.updateLoadingStepProgress("Adding Rows To The Table...", 70, 90, rowsProcessed, totalRows);
+			await GDV.utils.yieldToBrowserTimeout(100);
 		}
 	}
 
@@ -382,7 +381,7 @@
 			addColumnFilterItems(container, column, colName, colDef, colIdx);
 
 			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
-			await GDV.utils.yieldToBrowserTimeout();
+			await GDV.utils.yieldToBrowserTimeout(100);
 		}
 
 		bindTableSortingButtons();

@@ -1,6 +1,7 @@
 (() => {
-	const CSV_ROW_THROTTLE = 500;
+	const ROW_THROTTLE = 500;
 	const similarityScoreName = "similarity_score";
+	let similarityGameRowData = null;
 
 	GDV.tableGenerator.getSimilarityScoreName = getSimilarityScoreName;
 	function getSimilarityScoreName() {
@@ -54,25 +55,39 @@
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const columnDetails = GDV.state.getActiveColumnDetails();
 		const similarityGame = GDV.state.getSimilarityGame();
-		let similarityGameRowData = null;
+		const hasSimilarityScoreCondition = !!prefilterConditions?.[similarityScoreName];
+		const filterDetails = { columnDetails, prefilterAst, prefilterConditions, similarityGame };
+		let rowsData = null;
 
 		if (similarityGame) {
-			similarityGameRowData = await getSimilarGameRow(file, similarityGame);
+			similarityGameRowData = null;
+			if (hasSimilarityScoreCondition) {
+				const rowsDataWithoutScore = await getRowsDataFromCsv(file, filterDetails);
+				putSimilarityScores(rowsDataWithoutScore, similarityGameRowData);
+				rowsData = filterRowsData(rowsDataWithoutScore, filterDetails);
+			} else {
+				rowsData = await getRowsDataFromCsv(file, filterDetails);
+				putSimilarityScores(rowsData, similarityGameRowData);
+			}
+		} else {
+			rowsData = await getRowsDataFromCsv(file, filterDetails);
 		}
-		const generatedData = await generateDataFromCsv(file, prefilterAst, prefilterConditions, columnDetails, similarityGame, similarityGameRowData);
+
 		const context = { file, prefilters: prefilterConditions };
-		if (!Array.isArray(generatedData) || generatedData.length === 0) {
+		if (!Array.isArray(rowsData) || rowsData.length === 0) {
 			GDV.utils.reportHardWarning("No results were found.", "The search did not produce any rows after applying the prefilters.", context);
 			return;
 		}
-		await GDV.datatable.loadTable(generatedData);
+		await GDV.datatable.loadTable(rowsData);
 	}
 
-	async function getSimilarGameRow(file, similarityGame) {
-		let similarityGameRowData = null;
+	async function getRowsDataFromCsv(file, filterDetails) {
+		const rowsData = [];
 		const totalSize = file.size;
 		let rowsProcessed = 0;
 		let bytesProcessed = 0;
+		const { columnDetails, prefilterAst, prefilterConditions, similarityGame } = filterDetails;
+		const hasNoPrefilters = !prefilterConditions || Object.keys(prefilterConditions).length === 0 || !prefilterAst;
 
 		return new Promise((resolve, reject) => {
 			Papa.parse(file, {
@@ -82,29 +97,31 @@
 				newline: "", // Important to handle line endings
 				step: (row, parser) => {
 					if (GDV.loading.isLoadingCancelled()) {
-						parser.abort(); // stops PapaParse
+						parser.abort();
 						reject(new Error("Loading cancelled by user."));
 						return;
 					}
 
-					// Add row if passes prefilters
+					if (hasNoPrefilters || isRowIncluded(row.data, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
+						rowsData.push(row.data);
+					}
+
 					if (isSimilarityGame(similarityGame, row.data)) {
 						similarityGameRowData = structuredClone(row.data);
-						parser.abort(); // stop parsing if found
-						return;
 					}
 
 					rowsProcessed++;
 					bytesProcessed += estimateRowSize(row.data);
 
 					// Throttle progress updates
-					if (rowsProcessed % CSV_ROW_THROTTLE === 0) {
-						GDV.loading.updateLoadingStepProgress("Loading similar game details...", 0, 20, bytesProcessed, totalSize);
+					if (rowsProcessed % ROW_THROTTLE === 0) {
+						GDV.loading.updateLoadingStepProgress("Generating Row Data...", 0, 50, bytesProcessed, totalSize);
 					}
 				},
 				complete: () => {
-					GDV.loading.updateLoadingDirectUpdate("Similar game details scan completed.", 20);
-					resolve(similarityGameRowData);
+					GDV.loading.updateLoadingDirectUpdate("Row Data Generated.", 50);
+					GDV.utils.yieldToBrowserTimeout(100);
+					resolve(rowsData);
 				},
 				error: (err) => {
 					reject(err); // Ensure rejection on any parsing error
@@ -113,62 +130,44 @@
 		});
 	}
 
-	async function generateDataFromCsv(file, prefilterAst, prefilterConditions, columnDetails, similarityGame, similarityGameRowData) {
-		const generatedData = [];
-		const totalSize = file.size;
-		let rowsProcessed = 0;
-		let bytesProcessed = 0;
+	function putSimilarityScores(rowsData, similarityGameRowData) {
+		if (!Array.isArray(rowsData) || !similarityGameRowData) {
+			return;
+		}
+		const similarityScoreName = getSimilarityScoreName();
+		for (let i = 0; i < rowsData.length; i++) {
+			const rowData = rowsData[i];
+			rowData[similarityScoreName] = computeRowSimilarityPercent(similarityGameRowData, rowData);
+			if (i % ROW_THROTTLE === 0) {
+				GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 60, i, rowsData.length);
+			}
+		}
+		GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", 60);
+		GDV.utils.yieldToBrowserTimeout(100);
+	}
+
+	function filterRowsData(rowsData, filterDetails) {
+		if (!Array.isArray(rowsData)) {
+			return [];
+		}
+		const { columnDetails, prefilterAst, prefilterConditions, similarityGame } = filterDetails;
 		const hasNoPrefilters = !prefilterConditions || Object.keys(prefilterConditions).length === 0 || !prefilterAst;
-		const hasSimilarityScore = !!prefilterConditions?.[getSimilarityScoreName()];
-
-		return new Promise((resolve, reject) => {
-			Papa.parse(file, {
-				header: true,
-				skipEmptyLines: true,
-				worker: true,
-				newline: "", // Important to handle line endings
-				step: (row, parser) => {
-					if (GDV.loading.isLoadingCancelled()) {
-						parser.abort(); // stops PapaParse
-						reject(new Error("Loading cancelled by user."));
-						return;
-					}
-
-					if (similarityGameRowData) {
-						if (hasSimilarityScore) {
-							const completedRowData = { ...row.data, [getSimilarityScoreName()]: computeRowSimilarityPercent(similarityGameRowData, row.data) };
-							if (hasNoPrefilters || isRowIncluded(completedRowData, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
-								generatedData.push(completedRowData);
-							}
-						} else {
-							if (hasNoPrefilters || isRowIncluded(row.data, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
-								const completedRowData = { ...row.data, [getSimilarityScoreName()]: computeRowSimilarityPercent(similarityGameRowData, row.data) };
-								generatedData.push(completedRowData);
-							}
-						}
-					} else {
-						if (hasNoPrefilters || isRowIncluded(row.data, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
-							generatedData.push(row.data);
-						}
-					}
-
-					rowsProcessed++;
-					bytesProcessed += estimateRowSize(row.data);
-
-					// Throttle progress updates
-					if (rowsProcessed % CSV_ROW_THROTTLE === 0) {
-						GDV.loading.updateLoadingStepProgress("Generating Data...", 20, 80, bytesProcessed, totalSize);
-					}
-				},
-				complete: () => {
-					GDV.loading.updateLoadingDirectUpdate("Generating Data Finished...", 80);
-					resolve(generatedData);
-				},
-				error: (err) => {
-					reject(err); // Ensure rejection on any parsing error
-				},
-			});
-		});
+		if (hasNoPrefilters) {
+			return rowsData;
+		}
+		const filteredRowsData = [];
+		for (let i = 0; i < rowsData.length; i++) {
+			const rowData = rowsData[i];
+			if (isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
+				filteredRowsData.push(rowData);
+			}
+			if (i % ROW_THROTTLE === 0) {
+				GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", 60, 70, i, rowsData.length);
+			}
+		}
+		GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", 70);
+		GDV.utils.yieldToBrowserTimeout(100);
+		return filteredRowsData;
 	}
 
 	function isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityGame) {
@@ -183,13 +182,6 @@
 	function isRowIncludedBasedFromPrefilters(rowData, prefilterAst, prefilterConditions, columnDetails) {
 		return evaluatePrefilterAst(rowData, prefilterAst, prefilterConditions, columnDetails);
 	}
-
-	// function isRowIncludedBasedFromPrefilters_old(rowData, prefilterAst, prefilterConditions, columnDetails) {
-	// 	if (!prefilterConditions || Object.keys(prefilterConditions).length === 0) return true;
-	// 	return Object.entries(prefilterConditions).every(([col, criterion]) =>
-	// 		isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetails[col])
-	// 	);
-	// }
 
 	function evaluatePrefilterAst(rowData, node, prefilterConditions, columnDetails) {
 		if (!node) return true;
@@ -228,23 +220,26 @@
 		if (!colDef) return true;
 
 		const normalize = (v) => (v == null ? "" : typeof v === "string" ? v.trim() : v);
-		const rawVal = rowData[col];
-		const val = normalize(rawVal);
+		if (!(col in rowData)) {
+			return true;
+		}
+		const rawValue = rowData[col];
+		const value = normalize(rawValue);
 
 		if (colDef.type === "tag") {
 			if (!Array.isArray(criterion.choices)) return true;
-			return criterion.choices.includes(Number(val));
+			return criterion.choices.includes(Number(value));
 		}
 
 		if (colDef.type === "bool") {
 			if (!Array.isArray(criterion.choices)) return true;
-			const rowBool = normalizeBool(val);
+			const rowBool = normalizeBool(value);
 			if (rowBool === null) return true;
 			return criterion.choices.map(normalizeBool).includes(rowBool);
 		}
 
 		if (colDef.type === "int" || colDef.type === "float") {
-			const num = Number(val);
+			const num = Number(value);
 			if (Number.isNaN(num)) return true;
 			if (criterion.min != null && num < criterion.min) return false;
 			if (criterion.max != null && num > criterion.max) return false;
@@ -255,16 +250,16 @@
 		if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
 			if (!Array.isArray(criterion.choices)) return true;
 			if (criterion.choices.length === 0) return false;
-			let typedVal = val;
-			if (colDef.type === "int") typedVal = parseInt(val, 10);
-			if (colDef.type === "float") typedVal = parseFloat(val);
-			if (colDef.type === "bool") typedVal = normalizeBool(val);
+			let typedVal = value;
+			if (colDef.type === "int") typedVal = parseInt(value, 10);
+			if (colDef.type === "float") typedVal = parseFloat(value);
+			if (colDef.type === "bool") typedVal = normalizeBool(value);
 			if (!criterion.choices.includes(typedVal)) return false;
 			return true;
 		}
 
 		if (criterion.text && Array.isArray(criterion.text)) {
-			const lowerVal = String(val).toLowerCase();
+			const lowerVal = String(value).toLowerCase();
 			return criterion.text.some((t) => lowerVal.includes(String(t).toLowerCase()));
 		}
 
@@ -285,19 +280,14 @@
 		]);
 
 		const compareKeys = Object.keys(similarGameRowData).filter((k) => !IGNORE_COLS.has(k));
-
 		let score = 0;
 		let total = 0;
-
 		for (const col of compareKeys) {
 			const a = similarGameRowData[col];
 			const b = rowData[col];
-
 			let similarity = 0;
-
 			const na = Number(a);
 			const nb = Number(b);
-
 			// numeric compare
 			if (Number.isFinite(na) && Number.isFinite(nb)) {
 				similarity = GDV.utils.getNormalizedDifference(na, nb);
@@ -308,7 +298,6 @@
 
 				similarity = sa === sb ? 1 : 0;
 			}
-
 			score += similarity;
 			total++;
 		}
