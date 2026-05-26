@@ -1,4 +1,6 @@
 (() => {
+	const BRACKET_RE = /\s*\[[^\]]*\]/g;
+
 	GDV.utils.logInformation = logInformation;
 	function logInformation(level, label, description, context) {
 		if (console[level]) {
@@ -104,19 +106,23 @@
 	};
 
 	GDV.utils.findNearestGameKey = (input) => {
-		const q = input.toLowerCase();
+		const inputLower = input.toLowerCase().trim();
+		if (!inputLower) return null;
 		let best = null;
 		let bestScore = Infinity;
 
 		for (const key of GDV.state.getGameKeys()) {
-			const k = key.toLowerCase();
+			const keyLower = key.toLowerCase();
 
 			// Fast path: substring match
-			if (k.includes(q)) return key;
+			if (keyLower.includes(inputLower)) return key;
 
-			const score = levenshteinDistance(q, k);
-			if (score < bestScore) {
-				bestScore = score;
+			const titleLower = keyLower.replace(BRACKET_RE, "").trim();
+			const keyScore = levenshteinDistance(inputLower, keyLower);
+			const titleScore = levenshteinDistance(inputLower, titleLower);
+			const finalScore = Math.min(keyScore, titleScore);
+			if (finalScore < bestScore) {
+				bestScore = finalScore;
 				best = key;
 			}
 		}
