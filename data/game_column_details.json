@@ -47,8 +47,8 @@
     "type": "float",
     "choices": [],
     "min": 0,
-    "max": 5,
-    "description": "Normalized rating of the game using a Bayesian average to account for varying number of reviews."
+    "max": 100,
+    "description": "Bayesian estimate of overall game quality based on F95 and VNDB ratings, weighted by rating confidence and review volume."
   },
   "play_time_hours": {
     "type": "float",
@@ -85,8 +85,7 @@
       "5. Mixed",
       "6. No Data",
       "7. Mildly Negative",
-      "8. Negative",
-      "9. Very Negative"
+      "8. Negative"
     ],
     "description": "Human-readable label for the overall sentiment score"
   },
@@ -156,7 +155,6 @@
   "gameplay_sentiment_label": {
     "type": "str",
     "choices": [
-      "1. Very Positive",
       "2. Positive",
       "3. Mildly Positive",
       "4. Neutral",
@@ -180,10 +178,29 @@
     "max": 1774,
     "description": "Number of ratings submitted on the site."
   },
+  "vndb_rating": {
+    "type": "float",
+    "choices": [],
+    "min": 0,
+    "max": 10,
+    "description": "Average rating on VNDB."
+  },
+  "vndb_rating_count": {
+    "type": "int",
+    "choices": [],
+    "min": 0,
+    "max": 18666,
+    "description": "Number of ratings submitted on VNDB."
+  },
   "url": {
     "type": "str",
     "choices": [],
     "description": "Direct link to the game’s thread or page on the source site."
+  },
+  "vndb_url": {
+    "type": "str",
+    "choices": [],
+    "description": "Direct link to the game’s page on VNDB."
   },
   "site_std_version": {
     "type": "str",
