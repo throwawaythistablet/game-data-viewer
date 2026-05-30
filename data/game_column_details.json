@@ -189,7 +189,7 @@
     "type": "int",
     "choices": [],
     "min": 0,
-    "max": 18666,
+    "max": 18676,
     "description": "Number of ratings submitted on VNDB."
   },
   "url": {
@@ -17247,6 +17247,17 @@
     "tag_count": 631,
     "description": "Tag automatically detected in the author’s genre description: 'ugly'"
   },
+  "site: swinging": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 631,
+    "description": "Tag assigned by the official site: 'swinging'"
+  },
   "author: mountain": {
     "type": "tag",
     "choices": [
@@ -17268,17 +17279,6 @@
     "max": 1,
     "tag_count": 630,
     "description": "Tag automatically detected in the author’s genre description: 'panties'"
-  },
-  "site: swinging": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 630,
-    "description": "Tag assigned by the official site: 'swinging'"
   },
   "text search: true ending": {
     "type": "tag",
