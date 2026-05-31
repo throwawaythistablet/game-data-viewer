@@ -185,7 +185,9 @@
 				if (!key) return "";
 				const image_url = getThumbnailImageForKey(key);
 				const game_url = stripHtmlToString(row.url);
-				return renderThumbnail(image_url, game_url);
+				const vndb_url = stripHtmlToString(row.vndb_url);
+				const vndb_character_count = row.vndb_character_count
+				return renderThumbnail(image_url, game_url, vndb_url, vndb_character_count);
 			},
 		};
 	}
@@ -282,7 +284,9 @@
 						const key = rowData.key;
 						const image_url = getThumbnailImageForKey(key);
 						const game_url = stripHtmlToString(rowData.url);
-						td.appendChild(renderThumbnail(key, image_url, game_url));
+						const vndb_url = stripHtmlToString(rowData.vndb_url);
+						const vndb_character_count = rowData.vndb_character_count
+						td.appendChild(renderThumbnail(key, image_url, game_url, vndb_url, vndb_character_count));
 					} else if (col.data === "site_std_version") {
 						const rd = rowData[col.data];
 						const trimmed = typeof rd === "string" && rd.length > 19 ? `${rd.slice(0, 19)}…` : rd;
@@ -861,7 +865,7 @@
 		return btn;
 	}
 
-	function renderThumbnail(key, image_url, game_url) {
+	function renderThumbnail(key, image_url, game_url, vndb_url, vndb_character_count) {
 		if (!image_url || !game_url) return document.createDocumentFragment();
 
 		const wrapper = document.createElement("div");
@@ -870,6 +874,7 @@
 		// Main link + image
 		const aGame = document.createElement("a");
 		aGame.href = game_url;
+		aGame.title = "Click to Play Game";
 		aGame.target = "_blank";
 		aGame.rel = "noopener noreferrer";
 
@@ -881,20 +886,64 @@
 
 		aGame.appendChild(img);
 		wrapper.appendChild(aGame);
+		wrapper.appendChild(createThumbnailOverlay(key, game_url, vndb_url, vndb_character_count));
 
-		// Overlay div
+		return wrapper;
+	}
+
+	function createThumbnailOverlay(key, game_url, vndb_url, vndb_character_count) {
 		const overlay = document.createElement("div");
 		overlay.className = "table-thumbnail-overlay";
 
-		const playLink = document.createElement("a");
-		playLink.className = "table-thumbnail-action";
-		playLink.href = game_url;
-		playLink.target = "_blank";
-		playLink.rel = "noopener noreferrer";
-		playLink.title = "Play the game"; // tooltip
-		playLink.textContent = "Play ▶";
-		playLink.setAttribute("aria-label", "Play the game"); // screen reader label
-		playLink.setAttribute("role", "button"); // optional for better semantics
+		if (vndb_url) {
+			const vndbLink = document.createElement("a");
+			vndbLink.className = "table-thumbnail-action";
+			vndbLink.target = "_blank";
+			vndbLink.rel = "noopener noreferrer";
+			if (vndb_character_count > 0) {
+				vndbLink.href = getSubUrlUsingString(vndb_url, "chars#chars");
+				vndbLink.title = "Read character profiles on VNDB";
+				vndbLink.textContent = "Character Profiles 👥";
+				vndbLink.setAttribute("aria-label", "Read character profiles on VNDB");
+			} else {
+				vndbLink.href = vndb_url;
+				vndbLink.title = "Open this game on VNDB";
+				vndbLink.textContent = "VNDB 🌐";
+				vndbLink.setAttribute("aria-label", "Open this game on VNDB");
+			}
+			vndbLink.setAttribute("role", "button"); // optional for better semantics
+			overlay.appendChild(vndbLink);
+		}
+
+		const reviewsContainer = document.createElement("div");
+		reviewsContainer.className = "table-thumbnail-dropdown";
+		const reviewsButton = document.createElement("button");
+		reviewsButton.className = "table-thumbnail-action";
+		reviewsButton.type = "button";
+		reviewsButton.title = "Read reviews for the game";
+		reviewsButton.textContent = "Reviews 📖 ▲";
+		reviewsButton.setAttribute("aria-label", "Read reviews for the game");
+		const reviewsMenu = document.createElement("div");
+		reviewsMenu.className = "table-thumbnail-dropdown-menu";
+		if (vndb_url) {
+			const vndbReviewLink = document.createElement("a");
+			vndbReviewLink.className = "table-thumbnail-dropdown-item";
+			vndbReviewLink.href = getSubUrlUsingString(vndb_url, "reviews#review");
+			vndbReviewLink.target = "_blank";
+			vndbReviewLink.rel = "noopener noreferrer";
+			vndbReviewLink.textContent = "VNDB Reviews";
+			reviewsMenu.appendChild(vndbReviewLink);
+		}
+		const f95ReviewLink = document.createElement("a");
+		f95ReviewLink.className = "table-thumbnail-dropdown-item";
+		f95ReviewLink.href = getSubUrl(game_url, "br-reviews");
+		f95ReviewLink.target = "_blank";
+		f95ReviewLink.rel = "noopener noreferrer";
+		f95ReviewLink.textContent = "F95 Reviews";
+		reviewsMenu.appendChild(f95ReviewLink);
+		reviewsContainer.appendChild(reviewsButton);
+		reviewsContainer.appendChild(reviewsMenu);
+		overlay.appendChild(reviewsContainer);
 
 		const writeReview = document.createElement("a");
 		writeReview.className = "table-thumbnail-action";
@@ -905,16 +954,7 @@
 		writeReview.textContent = "Write A Review 📝";
 		writeReview.setAttribute("aria-label", "Write a review for the game");
 		writeReview.setAttribute("role", "button");
-
-		const readReviews = document.createElement("a");
-		readReviews.className = "table-thumbnail-action";
-		readReviews.href = getSubUrl(game_url, "br-reviews");
-		readReviews.target = "_blank";
-		readReviews.rel = "noopener noreferrer";
-		readReviews.title = "Read reviews for the game";
-		readReviews.textContent = "Read Reviews 📖";
-		readReviews.setAttribute("aria-label", "Read reviews for the game");
-		readReviews.setAttribute("role", "button");
+		overlay.appendChild(writeReview);
 
 		const findSimilarGames = document.createElement("a");
 		findSimilarGames.className = "table-thumbnail-action";
@@ -928,14 +968,9 @@
 			setSimilarityGame(key);
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
-
-		overlay.appendChild(playLink);
-		overlay.appendChild(writeReview);
-		overlay.appendChild(readReviews);
 		overlay.appendChild(findSimilarGames);
-		wrapper.appendChild(overlay);
 
-		return wrapper;
+		return overlay
 	}
 
 	function renderCellValueNode(val, colName = null) {
@@ -1128,6 +1163,13 @@
 			if (path.startsWith("/")) path = path.slice(1);
 			return base + path;
 		}
+	}
+
+	function getSubUrlUsingString(gameUrl, path) {
+		let base = gameUrl.trim();
+		if (!base.endsWith("/")) base += "/";
+		if (path.startsWith("/")) path = path.slice(1);
+		return base + path;
 	}
 
 	function findIndexOfColumnByNameInTable(colName) {

@@ -202,6 +202,13 @@
     "choices": [],
     "description": "Direct link to the game’s page on VNDB."
   },
+  "vndb_character_count": {
+    "type": "int",
+    "choices": [],
+    "min": 0,
+    "max": 206,
+    "description": "Number of characters listed for the game on VNDB."
+  },
   "site_std_version": {
     "type": "str",
     "choices": [],

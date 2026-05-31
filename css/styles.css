@@ -773,7 +773,7 @@ td {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 8px;
+	gap: 2px;
 	pointer-events: none;
 
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
@@ -793,13 +793,22 @@ td {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	text-align: center;
 	height: 100%;
 	pointer-events: auto;
+	border: none;
+	outline: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
 
 	background: rgba(0, 0, 0, 0.3);
 	color: var(--text-muted);
 	font-size: 16px;
-	gap: 8px;
+	gap: 2px;
 	text-decoration: none;
 	backdrop-filter: blur(4px);
 	transition:
@@ -816,6 +825,52 @@ td {
 
 .table-thumbnail-action:active {
 	transform: translateY(0);
+}
+
+.table-thumbnail-dropdown {
+	position: relative;
+	display: flex;
+	flex: 1;
+	height: 100%;
+}
+
+.table-thumbnail-dropdown-menu {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 100%;
+	display: none;
+	flex-direction: column;
+	min-width: 100%;
+	background: transparent;
+	overflow: hidden;
+	z-index: 100;
+}
+
+.table-thumbnail-dropdown:hover .table-thumbnail-dropdown-menu {
+	display: flex;
+}
+
+.table-thumbnail-dropdown-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	text-align: center;
+	text-decoration: none;
+	background: rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(4px);
+	color: var(--text-main);
+	transition:
+		transform 0.12s ease,
+		opacity 0.2s ease;
+	opacity: 1;
+}
+
+.table-thumbnail-dropdown-item:hover {
+	color: var(--glow-strong);
+	transform: translateY(1px);
+	opacity: 1;
 }
 
 #previewOverlay {
