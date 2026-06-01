@@ -189,7 +189,7 @@
     "type": "int",
     "choices": [],
     "min": 0,
-    "max": 18676,
+    "max": 18681,
     "description": "Number of ratings submitted on VNDB."
   },
   "url": {
@@ -249,6 +249,11 @@
     "choices": [],
     "description": "Languages supported by the game (e.g., Arabia / Arabic, Armenia / Armenian, Bulgaria / Bulgarian (български), Catalonia / Catalan, Spain / Castilian / Spanish, Czechia / Czech, Denmark / Danish, Netherlands / Dutch, England / English, Esperanto, Philippines / Filipino / Tagalog, Finland / Finnish, France / French, Germany / German, Greece / Greek, India / Hindi, Hungary / Hungarian, Indonesia / Indonesian, Italy / Italian, Japan / Japanese (日本, 日本語), Korea / Korean (한국어), Latin, China / Mandarin / Chinese (中文, 简体中文, 繁體中文), Norway / Norwegian, Poland / Polish, Portugal / Portuguese, Romania / Romanian, Russia / Russian (русский), Slovakia / Slovak, Sweden / Swedish, Thailand / Thai, Türkiye / Turkish (türkiye, türkçe), Ukraine / Ukrainian (українська), Vietnam / Vietnamese)."
   },
+  "voice_details": {
+    "type": "str",
+    "choices": [],
+    "description": "Voice-related information including voice languages and voice acting."
+  },
   "title": {
     "type": "str",
     "choices": [],
@@ -263,12 +268,9 @@
     "description": "Boolean flag indicating whether the game is a visual novel (True/False)."
   },
   "censored": {
-    "type": "bool",
-    "choices": [
-      false,
-      true
-    ],
-    "description": "Boolean flag indicating whether the game is censored (True/False)."
+    "type": "str",
+    "choices": [],
+    "description": "Indicates whether the game contains censored content and the type or extent of censorship applied."
   },
   "text search: adult themes": {
     "type": "tag",
@@ -861,7 +863,7 @@
     ],
     "min": 0,
     "max": 1,
-    "tag_count": 11953,
+    "tag_count": 11954,
     "description": "Tag assigned by the official site: 'animated'"
   },
   "author: 2d cg": {
@@ -11391,17 +11393,6 @@
     "tag_count": 1263,
     "description": "Tag automatically detected through text or regex scanning: 'lingerie'"
   },
-  "site: kinetic novel": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 1262,
-    "description": "Tag assigned by the official site: 'kinetic novel'"
-  },
   "author: small person": {
     "type": "tag",
     "choices": [
@@ -11412,6 +11403,17 @@
     "max": 1,
     "tag_count": 1261,
     "description": "Tag automatically detected in the author’s genre description: 'small person'"
+  },
+  "site: kinetic novel": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 1261,
+    "description": "Tag assigned by the official site: 'kinetic novel'"
   },
   "text search: physics": {
     "type": "tag",
@@ -17166,17 +17168,6 @@
     "tag_count": 638,
     "description": "Tag automatically detected in forum recommendation threads: 'anime franchise'"
   },
-  "site: loli": {
-    "type": "tag",
-    "choices": [
-      0,
-      1
-    ],
-    "min": 0,
-    "max": 1,
-    "tag_count": 637,
-    "description": "Tag assigned by the official site: 'loli'"
-  },
   "author: riding": {
     "type": "tag",
     "choices": [
@@ -17187,6 +17178,17 @@
     "max": 1,
     "tag_count": 636,
     "description": "Tag automatically detected in the author’s genre description: 'riding'"
+  },
+  "site: loli": {
+    "type": "tag",
+    "choices": [
+      0,
+      1
+    ],
+    "min": 0,
+    "max": 1,
+    "tag_count": 636,
+    "description": "Tag assigned by the official site: 'loli'"
   },
   "text search: eggs": {
     "type": "tag",
