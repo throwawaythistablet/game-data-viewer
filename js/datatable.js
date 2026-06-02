@@ -884,8 +884,14 @@
 		img.alt = "thumbnail";
 		img.loading = "lazy";
 
+		const playRegion = document.createElement("div");
+		playRegion.className = "table-thumbnail-play-overlay";
+		playRegion.textContent = "▶ Play";
+		wrapper.appendChild(playRegion);
+
 		aGame.appendChild(img);
 		wrapper.appendChild(aGame);
+		wrapper.appendChild(playRegion);
 		wrapper.appendChild(createThumbnailOverlay(key, game_url, vndb_url, vndb_character_count));
 
 		return wrapper;
@@ -893,7 +899,7 @@
 
 	function createThumbnailOverlay(key, game_url, vndb_url, vndb_character_count) {
 		const overlay = document.createElement("div");
-		overlay.className = "table-thumbnail-overlay";
+		overlay.className = "table-thumbnail-action-overlay";
 
 		if (vndb_url) {
 			const vndbLink = document.createElement("a");
@@ -921,7 +927,7 @@
 		reviewsButton.className = "table-thumbnail-action";
 		reviewsButton.type = "button";
 		reviewsButton.title = "Read reviews for the game";
-		reviewsButton.textContent = "Reviews 📖 ▲";
+		reviewsButton.textContent = "Reviews ▲";
 		reviewsButton.setAttribute("aria-label", "Read reviews for the game");
 		const reviewsMenu = document.createElement("div");
 		reviewsMenu.className = "table-thumbnail-dropdown-menu";
@@ -931,7 +937,7 @@
 			vndbReviewLink.href = getSubUrlUsingString(vndb_url, "reviews#review");
 			vndbReviewLink.target = "_blank";
 			vndbReviewLink.rel = "noopener noreferrer";
-			vndbReviewLink.textContent = "VNDB Reviews";
+			vndbReviewLink.textContent = "VNDB 📖 Reviews";
 			reviewsMenu.appendChild(vndbReviewLink);
 		}
 		const f95ReviewLink = document.createElement("a");
@@ -939,7 +945,7 @@
 		f95ReviewLink.href = getSubUrl(game_url, "br-reviews");
 		f95ReviewLink.target = "_blank";
 		f95ReviewLink.rel = "noopener noreferrer";
-		f95ReviewLink.textContent = "F95 Reviews";
+		f95ReviewLink.textContent = "F95 📖 Reviews";
 		reviewsMenu.appendChild(f95ReviewLink);
 		reviewsContainer.appendChild(reviewsButton);
 		reviewsContainer.appendChild(reviewsMenu);

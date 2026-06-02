@@ -762,7 +762,34 @@ td {
 	transform: scale(1.03);
 }
 
-.table-thumbnail-overlay {
+.table-thumbnail-play-overlay {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	color: var(--text-muted);
+	font-size: 28px;
+	text-shadow: 4px 4px 4px var(--bg-main);
+	opacity: 0;
+	transition: transform 0.12s ease, opacity 0.2s ease, color 0.2s ease;
+}
+
+.table-thumbnail-wrapper:hover .table-thumbnail-play-overlay {
+	opacity: 0.7;
+}
+
+.table-thumbnail-wrapper>a:hover+.table-thumbnail-play-overlay {
+	color: var(--glow-strong);
+	transform: translateY(1px);
+	opacity: 1;
+}
+
+.table-thumbnail-action-overlay {
 	position: absolute;
 	left: 0;
 	right: 0;
@@ -775,15 +802,12 @@ td {
 	justify-content: center;
 	gap: 2px;
 	pointer-events: none;
-
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
-
 	opacity: 0;
 	transition: opacity 0.2s ease;
 }
 
-/* Fade in overlay on hover */
-.table-thumbnail-wrapper:hover .table-thumbnail-overlay {
+.table-thumbnail-wrapper:hover .table-thumbnail-action-overlay {
 	opacity: 1;
 	pointer-events: auto;
 }
@@ -804,16 +828,13 @@ td {
 	cursor: pointer;
 	appearance: none;
 	-webkit-appearance: none;
-
 	background: rgba(0, 0, 0, 0.3);
 	color: var(--text-muted);
 	font-size: 16px;
 	gap: 2px;
 	text-decoration: none;
 	backdrop-filter: blur(4px);
-	transition:
-		transform 0.12s ease,
-		opacity 0.2s ease;
+	transition: transform 0.12s ease, opacity 0.2s ease;
 	opacity: 0.7;
 }
 
