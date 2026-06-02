@@ -267,10 +267,18 @@
     ],
     "description": "Boolean flag indicating whether the game is a visual novel (True/False)."
   },
-  "censored": {
+  "is_censored": {
+    "type": "bool",
+    "choices": [
+      false,
+      true
+    ],
+    "description": "Boolean flag indicating whether the game is censored (True/False)."
+  },
+  "censored_details": {
     "type": "str",
     "choices": [],
-    "description": "Indicates whether the game contains censored content and the type or extent of censorship applied."
+    "description": "Details about censorship in the game, including the type and extent of censorship applied (e.g., mosaics, black bars, blurred visuals, pixelation, edited scenes, removed scenes)."
   },
   "text search: adult themes": {
     "type": "tag",
