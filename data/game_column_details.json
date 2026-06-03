@@ -192,47 +192,12 @@
     "max": 18681,
     "description": "Number of ratings submitted on VNDB."
   },
-  "url": {
-    "type": "str",
-    "choices": [],
-    "description": "Direct link to the game’s thread or page on the source site."
-  },
-  "vndb_url": {
-    "type": "str",
-    "choices": [],
-    "description": "Direct link to the game’s page on VNDB."
-  },
   "vndb_character_count": {
     "type": "int",
     "choices": [],
     "min": 0,
     "max": 206,
     "description": "Number of characters listed for the game on VNDB."
-  },
-  "site_std_version": {
-    "type": "str",
-    "choices": [],
-    "description": "Standardized version format derived from the site’s version number."
-  },
-  "site_version": {
-    "type": "str",
-    "choices": [],
-    "description": "The version string as listed on the site."
-  },
-  "site_last_update_date": {
-    "type": "str",
-    "choices": [],
-    "description": "Date when the game was last updated on the site."
-  },
-  "site_release_date": {
-    "type": "str",
-    "choices": [],
-    "description": "Original release date of the game."
-  },
-  "crawler_last_visit": {
-    "type": "str",
-    "choices": [],
-    "description": "Timestamp when the crawler last fetched data for this game."
   },
   "developer": {
     "type": "str",
@@ -279,6 +244,48 @@
     "type": "str",
     "choices": [],
     "description": "Details about censorship in the game, including the type and extent of censorship applied (e.g., mosaics, black bars, blurred visuals, pixelation, edited scenes, removed scenes)."
+  },
+  "site_std_version": {
+    "type": "str",
+    "choices": [],
+    "description": "Standardized version format derived from the site’s version number."
+  },
+  "site_version": {
+    "type": "str",
+    "choices": [],
+    "description": "The version string as listed on the site."
+  },
+  "url": {
+    "type": "str",
+    "choices": [],
+    "description": "Direct link to the game’s thread or page on the source site."
+  },
+  "site_last_update_date": {
+    "type": "str",
+    "choices": [],
+    "description": "Date when the game was last updated on the site."
+  },
+  "site_release_date": {
+    "type": "str",
+    "choices": [],
+    "description": "Original release date of the game."
+  },
+  "site_last_visit": {
+    "type": "str",
+    "choices": [],
+    "description": "Timestamp when the crawler last fetched data from site for this game."
+  },
+  "vndb_url": {
+    "type": "str",
+    "choices": [],
+    "description": "Direct link to the game’s page on VNDB."
+  },
+  "vndb_last_visit": {
+    "type": "str",
+    "choices": [
+      ""
+    ],
+    "description": "Timestamp when the crawler last fetched data from VNDB for this game."
   },
   "text search: adult themes": {
     "type": "tag",
