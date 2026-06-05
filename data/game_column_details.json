@@ -189,7 +189,7 @@
     "type": "int",
     "choices": [],
     "min": 0,
-    "max": 18681,
+    "max": 22898,
     "description": "Number of ratings submitted on VNDB."
   },
   "vndb_character_count": {
@@ -282,9 +282,7 @@
   },
   "vndb_last_visit": {
     "type": "str",
-    "choices": [
-      ""
-    ],
+    "choices": [],
     "description": "Timestamp when the crawler last fetched data from VNDB for this game."
   },
   "text search: adult themes": {
