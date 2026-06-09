@@ -190,7 +190,7 @@
     "type": "int",
     "choices": [],
     "min": 0,
-    "max": 22898,
+    "max": 22931,
     "description": "Number of ratings submitted on VNDB."
   },
   "vndb_character_count": {
