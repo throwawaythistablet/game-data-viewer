@@ -555,8 +555,7 @@
 	function createChoiceFilter(name, choices, prefill = null) {
 		const container = document.createElement("div");
 		container.className = "prefilter-box";
-
-		const checkedValues = Array.isArray(prefill?.choices) ? prefill.choices : choices.slice();
+		const checkedValues = Array.isArray(prefill?.choices) ? prefill.choices : [];
 
 		// Helper to sanitize names/ids
 		const sanitizedName = String(name)
