@@ -1,20 +1,20 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 355695],
-      ["data/game_column_details.json", 1196925],
-      ["data/game_data_part_1.csv", 41947247],
-      ["data/game_data_part_2.csv", 41945744],
-      ["data/game_data_part_3.csv", 41952237],
-      ["data/game_data_part_4.csv", 41947451],
-      ["data/game_data_part_5.csv", 41949675],
-      ["data/game_data_part_6.csv", 41944993],
-      ["data/game_data_part_7.csv", 12977754],
-      ["data/game_keys.json", 1330777],
-      ["data/game_thumbnails.json", 19891731],
-      ["data/tag_quick_search_patterns.json", 1671705],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 355695],
+		["data/game_column_details.json", 1196925],
+		["data/game_data_part_1.csv", 41947247],
+		["data/game_data_part_2.csv", 41945744],
+		["data/game_data_part_3.csv", 41952237],
+		["data/game_data_part_4.csv", 41947451],
+		["data/game_data_part_5.csv", 41949675],
+		["data/game_data_part_6.csv", 41944993],
+		["data/game_data_part_7.csv", 12977754],
+		["data/game_keys.json", 1330777],
+		["data/game_thumbnails.json", 19891731],
+		["data/tag_quick_search_patterns.json", 1671705],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -329,6 +329,7 @@
 			prefilterAst = GDV.prefilter.createPrefilterAstFromConditions(prefilterConditions);
 			hasAst = true;
 		}
+		GDV.prefilter.updatePrefilterColumnNames(prefilterConditions, prefilterAst);
 		if (!GDV.prefilter.arePrefiltersCorrect(prefilterConditions, prefilterAst)) {
 			({ prefilterConditions, prefilterAst } = GDV.prefilter.repairPrefilterConditionsAndAst(prefilterConditions, prefilterAst));
 		}

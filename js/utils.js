@@ -129,6 +129,24 @@
 		return best;
 	};
 
+	GDV.utils.findBestStringMatch = findBestStringMatch;
+	function findBestStringMatch(input, candidates) {
+		if (!candidates.length) return null;
+		let bestMatch = null;
+		let bestDistance = Infinity;
+		for (const candidate of candidates) {
+			if (input === candidate) {
+				return candidate;
+			}
+			const distance = levenshteinDistance(input, candidate);
+			if (distance < bestDistance) {
+				bestDistance = distance;
+				bestMatch = candidate;
+			}
+		}
+		return bestMatch;
+	}
+
 	GDV.utils.levenshteinDistance = levenshteinDistance;
 	function levenshteinDistance(a, b) {
 		const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
@@ -142,6 +160,25 @@
 			}
 		}
 		return matrix[a.length][b.length];
+	}
+
+	GDV.utils.getStringSimilarity = getStringSimilarity;
+	function getStringSimilarity(a, b) {
+		if (a === b) return 1;
+		if (!a || !b) return 0;
+		// Exact substring match gets a strong score.
+		if (a.includes(b) || b.includes(a)) {
+			return Math.min(a.length, b.length) / Math.max(a.length, b.length);
+		}
+		// Character-level similarity.
+		const maxLength = Math.max(a.length, b.length);
+		let matches = 0;
+		for (let i = 0; i < Math.min(a.length, b.length); i++) {
+			if (a[i] === b[i]) {
+				matches++;
+			}
+		}
+		return matches / maxLength;
 	}
 
 	GDV.utils.computeNearestMatchDistance = (columnName, searchText) => {

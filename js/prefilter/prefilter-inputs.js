@@ -156,23 +156,28 @@
 
 	GDV.prefilter.collectColumnsFromAst = collectColumnsFromAst;
 	function collectColumnsFromAst(node) {
-		const result = [];
-		function traverse(n) {
-			if (!n) return;
-			switch (n.ast_type) {
+		return [...GDV.prefilter.collectColumnsSetFromAst(node)]
+	}
+
+	GDV.prefilter.collectColumnsSetFromAst = collectColumnsSetFromAst;
+	function collectColumnsSetFromAst(node) {
+		const columns = new Set();
+		function traverse(node) {
+			if (!node) return;
+			switch (node.ast_type) {
 				case "VALUE":
-					if (n.column != null) {
-						result.push(n.column);
+					if (node.column != null) {
+						columns.add(node.column);
 					}
 					return;
 				case "NOT":
-					traverse(n.child);
+					traverse(node.child);
 					return;
 				case "AND":
 				case "OR":
-					if (!n.children) return;
-					for (let i = 0; i < n.children.length; i++) {
-						traverse(n.children[i]);
+					if (!node.children) return;
+					for (let i = 0; i < node.children.length; i++) {
+						traverse(node.children[i]);
 					}
 					return;
 				default:
@@ -180,7 +185,75 @@
 			}
 		}
 		traverse(node);
-		return result;
+		return columns;
+	}
+
+	GDV.prefilter.updatePrefilterColumnNames = updatePrefilterColumnNames;
+	function updatePrefilterColumnNames(conditions, ast) {
+		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const astColumnNamesSet = collectColumnsSetFromAst(ast);
+		const conditionColumnNamesSet = new Set(Object.keys(conditions || {}));
+		const allColumnNames = [...new Set([...astColumnNamesSet, ...conditionColumnNamesSet])];
+		const mapping = mapColumnNamesToColDefNames(allColumnNames, colDefs);
+		updatePrefilterColumnNamesInConditions(conditions, mapping);
+		updatePrefilterColumnNamesInAst(ast, mapping);
+	}
+
+	function mapColumnNamesToColDefNames(columns, colDefs) {
+		const colDefKeys = Object.keys(colDefs || {});
+		const mapping = new Map();
+		for (const column of columns) {
+			// columnWithAssigned = column.replace(/^author: /, "assigned: ");
+			// columnWithAssigned = column.replace(/^(author|site): /, "assigned: ");
+			const match = GDV.utils.findBestStringMatch(column, colDefKeys);
+			// const match = GDV.utils.findBestStringMatch(columnWithAssigned, colDefKeys);
+			if (match !== null) {
+				mapping.set(column, match);
+			}
+		}
+		return mapping;
+	}
+
+	function updatePrefilterColumnNamesInConditions(conditions, mapping) {
+		// Update condition keys while preserving their values.
+		const updatedConditions = {};
+		for (const [oldColumn, value] of Object.entries(conditions || {})) {
+			const newColumn = mapping.get(oldColumn) || oldColumn;
+			updatedConditions[newColumn] = value;
+		}
+		// Replace the contents of the original conditions object.
+		for (const key of Object.keys(conditions)) {
+			delete conditions[key];
+		}
+		Object.assign(conditions, updatedConditions);
+	}
+
+	function updatePrefilterColumnNamesInAst(ast, mapping) {
+		function traverse(node) {
+			if (!node) return;
+			switch (node.ast_type) {
+				case "VALUE":
+					if (node.column != null) {
+						node.column = mapping.get(node.column) || node.column;
+					}
+					return;
+				case "NOT":
+					traverse(node.child);
+					return;
+				case "AND":
+				case "OR":
+					if (!node.children) return;
+
+					for (const child of node.children) {
+						traverse(child);
+					}
+					return;
+
+				default:
+					return;
+			}
+		}
+		traverse(ast);
 	}
 
 	GDV.prefilter.arePrefiltersCorrect = arePrefiltersCorrect;
@@ -249,12 +322,12 @@
 		let cleanAstRoot = cleanAst(prefilterAst);
 
 		// --- 3. COLLECT AST COLUMNS (reuse existing utility)
-		const astColumns = new Set(collectColumnsFromAst(cleanAstRoot));
+		const astColumnsSet = collectColumnsSetFromAst(cleanAstRoot);
 
 		// --- 4. FIND MISSING CONDITIONS (present in conditions but not AST)
 		const missingNodes = [];
 		for (const col in cleanConditions) {
-			if (!astColumns.has(col)) {
+			if (!astColumnsSet.has(col)) {
 				missingNodes.push({
 					ast_type: "VALUE",
 					column: col
@@ -1038,18 +1111,16 @@
 
 	function validatePrefilterConsistency(conditions, ast) {
 		const warnings = [];
-		const astColumns = collectColumnsFromAst(ast);
-		const conditionColumns = Object.keys(conditions || {});
-		const conditionSet = new Set(conditionColumns);
-		const astSet = new Set(astColumns);
+		const astColumnsSet = collectColumnsSetFromAst(ast);
+		const conditionColumnsSet = new Set(Object.keys(conditions || {}));
 
-		for (const col of astColumns) {
-			if (!conditionSet.has(col)) {
+		for (const col of astColumnsSet) {
+			if (!conditionColumnsSet.has(col)) {
 				warnings.push(`Expression references "${col}" but no condition exists for it`);
 			}
 		}
-		for (const col of conditionColumns) {
-			if (!astSet.has(col)) {
+		for (const col of conditionColumnsSet) {
+			if (!astColumnsSet.has(col)) {
 				warnings.push(`Condition "${col}" exists but is not used in the expression`);
 			}
 		}
