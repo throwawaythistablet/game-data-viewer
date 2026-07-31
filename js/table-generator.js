@@ -1,11 +1,20 @@
 (() => {
 	const ROW_THROTTLE = 500;
-	const similarityScoreName = "similarity_score";
+	const SIMILARITY_SCORE_NAME = "similarity_score";
 	let similarityGameRowData = null;
 
 	GDV.tableGenerator.getSimilarityScoreName = getSimilarityScoreName;
 	function getSimilarityScoreName() {
-		return similarityScoreName;
+		return SIMILARITY_SCORE_NAME;
+	}
+
+	GDV.tableGenerator.shouldIncludeColumn = shouldIncludeColumn;
+	function shouldIncludeColumn(columnName, columnDetails, prefilterConditions) {
+		if (columnName === SIMILARITY_SCORE_NAME || columnName in (prefilterConditions || {})) {
+			return true;
+		}
+		const columnDetail = columnDetails?.[columnName];
+		return !columnDetail || columnDetail.type !== "tag";
 	}
 
 	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file) => {
@@ -55,10 +64,9 @@
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const columnDetails = GDV.state.getActiveColumnDetails();
 		const similarityGame = GDV.state.getSimilarityGame();
-		const hasSimilarityScoreCondition = !!prefilterConditions?.[similarityScoreName];
+		const hasSimilarityScoreCondition = !!prefilterConditions?.[SIMILARITY_SCORE_NAME];
 		const filterDetails = { columnDetails, prefilterAst, prefilterConditions, similarityGame };
 		let rowsData = null;
-
 		if (similarityGame) {
 			similarityGameRowData = null;
 			if (hasSimilarityScoreCondition) {
@@ -101,13 +109,14 @@
 						reject(new Error("Loading cancelled by user."));
 						return;
 					}
+					const rowData = filterColumnsInRowData(row.data, columnDetails, prefilterConditions);
 
-					if (hasNoPrefilters || isRowIncluded(row.data, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
-						rowsData.push(row.data);
+					if (hasNoPrefilters || isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
+						rowsData.push(rowData);
 					}
 
-					if (isSimilarityGame(similarityGame, row.data)) {
-						similarityGameRowData = structuredClone(row.data);
+					if (isSimilarityGame(similarityGame, rowData)) {
+						similarityGameRowData = structuredClone(rowData);
 					}
 
 					rowsProcessed++;
@@ -129,14 +138,24 @@
 		});
 	}
 
+	function filterColumnsInRowData(rowData, columnDetails, prefilterConditions) {
+		const filteredRowData = {};
+		for (const [columnName, value] of Object.entries(rowData)) {
+			if (shouldIncludeColumn(columnName, columnDetails, prefilterConditions)) {
+				filteredRowData[columnName] = value;
+			}
+		}
+		return filteredRowData;
+	}
+
 	async function putSimilarityScores(rowsData, similarityGameRowData) {
 		if (!Array.isArray(rowsData) || !similarityGameRowData) {
 			return;
 		}
-		const similarityScoreName = getSimilarityScoreName();
+		const SIMILARITY_SCORE_NAME = getSimilarityScoreName();
 		for (let i = 0; i < rowsData.length; i++) {
 			const rowData = rowsData[i];
-			rowData[similarityScoreName] = computeRowSimilarityPercent(similarityGameRowData, rowData);
+			rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowData, rowData);
 			if (i % ROW_THROTTLE === 0) {
 				await GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 70, i, rowsData.length);
 			}
@@ -213,8 +232,8 @@
 		}
 	}
 
-	function isRowIncludedForPrefilterCondition(rowData, col, criterion, colDef) {
-		if (!colDef) return true;
+	function isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetail) {
+		if (!columnDetail) return true;
 
 		const normalize = (v) => (v == null ? "" : typeof v === "string" ? v.trim() : v);
 		if (!(col in rowData)) {
@@ -223,19 +242,19 @@
 		const rawValue = rowData[col];
 		const value = normalize(rawValue);
 
-		if (colDef.type === "tag") {
+		if (columnDetail.type === "tag") {
 			if (!Array.isArray(criterion.choices)) return true;
 			return criterion.choices.includes(Number(value));
 		}
 
-		if (colDef.type === "bool") {
+		if (columnDetail.type === "bool") {
 			if (!Array.isArray(criterion.choices)) return true;
 			const rowBool = normalizeBool(value);
 			if (rowBool === null) return true;
 			return criterion.choices.map(normalizeBool).includes(rowBool);
 		}
 
-		if (colDef.type === "int" || colDef.type === "float") {
+		if (columnDetail.type === "int" || columnDetail.type === "float") {
 			const num = Number(value);
 			if (Number.isNaN(num)) return true;
 			if (criterion.min != null && num < criterion.min) return false;
@@ -244,13 +263,13 @@
 			return true;
 		}
 
-		if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
+		if (Array.isArray(columnDetail.choices) && columnDetail.choices.length > 0) {
 			if (!Array.isArray(criterion.choices)) return true;
 			if (criterion.choices.length === 0) return false;
 			let typedVal = value;
-			if (colDef.type === "int") typedVal = parseInt(value, 10);
-			if (colDef.type === "float") typedVal = parseFloat(value);
-			if (colDef.type === "bool") typedVal = normalizeBool(value);
+			if (columnDetail.type === "int") typedVal = parseInt(value, 10);
+			if (columnDetail.type === "float") typedVal = parseFloat(value);
+			if (columnDetail.type === "bool") typedVal = normalizeBool(value);
 			if (!criterion.choices.includes(typedVal)) return false;
 			return true;
 		}

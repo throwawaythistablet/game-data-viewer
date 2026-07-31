@@ -84,28 +84,30 @@
 
             <hr style="margin: 12px 0;">
 
-            🏷️ <strong>About Tags & How They Work</strong><br>
+        🏷️ <strong>About Tags & How They Work</strong><br>
             <div style="padding-left: 20px; margin-top: 8px;">
                 Tags are <strong>automatically generated</strong> from text and metadata — they are not manually assigned.<br>
                 Tags are assigned using pattern matching (regex) applied to:
                 <ul>
                 <li>📖 Game descriptions</li>
-                <li>✍️  Author-provided genre/description</li>
+                <li>✍️ Author descriptions</li>
+                <li>🌐 Official site information</li>
+                <li>🗂️ VNDB information</li>
                 <li>💬 User reviews</li>
                 <li>📝 Forum recommendation threads</li>
                 </ul>
 
                 <strong>Tag types (visible as prefixes)</strong>
                 <ul>
-                <li><code>site:</code> — Tag assigned by the official site.</li>
-                <li><code>author:</code> — Detected in the author's genre/description.</li>
-                <li><code>text search:</code> — Detected by regex/text scanning of descriptions and reviews.</li>
-                <li><code>forum recommendation:</code> — Detected from forum recommendation threads.</li>
+                <li><code>site:</code> — Tags automatically assigned by the official site.</li>
+                <li><code>assigned:</code> — Tags automatically assigned from the author descriptions, site tags, and VNDB tags.</li>
+                <li><code>text search:</code> — Tags automatically detected by regex/text scanning of descriptions and reviews.</li>
+                <li><code>forum recommendation:</code> — Tags automatically detected from forum recommendation threads.</li>
                 </ul>
 
                 <p>
                 <strong>How to use tag types:</strong>
-                You can combine broader tags (<code>text search:</code> / <code>forum recommendation:</code>) that may include some false positives with stricter tags (<code>site:</code> / <code>author:</code>) to refine results more reliably.
+                You can combine broader tags (<code>text search:</code> / <code>forum recommendation:</code>) that may include some false positives with stricter tags (<code>site:</code> / <code>assigned:</code>) to refine results more reliably.
                 For example, using <code>text search: exhibitionism</code> plus <code>site: female protagonist</code> often narrows results to relevant entries while reducing accidental matches.
                 </p>
 

@@ -150,11 +150,11 @@
 		marker.replaceChildren(container);
 	};
 
-	GDV.dom.createHighlightFromValue = (val, colName) => {
+	GDV.dom.createHighlightFromValue = (val, columnName) => {
 		const num = parseFloat(val);
 		if (Number.isNaN(num)) return document.createTextNode(val);
 
-		const { min, max } = GDV.state.getActiveColumnDetails()[colName] || {};
+		const { min, max } = GDV.state.getActiveColumnDetails()[columnName] || {};
 		const intensity = max === min ? 0 : Math.max(0, Math.min(1, (num - min) / (max - min)));
 
 		const { low, high } = getRangeColors();

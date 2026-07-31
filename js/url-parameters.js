@@ -39,12 +39,11 @@
 		}
 		const humanPrefilterConditions = parseHumanReadable(params);
 		pfObj = mergePrefilterConditions(pfObj, humanPrefilterConditions);
-		const adjustedPrefilterConditions = adjustPrefilterNamesIfNeeded(pfObj);
-		if (adjustedPrefilterConditions && !validatePrefilterConditions(adjustedPrefilterConditions)) {
+		if (pfObj && !validatePrefilterConditions(pfObj)) {
 			GDV.utils.reportSoftWarning("Prefilter Validation Failed", "The prefilters extracted from the URL did not pass validation and will be ignored.");
 			return null;
 		}
-		return adjustedPrefilterConditions || null;
+		return pfObj || null;
 	}
 
 	function extractPrefilterAst(params) {
@@ -145,16 +144,16 @@
 
 		Object.keys(params).forEach((key) => {
 			if (!key.startsWith("pf_")) return;
-			const colName = key.substring(3); // remove pf_
+			const columnName = key.substring(3); // remove pf_
 			const val = params[key];
 
-			const colDef = GDV.state.getActiveColumnDetails()[colName];
-			if (!colDef) {
-				GDV.utils.reportSoftWarning("Unknown Column in URL Prefilters", `The column '${colName}' in the URL prefilters is unknown and will be ignored.`);
+			const columnDetail = GDV.state.getActiveColumnDetails()[columnName];
+			if (!columnDetail) {
+				GDV.utils.reportSoftWarning("Unknown Column in URL Prefilters", `The column '${columnName}' in the URL prefilters is unknown and will be ignored.`);
 				return;
 			}
 
-			switch (colDef.type) {
+			switch (columnDetail.type) {
 				case "float":
 				case "int": {
 					// Range parsing: "min-max" or "-max" or "min-"
@@ -164,10 +163,10 @@
 
 					// Ensure min <= max if both exist
 					if (min !== null && max !== null && min > max) {
-						GDV.utils.reportSoftWarning("Prefilter Range Correction", `For column '${colName}', min value was greater than max. Values have been swapped.`);
-						prefilterConditions[colName] = { type: colDef.type, min: max, max: min };
+						GDV.utils.reportSoftWarning("Prefilter Range Correction", `For column '${columnName}', min value was greater than max. Values have been swapped.`);
+						prefilterConditions[columnName] = { type: columnDetail.type, min: max, max: min };
 					} else {
-						prefilterConditions[colName] = { type: colDef.type, min, max };
+						prefilterConditions[columnName] = { type: columnDetail.type, min, max };
 					}
 					break;
 				}
@@ -177,8 +176,8 @@
 					const choices = val.split(",").map((s) => s.trim()).filter(Boolean);
 
 					// Optional: validate against allowed choices
-					const validChoices = colDef.choices.length ? choices.filter((c) => colDef.choices.includes(c)) : choices;
-					prefilterConditions[colName] = { type: "str", choices: validChoices };
+					const validChoices = columnDetail.choices.length ? choices.filter((c) => columnDetail.choices.includes(c)) : choices;
+					prefilterConditions[columnName] = { type: "str", choices: validChoices };
 					break;
 				}
 
@@ -187,8 +186,8 @@
 					const tags = val.split(",").map(Number).filter((n) => !Number.isNaN(n));
 
 					// Optional: validate against min/max
-					const validTags = tags.filter((n) => n >= colDef.min && n <= colDef.max);
-					prefilterConditions[colName] = { type: "tag", choices: validTags };
+					const validTags = tags.filter((n) => n >= columnDetail.min && n <= columnDetail.max);
+					prefilterConditions[columnName] = { type: "tag", choices: validTags };
 					break;
 				}
 
@@ -202,7 +201,7 @@
 						})
 						.filter((v) => v !== null);
 
-					prefilterConditions[colName] = { type: "bool", choices: boolVals };
+					prefilterConditions[columnName] = { type: "bool", choices: boolVals };
 					break;
 				}
 
@@ -212,7 +211,7 @@
 						.split(",")
 						.map((s) => s.trim())
 						.filter(Boolean);
-					if (tokens.length) prefilterConditions[colName] = { text: tokens };
+					if (tokens.length) prefilterConditions[columnName] = { text: tokens };
 					break;
 				}
 			}
@@ -225,27 +224,6 @@
 		if (!base) return override || {};
 		if (!override) return base;
 		return { ...base, ...override };
-	}
-
-	function adjustPrefilterNamesIfNeeded(inputPrefilters) {
-		const activeCols = GDV.state.getActiveColumnDetails() || {};
-		const validPrefilters = {};
-
-		for (const [col, criterion] of Object.entries(inputPrefilters)) {
-			if (activeCols[col]) {
-				// Column exists, include as-is
-				validPrefilters[col] = criterion;
-			} else {
-				// Try "text search: " prefix
-				const textSearchCol = `text search: ${col}`;
-				if (activeCols[textSearchCol]) {
-					validPrefilters[textSearchCol] = criterion;
-				} else {
-					GDV.utils.reportSoftWarning("Prefilter column not found", `Prefilter column not found: "${col}" or "${textSearchCol}", skipping.`);
-				}
-			}
-		}
-		return validPrefilters;
 	}
 
 	function validatePrefilterConditions(prefilterConditions) {

@@ -104,28 +104,27 @@
 	};
 
 	GDV.datatable.getColumnDescription = getColumnDescription;
-	function getColumnDescription(colName) {
-		const description = GDV.state.getActiveColumnDetails()?.[colName]?.description || "";
+	function getColumnDescription(columnName) {
+		const description = GDV.state.getActiveColumnDetails()?.[columnName]?.description || "";
 
 		// If it's a site tag or unprefixed, skip regex completely
-		if (colName.startsWith("site: ") || !colName.includes(": ")) {
+		if (columnName.startsWith("site: ") || !columnName.includes(": ")) {
 			return description;
 		}
 
-		const filterName = GDV.utils.normalizeFilterName(colName);
+		const filterName = GDV.utils.normalizeFilterName(columnName);
 		const pattern = GDV.state.getTagQuickSearchPatterns()?.[filterName]?.pattern;
 		const patternDesc = pattern ? `Regex pattern:\n${pattern}` : "";
 
 		return [description, patternDesc].filter(Boolean).join("\n");
 	}
 
-	GDV.datatable.getColumnTagCount = (colName) => GDV.state.getActiveColumnDetails()?.[colName]?.tag_count ?? null;
+	GDV.datatable.getColumnTagCount = (columnName) => GDV.state.getActiveColumnDetails()?.[columnName]?.tag_count ?? null;
 
 	function createTableColumns(parsedData) {
 		if (!parsedData || !parsedData.length) return [];
 		const columnNames = Object.keys(parsedData[0]);
-		const columnDetails = GDV.state.getActiveColumnDetails();
-		const columns = buildDataColumns(columnNames, columnDetails);
+		const columns = buildDataColumns(columnNames);
 
 		const thumbnailColumn = buildThumbnailColumn();
 		if (thumbnailColumn) {
@@ -150,16 +149,14 @@
 		csvTableElement.show();
 	}
 
-	function buildDataColumns(columnNamesInTable, columnDetails) {
+	function buildDataColumns(columnNamesInTable) {
 		const prefilterConditions = GDV.state.getPrefilterConditions();
-		const prefilterAst = GDV.state.getPrefilterAst();
 		const specialKeys = ["key", GDV.tableGenerator.getSimilarityScoreName()];
-		const prefilterKeys = GDV.prefilter.collectColumnsFromAst(prefilterAst).filter((col) => !specialKeys.includes(col));
+		const prefilterKeys = Object.keys(prefilterConditions || {}).filter(col => !specialKeys.includes(col));
 
-		const normalColumns = columnNamesInTable.filter((k) => shouldIncludeColumn(k, columnDetails, prefilterConditions));
-		const prefilterColumns = prefilterKeys.filter(col => columnNamesInTable.includes(col));
 		const specialColumns = columnNamesInTable.filter((col) => specialKeys.includes(col));
-		const resultKeys = [...specialColumns, ...prefilterColumns, ...normalColumns.filter((col) => !specialColumns.includes(col) && !prefilterColumns.includes(col))];
+		const prefilterColumns = prefilterKeys.filter(col => columnNamesInTable.includes(col));
+		const resultKeys = [...specialColumns, ...prefilterColumns, ...columnNamesInTable.filter((col) => !specialColumns.includes(col) && !prefilterColumns.includes(col))];
 		return resultKeys.map((columnName) => ({
 			title: columnName,
 			data: columnName,
@@ -205,11 +202,6 @@
 				td.appendChild(renderViewButton());
 			},
 		};
-	}
-
-	function shouldIncludeColumn(key, columnDetails, prefilterConditions) {
-		const colDef = columnDetails[key];
-		return !colDef || colDef.type !== "tag" || key in prefilterConditions;
 	}
 
 	function destroyExistingTable() {
@@ -352,15 +344,15 @@
 	function addHeaderTooltips(api) {
 		api.columns().every(function () {
 			const header = this.header();
-			const colName = header.textContent.trim();
-			header.title = getColumnDescription(colName);
+			const columnName = header.textContent.trim();
+			header.title = getColumnDescription(columnName);
 			return true; // satisfies Biome linter
 		});
 	}
 
 	async function addColumnFilters(api) {
 		const colCount = api.columns().count();
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
 		const ths = document.querySelectorAll(".filters th");
 
 		for (let colIdx = 0; colIdx < colCount; colIdx++) {
@@ -374,15 +366,15 @@
 			container.className = "filter-container";
 			th.appendChild(container);
 
-			const colName = column.header().textContent.trim();
-			const colDef = colDefs[colName];
+			const columnName = column.header().textContent.trim();
+			const columnDetail = columnDetails[columnName];
 
-			if (colName === "thumbnails") {
+			if (columnName === "thumbnails") {
 				addGameSimilaritySearch(container);
 				continue;
 			}
-			if (!colDef) continue;
-			addColumnFilterItems(container, column, colName, colDef, colIdx);
+			if (!columnDetail) continue;
+			addColumnFilterItems(container, column, columnName, columnDetail, colIdx);
 
 			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
 		}
@@ -475,14 +467,14 @@
 		});
 	}
 
-	async function addColumnFilterItems(container, column, colName, colDef, colIdx) {
+	async function addColumnFilterItems(container, column, columnName, columnDetail, colIdx) {
 		addSortingControls(container, colIdx);
-		if (colDef.choices && colDef.choices.length > 0) {
-			addCheckboxFilter(container, column, colName, colDef);
-		} else if (colDef.type === "int" || colDef.type === "float") {
-			addRangeFilter(container, column, colName, colDef);
+		if (columnDetail.choices && columnDetail.choices.length > 0) {
+			addCheckboxFilter(container, column, columnName, columnDetail);
+		} else if (columnDetail.type === "int" || columnDetail.type === "float") {
+			addRangeFilter(container, column, columnName, columnDetail);
 		} else {
-			addTextFilter(container, column, colName);
+			addTextFilter(container, column, columnName);
 		}
 	}
 
@@ -511,13 +503,13 @@
 		container.append(lineWrapper);
 	}
 
-	function addCheckboxFilter(th, column, colName, colDef) {
+	function addCheckboxFilter(th, column, columnName, columnDetail) {
 		const box = document.createElement("div");
 		box.className = "filter-checkbox";
 		th.appendChild(box);
 
 		// Sanitize column name for IDs
-		const sanitizedColName = String(colName || "checkbox-filter")
+		const sanitizedColumnName = String(columnName || "checkbox-filter")
 			.replace(/\s+/g, "-")
 			.replace(/[^\w-]/g, "");
 
@@ -529,8 +521,8 @@
 		toggleInput.type = "checkbox";
 		toggleInput.className = "toggle-all";
 		toggleInput.checked = true;
-		toggleInput.id = `toggle-all-filter-${sanitizedColName}`;
-		toggleInput.name = `toggleAll-filter-${sanitizedColName}`;
+		toggleInput.id = `toggle-all-filter-${sanitizedColumnName}`;
+		toggleInput.name = `toggleAll-filter-${sanitizedColumnName}`;
 
 		toggleLabel.setAttribute("for", toggleInput.id);
 		toggleLabel.appendChild(toggleInput);
@@ -538,7 +530,7 @@
 		box.appendChild(toggleLabel);
 
 		// Individual checkboxes
-		colDef.choices.forEach((v, idx) => {
+		columnDetail.choices.forEach((v, idx) => {
 			const label = document.createElement("label");
 
 			const input = document.createElement("input");
@@ -550,8 +542,8 @@
 			const sanitizedValue = String(v)
 				.replace(/\s+/g, "-")
 				.replace(/[^\w-]/g, "");
-			input.id = `chk-filter-${sanitizedColName}-${sanitizedValue}-${idx}`;
-			input.name = `chk-filter-${sanitizedColName}`;
+			input.id = `chk-filter-${sanitizedColumnName}-${sanitizedValue}-${idx}`;
+			input.name = `chk-filter-${sanitizedColumnName}`;
 
 			label.setAttribute("for", input.id);
 			label.appendChild(input);
@@ -580,13 +572,13 @@
 				const checkedInputs = box.querySelectorAll('input[type="checkbox"]:not(.toggle-all):checked');
 				const checkedVals = Array.from(checkedInputs).map((el) => el.value);
 
-				toggleInput.checked = checkedVals.length === colDef.choices.length;
+				toggleInput.checked = checkedVals.length === columnDetail.choices.length;
 
 				let searchRegex;
 
 				if (checkedVals.length === 0) {
 					searchRegex = ""; // match everything
-				} else if (checkedVals.length === colDef.choices.length) {
+				} else if (checkedVals.length === columnDetail.choices.length) {
 					searchRegex = "";
 				} else {
 					const escaped = checkedVals.map((v) => $.fn.dataTable.util.escapeRegex(v));
@@ -598,14 +590,14 @@
 		});
 	}
 
-	function addRangeFilter(th, column, colName, colDef) {
+	function addRangeFilter(th, column, columnName, columnDetail) {
 		// Container
 		const box = document.createElement("div");
 		box.className = "filter-range";
 		th.appendChild(box);
 
 		// Helper to sanitize column name for IDs
-		const sanitizedName = String(colName || "range-filter")
+		const sanitizedName = String(columnName || "range-filter")
 			.replace(/\s+/g, "-")
 			.replace(/[^\w-]/g, "");
 
@@ -627,7 +619,7 @@
 		minInput.placeholder = "Min";
 		minInput.id = minId;
 		minInput.name = minId;
-		minInput.value = colDef.min ?? "";
+		minInput.value = columnDetail.min ?? "";
 		minWrapper.appendChild(minInput);
 
 		// Max input wrapper and label
@@ -648,12 +640,12 @@
 		maxInput.placeholder = "Max";
 		maxInput.id = maxId;
 		maxInput.name = maxId;
-		maxInput.value = colDef.max ?? "";
+		maxInput.value = columnDetail.max ?? "";
 		maxWrapper.appendChild(maxInput);
 
 		// Store original values in dataset
-		box.dataset.originalMin = colDef.min ?? "";
-		box.dataset.originalMax = colDef.max ?? "";
+		box.dataset.originalMin = columnDetail.min ?? "";
+		box.dataset.originalMax = columnDetail.max ?? "";
 
 		const colIdx = column.index();
 		const dataKey = column.dataSrc();
@@ -705,7 +697,7 @@
 		applyRangeFilter();
 	}
 
-	function addTextFilter(th, column, colName) {
+	function addTextFilter(th, column, columnName) {
 		// Wrapper div
 		const wrapper = document.createElement("div");
 		wrapper.className = "text-input-wrapper";
@@ -715,8 +707,8 @@
 		const label = document.createElement("label");
 		label.className = "text-input-label";
 
-		// Ensure colName is a string
-		const sanitizedName = String(colName || "text-filter")
+		// Ensure columnName is a string
+		const sanitizedName = String(columnName || "text-filter")
 			.replace(/\s+/g, "-")
 			.replace(/[^\w-]/g, "");
 		const inputId = `filter-${sanitizedName}`;
@@ -979,7 +971,7 @@
 		return overlay
 	}
 
-	function renderCellValueNode(val, colName = null) {
+	function renderCellValueNode(val, columnName = null) {
 		if (val === undefined || val === null) return document.createTextNode("");
 
 		const text = String(val).trim();
@@ -1002,7 +994,7 @@
 		}
 
 		// Highlight numeric columns
-		const highlightedNode = createHighlightedNode(text, colName);
+		const highlightedNode = createHighlightedNode(text, columnName);
 		if (highlightedNode) {
 			return highlightedNode;
 		}
@@ -1038,20 +1030,20 @@
 		return a;
 	}
 
-	function createHighlightedNode(text, colName) {
-		if (!colName) return null;
+	function createHighlightedNode(text, columnName) {
+		if (!columnName) return null;
 
-		const colDef = GDV.state.getActiveColumnDetails()?.[colName];
-		if (!colDef) return null;
-		const colNameLower = colName.toLowerCase();
+		const columnDetail = GDV.state.getActiveColumnDetails()?.[columnName];
+		if (!columnDetail) return null;
+		const columnNameLower = columnName.toLowerCase();
 
-		if (colDef.type === "int" || colDef.type === "float") {
-			return GDV.dom.createHighlightFromValue(text, colName);
-		} else if (colNameLower.includes("sentiment_label")) {
+		if (columnDetail.type === "int" || columnDetail.type === "float") {
+			return GDV.dom.createHighlightFromValue(text, columnName);
+		} else if (columnNameLower.includes("sentiment_label")) {
 			return GDV.dom.createHighlightFromSentiment(text);
-		} else if (colNameLower === "status") {
+		} else if (columnNameLower === "status") {
 			return GDV.dom.createHighlightFromStatus(text);
-		} else if (colNameLower === "play_time_label") {
+		} else if (columnNameLower === "play_time_label") {
 			return GDV.dom.createHighlightFromPlayTimeLabel(text);
 		}
 		return null;
@@ -1178,10 +1170,10 @@
 		return base + path;
 	}
 
-	function findIndexOfColumnByNameInTable(colName) {
+	function findIndexOfColumnByNameInTable(columnName) {
 		const dt = csvTableElement.DataTable();
-		if (!colName) return null;
-		const target = colName.toLowerCase();
+		if (!columnName) return null;
+		const target = columnName.toLowerCase();
 		const colIdx = dt
 			.columns()
 			.indexes()
@@ -1194,19 +1186,19 @@
 		return colIdx ?? null;
 	}
 
-	function findIndexOfColumnByNameInColumns(columns, colName) {
-		if (!Array.isArray(columns) || !colName) return null;
-		colName = colName.toLowerCase();
+	function findIndexOfColumnByNameInColumns(columns, columnName) {
+		if (!Array.isArray(columns) || !columnName) return null;
+		columnName = columnName.toLowerCase();
 
-		const idx = columns.findIndex((col) => col?.title?.toLowerCase() === colName);
+		const idx = columns.findIndex((col) => col?.title?.toLowerCase() === columnName);
 
 		return idx !== -1 ? idx : null;
 	}
 
-	function getValueOfColumnFromRowElement(el, colName) {
+	function getValueOfColumnFromRowElement(el, columnName) {
 		const dt = csvTableElement.DataTable();
 		const tr = el.closest("tr");
-		if (!tr || !colName) return null;
+		if (!tr || !columnName) return null;
 
 		const rowData = dt.row(tr).data();
 		if (!rowData) return null;
@@ -1214,11 +1206,11 @@
 		// In this implementation, DataTables row data is always array-based (DOM-sourced, not object mode).
 		// Case 1: object row (key-based)
 		// if (typeof rowData === "object" && !Array.isArray(rowData)) {
-		// 	return rowData[colName] ?? null;
+		// 	return rowData[columnName] ?? null;
 		// }
 
 		// Case 2: array row (index-based)
-		const colIdx = findIndexOfColumnByNameInTable(colName);
+		const colIdx = findIndexOfColumnByNameInTable(columnName);
 		if (colIdx == null) return null;
 
 		return rowData[colIdx] ?? null;

@@ -438,16 +438,16 @@
 	function createPrefilterGrid(prefill) {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		for (const [col, colDef] of Object.entries(colDefs)) {
-			grid.appendChild(createFilterSectionForColumnDetails(col, colDef, prefill[col]));
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		for (const [col, columnDetail] of Object.entries(columnDetails)) {
+			grid.appendChild(createFilterSectionForColumnDetails(col, columnDetail, prefill[col]));
 		}
 		prefilterSections = grid.querySelectorAll(".prefilter-section");
 		prefilterSectionArray = Array.from(prefilterSections);
 		return grid;
 	}
 
-	function createFilterSectionForColumnDetails(col, colDef, prefill) {
+	function createFilterSectionForColumnDetails(col, columnDetail, prefill) {
 		const section = document.createElement("section");
 		section.className = "prefilter-section";
 		section.dataset.col = String(col);
@@ -457,12 +457,12 @@
 		title.textContent = col;
 		section.appendChild(title);
 
-		if (colDef.type === "tag") {
+		if (columnDetail.type === "tag") {
 			section.appendChild(createTagFilter(col, prefill));
-		} else if (Array.isArray(colDef.choices) && colDef.choices.length > 0) {
-			section.appendChild(createChoiceFilter(col, colDef.choices, prefill));
-		} else if (colDef.type === "int" || colDef.type === "float") {
-			section.appendChild(createRangeFilter(col, colDef.min, colDef.max, prefill));
+		} else if (Array.isArray(columnDetail.choices) && columnDetail.choices.length > 0) {
+			section.appendChild(createChoiceFilter(col, columnDetail.choices, prefill));
+		} else if (columnDetail.type === "int" || columnDetail.type === "float") {
+			section.appendChild(createRangeFilter(col, columnDetail.min, columnDetail.max, prefill));
 		} else {
 			section.appendChild(createTextFilterInput(col, prefill));
 		}
@@ -1087,9 +1087,9 @@
 		const toShow = [];
 		const toHide = [];
 		prefilterSections.forEach((section) => {
-			const colName = section.dataset.col;
-			const matchesSearch = tokens.length === 0 || sectionMatchesTokens(colName, tokens);
-			const matchesCategory = category === "__all__" || (colCategories[category] || []).includes(colName);
+			const columnName = section.dataset.col;
+			const matchesSearch = tokens.length === 0 || sectionMatchesTokens(columnName, tokens);
+			const matchesCategory = category === "__all__" || (colCategories[category] || []).includes(columnName);
 			if (matchesSearch && matchesCategory) {
 				visibleCount++;
 				if (visibleCount > maxVisibleSections) {
@@ -1154,16 +1154,16 @@
 			return;
 		}
 
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const colOrder = Object.keys(colDefs);
-		const orderMap = new Map(colOrder.map((col, i) => [col, i]));
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnOrder = Object.keys(columnDetails);
+		const orderMap = new Map(columnOrder.map((col, i) => [col, i]));
 		const sortingInfo = new Map();
 
 		for (const section of sectionArray) {
-			const colName = section.dataset.col;
+			const columnName = section.dataset.col;
 			sortingInfo.set(section, {
-				dist: GDV.utils.computeNearestMatchDistance(colName, searchText),
-				order: orderMap.get(colName)
+				dist: GDV.utils.computeNearestMatchDistance(columnName, searchText),
+				order: orderMap.get(columnName)
 			});
 		}
 
@@ -1176,17 +1176,17 @@
 	}
 
 	function sortPrefilterSectionsByUsage(sectionArray) {
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const colOrder = Object.keys(colDefs);
-		const orderMap = new Map(colOrder.map((col, i) => [col, i]));
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnOrder = Object.keys(columnDetails);
+		const orderMap = new Map(columnOrder.map((col, i) => [col, i]));
 
 		sectionArray.sort((a, b) => {
 			return orderMap.get(a.dataset.col) - orderMap.get(b.dataset.col);
 		});
 	}
 
-	function sectionMatchesTokens(colName, tokens) {
-		const filterName = GDV.utils.normalizeFilterName(colName);
+	function sectionMatchesTokens(columnName, tokens) {
+		const filterName = GDV.utils.normalizeFilterName(columnName);
 		const columnDetails = GDV.state.getActiveColumnDetails()?.[filterName];
 		const description = columnDetails?.description?.toLowerCase() || "";
 		const tagPatterns = GDV.state.getTagQuickSearchPatterns()?.[filterName];

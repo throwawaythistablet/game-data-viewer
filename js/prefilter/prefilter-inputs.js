@@ -1,4 +1,5 @@
 (() => {
+	const BEST_NAME_SIMILARITY_LIMIT = 0.8;
 	let searchText = null;
 	let prefilterConditions = {};
 	let prefilterAst = null;
@@ -73,8 +74,8 @@
 
 	GDV.prefilter.updateActiveItemParametersInConditionAndAst = updateActiveItemParametersInConditionAndAst;
 	function updateActiveItemParametersInConditionAndAst(form, col) {
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const def = colDefs[col];
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const def = columnDetails[col];
 		if (!def) return;
 		if (isNumericColumn(def)) {
 			updateNumericPrefilter(form, col, def);
@@ -190,25 +191,30 @@
 
 	GDV.prefilter.updatePrefilterColumnNames = updatePrefilterColumnNames;
 	function updatePrefilterColumnNames(conditions, ast) {
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
 		const astColumnNamesSet = collectColumnsSetFromAst(ast);
 		const conditionColumnNamesSet = new Set(Object.keys(conditions || {}));
 		const allColumnNames = [...new Set([...astColumnNamesSet, ...conditionColumnNamesSet])];
-		const mapping = mapColumnNamesToColDefNames(allColumnNames, colDefs);
+		const mapping = mapColumnNamesToColumnDetailsNames(allColumnNames, columnDetails);
 		updatePrefilterColumnNamesInConditions(conditions, mapping);
 		updatePrefilterColumnNamesInAst(ast, mapping);
 	}
 
-	function mapColumnNamesToColDefNames(columns, colDefs) {
-		const colDefKeys = Object.keys(colDefs || {});
+	function mapColumnNamesToColumnDetailsNames(columnNames, columnDetails) {
+		const columnDetailsKeys = Object.keys(columnDetails || {});
 		const mapping = new Map();
-		for (const column of columns) {
-			// columnWithAssigned = column.replace(/^author: /, "assigned: ");
-			// columnWithAssigned = column.replace(/^(author|site): /, "assigned: ");
-			const match = GDV.utils.findBestStringMatch(column, colDefKeys);
-			// const match = GDV.utils.findBestStringMatch(columnWithAssigned, colDefKeys);
-			if (match !== null) {
-				mapping.set(column, match);
+		for (const columnName of columnNames) {
+			let adjustedColumnName = columnName.replace(/^author: /, "assigned: ");
+			if (!/^[\w\s]*\w+:/.test(adjustedColumnName)) {
+				adjustedColumnName = `text search: ${adjustedColumnName}`;
+			}
+			const bestName = GDV.utils.findBestStringMatch(adjustedColumnName, columnDetailsKeys);
+			if (bestName !== null) {
+				mapping.set(columnName, bestName);
+				const similarity = GDV.utils.getStringSimilarity(adjustedColumnName, bestName);
+				if (similarity < BEST_NAME_SIMILARITY_LIMIT) {
+					GDV.utils.reportSoftWarning("Prefilter column may be incorrect", `"${adjustedColumnName}" was matched to "${bestName}" with only ${(similarity * 100).toFixed(1)}% similarity. The imported filter may not match the intended column.`);
+				}
 			}
 		}
 		return mapping;
@@ -258,9 +264,9 @@
 
 	GDV.prefilter.arePrefiltersCorrect = arePrefiltersCorrect;
 	function arePrefiltersCorrect(conditions, ast) {
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
-		const conditionWarnings = validatePrefilterConditions(conditions, colDefs);
-		const astWarnings = validatePrefilterAst(ast, colDefs);
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const conditionWarnings = validatePrefilterConditions(conditions, columnDetails);
+		const astWarnings = validatePrefilterAst(ast, columnDetails);
 		const consistencyWarnings = validatePrefilterConsistency(conditions, ast);
 		if (conditionWarnings.length || astWarnings.length || consistencyWarnings.length) {
 			for (const w of conditionWarnings) {
@@ -279,12 +285,12 @@
 
 	GDV.prefilter.repairPrefilterConditionsAndAst = repairPrefilterConditionsAndAst;
 	function repairPrefilterConditionsAndAst(prefilterConditions, prefilterAst) {
-		const colDefs = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getActiveColumnDetails() || {};
 
 		// --- 1. CLEAN CONDITIONS (schema-level validation only)
 		const cleanConditions = {};
 		for (const col in (prefilterConditions || {})) {
-			if (colDefs[col]) {
+			if (columnDetails[col]) {
 				cleanConditions[col] = prefilterConditions[col];
 			}
 		}
@@ -1074,25 +1080,25 @@
 		return ast;
 	}
 
-	function validatePrefilterConditions(conditions, colDefs) {
+	function validatePrefilterConditions(conditions, columnDetails) {
 		if (!conditions || typeof conditions !== "object") {
 			return ["Invalid conditions object"];
 		}
 		const warnings = [];
 		for (const col in conditions) {
-			if (!colDefs[col]) {
+			if (!columnDetails[col]) {
 				warnings.push(`Condition name is not recognized: "${col}"`);
 			}
 		}
 		return warnings;
 	}
 
-	function validatePrefilterAst(ast, colDefs) {
+	function validatePrefilterAst(ast, columnDetails) {
 		const warnings = [];
 		function walk(node) {
 			if (!node) return;
 			if (node.ast_type === "VALUE") {
-				if (!colDefs[node.column]) {
+				if (!columnDetails[node.column]) {
 					warnings.push(`Name in expression is not recognized: ${node.column}`);
 				}
 				return;
