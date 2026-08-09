@@ -523,7 +523,7 @@
   (r"bexpr", r"gambling card games", r"<< _V_GAMBLING_CARD_GAMES_STRICT_V_ >> or positive_look_both(__GAMBLE__,-(2w)?-,__CARD_AND_DECK__)"),
   (r"bexpr", r"game franchise", r"<< FINAL FANTASY >> or << DRAGON QUEST >> or << WITCHER >> or << LIFE IS STRANGE >> or << SKYRIM >> or << WARCRAFT >> or << MASS EFFECT >> or << WARHAMMER >> or << GENSHIN >> or << OVERWATCH >> or << VALORANT >> or << POKEMON >> or << DIGIMON >> or << ZELDA >> or << TOMB RAIDER >> or << DANGANRONPA >> or << NIER AUTOMATA >> or << HUNIE POP >> or << _V_GAME_FRANCHISE_STRICT_V_ >>"),
   (r"bexpr", r"game over rape", r"<< _V_GAME_OVER_RAPE_V_ >> or positive_look_both(__GAME_OVER_DEFEAT__,-(2w)?-,__RAPE_NON_CONSEN__)"),
-  (r"bexpr", r"gameplay available", r"<< TURN BASED COMBAT >> or << INTERACTIVE COMBAT >> or << BOSS FIGHT >> or << PLATFORMER >> or << SIDE SCROLLER >> or << SANDBOX >> or << MINI GAMES >> or << PUZZLE >> or << DIFFICULTY MODE >> or << GRINDY >> or << RPG >> or << MANAGEMENT >> or << _V_GAMEPLAY_STRICT_V_ >>"),
+  (r"bexpr", r"gameplay available", r"<< TURN BASED COMBAT >> or << INTERACTIVE COMBAT >> or << BOSS FIGHT >> or << PLATFORMER >> or << SIDE SCROLLER >> or << SANDBOX >> or << MINI GAMES >> or << PUZZLE >> or << DIFFICULTY MODE >> or << GRINDY >> or << RPG >> or << _V_GAMEPLAY_STRICT_V_ >>"),
   (r"bexpr", r"gamer character", r"<< GAMER GIRL >> or << GAMER GUY >> or positive_look_both(__GAMER_WORD__,-(2w)?-,__AAP_PERSON_CHARACTER_PROTAGONIST__)"),
   (r"bexpr", r"gamer girl", r"positive_look_both(__GAMER_WORD__,-(2w)?-,__FEMALE_WITH_PRONOUNS__)"),
   (r"bexpr", r"gamer guy", r"positive_look_both(__GAMER_WORD__,-(2w)?-,__MALE_WITH_PRONOUNS__)"),
