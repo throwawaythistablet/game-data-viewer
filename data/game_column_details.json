@@ -85,8 +85,8 @@
       "4. Neutral",
       "5. Mixed",
       "6. No Data",
-      "8. Negative",
-      "9. Very Negative"
+      "7. Mildly Negative",
+      "8. Negative"
     ],
     "description": "Human-readable label for the overall sentiment score"
   },
@@ -106,8 +106,8 @@
       "4. Neutral",
       "5. Mixed",
       "6. No Data",
-      "8. Negative",
-      "9. Very Negative"
+      "7. Mildly Negative",
+      "8. Negative"
     ],
     "description": "Human-readable label for the art sentiment score"
   },
@@ -127,8 +127,8 @@
       "4. Neutral",
       "5. Mixed",
       "6. No Data",
-      "8. Negative",
-      "9. Very Negative"
+      "7. Mildly Negative",
+      "8. Negative"
     ],
     "description": "Human-readable label for the story sentiment score."
   },
@@ -148,8 +148,8 @@
       "4. Neutral",
       "5. Mixed",
       "6. No Data",
-      "8. Negative",
-      "9. Very Negative"
+      "7. Mildly Negative",
+      "8. Negative"
     ],
     "description": "Human-readable label for the content sentiment score."
   },
@@ -169,6 +169,7 @@
       "4. Neutral",
       "5. Mixed",
       "6. No Data",
+      "7. Mildly Negative",
       "8. Negative",
       "9. Very Negative"
     ],
