@@ -99,10 +99,20 @@
 
 	GDV.utils.debounce = (fn, delay = 100) => {
 		let timer = null;
-		return function (...args) {
+		const debounced = (...args) => {
 			clearTimeout(timer);
-			timer = setTimeout(() => fn.apply(this, args), delay);
+			timer = setTimeout(() => {
+				timer = null;
+				fn(...args);
+			}, delay);
 		};
+		debounced.cancel = () => {
+			if (timer !== null) {
+				clearTimeout(timer);
+				timer = null;
+			}
+		};
+		return debounced;
 	};
 
 	GDV.utils.findNearestGameKey = (input) => {

@@ -4,6 +4,7 @@
 	let currentPreviewIndex = 0;
 	let overlayMoveScheduled = false;
 	let lastMouseEvent = null;
+	let isResettingFilters = false;
 
 	bindPreviewOverlayGlobalCleanup();
 
@@ -20,87 +21,106 @@
 			await GDV.loading.finishLoading();
 			return;
 		}
+
 		const dt = csvTableElement.DataTable();
+		isResettingFilters = true;
 
-		// Native DOM queries
-		const checkboxFilters = document.querySelectorAll("tr.filters .filter-checkbox");
-		const textFilters = document.querySelectorAll("tr.filters .text-input-input");
-		const rangeFilters = document.querySelectorAll("tr.filters .filter-range");
+		try {
+			const checkboxFilters = document.querySelectorAll("tr.filters .filter-checkbox");
+			const textFilters = document.querySelectorAll("tr.filters .text-input-input");
+			const rangeFilters = document.querySelectorAll("tr.filters .filter-range");
 
-		// Reset column searches
-		await GDV.loading.updateLoadingDirectUpdate("Resetting column searches...", 0);
-		const colCount = dt.columns().count();
+			// Reset column searches without drawing after each change.
+			await GDV.loading.updateLoadingDirectUpdate("Resetting column searches...", 0);
+			const colCount = dt.columns().count();
 
-		for (let i = 0; i < colCount; i++) {
-			dt.column(i).search("");
+			for (let i = 0; i < colCount; i++) {
+				dt.column(i).search("");
 
-			await GDV.loading.updateLoadingStepProgress("Resetting column searches...", 0, 20, i + 1, colCount);
-			if (GDV.loading.isLoadingCancelled()) break;
-		}
-
-		// Reset checkboxes
-		for (let i = 0; i < checkboxFilters.length; i++) {
-			const box = checkboxFilters[i];
-			const checkboxes = box.querySelectorAll('input[type="checkbox"]');
-
-			checkboxes.forEach((cb) => {
-				cb.checked = true;
-			});
-
-			checkboxes.forEach((cb) => {
-				if (!cb.classList.contains("toggle-all")) {
-					cb.dispatchEvent(new Event("change", { bubbles: true }));
+				await GDV.loading.updateLoadingStepProgress("Resetting column searches...", 0, 20, i + 1, colCount);
+				if (GDV.loading.isLoadingCancelled()) {
+					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting column searches was cancelled before all column searches were reset.");
+					return;
 				}
-			});
-
-			await GDV.loading.updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, i + 1, checkboxFilters.length);
-			if (GDV.loading.isLoadingCancelled()) break;
-		}
-
-		// Reset text filters
-		for (let i = 0; i < textFilters.length; i++) {
-			const input = textFilters[i];
-			input.value = "";
-			input.dispatchEvent(new Event("keyup", { bubbles: true }));
-
-			await GDV.loading.updateLoadingStepProgress("Resetting text filters...", 40, 60, i + 1, textFilters.length);
-			if (GDV.loading.isLoadingCancelled()) break;
-		}
-
-		// Reset numeric range filters
-		for (let i = 0; i < rangeFilters.length; i++) {
-			const range = rangeFilters[i];
-
-			const minInput = range.querySelector(".range-input-min");
-			const maxInput = range.querySelector(".range-input-max");
-
-			if (minInput) {
-				minInput.value = range.dataset.originalMin || "";
-			}
-			if (maxInput) {
-				maxInput.value = range.dataset.originalMax || "";
 			}
 
-			const inputs = range.querySelectorAll("input");
-			inputs.forEach((input) => {
+			// Reset checkbox UI. The change handlers update their search state,
+			// but isResettingFilters prevents them from redrawing the table.
+			for (let i = 0; i < checkboxFilters.length; i++) {
+				const box = checkboxFilters[i];
+				const checkboxes = box.querySelectorAll('input[type="checkbox"]');
+
+				checkboxes.forEach((cb) => {
+					cb.checked = true;
+				});
+
+				checkboxes.forEach((cb) => {
+					if (!cb.classList.contains("toggle-all")) {
+						cb.dispatchEvent(new Event("change", { bubbles: true }));
+					}
+				});
+
+				await GDV.loading.updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, i + 1, checkboxFilters.length);
+				if (GDV.loading.isLoadingCancelled()) {
+					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting checkbox filters was cancelled before all checkbox filters were reset.");
+					return;
+				}
+			}
+
+			// Reset text filters without drawing after each field.
+			for (let i = 0; i < textFilters.length; i++) {
+				const input = textFilters[i];
+				input.value = "";
 				input.dispatchEvent(new Event("input", { bubbles: true }));
-			});
 
-			await GDV.loading.updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, i + 1, rangeFilters.length);
-			if (GDV.loading.isLoadingCancelled()) break;
+				await GDV.loading.updateLoadingStepProgress("Resetting text filters...", 40, 60, i + 1, textFilters.length);
+				if (GDV.loading.isLoadingCancelled()) {
+					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting text filters was cancelled before all text filters were reset.");
+					return;
+				}
+			}
+
+			// Reset numeric range filters. The input event updates the stored
+			// min/max values, while the reset flag suppresses the table draw.
+			for (let i = 0; i < rangeFilters.length; i++) {
+				const range = rangeFilters[i];
+
+				const minInput = range.querySelector(".range-input-min");
+				const maxInput = range.querySelector(".range-input-max");
+
+				if (minInput) {
+					minInput.value = range.dataset.originalMin || "";
+				}
+				if (maxInput) {
+					maxInput.value = range.dataset.originalMax || "";
+				}
+
+				const inputs = range.querySelectorAll("input");
+				inputs.forEach((input) => {
+					input.dispatchEvent(new Event("change", { bubbles: true }));
+				});
+
+				await GDV.loading.updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, i + 1, rangeFilters.length);
+				if (GDV.loading.isLoadingCancelled()) {
+					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting numeric range filters was cancelled before all range filters were reset.");
+					return;
+				}
+			}
+
+			// Reset column order if ColReorder is available.
+			if (dt.colReorder && typeof dt.colReorder.reset === "function") {
+				dt.colReorder.reset();
+			}
+
+			// Perform the only table draw for the entire reset operation.
+			await GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 80);
+			sortTable();
+
+			await GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
+		} finally {
+			isResettingFilters = false;
+			await GDV.loading.finishLoading();
 		}
-
-		// Reset column order if ColReorder is available
-		if (dt.colReorder && typeof dt.colReorder.reset === "function") {
-			dt.colReorder.reset();
-		}
-
-		// Reset sorting and redraw table
-		await GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 80);
-		sortTable();
-		await GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
-
-		await GDV.loading.finishLoading();
 	};
 
 	GDV.datatable.getColumnDescription = getColumnDescription;
@@ -144,8 +164,13 @@
 
 		createTableHeader(columns);
 		const tbody = createTableBody();
-		await appendRowsToTableInChunks(data, columns, tbody);
-		await initializeDataTableWithOptions(columns);
+
+		const areRowsAdded = await appendRowsToTableInChunks(data, columns, tbody);
+		if (!areRowsAdded) return;
+
+		const areFiltersAdded = await initializeDataTableWithOptions(columns);
+		if (!areFiltersAdded) return;
+
 		csvTableElement.show();
 	}
 
@@ -171,36 +196,21 @@
 
 	function buildThumbnailColumn() {
 		if (!GDV.state.getThumbnails()) return null;
-
 		return {
 			title: "thumbnails",
 			data: "__thumbnail__",
 			orderable: false,
 			searchable: false,
-			render: (_data, _type, row) => {
-				const key = row.key;
-				if (!key) return "";
-				const image_url = getThumbnailImageForKey(key);
-				const game_url = stripHtmlToString(row.url);
-				const vndb_url = stripHtmlToString(row.vndb_url);
-				const vndb_character_count = row.vndb_character_count
-				return renderThumbnail(image_url, game_url, vndb_url, vndb_character_count);
-			},
 		};
 	}
 
 	function buildViewImagesColumn(columnNames) {
 		if (!columnNames.includes("location")) return null;
-
 		return {
 			title: "View Images",
 			data: "__view_images__",
 			orderable: false,
 			searchable: false,
-			createdCell: (td) => {
-				td.textContent = "";
-				td.appendChild(renderViewButton());
-			},
 		};
 	}
 
@@ -262,7 +272,10 @@
 		const totalRows = data.length;
 
 		for (let start = 0; start < totalRows; start += CHUNK_SIZE) {
-			if (GDV.loading.isLoadingCancelled()) throw new Error("Loading cancelled by user.");
+			if (GDV.loading.isLoadingCancelled()) {
+				GDV.utils.reportSoftWarning("Table Row Loading Cancelled", "Loading table rows was cancelled before all rows were added.");
+				return false;
+			}
 			const chunk = data.slice(start, start + CHUNK_SIZE);
 			const fragment = document.createDocumentFragment();
 			chunk.forEach((rowData) => {
@@ -277,7 +290,7 @@
 						const image_url = getThumbnailImageForKey(key);
 						const game_url = stripHtmlToString(rowData.url);
 						const vndb_url = stripHtmlToString(rowData.vndb_url);
-						const vndb_character_count = rowData.vndb_character_count
+						const vndb_character_count = rowData.vndb_character_count;
 						td.appendChild(renderThumbnail(key, image_url, game_url, vndb_url, vndb_character_count));
 					} else if (col.data === "site_std_version") {
 						const rd = rowData[col.data];
@@ -300,17 +313,18 @@
 			await GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 80, 90, rowsProcessed, totalRows);
 		}
 		await GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 90);
+		return true;
 	}
 
 	function initializeDataTableWithOptions(columns) {
-		sortColumnName = getDefaultSortColumnName();
+		const sortColumnName = getDefaultSortColumnName();
 		let sortColumnIndex = findIndexOfColumnByNameInColumns(columns, sortColumnName);
 		if (isInvalidColumnIndex(sortColumnIndex)) {
 			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot sort by "${sortColumnName}": the column index is missing or invalid.`);
 			sortColumnIndex = 0;
 		}
 
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			const dt = csvTableElement.DataTable({
 				paging: true,
 				pageLength: 100,
@@ -323,14 +337,18 @@
 				colReorder: true,
 				autoWidth: false,
 				orderCellsTop: true,
-
 				dom: '<"top"lfip>rt<"bottom"lfip><"clear">',
 
 				initComplete: async function () {
-					const api = this.api();
-					addHeaderTooltips(api);
-					await addColumnFilters(api);
-					resolve();
+					try {
+						const api = this.api();
+						addHeaderTooltips(api);
+
+						const areFiltersAdded = await addColumnFilters(api);
+						resolve(areFiltersAdded);
+					} catch (err) {
+						reject(err);
+					}
 				},
 			});
 			// ⚡ Scroll to top on page change
@@ -353,10 +371,13 @@
 	async function addColumnFilters(api) {
 		const colCount = api.columns().count();
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
-		const ths = document.querySelectorAll(".filters th");
+		const ths = csvTableElement[0].querySelectorAll(".filters th");
 
 		for (let colIdx = 0; colIdx < colCount; colIdx++) {
-			if (GDV.loading.isLoadingCancelled()) throw new Error("Loading cancelled by user.");
+			if (GDV.loading.isLoadingCancelled()) {
+				GDV.utils.reportSoftWarning("Column Filter Setup Cancelled", "Adding column filters was cancelled before all filters were created.");
+				return false;
+			}
 			const column = api.column(colIdx);
 			const th = ths[colIdx];
 			if (!th) continue;
@@ -382,6 +403,7 @@
 
 		bindTableSortingButtons();
 		setupFiltersExpandCollapse();
+		return true;
 	}
 
 	function addGameSimilaritySearch(container) {
@@ -467,7 +489,7 @@
 		});
 	}
 
-	async function addColumnFilterItems(container, column, columnName, columnDetail, colIdx) {
+	function addColumnFilterItems(container, column, columnName, columnDetail, colIdx) {
 		addSortingControls(container, colIdx);
 		if (columnDetail.choices && columnDetail.choices.length > 0) {
 			addCheckboxFilter(container, column, columnName, columnDetail);
@@ -478,7 +500,7 @@
 		}
 	}
 
-	async function addSortingControls(container, colIdx) {
+	function addSortingControls(container, colIdx) {
 		// Create a wrapper div for buttons
 		const lineWrapper = document.createElement("div");
 		lineWrapper.className = "filters-line-wrapper";
@@ -556,38 +578,41 @@
 		box.addEventListener("change", (e) => {
 			const target = e.target;
 
-			// Toggle all handler
 			if (target.classList.contains("toggle-all")) {
 				const checked = target.checked;
 				const allCheckboxes = box.querySelectorAll('input[type="checkbox"]:not(.toggle-all)');
 				allCheckboxes.forEach((cb) => {
 					cb.checked = checked;
-					cb.dispatchEvent(new Event("change", { bubbles: true }));
 				});
+
+				applyCheckboxFilter(column, columnDetail, box, toggleInput);
 				return;
 			}
 
-			// Individual checkbox handler
 			if (target.matches('input[type="checkbox"]:not(.toggle-all)')) {
-				const checkedInputs = box.querySelectorAll('input[type="checkbox"]:not(.toggle-all):checked');
-				const checkedVals = Array.from(checkedInputs).map((el) => el.value);
-
-				toggleInput.checked = checkedVals.length === columnDetail.choices.length;
-
-				let searchRegex;
-
-				if (checkedVals.length === 0) {
-					searchRegex = ""; // match everything
-				} else if (checkedVals.length === columnDetail.choices.length) {
-					searchRegex = "";
-				} else {
-					const escaped = checkedVals.map((v) => $.fn.dataTable.util.escapeRegex(v));
-					searchRegex = `^(${escaped.join("|")})$`;
-				}
-
-				column.search(searchRegex, true, false).draw();
+				applyCheckboxFilter(column, columnDetail, box, toggleInput);
 			}
 		});
+	}
+
+	function applyCheckboxFilter(column, columnDetail, box, toggleInput) {
+		const checkedInputs = box.querySelectorAll('input[type="checkbox"]:not(.toggle-all):checked');
+		const checkedVals = Array.from(checkedInputs).map((el) => el.value);
+		toggleInput.checked = checkedVals.length === columnDetail.choices.length;
+
+		let searchRegex;
+		if (checkedVals.length === 0 || checkedVals.length === columnDetail.choices.length) {
+			searchRegex = "";
+		} else {
+			const escaped = checkedVals.map((v) => $.fn.dataTable.util.escapeRegex(v));
+			searchRegex = `^(${escaped.join("|")})$`;
+		}
+
+		column.search(searchRegex, true, false);
+
+		if (!isResettingFilters) {
+			column.draw();
+		}
 	}
 
 	function addRangeFilter(th, column, columnName, columnDetail) {
@@ -684,13 +709,19 @@
 			minVal = !Number.isNaN(minValRaw) ? minValRaw : undefined;
 			maxVal = !Number.isNaN(maxValRaw) ? maxValRaw : undefined;
 
-			table.draw();
+			if (!isResettingFilters) {
+				table.draw();
+			}
 		}
 
 		// Event listeners for min/max inputs
+		const applyRangeFilterDebounced = GDV.utils.debounce(applyRangeFilter, 500);
 		[minInput, maxInput].forEach((input) => {
-			input.addEventListener("input", applyRangeFilter);
-			input.addEventListener("change", applyRangeFilter);
+			input.addEventListener("input", applyRangeFilterDebounced);
+			input.addEventListener("change", () => {
+				applyRangeFilterDebounced.cancel();
+				applyRangeFilter();
+			});
 		});
 
 		// Apply filter initially
@@ -728,11 +759,11 @@
 
 		// Event handler
 		const handler = function () {
-			column.search(this.value).draw();
+			column.search(this.value);
+			if (!isResettingFilters) {
+				column.draw();
+			}
 		};
-
-		input.addEventListener("keyup", handler);
-		input.addEventListener("change", handler);
 		input.addEventListener("input", handler);
 	}
 
@@ -879,7 +910,6 @@
 		const playRegion = document.createElement("div");
 		playRegion.className = "table-thumbnail-play-overlay";
 		playRegion.textContent = "▶ Play";
-		wrapper.appendChild(playRegion);
 
 		aGame.appendChild(img);
 		wrapper.appendChild(aGame);
@@ -976,28 +1006,19 @@
 
 		const text = String(val).trim();
 
-		// Excel-style HYPERLINK formula
-		const hyperlinkMatch = text.match(/^=HYPERLINK\("([^"]+)",\s*"([^"]+)"\)$/i);
-		if (hyperlinkMatch) {
-			const [, rawPath, label] = hyperlinkMatch;
-			return createHyperlinkNode(toFileUrl(rawPath), label);
-		}
+		const excelHyperlinkNode = createExcelHyperlinkNode(text);
+		if (excelHyperlinkNode) return excelHyperlinkNode;
 
-		// Web URLs
-		if (/^https?:\/\//i.test(text)) {
+		if (isWebUrl(text)) {
 			return createHyperlinkNode(text, text);
 		}
 
-		// Local Windows path
-		if (/^[a-zA-Z]:\\/.test(text)) {
+		if (isWindowsPath(text)) {
 			return createHyperlinkNode(toFileUrl(text), text);
 		}
 
-		// Highlight numeric columns
 		const highlightedNode = createHighlightedNode(text, columnName);
-		if (highlightedNode) {
-			return highlightedNode;
-		}
+		if (highlightedNode) return highlightedNode;
 
 		return document.createTextNode(text);
 	}
@@ -1020,7 +1041,15 @@
 		return GDV.state.getSimilarityGame() ? GDV.tableGenerator.getSimilarityScoreName() : "bayesian_rating";
 	}
 
-	// Small helper for hyperlink nodes
+	function createExcelHyperlinkNode(text) {
+		const match = text.match(/^=HYPERLINK\("([^"]+)",\s*"([^"]+)"\)$/i);
+		if (!match) return null;
+
+		const [, path, label] = match;
+		const url = isWebUrl(path) ? path : toFileUrl(path);
+		return createHyperlinkNode(url, label);
+	}
+
 	function createHyperlinkNode(url, label) {
 		const a = document.createElement("a");
 		a.href = url;
@@ -1080,17 +1109,15 @@
 		const previewImg = document.getElementById("previewImage");
 		if (!overlay || !previewImg) return;
 
-		const offset = 20; // small gap from cursor
-		let x = e.pageX + offset;
-		let y = e.pageY + offset;
-
-		// Keep overlay within viewport
+		const offset = 20;
+		let x = e.clientX + offset;
+		let y = e.clientY + offset;
 		const vw = window.innerWidth;
 		const vh = window.innerHeight;
 		const rect = previewImg.getBoundingClientRect();
 
-		if (x + rect.width > vw) x = e.pageX - rect.width - offset;
-		if (y + rect.height > vh) y = e.pageY - rect.height - offset;
+		if (x + rect.width > vw) x = e.clientX - rect.width - offset;
+		if (y + rect.height > vh) y = e.clientY - rect.height - offset;
 
 		overlay.style.left = `${x}px`;
 		overlay.style.top = `${y}px`;
@@ -1203,24 +1230,22 @@
 		const rowData = dt.row(tr).data();
 		if (!rowData) return null;
 
-		// In this implementation, DataTables row data is always array-based (DOM-sourced, not object mode).
-		// Case 1: object row (key-based)
-		// if (typeof rowData === "object" && !Array.isArray(rowData)) {
-		// 	return rowData[columnName] ?? null;
-		// }
-
-		// Case 2: array row (index-based)
 		const colIdx = findIndexOfColumnByNameInTable(columnName);
 		if (colIdx == null) return null;
 
 		return rowData[colIdx] ?? null;
 	}
 
+	function isWebUrl(text) {
+		return /^https?:\/\//i.test(text);
+	}
+
+	function isWindowsPath(text) {
+		return /^[a-zA-Z]:\\/.test(text);
+	}
+
 	function toFileUrl(path) {
-		if (path.startsWith("http")) return path;
-		let urlPath = path.replace(/\\/g, "/");
-		if (!urlPath.startsWith("/")) urlPath = `/${urlPath}`;
-		return `file:///${urlPath}`;
+		return `file:///${path.replace(/\\/g, "/")}`;
 	}
 
 	function isInvalidColumnIndex(columnIndex) {
@@ -1250,7 +1275,6 @@
 	}
 
 	function resetSimilarityGame() {
-		similarGameRow = null;
 		GDV.state.resetSimilarityGame();
 		GDV.dom.refreshMainPanelSimilarityGameSection();
 	}
@@ -1279,14 +1303,7 @@
 	}
 
 	function handleThumbnailMouseLeave() {
-		const overlay = document.getElementById("previewOverlay");
-		const previewImg = document.getElementById("previewImage");
-
-		if (overlay) overlay.style.display = "none";
-		if (previewImg) previewImg.src = "";
-
-		stopPreviewSlideshow();
-		currentPreviewIndex = 0;
+		hidePreviewOverlay();
 	}
 
 	function handleThumbnailMouseMove(e) {
