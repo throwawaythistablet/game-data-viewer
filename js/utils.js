@@ -88,7 +88,7 @@
 	};
 
 	// Yield with a short fixed delay (setTimeout)
-	GDV.utils.yieldToBrowserTimeout = async (ms = 50) => {
+	GDV.utils.yieldToBrowserTimeout = async (ms = 100) => {
 		await new Promise((resolve) => setTimeout(resolve, ms));
 	};
 
@@ -222,6 +222,28 @@
 		const bb = Math.abs(b);
 		return Math.min(aa, bb) / Math.max(aa, bb);
 	};
+
+	GDV.utils.stripHtmlAndConvertToNumber = (text) => {
+		if (typeof text === "number") return text; // already a number
+		if (typeof text !== "string") return NaN; // not parseable
+		return parseFloat(stripHtmlAndNormalize(text));
+	}
+
+	GDV.utils.stripHtmlAndNormalize = stripHtmlAndNormalize;
+	function stripHtmlAndNormalize(text) {
+		return text
+			.replace(/<[^>]*>/g, "") // remove HTML tags
+			.replace(/,/g, "") // remove commas
+			.replace(/\s+/g, "") // remove spaces inside numbers
+			.trim();
+	}
+
+	GDV.utils.stripHtmlToString = stripHtmlToString;
+	function stripHtmlToString(text) {
+		if (typeof text !== "string") return text;
+		// Remove all HTML tags and trim
+		return text.replace(/<[^>]*>/g, "").trim();
+	}
 
 	GDV.utils.normalizeFilterName = (columnName) => {
 		return columnName.includes(": ") ? columnName.split(": ")[1] : columnName;

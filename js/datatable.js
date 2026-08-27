@@ -110,11 +110,12 @@
 
 			// Reset column order if ColReorder is available.
 			if (dt.colReorder && typeof dt.colReorder.reset === "function") {
+				await GDV.loading.updateLoadingDirectUpdate("Resetting column order...", 80);
 				dt.colReorder.reset();
 			}
 
 			// Perform the only table draw for the entire reset operation.
-			await GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 80);
+			await GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 90);
 			sortTable();
 
 			await GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
@@ -288,8 +289,8 @@
 					} else if (col.data === "__thumbnail__") {
 						const key = rowData.key;
 						const image_url = getThumbnailImageForKey(key);
-						const game_url = stripHtmlToString(rowData.url);
-						const vndb_url = stripHtmlToString(rowData.vndb_url);
+						const game_url = GDV.utils.stripHtmlToString(rowData.url);
+						const vndb_url = GDV.utils.stripHtmlToString(rowData.vndb_url);
 						const vndb_character_count = rowData.vndb_character_count;
 						td.appendChild(renderThumbnail(key, image_url, game_url, vndb_url, vndb_character_count));
 					} else if (col.data === "site_std_version") {
@@ -396,7 +397,6 @@
 			}
 			if (!columnDetail) continue;
 			addColumnFilterItems(container, columnName, columnDetail);
-
 			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
 		}
 		await GDV.loading.updateLoadingDirectUpdate("Finalizing Results...", 99);
@@ -684,9 +684,6 @@
 		[minInput, maxInput].forEach((input) => {
 			input.addEventListener("input", applyRangeFilterDebounced);
 		});
-
-		// Apply filter initially
-		applyRangeFilter(columnName, minInput, maxInput);
 	}
 
 	function applyRangeFilter(columnName, minInput, maxInput) {
@@ -707,11 +704,12 @@
 			column.search("", true, false);
 		} else {
 			const trie = GDV.utils.createRegexTrie();
-			column.nodes().each((td) => {
-				const rawValue = table.cell(td).render("filter");
-				const num = stripHtmlAndConvertToNumber(rawValue);
+			const values = column.data();
+			values.each((rawValue) => {
+				const normalizedValueStr = GDV.utils.stripHtmlAndNormalize(String(rawValue));
+				const num = parseFloat(normalizedValueStr);
 				if (Number.isNaN(num) || (minValue === undefined || num >= minValue) && (maxValue === undefined || num <= maxValue)) {
-					trie.add(String(rawValue));
+					trie.add(normalizedValueStr);
 				}
 			});
 			const searchRegex = trie.toRegex();
@@ -752,22 +750,23 @@
 		input.name = inputId;
 		wrapper.appendChild(input);
 
-		// Event handler
-		const handler = function () {
-			const columnIndex = findIndexOfColumnByNameInTable(columnName);
-			if (isInvalidColumnIndex(columnIndex)) {
-				GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot apply the filter for "${columnName}": the column index is missing or invalid.`);
-				return;
-			}
+		const applyTextFilterDebounced = GDV.utils.debounce(() => applyTextFilter(columnName, input));
+		input.addEventListener("input", applyTextFilterDebounced);
+	}
 
-			const column = csvTableElement.DataTable().column(columnIndex);
-			column.search(this.value);
+	function applyTextFilter(columnName, input) {
+		const columnIndex = findIndexOfColumnByNameInTable(columnName);
+		if (isInvalidColumnIndex(columnIndex)) {
+			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot apply the filter for "${columnName}": the column index is missing or invalid.`);
+			return;
+		}
 
-			if (!isResettingFilters) {
-				column.draw();
-			}
-		};
-		input.addEventListener("input", handler);
+		const column = csvTableElement.DataTable().column(columnIndex);
+		column.search(input.value);
+
+		if (!isResettingFilters) {
+			column.draw();
+		}
 	}
 
 	function bindTableSortingButtons() {
@@ -1259,23 +1258,6 @@
 
 	function isInvalidColumnIndex(columnIndex) {
 		return columnIndex === null || columnIndex === -1;
-	}
-
-	function stripHtmlAndConvertToNumber(text) {
-		if (typeof text === "number") return text; // already a number
-		if (typeof text !== "string") return NaN; // not parseable
-		const cleaned = text
-			.replace(/<[^>]*>/g, "") // remove HTML tags
-			.replace(/,/g, "") // remove commas
-			.replace(/\s+/g, "") // remove spaces inside numbers
-			.trim();
-		return parseFloat(cleaned);
-	}
-
-	function stripHtmlToString(text) {
-		if (typeof text !== "string") return text;
-		// Remove all HTML tags and trim
-		return text.replace(/<[^>]*>/g, "").trim();
 	}
 
 	function setSimilarityGame(gameName) {
