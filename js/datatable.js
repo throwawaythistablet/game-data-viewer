@@ -1,10 +1,11 @@
 (() => {
 	const csvTableElement = $("#csvTable");
+	let isResettingFilters = false;
+	let columnIndexByNameMap = null;
 	let previewTimer = null;
 	let currentPreviewIndex = 0;
 	let overlayMoveScheduled = false;
 	let lastMouseEvent = null;
-	let isResettingFilters = false;
 
 	bindPreviewOverlayGlobalCleanup();
 
@@ -1196,27 +1197,37 @@
 	}
 
 	function findIndexOfColumnByNameInTable(columnName) {
-		const dt = csvTableElement.DataTable();
 		if (!columnName) return null;
-		const target = columnName.toLowerCase();
-		const colIdx = dt
-			.columns()
-			.indexes()
-			.toArray()
-			.find((i) => {
-				const header = dt.column(i).header();
-				const key = header?.dataset?.columnKey;
-				return key && key.toLowerCase() === target;
-			});
-		return colIdx ?? null;
+		const columnNameLower = columnName.toLowerCase();
+
+		if (!columnIndexByNameMap) rebuildColumnIndexByNameMap();
+		const columnIndex = columnIndexByNameMap.get(columnNameLower);
+		if (columnIndex === undefined) return null;
+
+		const dt = csvTableElement.DataTable();
+		const currentColumnNameLower = dt.column(columnIndex).header()?.dataset?.columnKey?.toLowerCase();
+
+		if (currentColumnNameLower !== columnNameLower) {
+			rebuildColumnIndexByNameMap();
+			return columnIndexByNameMap.get(columnNameLower) ?? null;
+		}
+		return columnIndex;
+	}
+
+	function rebuildColumnIndexByNameMap() {
+		const dt = csvTableElement.DataTable();
+		columnIndexByNameMap = new Map();
+
+		dt.columns().indexes().each((i) => {
+			const columnName = dt.column(i).header()?.dataset?.columnKey;
+			if (columnName) columnIndexByNameMap.set(columnName.toLowerCase(), i);
+		});
 	}
 
 	function findIndexOfColumnByNameInColumns(columns, columnName) {
 		if (!Array.isArray(columns) || !columnName) return null;
 		columnName = columnName.toLowerCase();
-
 		const idx = columns.findIndex((col) => col?.title?.toLowerCase() === columnName);
-
 		return idx !== -1 ? idx : null;
 	}
 
