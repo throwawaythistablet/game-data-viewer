@@ -222,7 +222,6 @@
 		} catch (err) {
 			GDV.utils.reportSoftWarning("Destroy DataTable Failed", "Failed to destroy existing DataTable.", err, { csvTableElement });
 		} finally {
-			clearTableRangeFilters();
 			csvTableElement.empty();
 		}
 	}
@@ -395,7 +394,7 @@
 				continue;
 			}
 			if (!columnDetail) continue;
-			addColumnFilterItems(container, column, columnName, columnDetail, colIdx);
+			addColumnFilterItems(container, columnName, columnDetail);
 
 			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
 		}
@@ -489,18 +488,18 @@
 		});
 	}
 
-	function addColumnFilterItems(container, column, columnName, columnDetail, colIdx) {
-		addSortingControls(container, colIdx);
+	function addColumnFilterItems(container, columnName, columnDetail) {
+		addSortingControls(container, columnName);
 		if (columnDetail.choices && columnDetail.choices.length > 0) {
-			addCheckboxFilter(container, column, columnName, columnDetail);
+			addCheckboxFilter(container, columnName, columnDetail);
 		} else if (columnDetail.type === "int" || columnDetail.type === "float") {
-			addRangeFilter(container, column, columnName, columnDetail);
+			addRangeFilter(container, columnName, columnDetail);
 		} else {
-			addTextFilter(container, column, columnName);
+			addTextFilter(container, columnName);
 		}
 	}
 
-	function addSortingControls(container, colIdx) {
+	function addSortingControls(container, columnName) {
 		// Create a wrapper div for buttons
 		const lineWrapper = document.createElement("div");
 		lineWrapper.className = "filters-line-wrapper";
@@ -508,13 +507,13 @@
 		// Create ascending button
 		const asc = document.createElement("button");
 		asc.className = "sort-asc btn";
-		asc.dataset.colIdx = colIdx;
+		asc.dataset.columnName = columnName;
 		asc.textContent = "Sort ↑";
 
 		// Create descending button
 		const desc = document.createElement("button");
 		desc.className = "sort-desc btn";
-		desc.dataset.colIdx = colIdx;
+		desc.dataset.columnName = columnName;
 		desc.textContent = "Sort ↓";
 
 		// Append buttons to the wrapper
@@ -525,7 +524,7 @@
 		container.append(lineWrapper);
 	}
 
-	function addCheckboxFilter(th, column, columnName, columnDetail) {
+	function addCheckboxFilter(th, columnName, columnDetail) {
 		const box = document.createElement("div");
 		box.className = "filter-checkbox";
 		th.appendChild(box);
@@ -585,17 +584,17 @@
 					cb.checked = checked;
 				});
 
-				applyCheckboxFilter(column, columnDetail, box, toggleInput);
+				applyCheckboxFilter(columnName, columnDetail, box, toggleInput);
 				return;
 			}
 
 			if (target.matches('input[type="checkbox"]:not(.toggle-all)')) {
-				applyCheckboxFilter(column, columnDetail, box, toggleInput);
+				applyCheckboxFilter(columnName, columnDetail, box, toggleInput);
 			}
 		});
 	}
 
-	function applyCheckboxFilter(column, columnDetail, box, toggleInput) {
+	function applyCheckboxFilter(columnName, columnDetail, box, toggleInput) {
 		const checkedInputs = box.querySelectorAll('input[type="checkbox"]:not(.toggle-all):checked');
 		const checkedVals = Array.from(checkedInputs).map((el) => el.value);
 		toggleInput.checked = checkedVals.length === columnDetail.choices.length;
@@ -608,6 +607,13 @@
 			searchRegex = `^(${escaped.join("|")})$`;
 		}
 
+		const columnIndex = findIndexOfColumnByNameInTable(columnName);
+		if (isInvalidColumnIndex(columnIndex)) {
+			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot apply the filter for "${columnName}": the column index is missing or invalid.`);
+			return;
+		}
+
+		const column = csvTableElement.DataTable().column(columnIndex);
 		column.search(searchRegex, true, false);
 
 		if (!isResettingFilters) {
@@ -615,7 +621,7 @@
 		}
 	}
 
-	function addRangeFilter(th, column, columnName, columnDetail) {
+	function addRangeFilter(th, columnName, columnDetail) {
 		// Container
 		const box = document.createElement("div");
 		box.className = "filter-range";
@@ -668,67 +674,55 @@
 		maxInput.value = columnDetail.max ?? "";
 		maxWrapper.appendChild(maxInput);
 
-		// Store original values in dataset
+		// Store original values for reset
 		box.dataset.originalMin = columnDetail.min ?? "";
 		box.dataset.originalMax = columnDetail.max ?? "";
 
-		const colIdx = column.index();
-		const dataKey = column.dataSrc();
-		const table = column.table();
-
-		let minVal;
-		let maxVal;
-
-		// Single DataTables filter function
-		const rangeFilter = (_settings, data) => {
-			let rawVal;
-
-			if (data == null) rawVal = undefined;
-			else if (typeof data === "object" && !Array.isArray(data)) rawVal = data[dataKey];
-			else if (Array.isArray(data)) rawVal = data[colIdx];
-			else rawVal = data;
-
-			const num = stripHtmlAndConvertToNumber(rawVal);
-			if (Number.isNaN(num)) return true;
-
-			if (minVal !== undefined && num < minVal) return false;
-			if (maxVal !== undefined && num > maxVal) return false;
-
-			return true;
-		};
-
-		const tableId = csvTableElement.id || "csvTable";
-		rangeFilter._rangeFilterKey = `rangeFilter_${tableId}_${colIdx}`;
-
-		$.fn.dataTable.ext.search.push(rangeFilter);
-
-		function applyRangeFilter() {
-			const minValRaw = parseFloat(minInput.value);
-			const maxValRaw = parseFloat(maxInput.value);
-
-			minVal = !Number.isNaN(minValRaw) ? minValRaw : undefined;
-			maxVal = !Number.isNaN(maxValRaw) ? maxValRaw : undefined;
-
-			if (!isResettingFilters) {
-				table.draw();
-			}
-		}
-
 		// Event listeners for min/max inputs
-		const applyRangeFilterDebounced = GDV.utils.debounce(applyRangeFilter, 500);
+		const applyRangeFilterDebounced = GDV.utils.debounce(() => applyRangeFilter(columnName, minInput, maxInput));
 		[minInput, maxInput].forEach((input) => {
 			input.addEventListener("input", applyRangeFilterDebounced);
-			input.addEventListener("change", () => {
-				applyRangeFilterDebounced.cancel();
-				applyRangeFilter();
-			});
 		});
 
 		// Apply filter initially
-		applyRangeFilter();
+		applyRangeFilter(columnName, minInput, maxInput);
 	}
 
-	function addTextFilter(th, column, columnName) {
+	function applyRangeFilter(columnName, minInput, maxInput) {
+		table = csvTableElement.DataTable();
+		const columnIndex = findIndexOfColumnByNameInTable(columnName);
+		if (isInvalidColumnIndex(columnIndex)) {
+			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot apply the range filter for "${columnName}": the column index is missing or invalid.`);
+			return;
+		}
+
+		const minValueRaw = parseFloat(minInput.value);
+		const maxValueRaw = parseFloat(maxInput.value);
+		const minValue = !Number.isNaN(minValueRaw) ? minValueRaw : undefined;
+		const maxValue = !Number.isNaN(maxValueRaw) ? maxValueRaw : undefined;
+
+		const column = table.column(columnIndex);
+		if (minValue === undefined && maxValue === undefined) {
+			column.search("", true, false);
+		} else {
+			const trie = GDV.utils.createRegexTrie();
+			column.nodes().each((td) => {
+				const rawValue = table.cell(td).render("filter");
+				const num = stripHtmlAndConvertToNumber(rawValue);
+				if (Number.isNaN(num) || (minValue === undefined || num >= minValue) && (maxValue === undefined || num <= maxValue)) {
+					trie.add(String(rawValue));
+				}
+			});
+			const searchRegex = trie.toRegex();
+			column.search(searchRegex, true, false);
+		}
+
+		if (!isResettingFilters) {
+			table.draw();
+		}
+	}
+
+	function addTextFilter(th, columnName) {
 		// Wrapper div
 		const wrapper = document.createElement("div");
 		wrapper.className = "text-input-wrapper";
@@ -759,7 +753,15 @@
 
 		// Event handler
 		const handler = function () {
+			const columnIndex = findIndexOfColumnByNameInTable(columnName);
+			if (isInvalidColumnIndex(columnIndex)) {
+				GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot apply the filter for "${columnName}": the column index is missing or invalid.`);
+				return;
+			}
+
+			const column = csvTableElement.DataTable().column(columnIndex);
 			column.search(this.value);
+
 			if (!isResettingFilters) {
 				column.draw();
 			}
@@ -769,21 +771,30 @@
 
 	function bindTableSortingButtons() {
 		if (!csvTableElement.data("sortingButtonsBound")) {
-			// Ascending sort buttons
 			csvTableElement.on("click", ".sort-asc", function () {
+				const columnName = $(this).data("columnName");
+				const columnIndex = findIndexOfColumnByNameInTable(columnName);
+				if (isInvalidColumnIndex(columnIndex)) {
+					GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot sort by "${columnName}": the column index is missing or invalid.`);
+					return;
+				}
+
 				const dt = csvTableElement.DataTable();
-				const colIdx = Number($(this).data("colIdx"));
-				dt.order([colIdx, "asc"]).draw();
+				dt.order([columnIndex, "asc"]).draw();
 			});
 
-			// Descending sort buttons
 			csvTableElement.on("click", ".sort-desc", function () {
+				const columnName = $(this).data("columnName");
+				const columnIndex = findIndexOfColumnByNameInTable(columnName);
+				if (isInvalidColumnIndex(columnIndex)) {
+					GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot sort by "${columnName}": the column index is missing or invalid.`);
+					return;
+				}
+
 				const dt = csvTableElement.DataTable();
-				const colIdx = Number($(this).data("colIdx"));
-				dt.order([colIdx, "desc"]).draw();
+				dt.order([columnIndex, "desc"]).draw();
 			});
 
-			// Mark as bound
 			csvTableElement.data("sortingButtonsBound", true);
 		}
 	}
@@ -1001,10 +1012,10 @@
 		return overlay
 	}
 
-	function renderCellValueNode(val, columnName = null) {
-		if (val === undefined || val === null) return document.createTextNode("");
+	function renderCellValueNode(value, columnName = null) {
+		if (value === undefined || value === null) return document.createTextNode("");
 
-		const text = String(val).trim();
+		const text = String(value).trim();
 
 		const excelHyperlinkNode = createExcelHyperlinkNode(text);
 		if (excelHyperlinkNode) return excelHyperlinkNode;
@@ -1150,19 +1161,6 @@
 				hidePreviewOverlay();
 			}
 		});
-	}
-
-	function clearTableRangeFilters() {
-		// Get table ID using native DOM
-		const tableId = csvTableElement.id || "csvTable";
-
-		// Filter out any existing range filters
-		$.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter((fn) => typeof fn._rangeFilterKey !== "string" || !fn._rangeFilterKey.startsWith(`rangeFilter_${tableId}_`));
-
-		// Redraw table if it exists
-		if ($.fn.DataTable.isDataTable(csvTableElement)) {
-			csvTableElement.DataTable().draw(false);
-		}
 	}
 
 	function getThumbnailImageForKey(key) {

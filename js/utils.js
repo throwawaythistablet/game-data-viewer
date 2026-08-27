@@ -239,6 +239,65 @@
 		URL.revokeObjectURL(url);
 	};
 
+	GDV.utils.createRegexTrie = () => {
+		const root = { children: new Map(), terminal: false };
+
+		function add(value) {
+			let node = root;
+			for (const char of value) {
+				if (!node.children.has(char)) {
+					node.children.set(char, { children: new Map(), terminal: false });
+				}
+				node = node.children.get(char);
+			}
+			node.terminal = true;
+		}
+
+		function serialize(node, cache) {
+			if (cache.has(node)) return cache.get(node);
+			const entries = [...node.children.entries()].sort(([a], [b]) => a.localeCompare(b));
+			const parts = [];
+			for (let i = 0; i < entries.length; i++) {
+				const [char, child] = entries[i];
+				const childPattern = serialize(child, cache);
+
+				if (/^\d$/.test(char)) {
+					let end = i;
+
+					while (end + 1 < entries.length) {
+						const [nextChar, nextChild] = entries[end + 1];
+
+						if (!/^\d$/.test(nextChar)) break;
+						if (Number(nextChar) !== Number(entries[end][0]) + 1) break;
+						if (serialize(nextChild, cache) !== childPattern) break;
+
+						end++;
+					}
+
+					if (end > i) {
+						const digitPattern = end - i === 9 ? "\\d" : `[${char}-${entries[end][0]}]`;
+						parts.push(`${digitPattern}${childPattern}`);
+						i = end;
+						continue;
+					}
+				}
+				parts.push(`${$.fn.dataTable.util.escapeRegex(char)}${childPattern}`);
+			}
+
+			let pattern = parts.length === 0 ? "" : parts.length === 1 ? parts[0] : `(?:${parts.join("|")})`;
+			if (node.terminal && pattern) pattern = `(?:${pattern})?`;
+			cache.set(node, pattern);
+			return pattern;
+		}
+
+		return {
+			add, toRegex() {
+				const pattern = serialize(root, new Map());
+				return pattern ? `^${pattern}$` : `(?!x)x`;
+			}
+		};
+	};
+
 	function createErrorMessage(error) {
 		if (!error?.message) return "";
 		const msg = error.message.toString().trim();
