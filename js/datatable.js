@@ -110,7 +110,7 @@
 
 			// Reset column order if ColReorder is available.
 			if (dt.colReorder && typeof dt.colReorder.reset === "function") {
-				await GDV.loading.updateLoadingDirectUpdate("Resetting column order...", 80);
+				await GDV.loading.updateLoadingDirectUpdate("Resetting the column order...", 80);
 				dt.colReorder.reset();
 			}
 
