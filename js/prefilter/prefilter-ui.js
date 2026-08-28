@@ -178,7 +178,7 @@
 		// Input field
 		const input = document.createElement("input");
 		input.type = "text";
-		input.placeholder = "Search prefilters to change…";
+		input.placeholder = "Search prefilters to change...";
 		input.className = "prefilter-search-input";
 		input.id = inputId;
 		input.name = inputId;
@@ -428,7 +428,7 @@
 		spinner.className = "prefilter-grid-loading-spinner";
 		const text = document.createElement("span");
 		text.className = "prefilter-grid-loading-text";
-		text.textContent = "Searching prefilters…";
+		text.textContent = "Searching prefilters...";
 
 		loader.appendChild(spinner);
 		loader.appendChild(text);
@@ -486,7 +486,7 @@
 		const textSpan = document.createElement("span");
 		textSpan.className = "hidden-past-limit";
 		textSpan.textContent = "0";
-		indicator.appendChild(document.createTextNode("…and "));
+		indicator.appendChild(document.createTextNode("...and "));
 		indicator.appendChild(textSpan);
 		indicator.appendChild(document.createTextNode(" more hidden "));
 
@@ -710,7 +710,7 @@
 		input.id = inputId;
 		input.name = name;
 		input.className = "text-input-input";
-		input.placeholder = `Prefilter ${name}…`;
+		input.placeholder = `Prefilter ${name}...`;
 
 		if (prefill?.text?.[0] !== undefined) {
 			input.value = prefill.text[0];

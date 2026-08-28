@@ -1,23 +1,23 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 612932],
-      ["data/game_column_details.json", 2035103],
-      ["data/game_data_part_1.csv", 43356869],
-      ["data/game_data_part_10.csv", 43148914],
-      ["data/game_data_part_2.csv", 43164204],
-      ["data/game_data_part_3.csv", 43155901],
-      ["data/game_data_part_4.csv", 43158705],
-      ["data/game_data_part_5.csv", 43162120],
-      ["data/game_data_part_6.csv", 43149845],
-      ["data/game_data_part_7.csv", 43154126],
-      ["data/game_data_part_8.csv", 43161661],
-      ["data/game_data_part_9.csv", 43159338],
-      ["data/game_keys.json", 1349843],
-      ["data/game_thumbnails.json", 20179185],
-      ["data/tag_quick_search_patterns.json", 5091841],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 612932],
+		["data/game_column_details.json", 2035103],
+		["data/game_data_part_1.csv", 43356869],
+		["data/game_data_part_10.csv", 43148914],
+		["data/game_data_part_2.csv", 43164204],
+		["data/game_data_part_3.csv", 43155901],
+		["data/game_data_part_4.csv", 43158705],
+		["data/game_data_part_5.csv", 43162120],
+		["data/game_data_part_6.csv", 43149845],
+		["data/game_data_part_7.csv", 43154126],
+		["data/game_data_part_8.csv", 43161661],
+		["data/game_data_part_9.csv", 43159338],
+		["data/game_keys.json", 1349843],
+		["data/game_thumbnails.json", 20179185],
+		["data/tag_quick_search_patterns.json", 5091841],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -167,19 +167,18 @@
 		}
 
 		try {
-			await GDV.loading.startLoading("var(--green)");
-			await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
-			await GDV.loading.updateLoadingDirectUpdate("Loading database records…", 0);
+			await GDV.loading.startLoading("Initializing...", "var(--green)");
+			await GDV.loading.updateLoadingDirectUpdate("Loading database records...", 0);
 			await loadCsvFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading column details…", 80);
+			await GDV.loading.updateLoadingDirectUpdate("Loading column details...", 80);
 			await loadColumnDetailsFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading game keys…", 82.5);
+			await GDV.loading.updateLoadingDirectUpdate("Loading game keys...", 82.5);
 			await loadGameKeysFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading column categories…", 85);
+			await GDV.loading.updateLoadingDirectUpdate("Loading column categories...", 85);
 			await loadColumnCategoriesFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions…", 87.5);
+			await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions...", 87.5);
 			await loadTagQuickSearchPatternsFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails…", 90);
+			await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails...", 90);
 			await loadThumbnailsFromLocalDataFolder();
 			GDV.prefilter.initializePrefilterOverlayIfNeeded();
 			await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
@@ -193,14 +192,13 @@
 
 	async function initializeHostedMode() {
 		initializeCommonSteps();
-		await GDV.loading.updateLoadingDirectUpdate("Initializing…", 0);
-		await GDV.loading.startLoading("var(--green)");
-		await loadDefaultCsv("Loading database records…", 0, 80);
-		await loadDefaultColumnDetailsJson("Loading column details…", 80, 82.5);
-		await loadDefaultGameKeysJson("Loading game keys…", 82.5, 85);
-		await loadDefaultColumnCategoriesJson("Loading column categories…", 85, 87.5);
-		await loadDefaultTagQuickSearchPatternsJson("Loading tag definitions…", 87.5, 90);
-		await loadDefaultThumbnailsJson("Linking thumbnails…", 90, 100);
+		await GDV.loading.startLoading("Initializing...", "var(--green)");
+		await loadDefaultCsv("Loading database records...", 0, 80);
+		await loadDefaultColumnDetailsJson("Loading column details...", 80, 82.5);
+		await loadDefaultGameKeysJson("Loading game keys...", 82.5, 85);
+		await loadDefaultColumnCategoriesJson("Loading column categories...", 85, 87.5);
+		await loadDefaultTagQuickSearchPatternsJson("Loading tag definitions...", 87.5, 90);
+		await loadDefaultThumbnailsJson("Linking thumbnails...", 90, 100);
 		GDV.prefilter.initializePrefilterOverlayIfNeeded();
 		await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
 		await GDV.loading.finishLoading();

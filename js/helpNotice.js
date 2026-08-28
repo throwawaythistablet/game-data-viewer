@@ -78,7 +78,7 @@
             ⚠️ <strong>Important: Use Prefilters to Reduce Load</strong><br>
             <ul style="margin-top: 8px;">
                 <li>The dataset is large and all processing happens client-side in your browser. Without prefilters, loading can be slow and memory-intensive.</li>
-                <li>⏳ You’ll see a “Loading Data…” overlay while it loads.</li>
+                <li>⏳ You’ll see a “Loading Data...” overlay while it loads.</li>
                 <li>✅ Using prefilters ensures a faster, smoother experience when exploring the table.</li>
             </ul>
 

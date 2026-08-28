@@ -1564,12 +1564,13 @@ td {
    ========================================================================== */
 
 #loadingOverlayElement {
+	--loading-color: currentColor;
 	display: none;
 	position: fixed;
 	inset: 0;
 	z-index: 704;
 	background: var(--bg-overlay);
-	color: var(--accent);
+	color: var(--loading-color);
 	font-size: 18px;
 	align-items: center;
 	justify-content: center;
@@ -1585,7 +1586,7 @@ td {
 	margin-top: 10px;
 	border-radius: 50%;
 	border: 6px solid var(--bg-elevated);
-	border-top: 6px solid var(--accent);
+	border-top: 6px solid var(--loading-color);
 	animation: spin 0.5s linear infinite;
 }
 
@@ -1602,7 +1603,7 @@ td {
 #loadingOverlayLabel {
 	font-size: 22px;
 	font-weight: bold;
-	color: var(--accent);
+	color: var(--loading-color);
 	margin-bottom: 16px;
 	text-align: center;
 }
@@ -1619,7 +1620,7 @@ td {
 #loadingOverlayProgressBar {
 	width: 0%;
 	height: 28px;
-	background: var(--accent);
+	background: var(--loading-color);
 	transition: width 0.1s;
 }
 

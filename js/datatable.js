@@ -15,9 +15,7 @@
 	};
 
 	GDV.datatable.resetAllFilters = async () => {
-		await GDV.loading.startLoading("var(--yellow)");
-		await GDV.loading.updateLoadingDirectUpdate("Resetting filters...", 0);
-
+		await GDV.loading.startLoading("Resetting filters...", "var(--yellow)");
 		if (!$.fn.DataTable.isDataTable(csvTableElement)) {
 			await GDV.loading.finishLoading();
 			return;
@@ -32,13 +30,13 @@
 			const rangeFilters = document.querySelectorAll("tr.filters .filter-range");
 
 			// Reset column searches without drawing after each change.
-			await GDV.loading.updateLoadingDirectUpdate("Resetting column searches...", 0);
+			GDV.loading.updateLoadingDirectUpdate("Resetting column searches...", 0);
 			const colCount = dt.columns().count();
 
 			for (let i = 0; i < colCount; i++) {
 				dt.column(i).search("");
 
-				await GDV.loading.updateLoadingStepProgress("Resetting column searches...", 0, 20, i + 1, colCount);
+				GDV.loading.updateLoadingStepProgress("Resetting column searches...", 0, 20, i + 1, colCount);
 				if (GDV.loading.isLoadingCancelled()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting column searches was cancelled before all column searches were reset.");
 					return;
@@ -61,7 +59,7 @@
 					}
 				});
 
-				await GDV.loading.updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, i + 1, checkboxFilters.length);
+				GDV.loading.updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, i + 1, checkboxFilters.length);
 				if (GDV.loading.isLoadingCancelled()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting checkbox filters was cancelled before all checkbox filters were reset.");
 					return;
@@ -74,7 +72,7 @@
 				input.value = "";
 				input.dispatchEvent(new Event("input", { bubbles: true }));
 
-				await GDV.loading.updateLoadingStepProgress("Resetting text filters...", 40, 60, i + 1, textFilters.length);
+				GDV.loading.updateLoadingStepProgress("Resetting text filters...", 40, 60, i + 1, textFilters.length);
 				if (GDV.loading.isLoadingCancelled()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting text filters was cancelled before all text filters were reset.");
 					return;
@@ -101,7 +99,7 @@
 					input.dispatchEvent(new Event("change", { bubbles: true }));
 				});
 
-				await GDV.loading.updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, i + 1, rangeFilters.length);
+				GDV.loading.updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, i + 1, rangeFilters.length);
 				if (GDV.loading.isLoadingCancelled()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting numeric range filters was cancelled before all range filters were reset.");
 					return;
@@ -110,15 +108,15 @@
 
 			// Reset column order if ColReorder is available.
 			if (dt.colReorder && typeof dt.colReorder.reset === "function") {
-				await GDV.loading.updateLoadingDirectUpdate("Resetting the column order...", 80);
+				GDV.loading.updateLoadingDirectUpdate("Resetting the column order...", 80);
 				dt.colReorder.reset();
 			}
 
 			// Perform the only table draw for the entire reset operation.
-			await GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 90);
+			GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 90);
 			sortTable();
 
-			await GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
+			GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
 		} finally {
 			isResettingFilters = false;
 			await GDV.loading.finishLoading();
@@ -167,7 +165,7 @@
 		createTableHeader(columns);
 		const tbody = createTableBody();
 
-		const areRowsAdded = await appendRowsToTableInChunks(data, columns, tbody);
+		const areRowsAdded = appendRowsToTableInChunks(data, columns, tbody);
 		if (!areRowsAdded) return;
 
 		const areFiltersAdded = await initializeDataTableWithOptions(columns);
@@ -268,7 +266,7 @@
 		return tbody;
 	}
 
-	async function appendRowsToTableInChunks(data, columns, tbody) {
+	function appendRowsToTableInChunks(data, columns, tbody) {
 		const CHUNK_SIZE = 500;
 		const totalRows = data.length;
 
@@ -295,7 +293,7 @@
 						td.appendChild(renderThumbnail(key, image_url, game_url, vndb_url, vndb_character_count));
 					} else if (col.data === "site_std_version") {
 						const rd = rowData[col.data];
-						const trimmed = typeof rd === "string" && rd.length > 19 ? `${rd.slice(0, 19)}…` : rd;
+						const trimmed = typeof rd === "string" && rd.length > 19 ? `${rd.slice(0, 19)}...` : rd;
 						td.appendChild(renderCellValueNode(trimmed, col.data));
 					} else {
 						td.appendChild(renderCellValueNode(rowData[col.data], col.data));
@@ -311,9 +309,9 @@
 
 			// Actual rows processed so far
 			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			await GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 80, 90, rowsProcessed, totalRows);
+			GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 80, 90, rowsProcessed, totalRows);
 		}
-		await GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 90);
+		GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 90);
 		return true;
 	}
 
@@ -340,12 +338,12 @@
 				orderCellsTop: true,
 				dom: '<"top"lfip>rt<"bottom"lfip><"clear">',
 
-				initComplete: async function () {
+				initComplete: function () {
 					try {
 						const api = this.api();
 						addHeaderTooltips(api);
 
-						const areFiltersAdded = await addColumnFilters(api);
+						const areFiltersAdded = addColumnFilters(api);
 						resolve(areFiltersAdded);
 					} catch (err) {
 						reject(err);
@@ -369,7 +367,7 @@
 		});
 	}
 
-	async function addColumnFilters(api) {
+	function addColumnFilters(api) {
 		const colCount = api.columns().count();
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
 		const ths = csvTableElement[0].querySelectorAll(".filters th");
@@ -397,9 +395,9 @@
 			}
 			if (!columnDetail) continue;
 			addColumnFilterItems(container, columnName, columnDetail);
-			await GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
+			GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
 		}
-		await GDV.loading.updateLoadingDirectUpdate("Finalizing Results...", 99);
+		GDV.loading.updateLoadingDirectUpdate("Finalizing Results...", 99);
 
 		bindTableSortingButtons();
 		setupFiltersExpandCollapse();

@@ -7,19 +7,33 @@
 	const loadingOverlayStopButton = document.getElementById("loadingOverlayStopButton");
 
 	let loadingCancelled = false;
+	let loadingRenderFrame = null;
+	let pendingLoadingLabel = "";
+	let pendingLoadingPercent = 0;
+	let renderedLoadingLabel = null;
+	let renderedLoadingPercent = null;
+	let renderedLoadingProgressText = null;
 
 	GDV.loading.startLoading = startLoading;
-	async function startLoading(color) {
-		await updateLoadingDirectUpdate("Loading...", 0);
+	async function startLoading(label, color) {
+		cancelScheduledLoadingRender();
 		resetLoadingCancellation();
-		await showLoading(color);
+
+		resetLoadingDisplay();
+		setLoadingColor(color);
+		updateLoadingLabel(label);
+		showLoading();
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
 	GDV.loading.finishLoading = finishLoading;
 	async function finishLoading() {
-		await hideLoading();
+		cancelScheduledLoadingRender();
 		resetLoadingCancellation();
-		await updateLoadingDirectUpdate("", 0);
+
+		hideLoading();
+		resetLoadingDisplay();
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
 	GDV.loading.resetLoadingCancellation = resetLoadingCancellation;
@@ -38,55 +52,93 @@
 	}
 
 	GDV.loading.updateLoadingDirectUpdate = updateLoadingDirectUpdate;
-	async function updateLoadingDirectUpdate(label, percent) {
-		loadingOverlayLabel.textContent = label;
-		loadingOverlayProgressBar.style.width = `${percent}%`;
-		loadingOverlayProgressText.textContent = `${percent.toFixed(2)}%`;
-
-		// GDV.utils.reportInformation(`Loading Direct Progress: ${percent.toFixed(2)}%`);
-
-		await GDV.utils.yieldToBrowserTimeout();
+	function updateLoadingDirectUpdate(label, percent) {
+		scheduleLoadingRender(label, percent);
 	}
 
 	GDV.loading.updateLoadingStepProgress = updateLoadingStepProgress;
-	async function updateLoadingStepProgress(label, startPercent, endPercent, currentStep, totalSteps) {
+	function updateLoadingStepProgress(label, startPercent, endPercent, currentStep, totalSteps) {
 		if (totalSteps <= 0) totalSteps = 1;
 
 		const fractionOfPhase = currentStep / totalSteps;
 		const totalPercent = startPercent + fractionOfPhase * (endPercent - startPercent);
 
+		scheduleLoadingRender(label, totalPercent);
+	}
+
+	function scheduleLoadingRender(label, percent) {
+		pendingLoadingLabel = label;
+		pendingLoadingPercent = percent;
+
+		if (loadingRenderFrame !== null) return;
+
+		loadingRenderFrame = requestAnimationFrame(renderLoading);
+	}
+
+	function renderLoading() {
+		loadingRenderFrame = null;
+		updateLoadingLabel(pendingLoadingLabel);
+		updateLoadingProgress(pendingLoadingPercent);
+	}
+
+	function updateLoadingLabel(label) {
+		if (renderedLoadingLabel === label) return;
+
 		loadingOverlayLabel.textContent = label;
-		loadingOverlayProgressBar.style.width = `${totalPercent}%`;
-		loadingOverlayProgressText.textContent = `${totalPercent.toFixed(2)}%`;
-
-		// GDV.utils.reportInformation(`Loading Step Progress: ${totalPercent.toFixed(2)}%`, `Step: ${currentStep}/${totalSteps} | Phase: ${startPercent} → ${endPercent}%`, {'startPercent': startPercent, 'endPercent': endPercent, 'currentStep': currentStep, 'totalSteps': totalSteps});
-
-		await GDV.utils.yieldToBrowserTimeout();
+		renderedLoadingLabel = label;
 	}
 
-	async function showLoading(color) {
-		if (color) {
-			changeColor(color);
-		}
+	function updateLoadingProgress(percent) {
+		if (renderedLoadingPercent === percent) return;
+
+		updateLoadingProgressBar(percent);
+		updateLoadingProgressText(percent);
+		renderedLoadingPercent = percent;
+	}
+
+	function updateLoadingProgressBar(percent) {
+		loadingOverlayProgressBar.style.width = `${percent}%`;
+	}
+
+	function updateLoadingProgressText(percent) {
+		const progressText = `${percent.toFixed(2)}%`;
+
+		if (renderedLoadingProgressText === progressText) return;
+
+		loadingOverlayProgressText.textContent = progressText;
+		renderedLoadingProgressText = progressText;
+	}
+
+	function resetLoadingDisplay() {
+		renderedLoadingLabel = null;
+		renderedLoadingPercent = null;
+		renderedLoadingProgressText = null;
+		updateLoadingLabel("");
+		updateLoadingProgress(0);
+	}
+
+	function showLoading() {
 		loadingOverlayElement.style.display = "flex";
-		await GDV.utils.yieldToBrowserTimeout();
 	}
 
-	async function hideLoading() {
+	function hideLoading() {
 		loadingOverlayElement.style.display = "none";
-		await GDV.utils.yieldToBrowserTimeout();
 	}
 
-	function changeColor(color) {
-		loadingOverlayElement.style.color = color;
-		loadingOverlaySpinner.style.borderTop = `6px solid ${color}`;
-		loadingOverlayLabel.style.color = color;
-		loadingOverlayProgressBar.style.background = color;
+	function setLoadingColor(color) {
+		loadingOverlayElement.style.setProperty("--loading-color", color);
 	}
 
-	// Stop loading button
+	function cancelScheduledLoadingRender() {
+		if (loadingRenderFrame === null) return;
+
+		cancelAnimationFrame(loadingRenderFrame);
+		loadingRenderFrame = null;
+	}
+
 	loadingOverlayStopButton.addEventListener("click", async () => {
 		cancelLoading();
-		await hideLoading();
+		hideLoading();
+		await GDV.utils.yieldToBrowserTimeout();
 	});
 })();

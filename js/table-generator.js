@@ -48,8 +48,7 @@
 	}
 
 	async function startTableGenerationUi() {
-		await GDV.loading.startLoading("var(--accent)");
-		await GDV.loading.updateLoadingDirectUpdate("Starting Data Search...", 0);
+		await GDV.loading.startLoading("Starting Data Search...", "var(--accent)");
 		GDV.dom.hideMainPrefiltersPanelSection();
 	}
 
@@ -71,11 +70,11 @@
 			similarityGameRowData = null;
 			if (hasSimilarityScoreCondition) {
 				const rowsDataWithoutScore = await getRowsDataFromCsv(file, filterDetails);
-				await putSimilarityScores(rowsDataWithoutScore, similarityGameRowData);
-				rowsData = await filterRowsData(rowsDataWithoutScore, filterDetails);
+				putSimilarityScores(rowsDataWithoutScore, similarityGameRowData);
+				rowsData = filterRowsData(rowsDataWithoutScore, filterDetails);
 			} else {
 				rowsData = await getRowsDataFromCsv(file, filterDetails);
-				await putSimilarityScores(rowsData, similarityGameRowData);
+				putSimilarityScores(rowsData, similarityGameRowData);
 			}
 		} else {
 			rowsData = await getRowsDataFromCsv(file, filterDetails);
@@ -89,7 +88,7 @@
 		await GDV.datatable.loadTable(rowsData);
 	}
 
-	async function getRowsDataFromCsv(file, filterDetails) {
+	function getRowsDataFromCsv(file, filterDetails) {
 		const rowsData = [];
 		const totalSize = file.size;
 		let rowsProcessed = 0;
@@ -127,8 +126,8 @@
 						GDV.loading.updateLoadingStepProgress("Generating Row Data...", 0, 50, bytesProcessed, totalSize);
 					}
 				},
-				complete: async () => {
-					await GDV.loading.updateLoadingDirectUpdate("Row Data Generated.", 50);
+				complete: () => {
+					GDV.loading.updateLoadingDirectUpdate("Row Data Generated.", 50);
 					resolve(rowsData);
 				},
 				error: (err) => {
@@ -148,7 +147,7 @@
 		return filteredRowData;
 	}
 
-	async function putSimilarityScores(rowsData, similarityGameRowData) {
+	function putSimilarityScores(rowsData, similarityGameRowData) {
 		if (!Array.isArray(rowsData) || !similarityGameRowData) {
 			return;
 		}
@@ -157,13 +156,13 @@
 			const rowData = rowsData[i];
 			rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowData, rowData);
 			if (i % ROW_THROTTLE === 0) {
-				await GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 70, i, rowsData.length);
+				GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", 50, 70, i, rowsData.length);
 			}
 		}
-		await GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", 70);
+		GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", 70);
 	}
 
-	async function filterRowsData(rowsData, filterDetails) {
+	function filterRowsData(rowsData, filterDetails) {
 		if (!Array.isArray(rowsData)) {
 			return [];
 		}
@@ -179,10 +178,10 @@
 				filteredRowsData.push(rowData);
 			}
 			if (i % ROW_THROTTLE === 0) {
-				await GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", 70, 80, i, rowsData.length);
+				GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", 70, 80, i, rowsData.length);
 			}
 		}
-		await GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", 80);
+		GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", 80);
 		return filteredRowsData;
 	}
 
