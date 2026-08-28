@@ -1,5 +1,6 @@
 (() => {
-	const ROW_THROTTLE = 100;
+	const PAPA_PARSE_ROW_THROTTLE = 100;
+	const GENERIC_ROW_THROTTLE = 1000;
 	const SIMILARITY_SCORE_NAME = "similarity_score";
 	let similarityGameRowData = null;
 
@@ -70,11 +71,11 @@
 			similarityGameRowData = null;
 			if (hasSimilarityScoreCondition) {
 				const rowsDataWithoutScore = await getRowsDataFromCsv(file, filterDetails, 0, 70);
-				putSimilarityScores(rowsDataWithoutScore, similarityGameRowData, 70, 80);
-				rowsData = filterRowsData(rowsDataWithoutScore, filterDetails, 80, 90);
+				await putSimilarityScores(rowsDataWithoutScore, similarityGameRowData, 70, 80);
+				rowsData = await filterRowsData(rowsDataWithoutScore, filterDetails, 80, 90);
 			} else {
 				rowsData = await getRowsDataFromCsv(file, filterDetails, 0, 70);
-				putSimilarityScores(rowsData, similarityGameRowData, 70, 90);
+				await putSimilarityScores(rowsData, similarityGameRowData, 70, 90);
 			}
 		} else {
 			rowsData = await getRowsDataFromCsv(file, filterDetails, 0, 90);
@@ -121,7 +122,7 @@
 					bytesProcessed += estimateRowSize(row.data);
 
 					// Throttle progress updates
-					if (rowsProcessed % ROW_THROTTLE === 0) {
+					if (rowsProcessed % PAPA_PARSE_ROW_THROTTLE === 0) {
 						GDV.loading.updateLoadingStepProgress("Generating Row Data...", startPercent, endPercent, bytesProcessed, totalSize);
 						parser.pause();
 						parser.resume();
@@ -149,7 +150,7 @@
 		return filteredRowData;
 	}
 
-	function putSimilarityScores(rowsData, similarityGameRowData, startPercent, endPercent) {
+	async function putSimilarityScores(rowsData, similarityGameRowData, startPercent, endPercent) {
 		if (!Array.isArray(rowsData) || !similarityGameRowData) {
 			return;
 		}
@@ -157,14 +158,16 @@
 		for (let i = 0; i < rowsData.length; i++) {
 			const rowData = rowsData[i];
 			rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowData, rowData);
-			if (i % ROW_THROTTLE === 0) {
+			if (i % GENERIC_ROW_THROTTLE === 0) {
 				GDV.loading.updateLoadingStepProgress("Generating Similarity Scores...", startPercent, endPercent, i, rowsData.length);
+				await GDV.utils.yieldToBrowserTimeout();
 			}
 		}
 		GDV.loading.updateLoadingDirectUpdate("Similarity Scores Generated.", endPercent);
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
-	function filterRowsData(rowsData, filterDetails, startPercent, endPercent) {
+	async function filterRowsData(rowsData, filterDetails, startPercent, endPercent) {
 		if (!Array.isArray(rowsData)) {
 			return [];
 		}
@@ -179,11 +182,13 @@
 			if (isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
 				filteredRowsData.push(rowData);
 			}
-			if (i % ROW_THROTTLE === 0) {
+			if (i % GENERIC_ROW_THROTTLE === 0) {
 				GDV.loading.updateLoadingStepProgress("Filtering Results by Similarity...", startPercent, endPercent, i, rowsData.length);
+				await GDV.utils.yieldToBrowserTimeout();
 			}
 		}
 		GDV.loading.updateLoadingDirectUpdate("Similarity Filtering Finished.", endPercent);
+		await GDV.utils.yieldToBrowserTimeout();
 		return filteredRowsData;
 	}
 

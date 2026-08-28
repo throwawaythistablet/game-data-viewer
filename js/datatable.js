@@ -163,7 +163,7 @@
 		createTableHeader(columns);
 		const tbody = createTableBody();
 
-		const areRowsAdded = appendRowsToTableInChunks(data, columns, tbody);
+		const areRowsAdded = await appendRowsToTableInChunks(data, columns, tbody);
 		if (!areRowsAdded) return;
 
 		const areFiltersAdded = await initializeDataTableWithOptions(columns);
@@ -264,8 +264,9 @@
 		return tbody;
 	}
 
-	function appendRowsToTableInChunks(data, columns, tbody) {
+	async function appendRowsToTableInChunks(data, columns, tbody) {
 		const CHUNK_SIZE = 500;
+		const CHUNK_THROTTLE = CHUNK_SIZE * 2;
 		const totalRows = data.length;
 
 		for (let start = 0; start < totalRows; start += CHUNK_SIZE) {
@@ -307,9 +308,13 @@
 
 			// Actual rows processed so far
 			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 90, 95, rowsProcessed, totalRows);
+			if (start % CHUNK_THROTTLE === 0) {
+				GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 90, 95, rowsProcessed, totalRows);
+				await GDV.utils.yieldToBrowserTimeout();
+			}
 		}
 		GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 95);
+		await GDV.utils.yieldToBrowserTimeout();
 		return true;
 	}
 
