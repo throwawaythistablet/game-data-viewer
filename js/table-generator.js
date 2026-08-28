@@ -55,7 +55,7 @@
 	async function finishTableGenerationUi() {
 		GDV.dom.refreshMainPagePrefiltersPanel();
 		GDV.dom.showMainPrefiltersPanelSection();
-		await GDV.loading.finishLoading();
+		await GDV.loading.finishLoading("Table Generation Complete.");
 	}
 
 	async function generateTable(file) {
@@ -103,7 +103,7 @@
 				worker: true,
 				newline: "", // Important to handle line endings
 				step: (row, parser) => {
-					if (GDV.loading.isLoadingCancelled()) {
+					if (GDV.loading.isLoadingStopped()) {
 						parser.abort();
 						reject(new Error("Loading cancelled by user."));
 						return;

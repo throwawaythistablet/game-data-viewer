@@ -1,12 +1,12 @@
 (() => {
 	const loadingOverlayElement = document.getElementById("loadingOverlayElement");
 	const loadingOverlayLabel = document.getElementById("loadingOverlayLabel");
-	const loadingOverlaySpinner = document.getElementById("loadingOverlaySpinner");
 	const loadingOverlayProgressBar = document.getElementById("loadingOverlayProgressBar");
 	const loadingOverlayProgressText = document.getElementById("loadingOverlayProgressText");
 	const loadingOverlayStopButton = document.getElementById("loadingOverlayStopButton");
+	const finishDisplayDelay = 1000;
 
-	let loadingCancelled = false;
+	let loadingStopped = false;
 	let loadingRenderFrame = null;
 	let pendingLoadingLabel = "";
 	let pendingLoadingPercent = 0;
@@ -14,10 +14,15 @@
 	let renderedLoadingPercent = null;
 	let renderedLoadingProgressText = null;
 
+	GDV.loading.isLoadingStopped = isLoadingStopped;
+	function isLoadingStopped() {
+		return loadingStopped;
+	}
+
 	GDV.loading.startLoading = startLoading;
 	async function startLoading(label, color) {
 		cancelScheduledLoadingRender();
-		resetLoadingCancellation();
+		resetLoadingStoppedFlag();
 
 		resetLoadingDisplay();
 		setLoadingColor(color);
@@ -27,28 +32,25 @@
 	}
 
 	GDV.loading.finishLoading = finishLoading;
-	async function finishLoading() {
-		cancelScheduledLoadingRender();
-		resetLoadingCancellation();
+	async function finishLoading(label) {
+		updateLoadingDirectUpdate(label, 100);
+		await GDV.utils.yieldToBrowserTimeout(finishDisplayDelay);
 
+		cancelScheduledLoadingRender();
+		resetLoadingStoppedFlag();
 		hideLoading();
 		resetLoadingDisplay();
 		await GDV.utils.yieldToBrowserTimeout();
 	}
 
-	GDV.loading.resetLoadingCancellation = resetLoadingCancellation;
-	function resetLoadingCancellation() {
-		loadingCancelled = false;
-	}
+	GDV.loading.abortLoading = abortLoading;
+	async function abortLoading() {
+		cancelScheduledLoadingRender();
+		resetLoadingStoppedFlag();
 
-	GDV.loading.cancelLoading = cancelLoading;
-	function cancelLoading() {
-		loadingCancelled = true;
-	}
-
-	GDV.loading.isLoadingCancelled = isLoadingCancelled;
-	function isLoadingCancelled() {
-		return loadingCancelled;
+		hideLoading();
+		resetLoadingDisplay();
+		await GDV.utils.yieldToBrowserTimeout();
 	}
 
 	GDV.loading.updateLoadingDirectUpdate = updateLoadingDirectUpdate;
@@ -73,6 +75,14 @@
 		if (loadingRenderFrame !== null) return;
 
 		loadingRenderFrame = requestAnimationFrame(renderLoading);
+	}
+
+	function resetLoadingStoppedFlag() {
+		loadingStopped = false;
+	}
+
+	function stopLoading() {
+		loadingStopped = true;
 	}
 
 	function renderLoading() {
@@ -137,7 +147,7 @@
 	}
 
 	loadingOverlayStopButton.addEventListener("click", async () => {
-		cancelLoading();
+		stopLoading();
 		hideLoading();
 		await GDV.utils.yieldToBrowserTimeout();
 	});

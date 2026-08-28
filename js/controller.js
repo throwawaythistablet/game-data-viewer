@@ -168,25 +168,24 @@
 
 		try {
 			await GDV.loading.startLoading("Initializing...", "var(--green)");
-			await GDV.loading.updateLoadingDirectUpdate("Loading database records...", 0);
+			GDV.loading.updateLoadingDirectUpdate("Loading database records...", 0);
 			await loadCsvFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading column details...", 80);
+			GDV.loading.updateLoadingDirectUpdate("Loading column details...", 80);
 			await loadColumnDetailsFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading game keys...", 82.5);
+			GDV.loading.updateLoadingDirectUpdate("Loading game keys...", 82.5);
 			await loadGameKeysFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading column categories...", 85);
+			GDV.loading.updateLoadingDirectUpdate("Loading column categories...", 85);
 			await loadColumnCategoriesFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Loading tag definitions...", 87.5);
+			GDV.loading.updateLoadingDirectUpdate("Loading tag definitions...", 87.5);
 			await loadTagQuickSearchPatternsFromLocalDataFolder();
-			await GDV.loading.updateLoadingDirectUpdate("Linking thumbnails...", 90);
+			GDV.loading.updateLoadingDirectUpdate("Linking thumbnails...", 90);
 			await loadThumbnailsFromLocalDataFolder();
 			GDV.prefilter.initializePrefilterOverlayIfNeeded();
-			await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
-			await GDV.loading.finishLoading();
+			await GDV.loading.finishLoading("Initialization complete.");
 			await applyUrlPrefiltersOrPrompt();
 		} catch (err) {
 			GDV.utils.reportHardError("Data Folder Load Failed", "An unexpected error occurred while loading files from the data folder.", err, { dataFolderHandle });
-			await GDV.loading.finishLoading();
+			await GDV.loading.abortLoading();
 		}
 	}
 
@@ -200,8 +199,7 @@
 		await loadDefaultTagQuickSearchPatternsJson("Loading tag definitions...", 87.5, 90);
 		await loadDefaultThumbnailsJson("Linking thumbnails...", 90, 100);
 		GDV.prefilter.initializePrefilterOverlayIfNeeded();
-		await GDV.loading.updateLoadingDirectUpdate("Initialization complete.", 100);
-		await GDV.loading.finishLoading();
+		await GDV.loading.finishLoading("Initialization complete.");
 		await applyUrlPrefiltersOrPrompt();
 	}
 
@@ -473,7 +471,7 @@
 	}
 
 	async function fetchWithProgress(url, estimatedFileSize, label, startPercent, endPercent) {
-		await GDV.loading.updateLoadingDirectUpdate(label, startPercent);
+		GDV.loading.updateLoadingDirectUpdate(label, startPercent);
 
 		const response = await fetch(url);
 		if (!response.ok) return response;
@@ -495,7 +493,7 @@
 
 					const now = performance.now();
 					if (now - lastUpdate > MIN_THROTTLE_MS) {
-						await GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, total);
+						GDV.loading.updateLoadingStepProgress(label, startPercent, endPercent, loaded, total);
 						lastUpdate = now;
 					}
 
@@ -507,7 +505,7 @@
 					console.warn(`[fetchWithProgress] File size mismatch for ${url} | actualLoaded=${loaded} | currentEstimate=${estimatedFileSize} | UPDATE_ESTIMATE_TO=${loaded}`);
 				}
 
-				await GDV.loading.updateLoadingDirectUpdate(label, endPercent);
+				GDV.loading.updateLoadingDirectUpdate(label, endPercent);
 				controller.close();
 			},
 		});

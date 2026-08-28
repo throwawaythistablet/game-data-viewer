@@ -17,7 +17,7 @@
 	GDV.datatable.resetAllFilters = async () => {
 		await GDV.loading.startLoading("Resetting filters...", "var(--yellow)");
 		if (!$.fn.DataTable.isDataTable(csvTableElement)) {
-			await GDV.loading.finishLoading();
+			await GDV.loading.abortLoading();
 			return;
 		}
 
@@ -37,7 +37,7 @@
 				dt.column(i).search("");
 
 				GDV.loading.updateLoadingStepProgress("Resetting column searches...", 0, 20, i + 1, colCount);
-				if (GDV.loading.isLoadingCancelled()) {
+				if (GDV.loading.isLoadingStopped()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting column searches was cancelled before all column searches were reset.");
 					return;
 				}
@@ -60,7 +60,7 @@
 				});
 
 				GDV.loading.updateLoadingStepProgress("Resetting checkbox filters...", 20, 40, i + 1, checkboxFilters.length);
-				if (GDV.loading.isLoadingCancelled()) {
+				if (GDV.loading.isLoadingStopped()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting checkbox filters was cancelled before all checkbox filters were reset.");
 					return;
 				}
@@ -73,7 +73,7 @@
 				input.dispatchEvent(new Event("input", { bubbles: true }));
 
 				GDV.loading.updateLoadingStepProgress("Resetting text filters...", 40, 60, i + 1, textFilters.length);
-				if (GDV.loading.isLoadingCancelled()) {
+				if (GDV.loading.isLoadingStopped()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting text filters was cancelled before all text filters were reset.");
 					return;
 				}
@@ -100,7 +100,7 @@
 				});
 
 				GDV.loading.updateLoadingStepProgress("Resetting numeric range filters...", 60, 80, i + 1, rangeFilters.length);
-				if (GDV.loading.isLoadingCancelled()) {
+				if (GDV.loading.isLoadingStopped()) {
 					GDV.utils.reportSoftWarning("Filter Reset Cancelled", "Resetting numeric range filters was cancelled before all range filters were reset.");
 					return;
 				}
@@ -115,11 +115,9 @@
 			// Perform the only table draw for the entire reset operation.
 			GDV.loading.updateLoadingDirectUpdate("Sorting the table...", 90);
 			sortTable();
-
-			GDV.loading.updateLoadingDirectUpdate("Resetting Filters Complete.", 100);
 		} finally {
 			isResettingFilters = false;
-			await GDV.loading.finishLoading();
+			await GDV.loading.finishLoading("Resetting Filters Complete.");
 		}
 	};
 
@@ -271,7 +269,7 @@
 		const totalRows = data.length;
 
 		for (let start = 0; start < totalRows; start += CHUNK_SIZE) {
-			if (GDV.loading.isLoadingCancelled()) {
+			if (GDV.loading.isLoadingStopped()) {
 				GDV.utils.reportSoftWarning("Table Row Loading Cancelled", "Loading table rows was cancelled before all rows were added.");
 				return false;
 			}
@@ -373,7 +371,7 @@
 		const ths = csvTableElement[0].querySelectorAll(".filters th");
 
 		for (let colIdx = 0; colIdx < colCount; colIdx++) {
-			if (GDV.loading.isLoadingCancelled()) {
+			if (GDV.loading.isLoadingStopped()) {
 				GDV.utils.reportSoftWarning("Column Filter Setup Cancelled", "Adding column filters was cancelled before all filters were created.");
 				return false;
 			}
