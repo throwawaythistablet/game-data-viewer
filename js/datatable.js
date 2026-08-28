@@ -307,9 +307,9 @@
 
 			// Actual rows processed so far
 			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 80, 90, rowsProcessed, totalRows);
+			GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 90, 95, rowsProcessed, totalRows);
 		}
-		GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 90);
+		GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 95);
 		return true;
 	}
 
@@ -393,7 +393,7 @@
 			}
 			if (!columnDetail) continue;
 			addColumnFilterItems(container, columnName, columnDetail);
-			GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, colIdx + 1, colCount);
+			GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 95, 99, colIdx + 1, colCount);
 		}
 		GDV.loading.updateLoadingDirectUpdate("Finalizing Results...", 99);
 
