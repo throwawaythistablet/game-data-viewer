@@ -1121,15 +1121,19 @@
 		const previewImg = document.getElementById("previewImage");
 		if (!overlay || !previewImg) return;
 
-		const offset = 20;
-		let x = e.clientX + offset;
-		let y = e.clientY + offset;
+		// #previewOverlay is position:absolute, so left/top use document coordinates.
+		// Use pageX/pageY here; switching to clientX/clientY will misplace the overlay when scrolled.
+		const offset = 20; // small gap from cursor
+		let x = e.pageX + offset;
+		let y = e.pageY + offset;
+
+		// Keep overlay within viewport
 		const vw = window.innerWidth;
 		const vh = window.innerHeight;
 		const rect = previewImg.getBoundingClientRect();
 
-		if (x + rect.width > vw) x = e.clientX - rect.width - offset;
-		if (y + rect.height > vh) y = e.clientY - rect.height - offset;
+		if (x + rect.width > vw) x = e.pageX - rect.width - offset;
+		if (y + rect.height > vh) y = e.pageY - rect.height - offset;
 
 		overlay.style.left = `${x}px`;
 		overlay.style.top = `${y}px`;
