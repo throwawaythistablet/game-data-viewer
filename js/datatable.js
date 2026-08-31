@@ -298,7 +298,9 @@
 					[50, 100, 200, 500, 1000],
 				],
 				fixedHeader: true,
-				colReorder: true,
+				colReorder: {
+					headerRows: [0]
+				},
 				autoWidth: false,
 				orderCellsTop: true,
 				layout: {
