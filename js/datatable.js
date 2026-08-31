@@ -326,8 +326,15 @@
 			sortColumnIndex = 0;
 		}
 
+		const numericColumnIndexes = columns.reduce((indexes, col, i) => {
+			const type = GDV.state.getActiveColumnDetails()?.[col.data]?.type;
+			if (type === "int" || type === "float") indexes.push(i);
+			return indexes;
+		}, []);
+
 		return new Promise((resolve, reject) => {
 			const dt = csvTableElement.DataTable({
+				columnDefs: [{ type: "html-num", targets: numericColumnIndexes }],
 				paging: true,
 				pageLength: 100,
 				order: [[sortColumnIndex, "desc"]],
