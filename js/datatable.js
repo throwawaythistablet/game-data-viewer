@@ -194,12 +194,17 @@
 			orderable: false,
 			searchable: false,
 			render: (_, type, row) => {
-				if (type !== "display") return "";
-				const key = row.key;
-				const image_url = getThumbnailImageForKey(key);
-				const game_url = GDV.utils.stripHtmlToString(row.url);
-				const vndb_url = GDV.utils.stripHtmlToString(row.vndb_url);
-				return renderThumbnail(key, image_url, game_url, vndb_url, row.vndb_character_count);
+				if (type === "display") {
+					const key = row.key;
+					const image_url = getThumbnailImageForKey(key);
+					const game_url = GDV.utils.stripHtmlToString(row.url);
+					const vndb_url = GDV.utils.stripHtmlToString(row.vndb_url);
+					return renderThumbnail(key, image_url, game_url, vndb_url, row.vndb_character_count);
+				}
+				if (type === "export") {
+					return row.key ?? "";
+				}
+				return "";
 			}
 		};
 	}
@@ -211,7 +216,11 @@
 			data: null,
 			orderable: false,
 			searchable: false,
-			render: (_, type) => type === "display" ? renderViewButton() : ""
+			render: (_, type) => {
+				if (type === "display") return renderViewButton();
+				if (type === "export") return "View";
+				return "";
+			}
 		};
 	}
 
@@ -305,10 +314,16 @@
 						text: "Download Table as CSV",
 						exportOptions: {
 							columns: ":visible",
+							orthogonal: "export",
 							modifier: {
 								search: "applied",
 								order: "applied",
 								page: "all"
+							},
+							format: {
+								body: (data, _row, _column, _node) => {
+									return data;
+								}
 							}
 						}
 					}
