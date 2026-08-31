@@ -1,23 +1,23 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 612932],
-      ["data/game_column_details.json", 2035103],
-      ["data/game_data_part_1.csv", 43356677],
-      ["data/game_data_part_10.csv", 43132286],
-      ["data/game_data_part_2.csv", 43163667],
-      ["data/game_data_part_3.csv", 43155968],
-      ["data/game_data_part_4.csv", 43158947],
-      ["data/game_data_part_5.csv", 43161875],
-      ["data/game_data_part_6.csv", 43164812],
-      ["data/game_data_part_7.csv", 43154227],
-      ["data/game_data_part_8.csv", 43161246],
-      ["data/game_data_part_9.csv", 43159652],
-      ["data/game_keys.json", 1349843],
-      ["data/game_thumbnails.json", 20179185],
-      ["data/tag_quick_search_patterns.json", 5091841],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 612932],
+		["data/game_column_details.json", 2035103],
+		["data/game_data_part_1.csv", 43356677],
+		["data/game_data_part_10.csv", 43132286],
+		["data/game_data_part_2.csv", 43163667],
+		["data/game_data_part_3.csv", 43155968],
+		["data/game_data_part_4.csv", 43158947],
+		["data/game_data_part_5.csv", 43161875],
+		["data/game_data_part_6.csv", 43164812],
+		["data/game_data_part_7.csv", 43154227],
+		["data/game_data_part_8.csv", 43161246],
+		["data/game_data_part_9.csv", 43159652],
+		["data/game_keys.json", 1349843],
+		["data/game_thumbnails.json", 20179185],
+		["data/tag_quick_search_patterns.json", 5091841],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -127,6 +127,23 @@
 		} catch (err) {
 			GDV.utils.reportHardError("Game Keys Load Failed", "Error loading column details JSON", err, { file });
 			setGameKeys({}, null);
+		}
+	};
+
+	GDV.controller.downloadDataCsvFile = () => {
+		try {
+			const file = GDV.state.getActiveCsvFile();
+			const url = URL.createObjectURL(file);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = file instanceof File && file.name ? file.name : "data.csv";
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			URL.revokeObjectURL(url);
+			GDV.utils.reportInformation("CSV Download Started", `Downloading ${a.download}.`);
+		} catch (err) {
+			GDV.utils.reportSoftError("CSV Download Failed", "The CSV file could not be downloaded.", err, { file: GDV.state.getActiveCsvFile() });
 		}
 	};
 

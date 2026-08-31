@@ -4,6 +4,7 @@
 	const discussionButton = document.getElementById("discussionButton");
 	const feedbackButton = document.getElementById("feedbackButton");
 	const tagPatternsButton = document.getElementById("tagPatternsButton");
+	const downloadDataCsvButton = document.getElementById("downloadDataCsvButton");
 	const resetFiltersButton = document.getElementById("resetFiltersButton");
 	const findGamesButton = document.getElementById("findGamesButton");
 	const mainPrefiltersPanelSection = document.getElementById("mainPrefiltersPanelSection");
@@ -490,7 +491,7 @@
 		return el;
 	}
 
-	// Search button
+	// Find Games button
 	findGamesButton.addEventListener("click", async () => {
 		if (!GDV.state.getActiveCsvFile()) {
 			GDV.utils.reportHardWarning("CSV Not Loaded", "No CSV file has been loaded yet.");
@@ -510,9 +511,14 @@
 		await GDV.datatable.resetAllFilters();
 	});
 
-	// Discussion button
-	discussionButton.addEventListener("click", () => {
-		window.open("https://f95zone.to/threads/cant-find-the-game-youre-looking-for-try-this.284593/", "_blank", "noopener,noreferrer");
+	// Download Data CSV button
+	downloadDataCsvButton.addEventListener("click", async () => {
+		await GDV.controller.downloadDataCsvFile();
+	});
+
+	// Tag Patterns button
+	tagPatternsButton.addEventListener("click", () => {
+		window.open("tags/tag_patterns.txt", "_blank", "noopener,noreferrer");
 	});
 
 	// Feedback button
@@ -520,9 +526,9 @@
 		window.open("https://docs.google.com/forms/d/e/1FAIpQLSevpNoZzTm6fDrWfT_3Sb4RsA8btJTFxhJByBBf9e_cw0UOEQ/viewform?usp=dialog", "_blank", "noopener,noreferrer");
 	});
 
-	// Tag Patterns button
-	tagPatternsButton.addEventListener("click", () => {
-		window.open("tags/tag_patterns.txt", "_blank", "noopener,noreferrer");
+	// Discussion button
+	discussionButton.addEventListener("click", () => {
+		window.open("https://f95zone.to/threads/cant-find-the-game-youre-looking-for-try-this.284593/", "_blank", "noopener,noreferrer");
 	});
 
 	// Theme toggle button
