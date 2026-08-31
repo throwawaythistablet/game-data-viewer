@@ -202,19 +202,24 @@
 
 	function mapColumnNamesToColumnDetailsNames(columnNames, columnDetails) {
 		const columnDetailsKeys = Object.keys(columnDetails || {});
+		const columnDetailsKeySet = new Set(columnDetailsKeys);
 		const mapping = new Map();
 		for (const columnName of columnNames) {
-			let adjustedColumnName = columnName.replace(/^author: /, "assigned: ");
-			if (!/^[\w\s]*\w+:/.test(adjustedColumnName)) {
-				adjustedColumnName = `text search: ${adjustedColumnName}`;
+			if (columnDetailsKeySet.has(columnName)) {
+				mapping.set(columnName, columnName);
+				continue;
 			}
-			const bestName = GDV.utils.findBestStringMatch(adjustedColumnName, columnDetailsKeys);
-			if (bestName !== null) {
-				mapping.set(columnName, bestName);
-				const similarity = GDV.utils.getStringSimilarity(adjustedColumnName, bestName);
-				if (similarity < BEST_NAME_SIMILARITY_LIMIT) {
-					GDV.utils.reportSoftWarning("Prefilter column may be incorrect", `"${adjustedColumnName}" was matched to "${bestName}" with only ${(similarity * 100).toFixed(1)}% similarity. The imported filter may not match the intended column.`);
-				}
+			let searchName = columnName.replace(/^author: /, "assigned: ");
+			if (!/^[\w\s]*\w+:/.test(searchName)) {
+				searchName = `text search: ${searchName}`;
+			}
+			const bestName = GDV.utils.findBestStringMatch(searchName, columnDetailsKeys);
+			if (bestName === null) continue;
+			mapping.set(columnName, bestName);
+
+			const similarity = GDV.utils.getStringSimilarity(searchName, bestName);
+			if (similarity < BEST_NAME_SIMILARITY_LIMIT) {
+				GDV.utils.reportSoftWarning("Prefilter column may be incorrect", `"${searchName}" was matched to "${bestName}" with only ${(similarity * 100).toFixed(1)}% similarity. The imported filter may not match the intended column.`);
 			}
 		}
 		return mapping;
