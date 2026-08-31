@@ -1,5 +1,4 @@
 (() => {
-	const PAPA_PARSE_ROW_THROTTLE = 100;
 	const GENERIC_ROW_THROTTLE = 1000;
 	const SIMILARITY_SCORE_NAME = "similarity_score";
 	let similarityGameRowData = null;
@@ -91,9 +90,8 @@
 
 	function getRowsDataFromCsv(file, filterDetails, startPercent, endPercent) {
 		const rowsData = [];
-		const totalSize = file.size;
-		let rowsProcessed = 0;
-		let bytesProcessed = 0;
+		let rowsCount = 0;
+		const rowsTotal = GDV.state.getGameKeys().length;
 		const { columnDetails, prefilterAst, prefilterConditions, similarityGame } = filterDetails;
 		const hasNoPrefilters = !prefilterConditions || Object.keys(prefilterConditions).length === 0 || !prefilterAst;
 
@@ -102,31 +100,24 @@
 				header: true,
 				skipEmptyLines: true,
 				newline: "", // Important to handle line endings
-				step: (row, parser) => {
+				chunkSize: 1024 * 1024,
+				chunk: (results, parser) => {
 					if (GDV.loading.isLoadingStopped()) {
 						parser.abort();
 						reject(new Error("Loading cancelled by user."));
 						return;
 					}
-					const rowData = filterColumnsInRowData(row.data, columnDetails, prefilterConditions);
-
-					if (hasNoPrefilters || isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
-						rowsData.push(rowData);
+					for (const rowDataRaw of results.data) {
+						const rowData = filterColumnsInRowData(rowDataRaw, columnDetails, prefilterConditions);
+						if (hasNoPrefilters || isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityGame)) {
+							rowsData.push(rowData);
+						}
+						if (isSimilarityGame(similarityGame, rowData)) {
+							similarityGameRowData = structuredClone(rowData);
+						}
+						rowsCount++;
 					}
-
-					if (isSimilarityGame(similarityGame, rowData)) {
-						similarityGameRowData = structuredClone(rowData);
-					}
-
-					rowsProcessed++;
-					bytesProcessed += estimateRowSize(row.data);
-
-					// Throttle progress updates
-					if (rowsProcessed % PAPA_PARSE_ROW_THROTTLE === 0) {
-						GDV.loading.updateLoadingStepProgress("Generating Row Data...", startPercent, endPercent, bytesProcessed, totalSize);
-						parser.pause();
-						parser.resume();
-					}
+					GDV.loading.updateLoadingStepProgress("Generating Row Data...", startPercent, endPercent, rowsCount, rowsTotal);
 				},
 				complete: async () => {
 					GDV.loading.updateLoadingDirectUpdate("Row Data Generated.", endPercent);
@@ -327,21 +318,6 @@
 		return total === 0
 			? "0.00"
 			: ((score / total) * 100).toFixed(2);
-	}
-
-	function estimateRowSize(rowData) {
-		let size = 1; // newline
-		const values = Object.values(rowData);
-		for (let i = 0; i < values.length; i++) {
-			const value = values[i];
-			// add value length if present
-			if (value != null) {
-				size += String(value).length;
-			}
-			// add comma between fields (except first)
-			if (i > 0) size += 1;
-		}
-		return size;
 	}
 
 	// Normalize boolean values from strings/CSV/etc
