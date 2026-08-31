@@ -332,6 +332,7 @@
 			return indexes;
 		}, []);
 
+		DataTable.Buttons.defaults.dom.button.className = "btn";
 		return new Promise((resolve, reject) => {
 			const dt = csvTableElement.DataTable({
 				columnDefs: [{ type: "html-num", targets: numericColumnIndexes }],
@@ -346,13 +347,32 @@
 				colReorder: true,
 				autoWidth: false,
 				orderCellsTop: true,
-				dom: '<"top"lfip>rt<"bottom"lfip><"clear">',
+				layout: {
+					topStart: 'info',
+					topEnd: 'paging',
+					top: ['pageLength', 'buttons', 'search'],
+					bottomStart: 'info',
+					bottomEnd: 'paging'
+				},
+				buttons: [
+					{
+						extend: "csv",
+						text: "Download Table as CSV",
+						exportOptions: {
+							columns: ":visible",
+							modifier: {
+								search: "applied",
+								order: "applied",
+								page: "all"
+							}
+						}
+					}
+				],
 
 				initComplete: async function () {
 					try {
 						const api = this.api();
 						addHeaderTooltips(api);
-
 						const areFiltersAdded = await addColumnFilters(api);
 						resolve(areFiltersAdded);
 					} catch (err) {
