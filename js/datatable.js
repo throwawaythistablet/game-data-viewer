@@ -348,12 +348,12 @@
 				orderCellsTop: true,
 				dom: '<"top"lfip>rt<"bottom"lfip><"clear">',
 
-				initComplete: function () {
+				initComplete: async function () {
 					try {
 						const api = this.api();
 						addHeaderTooltips(api);
 
-						const areFiltersAdded = addColumnFilters(api);
+						const areFiltersAdded = await addColumnFilters(api);
 						resolve(areFiltersAdded);
 					} catch (err) {
 						reject(err);
@@ -377,18 +377,18 @@
 		});
 	}
 
-	function addColumnFilters(api) {
+	async function addColumnFilters(api) {
 		const colCount = api.columns().count();
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
 		const ths = csvTableElement[0].querySelectorAll(".filters th");
 
-		for (let colIdx = 0; colIdx < colCount; colIdx++) {
+		for (let columnIndex = 0; columnIndex < colCount; columnIndex++) {
 			if (GDV.loading.isLoadingStopped()) {
 				GDV.utils.reportSoftWarning("Column Filter Setup Cancelled", "Adding column filters was cancelled before all filters were created.");
 				return false;
 			}
-			const column = api.column(colIdx);
-			const th = ths[colIdx];
+			const column = api.column(columnIndex);
+			const th = ths[columnIndex];
 			if (!th) continue;
 			if (th.querySelector(".filter-container")) continue;
 
@@ -405,9 +405,11 @@
 			}
 			if (!columnDetail) continue;
 			addColumnFilterItems(container, columnName, columnDetail);
-			GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 95, 99, colIdx + 1, colCount);
+			GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 95, 99, columnIndex + 1, colCount);
+			await GDV.utils.yieldToBrowserTimeout();
 		}
 		GDV.loading.updateLoadingDirectUpdate("Finalizing Results...", 99);
+		await GDV.utils.yieldToBrowserTimeout();
 
 		bindTableSortingButtons();
 		setupFiltersExpandCollapse();
@@ -1250,10 +1252,10 @@
 		const rowData = dt.row(tr).data();
 		if (!rowData) return null;
 
-		const colIdx = findIndexOfColumnByNameInTable(columnName);
-		if (colIdx == null) return null;
+		const columnIndex = findIndexOfColumnByNameInTable(columnName);
+		if (columnIndex == null) return null;
 
-		return rowData[colIdx] ?? null;
+		return rowData[columnIndex] ?? null;
 	}
 
 	function isWebUrl(text) {
