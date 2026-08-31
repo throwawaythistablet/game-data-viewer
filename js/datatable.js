@@ -161,12 +161,8 @@
 		destroyExistingTable();
 
 		createTableHeader(columns);
-		const tbody = createTableBody();
 
-		const areRowsAdded = await appendRowsToTableInChunks(data, columns, tbody);
-		if (!areRowsAdded) return;
-
-		const areFiltersAdded = await initializeDataTableWithOptions(columns);
+		const areFiltersAdded = await initializeDataTableWithOptions(data, columns);
 		if (!areFiltersAdded) return;
 
 		csvTableElement.show();
@@ -183,10 +179,7 @@
 		return resultKeys.map((columnName) => ({
 			title: columnName,
 			data: columnName,
-			createdCell: (td, cellData) => {
-				td.textContent = "";
-				td.appendChild(renderCellValueNode(cellData, columnName));
-			},
+			render: (data, type) => type === "display" ? renderCellValueNode(data, columnName) : data,
 			white_highlight: prefilterColumns.includes(columnName),
 			yellow_highlight: specialColumns.includes(columnName),
 		}));
@@ -194,11 +187,20 @@
 
 	function buildThumbnailColumn() {
 		if (!GDV.state.getThumbnails()) return null;
+
 		return {
 			title: "thumbnails",
-			data: "__thumbnail__",
+			data: null,
 			orderable: false,
 			searchable: false,
+			render: (_, type, row) => {
+				if (type !== "display") return "";
+				const key = row.key;
+				const image_url = getThumbnailImageForKey(key);
+				const game_url = GDV.utils.stripHtmlToString(row.url);
+				const vndb_url = GDV.utils.stripHtmlToString(row.vndb_url);
+				return renderThumbnail(key, image_url, game_url, vndb_url, row.vndb_character_count);
+			}
 		};
 	}
 
@@ -206,9 +208,10 @@
 		if (!columnNames.includes("location")) return null;
 		return {
 			title: "View Images",
-			data: "__view_images__",
+			data: null,
 			orderable: false,
 			searchable: false,
+			render: (_, type) => type === "display" ? renderViewButton() : ""
 		};
 	}
 
@@ -258,67 +261,7 @@
 		csvTableElement.append(thead);
 	}
 
-	function createTableBody() {
-		const tbody = document.createElement("tbody");
-		csvTableElement.append(tbody);
-		return tbody;
-	}
-
-	async function appendRowsToTableInChunks(data, columns, tbody) {
-		const CHUNK_SIZE = 500;
-		const CHUNK_THROTTLE = CHUNK_SIZE * 2;
-		const totalRows = data.length;
-
-		for (let start = 0; start < totalRows; start += CHUNK_SIZE) {
-			if (GDV.loading.isLoadingStopped()) {
-				GDV.utils.reportSoftWarning("Table Row Loading Cancelled", "Loading table rows was cancelled before all rows were added.");
-				return false;
-			}
-			const chunk = data.slice(start, start + CHUNK_SIZE);
-			const fragment = document.createDocumentFragment();
-			chunk.forEach((rowData) => {
-				const tr = document.createElement("tr");
-				columns.forEach((col) => {
-					const td = document.createElement("td");
-
-					if (col.data === "__view_images__") {
-						td.appendChild(renderViewButton());
-					} else if (col.data === "__thumbnail__") {
-						const key = rowData.key;
-						const image_url = getThumbnailImageForKey(key);
-						const game_url = GDV.utils.stripHtmlToString(rowData.url);
-						const vndb_url = GDV.utils.stripHtmlToString(rowData.vndb_url);
-						const vndb_character_count = rowData.vndb_character_count;
-						td.appendChild(renderThumbnail(key, image_url, game_url, vndb_url, vndb_character_count));
-					} else if (col.data === "site_std_version") {
-						const rd = rowData[col.data];
-						const trimmed = typeof rd === "string" && rd.length > 19 ? `${rd.slice(0, 19)}...` : rd;
-						td.appendChild(renderCellValueNode(trimmed, col.data));
-					} else {
-						td.appendChild(renderCellValueNode(rowData[col.data], col.data));
-					}
-
-					if (col.white_highlight) td.classList.add("white-highlight");
-					else if (col.yellow_highlight) td.classList.add("yellow-highlight");
-					tr.appendChild(td);
-				});
-				fragment.appendChild(tr);
-			});
-			tbody.appendChild(fragment);
-
-			// Actual rows processed so far
-			const rowsProcessed = Math.min(start + chunk.length, totalRows);
-			if (start % CHUNK_THROTTLE === 0) {
-				GDV.loading.updateLoadingStepProgress("Adding Rows to Table...", 90, 95, rowsProcessed, totalRows);
-				await GDV.utils.yieldToBrowserTimeout();
-			}
-		}
-		GDV.loading.updateLoadingDirectUpdate("Rows Added to Table.", 95);
-		await GDV.utils.yieldToBrowserTimeout();
-		return true;
-	}
-
-	function initializeDataTableWithOptions(columns) {
+	function initializeDataTableWithOptions(data, columns) {
 		const sortColumnName = getDefaultSortColumnName();
 		let sortColumnIndex = findIndexOfColumnByNameInColumns(columns, sortColumnName);
 		if (isInvalidColumnIndex(sortColumnIndex)) {
@@ -335,6 +278,8 @@
 		DataTable.Buttons.defaults.dom.button.className = "btn";
 		return new Promise((resolve, reject) => {
 			const dt = csvTableElement.DataTable({
+				data: data,
+				columns: columns,
 				columnDefs: [{ type: "html-num", targets: numericColumnIndexes }],
 				paging: true,
 				pageLength: 100,
@@ -425,7 +370,7 @@
 			}
 			if (!columnDetail) continue;
 			addColumnFilterItems(container, columnName, columnDetail);
-			GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 95, 99, columnIndex + 1, colCount);
+			GDV.loading.updateLoadingStepProgress("Adding Column Filters...", 90, 99, columnIndex + 1, colCount);
 			await GDV.utils.yieldToBrowserTimeout();
 		}
 		GDV.loading.updateLoadingDirectUpdate("Finalizing Results...", 99);
@@ -731,19 +676,15 @@
 
 		const column = table.column(columnIndex);
 		if (minValue === undefined && maxValue === undefined) {
-			column.search("", true, false);
+			column.search("");
 		} else {
-			const trie = GDV.utils.createRegexTrie();
-			const values = column.data();
-			values.each((rawValue) => {
-				const normalizedValueStr = GDV.utils.stripHtmlAndNormalize(String(rawValue));
-				const num = parseFloat(normalizedValueStr);
-				if (Number.isNaN(num) || (minValue === undefined || num >= minValue) && (maxValue === undefined || num <= maxValue)) {
-					trie.add(normalizedValueStr);
-				}
+			column.search((value) => {
+				const num = Number(value);
+				if (Number.isNaN(num)) return false;
+				if (minValue !== undefined && num < minValue) return false;
+				if (maxValue !== undefined && num > maxValue) return false;
+				return true;
 			});
-			const searchRegex = trie.toRegex();
-			column.search(searchRegex, true, false);
 		}
 
 		if (!isResettingFilters) {
@@ -1272,10 +1213,7 @@
 		const rowData = dt.row(tr).data();
 		if (!rowData) return null;
 
-		const columnIndex = findIndexOfColumnByNameInTable(columnName);
-		if (columnIndex == null) return null;
-
-		return rowData[columnIndex] ?? null;
+		return rowData[columnName] ?? null;
 	}
 
 	function isWebUrl(text) {
