@@ -172,14 +172,21 @@
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const specialKeys = ["key", GDV.tableGenerator.getSimilarityScoreName()];
 		const prefilterKeys = Object.keys(prefilterConditions || {}).filter(col => !specialKeys.includes(col));
-
 		const specialColumns = columnNamesInTable.filter((col) => specialKeys.includes(col));
 		const prefilterColumns = prefilterKeys.filter(col => columnNamesInTable.includes(col));
 		const resultKeys = [...specialColumns, ...prefilterColumns, ...columnNamesInTable.filter((col) => !specialColumns.includes(col) && !prefilterColumns.includes(col))];
+
 		return resultKeys.map((columnName) => ({
 			title: columnName,
 			data: columnName,
 			render: (data, type) => type === "display" ? renderCellValueNode(data, columnName) : data,
+			createdCell: (td) => {
+				if (prefilterColumns.includes(columnName)) {
+					td.classList.add("white-highlight");
+				} else if (specialColumns.includes(columnName)) {
+					td.classList.add("yellow-highlight");
+				}
+			},
 			white_highlight: prefilterColumns.includes(columnName),
 			yellow_highlight: specialColumns.includes(columnName),
 		}));
