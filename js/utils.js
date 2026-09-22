@@ -128,8 +128,8 @@
 			if (keyLower.includes(inputLower)) return key;
 
 			const titleLower = keyLower.replace(BRACKET_RE, "").trim();
-			const keyScore = levenshteinDistance(inputLower, keyLower);
-			const titleScore = levenshteinDistance(inputLower, titleLower);
+			const keyScore = getLevenshteinDistance(inputLower, keyLower);
+			const titleScore = getLevenshteinDistance(inputLower, titleLower);
 			const finalScore = Math.min(keyScore, titleScore);
 			if (finalScore < bestScore) {
 				bestScore = finalScore;
@@ -148,7 +148,7 @@
 			if (input === candidate) {
 				return candidate;
 			}
-			const distance = levenshteinDistance(input, candidate);
+			const distance = getLevenshteinDistance(input, candidate);
 			if (distance < bestDistance) {
 				bestDistance = distance;
 				bestMatch = candidate;
@@ -157,8 +157,8 @@
 		return bestMatch;
 	}
 
-	GDV.utils.levenshteinDistance = levenshteinDistance;
-	function levenshteinDistance(a, b) {
+	GDV.utils.getLevenshteinDistance = getLevenshteinDistance;
+	function getLevenshteinDistance(a, b) {
 		const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
 		for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
 		for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
@@ -170,6 +170,46 @@
 			}
 		}
 		return matrix[a.length][b.length];
+	}
+
+	GDV.utils.getJaroWinklerSimilarity = getJaroWinklerSimilarity;
+	function getJaroWinklerSimilarity(a, b) {
+		if (a === b) return 1;
+		if (!a || !b) return 0;
+
+		const maxDistance = Math.floor(Math.max(a.length, b.length) / 2) - 1;
+		const aMatches = new Array(a.length).fill(false);
+		const bMatches = new Array(b.length).fill(false);
+		let matches = 0;
+		for (let i = 0; i < a.length; i++) {
+			const start = Math.max(0, i - maxDistance);
+			const end = Math.min(i + maxDistance + 1, b.length);
+			for (let j = start; j < end; j++) {
+				if (bMatches[j] || a[i] !== b[j]) continue;
+				aMatches[i] = true;
+				bMatches[j] = true;
+				matches++;
+				break;
+			}
+		}
+
+		if (matches === 0) return 0;
+		let transpositions = 0;
+		let bIndex = 0;
+		for (let i = 0; i < a.length; i++) {
+			if (!aMatches[i]) continue;
+			while (!bMatches[bIndex]) bIndex++;
+			if (a[i] !== b[bIndex]) transpositions++;
+			bIndex++;
+		}
+		transpositions /= 2;
+		const jaro = (matches / a.length + matches / b.length + (matches - transpositions) / matches) / 3;
+		let prefixLength = 0;
+		for (let i = 0; i < Math.min(4, a.length, b.length); i++) {
+			if (a[i] !== b[i]) break;
+			prefixLength++;
+		}
+		return jaro + prefixLength * 0.1 * (1 - jaro);
 	}
 
 	GDV.utils.getStringSimilarity = getStringSimilarity;
@@ -193,20 +233,42 @@
 
 	GDV.utils.computeNearestMatchDistance = (columnName, searchText) => {
 		if (!searchText) return Infinity;
-
 		const colTokens = columnName.toLowerCase().split(/\s+/);
 		const searchTokens = searchText.toLowerCase().split(/\s+/);
-
 		let minDistance = Infinity;
-
 		for (const colToken of colTokens) {
 			for (const searchToken of searchTokens) {
-				const dist = GDV.utils.levenshteinDistance(colToken, searchToken);
+				const dist = getLevenshteinDistance(colToken, searchToken);
 				if (dist < minDistance) minDistance = dist;
 			}
 		}
-
 		return minDistance;
+	};
+
+	GDV.utils.computeNearestMatchScore = (columnName, searchText) => {
+		// Computes a one-to-one token similarity score using Monge–Elkan-style matching with Jaro-Winkler similarity.
+		if (!searchText) return 0;
+		const colTokens = columnName.toLowerCase().split(/\s+/);
+		const searchTokens = searchText.toLowerCase().split(/\s+/);
+		const usedColumnTokens = new Set();
+		let totalScore = 0;
+		for (const searchToken of searchTokens) {
+			let bestScore = 0;
+			let bestColumnIndex = -1;
+			for (let i = 0; i < colTokens.length; i++) {
+				if (usedColumnTokens.has(i)) continue;
+				const score = getJaroWinklerSimilarity(searchToken, colTokens[i]);
+				if (score > bestScore) {
+					bestScore = score;
+					bestColumnIndex = i;
+				}
+			}
+			if (bestColumnIndex !== -1) {
+				usedColumnTokens.add(bestColumnIndex);
+				totalScore += bestScore;
+			}
+		}
+		return totalScore / searchTokens.length;
 	};
 
 	GDV.utils.getNormalizedDifference = (a, b) => {

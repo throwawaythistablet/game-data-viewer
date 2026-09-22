@@ -3,7 +3,6 @@
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleSectionsBatchSize = 99;
 	let prefilterOverlay = null;
-	let prefilterSections = null;
 	let prefilterSectionArray = null;
 	let maxVisibleSections = visibleSectionsBatchSize;
 
@@ -442,8 +441,7 @@
 		for (const [col, columnDetail] of Object.entries(columnDetails)) {
 			grid.appendChild(createFilterSectionForColumnDetails(col, columnDetail, prefill[col]));
 		}
-		prefilterSections = grid.querySelectorAll(".prefilter-section");
-		prefilterSectionArray = Array.from(prefilterSections);
+		prefilterSectionArray = Array.from(grid.querySelectorAll(".prefilter-section"));
 		return grid;
 	}
 
@@ -1080,16 +1078,16 @@
 	function filterPrefilterSections(form) {
 		const searchText = getSearchTextInForm(form);
 		const category = getCategoryInForm(form);
-		const colCategories = GDV.state.getColumnCategories() || {};
-		const tokens = searchText.trim().toLowerCase().split(/\s+/).filter((t) => t.length > 0); // Tokenize search input: lowercase, split by spaces, remove empty tokens
+		const columnCategories = GDV.state.getColumnCategories() || {};
+		const searchTokens = searchText.trim().toLowerCase().split(/\s+/).filter((t) => t.length > 0); // Tokenize search input: lowercase, split by spaces, remove empty tokens
 		let visibleCount = 0;
 		let hiddenPastLimit = 0;
 		const toShow = [];
 		const toHide = [];
-		prefilterSections.forEach((section) => {
+		prefilterSectionArray.forEach((section) => {
 			const columnName = section.dataset.col;
-			const matchesSearch = tokens.length === 0 || sectionMatchesTokens(columnName, tokens);
-			const matchesCategory = category === "__all__" || (colCategories[category] || []).includes(columnName);
+			const matchesSearch = searchTokens.length === 0 || sectionMatchesTokens(columnName, searchTokens);
+			const matchesCategory = category === "__all__" || (columnCategories[category] || []).includes(columnName);
 			if (matchesSearch && matchesCategory) {
 				visibleCount++;
 				if (visibleCount > maxVisibleSections) {
@@ -1161,16 +1159,16 @@
 
 		for (const section of sectionArray) {
 			const columnName = section.dataset.col;
-			sortingInfo.set(section, {
-				dist: GDV.utils.computeNearestMatchDistance(columnName, searchText),
+			sortingInfo.set(columnName, {
+				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
 				order: orderMap.get(columnName)
 			});
 		}
 
 		sectionArray.sort((a, b) => {
-			const A = sortingInfo.get(a);
-			const B = sortingInfo.get(b);
-			if (A.dist !== B.dist) return A.dist - B.dist;
+			const A = sortingInfo.get(a.dataset.col);
+			const B = sortingInfo.get(b.dataset.col);
+			if (A.score !== B.score) return B.score - A.score;
 			return A.order - B.order;
 		});
 	}
@@ -1195,7 +1193,7 @@
 
 		return tokens.every((token) => {
 			const lowerToken = token.toLowerCase();
-			if (filterName.toLowerCase().includes(lowerToken)) return true;
+			if (columnName.toLowerCase().includes(lowerToken)) return true;
 			if (description.includes(lowerToken)) return true;
 			if (regexStr.includes(lowerToken)) return true;
 			if (regex?.test(token)) return true;
