@@ -1116,7 +1116,7 @@
 		const indicator = form.querySelector(".prefilter-grid-limit-indicator");
 		if (!indicator) return;
 
-		const count = Math.max(0, hiddenPastLimit | 0); // ensure valid non-negative int
+		const count = Math.max(0, hiddenPastLimit); // ensure valid non-negative int
 		indicator.dataset.hiddenPastLimit = count;
 
 		const textSpan = indicator.querySelector(".hidden-past-limit");
@@ -1270,14 +1270,14 @@
 
 		function onKeydown(e) {
 			if (e.key === "Escape") {
-				if (previousActive?.focus) previousActive.focus();
+				cleanupFocus();
 				finalizeAndClose();
 				resolve(null);
+				return;
 			}
 			if (e.key === "Tab") {
 				const focusables = Array.from(overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((el) => !el.disabled && el.offsetParent !== null);
 				if (!focusables.length) return;
-
 				const idx = focusables.indexOf(document.activeElement);
 				if (e.shiftKey && idx === 0) {
 					e.preventDefault();
@@ -1288,12 +1288,12 @@
 				}
 			}
 		}
-
-		overlay.addEventListener("keydown", onKeydown);
-		return () => {
+		const cleanupFocus = () => {
 			overlay.removeEventListener("keydown", onKeydown);
 			if (previousActive?.focus) previousActive.focus();
 		};
+		overlay.addEventListener("keydown", onKeydown);
+		return cleanupFocus;
 	}
 
 	function resetPrefilters(form) {
