@@ -1188,14 +1188,12 @@
 		const columnDetails = GDV.state.getActiveColumnDetails()?.[filterName];
 		const description = columnDetails?.description?.toLowerCase() || "";
 		const tagPatterns = GDV.state.getTagQuickSearchPatterns()?.[filterName];
-		const regexStr = tagPatterns?.pattern?.toLowerCase() || "";
 		const regex = tagPatterns?.regex || null;
 
 		return tokens.every((token) => {
 			const lowerToken = token.toLowerCase();
 			if (columnName.toLowerCase().includes(lowerToken)) return true;
 			if (description.includes(lowerToken)) return true;
-			if (regexStr.includes(lowerToken)) return true;
 			if (regex?.test(token)) return true;
 			return false;
 		});
