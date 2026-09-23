@@ -5,6 +5,8 @@
 	let prefilterOverlay = null;
 	let prefilterSectionArray = null;
 	let maxVisibleSections = visibleSectionsBatchSize;
+	let prefilterSectionSearchInfo = new Map();
+	let prefilterColumnOrderMap = new Map();
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
 	function initializePrefilterOverlayIfNeeded() {
@@ -149,7 +151,7 @@
 		});
 
 		select.addEventListener("change", () => {
-			filterPrefilterSections(form);
+			updatePrefilterSections(form);
 			const categoryElement = form.querySelector("#prefilter-selected-category");
 			if (categoryElement) {
 				categoryElement.dataset.value = select.value;
@@ -411,7 +413,7 @@
 		btn.addEventListener("click", () => {
 			GDV.prefilter.toggleSortMode();
 			btn.textContent = GDV.prefilter.getSortButtonDisplayText();
-			sortPrefilterSections(form);
+			updatePrefilterSections(form, true);
 		});
 		return btn;
 	}
@@ -438,8 +440,19 @@
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const tagQuickSearchPatterns = GDV.state.getTagQuickSearchPatterns() || {};
+		const columnOrder = Object.keys(columnDetails);
+		prefilterColumnOrderMap = new Map(columnOrder.map((col, i) => [col, i]));
+		prefilterSectionSearchInfo = new Map();
+
 		for (const [col, columnDetail] of Object.entries(columnDetails)) {
 			grid.appendChild(createFilterSectionForColumnDetails(col, columnDetail, prefill[col]));
+			const filterName = GDV.utils.normalizeFilterName(col);
+			prefilterSectionSearchInfo.set(col, {
+				lowerColumnName: col.toLowerCase(),
+				description: columnDetail?.description?.toLowerCase() || "",
+				regex: tagQuickSearchPatterns?.[filterName]?.regex || null
+			});
 		}
 		prefilterSectionArray = Array.from(grid.querySelectorAll(".prefilter-section"));
 		return grid;
@@ -1031,12 +1044,6 @@
 		});
 	});
 
-	function updatePrefilterSections(form) {
-		sortPrefilterSections(form);
-		filterPrefilterSections(form);
-		GDV.prefilter.setSearchText(getSearchTextInForm(form));
-	}
-
 	function startPrefilterGridLoading(form) {
 		const loader = form.querySelector(".prefilter-grid-loading-indicator");
 		if (loader) loader.style.display = "";
@@ -1054,59 +1061,72 @@
 		if (grid) grid.style.display = "";
 	}
 
-	function sortPrefilterSections(form) {
-		const grid = form.querySelector(".prefilter-grid");
+	function updatePrefilterSections(form, isSortModeChange = false) {
+		const searchText = getSearchTextInForm(form);
+		const matchingSections = getMatchingPrefilterSections(form);
 		const sortMode = GDV.prefilter.getSortMode();
-		switch (sortMode) {
-			case "alpha":
-				sortPrefilterSectionsAlphabetically(prefilterSectionArray);
-				break;
-			case "nearest":
-				sortPrefilterSectionsByNearestMatch(form, prefilterSectionArray);
-				break;
-			default:
+		if (sortMode === "nearest") {
+			if (searchText.trim()) {
+				sortPrefilterSectionsByNearestMatch(searchText, matchingSections);
+				reorderMatchingPrefilterSections(form, matchingSections);
+			} else {
 				sortPrefilterSectionsByUsage(prefilterSectionArray);
+				renderPrefilterSectionOrder(form);
+			}
+		} else if (isSortModeChange) {
+			if (sortMode === "alpha") {
+				sortPrefilterSectionsAlphabetically(prefilterSectionArray);
+			} else {
+				sortPrefilterSectionsByUsage(prefilterSectionArray);
+			}
+			renderPrefilterSectionOrder(form);
 		}
-
-		const fragment = document.createDocumentFragment();
-		prefilterSectionArray.forEach((section) => {
-			fragment.appendChild(section);
-		});
-		grid.appendChild(fragment);
+		applyPrefilterSectionVisibility(form, matchingSections);
+		GDV.prefilter.setSearchText(searchText);
 	}
 
 	function filterPrefilterSections(form) {
+		const matchingSections = getMatchingPrefilterSections(form);
+		applyPrefilterSectionVisibility(form, matchingSections);
+		return matchingSections;
+	}
+
+	function getMatchingPrefilterSections(form) {
 		const searchText = getSearchTextInForm(form);
 		const category = getCategoryInForm(form);
 		const columnCategories = GDV.state.getColumnCategories() || {};
-		const searchTokens = searchText.trim().toLowerCase().split(/\s+/).filter((t) => t.length > 0); // Tokenize search input: lowercase, split by spaces, remove empty tokens
-		let visibleCount = 0;
-		let hiddenPastLimit = 0;
-		const toShow = [];
-		const toHide = [];
-		prefilterSectionArray.forEach((section) => {
+		const searchTokens = searchText.trim().toLowerCase().split(/\s+/);
+		const isAllCategories = category === "__all__";
+		const categoryColumns = new Set(columnCategories[category] || []);
+		const matchingSections = [];
+		for (const section of prefilterSectionArray) {
 			const columnName = section.dataset.col;
 			const matchesSearch = searchTokens.length === 0 || sectionMatchesTokens(columnName, searchTokens);
-			const matchesCategory = category === "__all__" || (columnCategories[category] || []).includes(columnName);
-			if (matchesSearch && matchesCategory) {
-				visibleCount++;
-				if (visibleCount > maxVisibleSections) {
-					toHide.push(section);
-					hiddenPastLimit++;
-				} else {
-					toShow.push(section);
-				}
-			} else {
-				toHide.push(section);
-			}
-		});
+			const matchesCategory = isAllCategories || categoryColumns.has(columnName);
 
-		// Apply DOM updates in batches (reduces layout thrash)
-		toShow.forEach((el) => {
-			el.style.display = "";
-		});
-		toHide.forEach((el) => {
-			el.style.display = "none";
+			if (matchesSearch && matchesCategory) {
+				matchingSections.push(section);
+			}
+		}
+		return matchingSections;
+	}
+
+	function applyPrefilterSectionVisibility(form, matchingSections) {
+		const matchingSet = new Set(matchingSections);
+		let visibleCount = 0;
+		let hiddenPastLimit = 0;
+		prefilterSectionArray.forEach((section) => {
+			if (!matchingSet.has(section)) {
+				section.style.display = "none";
+				return;
+			}
+			visibleCount++;
+			if (visibleCount > maxVisibleSections) {
+				section.style.display = "none";
+				hiddenPastLimit++;
+			} else {
+				section.style.display = "";
+			}
 		});
 		updatePrefilterGridLimitIndicator(form, hiddenPastLimit);
 		updatePrefilterGridNoResults(form, visibleCount);
@@ -1145,56 +1165,70 @@
 		sectionArray.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
 	}
 
-	function sortPrefilterSectionsByNearestMatch(form, sectionArray) {
-		const searchText = getSearchTextInForm(form);
-		if (!searchText) {
+	function sortPrefilterSectionsByNearestMatch(searchText, sectionArray) {
+		if (!searchText.trim()) {
 			sortPrefilterSectionsByUsage(sectionArray);
 			return;
 		}
-
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
-		const columnOrder = Object.keys(columnDetails);
-		const orderMap = new Map(columnOrder.map((col, i) => [col, i]));
 		const sortingInfo = new Map();
-
 		for (const section of sectionArray) {
 			const columnName = section.dataset.col;
 			sortingInfo.set(columnName, {
 				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
-				order: orderMap.get(columnName)
+				order: prefilterColumnOrderMap.get(columnName)
 			});
 		}
-
 		sectionArray.sort((a, b) => {
 			const A = sortingInfo.get(a.dataset.col);
 			const B = sortingInfo.get(b.dataset.col);
+
 			if (A.score !== B.score) return B.score - A.score;
 			return A.order - B.order;
 		});
 	}
 
 	function sortPrefilterSectionsByUsage(sectionArray) {
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
-		const columnOrder = Object.keys(columnDetails);
-		const orderMap = new Map(columnOrder.map((col, i) => [col, i]));
-
 		sectionArray.sort((a, b) => {
-			return orderMap.get(a.dataset.col) - orderMap.get(b.dataset.col);
+			return prefilterColumnOrderMap.get(a.dataset.col) - prefilterColumnOrderMap.get(b.dataset.col);
 		});
 	}
 
+	function renderPrefilterSectionOrder(form) {
+		const grid = form.querySelector(".prefilter-grid");
+		if (!grid) return;
+		const fragment = document.createDocumentFragment();
+		prefilterSectionArray.forEach((section) => {
+			fragment.appendChild(section);
+		});
+		grid.appendChild(fragment);
+	}
+
+	function reorderMatchingPrefilterSections(form, matchingSections) {
+		const matchingSet = new Set(matchingSections);
+		const reorderedSections = prefilterSectionArray.slice();
+		let matchingIndex = 0;
+		let orderChanged = false;
+		for (let i = 0; i < reorderedSections.length; i++) {
+			if (!matchingSet.has(reorderedSections[i])) continue;
+			const replacement = matchingSections[matchingIndex++];
+			if (reorderedSections[i] !== replacement) {
+				reorderedSections[i] = replacement;
+				orderChanged = true;
+			}
+		}
+		if (!orderChanged) return;
+		prefilterSectionArray = reorderedSections;
+		renderPrefilterSectionOrder(form);
+	}
+
 	function sectionMatchesTokens(columnName, tokens) {
-		const filterName = GDV.utils.normalizeFilterName(columnName);
-		const columnDetails = GDV.state.getActiveColumnDetails()?.[filterName];
-		const description = columnDetails?.description?.toLowerCase() || "";
-		const tagPatterns = GDV.state.getTagQuickSearchPatterns()?.[filterName];
-		const regex = tagPatterns?.regex || null;
+		const searchInfo = prefilterSectionSearchInfo.get(columnName);
+		if (!searchInfo) return false;
 
 		return tokens.every((token) => {
-			const lowerToken = token.toLowerCase();
-			if (columnName.toLowerCase().includes(lowerToken)) return true;
-			if (description.includes(lowerToken)) return true;
-			if (regex?.test(token)) return true;
+			if (searchInfo.lowerColumnName.includes(token)) return true;
+			if (searchInfo.description.includes(token)) return true;
+			if (searchInfo.regex?.test(token)) return true;
 			return false;
 		});
 	}
@@ -1337,9 +1371,10 @@
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		if (categorySelect) {
 			categorySelect.value = "__all__";
-			filterPrefilterSections(form);
+			updatePrefilterSections(form);
 		}
 	}
+
 	function getCategoryInForm(form) {
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		return categorySelect?.value || "__all__";
