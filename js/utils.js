@@ -386,6 +386,17 @@
 		return new Map(Object.entries(object));
 	}
 
+	GDV.utils.convertJsonObjectToRegexMap = (object, maxLength = Infinity) => {
+		return new Map(
+			Object.entries(object).map(([key, regexStr]) => [
+				key,
+				regexStr && regexStr.length <= maxLength
+					? GDV.utils.convertToRegex(regexStr)
+					: null
+			])
+		);
+	};
+
 	GDV.utils.convertToRegex = (regexStr) => {
 		let regex = null;
 		try {

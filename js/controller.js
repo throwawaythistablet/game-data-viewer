@@ -55,13 +55,14 @@
 
 	GDV.controller.setTagFullMatchPatterns = setTagFullMatchPatterns;
 	function setTagFullMatchPatterns(tagFullMatchPatterns, fileName) {
-		GDV.state.setTagFullMatchPatterns(GDV.utils.convertJsonObjectToMap(tagFullMatchPatterns));
+		const maxFullMatchRegexLength = 20000;
+		GDV.state.setTagFullMatchPatterns(GDV.utils.convertJsonObjectToRegexMap(tagFullMatchPatterns, maxFullMatchRegexLength));
 		GDV.dom.setTagFullMatchPatterns(fileName);
 	}
 
 	GDV.controller.setTagQuickSearchPatterns = setTagQuickSearchPatterns;
 	function setTagQuickSearchPatterns(tagQuickSearchPatterns, fileName) {
-		GDV.state.setTagQuickSearchPatterns(GDV.utils.convertJsonObjectToMap(tagQuickSearchPatterns));
+		GDV.state.setTagQuickSearchPatterns(GDV.utils.convertJsonObjectToRegexMap(tagQuickSearchPatterns));
 		GDV.dom.setTagQuickSearchPatterns(fileName);
 	}
 

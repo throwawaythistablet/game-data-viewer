@@ -445,16 +445,15 @@
 		const columnOrder = Object.keys(columnDetails);
 		prefilterColumnOrderMap = new Map(columnOrder.map((col, i) => [col, i]));
 		prefilterSectionSearchInfo = new Map();
-		for (const [col, columnDetail] of Object.entries(columnDetails)) {
-			grid.appendChild(createFilterSectionForColumnDetails(col, columnDetail, prefill[col]));
-			const filterName = GDV.utils.normalizeFilterName(col);
-			const fullMatchPattern = tagFullMatchPatterns?.get(filterName);
-			const quickSearchPattern = tagQuickSearchPatterns?.get(filterName);
-			prefilterSectionSearchInfo.set(col, {
-				lowerColumnName: col.toLowerCase(),
-				description: columnDetail?.description?.toLowerCase() || "",
-				fullMatchRegex: fullMatchPattern && fullMatchPattern.length <= 20000 ? GDV.utils.convertToRegex(fullMatchPattern) : null,
-				quickSearchRegex: quickSearchPattern ? GDV.utils.convertToRegex(quickSearchPattern) : null
+		for (const [columnName, columnDetail] of Object.entries(columnDetails)) {
+			grid.appendChild(createFilterSectionForColumnDetails(columnName, columnDetail, prefill[columnName]));
+			const filterName = GDV.utils.normalizeFilterName(columnName);
+			const fullMatchRegex = tagFullMatchPatterns.get(filterName) ?? null;
+			const quickSearchRegex = tagQuickSearchPatterns.get(filterName) ?? null;
+			prefilterSectionSearchInfo.set(columnName, {
+				description: columnDetail?.type === "tag" ? "" : columnDetail?.description?.toLowerCase() || "",
+				fullMatchRegex,
+				quickSearchRegex
 			});
 		}
 		prefilterSectionArray = Array.from(grid.querySelectorAll(".prefilter-section"));
@@ -1098,7 +1097,7 @@
 		const searchText = getSearchTextInForm(form);
 		const category = getCategoryInForm(form);
 		const columnCategories = GDV.state.getColumnCategories() || {};
-		const searchTokens = searchText.trim().toLowerCase().split(/\s+/);
+		const searchTokens = searchText.trim().toLowerCase().split(/\W+/);
 		const isAllCategories = category === "__all__";
 		const categoryColumns = new Set(columnCategories[category] || []);
 		const matchingSections = [];
@@ -1106,7 +1105,6 @@
 			const columnName = section.dataset.col;
 			const matchesSearch = searchTokens.length === 0 || sectionMatchesTokens(columnName, searchTokens);
 			const matchesCategory = isAllCategories || categoryColumns.has(columnName);
-
 			if (matchesSearch && matchesCategory) {
 				matchingSections.push(section);
 			}
@@ -1235,9 +1233,8 @@
 	function sectionMatchesTokens(columnName, tokens) {
 		const searchInfo = prefilterSectionSearchInfo.get(columnName);
 		if (!searchInfo) return false;
-
 		return tokens.every((token) => {
-			if (searchInfo.lowerColumnName.includes(token)) return true;
+			if (columnName.toLowerCase().includes(token)) return true;
 			if (searchInfo.description.includes(token)) return true;
 			if (searchInfo.quickSearchRegex?.test(token)) return true;
 			return false;
