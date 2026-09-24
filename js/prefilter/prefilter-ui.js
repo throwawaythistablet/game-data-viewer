@@ -440,18 +440,21 @@
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const tagFullMatchPatterns = GDV.state.getTagFullMatchPatterns() || {};
 		const tagQuickSearchPatterns = GDV.state.getTagQuickSearchPatterns() || {};
 		const columnOrder = Object.keys(columnDetails);
 		prefilterColumnOrderMap = new Map(columnOrder.map((col, i) => [col, i]));
 		prefilterSectionSearchInfo = new Map();
-
 		for (const [col, columnDetail] of Object.entries(columnDetails)) {
 			grid.appendChild(createFilterSectionForColumnDetails(col, columnDetail, prefill[col]));
 			const filterName = GDV.utils.normalizeFilterName(col);
+			const fullMatchPattern = tagFullMatchPatterns?.get(filterName);
+			const quickSearchPattern = tagQuickSearchPatterns?.get(filterName);
 			prefilterSectionSearchInfo.set(col, {
 				lowerColumnName: col.toLowerCase(),
 				description: columnDetail?.description?.toLowerCase() || "",
-				regex: tagQuickSearchPatterns?.[filterName]?.regex || null
+				fullMatchRegex: fullMatchPattern && fullMatchPattern.length <= 20000 ? GDV.utils.convertToRegex(fullMatchPattern) : null,
+				quickSearchRegex: quickSearchPattern ? GDV.utils.convertToRegex(quickSearchPattern) : null
 			});
 		}
 		prefilterSectionArray = Array.from(grid.querySelectorAll(".prefilter-section"));
@@ -1042,7 +1045,7 @@
 		requestAnimationFrame(() => {
 			stopPrefilterGridLoading(form);
 		});
-	});
+	}, 100);
 
 	function startPrefilterGridLoading(form) {
 		const loader = form.querySelector(".prefilter-grid-loading-indicator");
@@ -1170,19 +1173,27 @@
 			sortPrefilterSectionsByUsage(sectionArray);
 			return;
 		}
+
 		const sortingInfo = new Map();
 		for (const section of sectionArray) {
 			const columnName = section.dataset.col;
+			const searchInfo = prefilterSectionSearchInfo.get(columnName);
 			sortingInfo.set(columnName, {
+				isFullMatch: searchText.length >= 4 && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
 				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
 				order: prefilterColumnOrderMap.get(columnName)
 			});
 		}
+
 		sectionArray.sort((a, b) => {
 			const A = sortingInfo.get(a.dataset.col);
 			const B = sortingInfo.get(b.dataset.col);
-
-			if (A.score !== B.score) return B.score - A.score;
+			if (A.isFullMatch !== B.isFullMatch) {
+				return B.isFullMatch - A.isFullMatch;
+			}
+			if (A.score !== B.score) {
+				return B.score - A.score;
+			}
 			return A.order - B.order;
 		});
 	}
@@ -1228,7 +1239,7 @@
 		return tokens.every((token) => {
 			if (searchInfo.lowerColumnName.includes(token)) return true;
 			if (searchInfo.description.includes(token)) return true;
-			if (searchInfo.regex?.test(token)) return true;
+			if (searchInfo.quickSearchRegex?.test(token)) return true;
 			return false;
 		});
 	}

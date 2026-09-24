@@ -382,6 +382,20 @@
 		};
 	};
 
+	GDV.utils.convertJsonObjectToMap = (object) => {
+		return new Map(Object.entries(object));
+	}
+
+	GDV.utils.convertToRegex = (regexStr) => {
+		let regex = null;
+		try {
+			regex = new RegExp(regexStr, "i");
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Invalid Regex", `Invalid regex pattern.`, err, { regexStr: regexStr });
+		}
+		return regex;
+	};
+
 	function createErrorMessage(error) {
 		if (!error?.message) return "";
 		const msg = error.message.toString().trim();

@@ -1,23 +1,23 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_categories.json", 544597],
-      ["data/game_column_details.json", 1877103],
-      ["data/game_data_part_1.csv", 45061565],
-      ["data/game_data_part_2.csv", 44889193],
-      ["data/game_data_part_3.csv", 44895826],
-      ["data/game_data_part_4.csv", 44890510],
-      ["data/game_data_part_5.csv", 44889533],
-      ["data/game_data_part_6.csv", 44889551],
-      ["data/game_data_part_7.csv", 44889325],
-      ["data/game_data_part_8.csv", 44894281],
-      ["data/game_data_part_9.csv", 44886133],
-      ["data/game_keys.json", 1364385],
-      ["data/game_thumbnails.json", 20398826],
-      ["data/tag_named_regex_patterns.json", 5545545],
-      ["data/tag_quick_search_patterns.json", 4561841],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_categories.json", 544597],
+		["data/game_column_details.json", 1877103],
+		["data/game_data_part_1.csv", 45061565],
+		["data/game_data_part_2.csv", 44889193],
+		["data/game_data_part_3.csv", 44895826],
+		["data/game_data_part_4.csv", 44890510],
+		["data/game_data_part_5.csv", 44889533],
+		["data/game_data_part_6.csv", 44889551],
+		["data/game_data_part_7.csv", 44889325],
+		["data/game_data_part_8.csv", 44894281],
+		["data/game_data_part_9.csv", 44886133],
+		["data/game_keys.json", 1364385],
+		["data/game_thumbnails.json", 20398826],
+		["data/tag_full_match_patterns.json", 5545545],
+		["data/tag_quick_search_patterns.json", 4561841],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -53,9 +53,15 @@
 		GDV.dom.setColumnCategories(fileName);
 	}
 
+	GDV.controller.setTagFullMatchPatterns = setTagFullMatchPatterns;
+	function setTagFullMatchPatterns(tagFullMatchPatterns, fileName) {
+		GDV.state.setTagFullMatchPatterns(GDV.utils.convertJsonObjectToMap(tagFullMatchPatterns));
+		GDV.dom.setTagFullMatchPatterns(fileName);
+	}
+
 	GDV.controller.setTagQuickSearchPatterns = setTagQuickSearchPatterns;
 	function setTagQuickSearchPatterns(tagQuickSearchPatterns, fileName) {
-		GDV.state.setTagQuickSearchPatterns(buildTagFullPatternObjects(tagQuickSearchPatterns));
+		GDV.state.setTagQuickSearchPatterns(GDV.utils.convertJsonObjectToMap(tagQuickSearchPatterns));
 		GDV.dom.setTagQuickSearchPatterns(fileName);
 	}
 
@@ -189,11 +195,13 @@
 			await loadCsvFromLocalDataFolder();
 			GDV.loading.updateLoadingDirectUpdate("Loading column details...", 80);
 			await loadColumnDetailsFromLocalDataFolder();
-			GDV.loading.updateLoadingDirectUpdate("Loading game keys...", 82.5);
+			GDV.loading.updateLoadingDirectUpdate("Loading game keys...", 82);
 			await loadGameKeysFromLocalDataFolder();
-			GDV.loading.updateLoadingDirectUpdate("Loading column categories...", 85);
+			GDV.loading.updateLoadingDirectUpdate("Loading column categories...", 84);
 			await loadColumnCategoriesFromLocalDataFolder();
-			GDV.loading.updateLoadingDirectUpdate("Loading tag definitions...", 87.5);
+			GDV.loading.updateLoadingDirectUpdate("Loading tag full match patterns...", 86);
+			await loadTagFullMatchPatternsFromLocalDataFolder();
+			GDV.loading.updateLoadingDirectUpdate("Loading tag quick search patterns...", 88);
 			await loadTagQuickSearchPatternsFromLocalDataFolder();
 			GDV.loading.updateLoadingDirectUpdate("Linking thumbnails...", 90);
 			await loadThumbnailsFromLocalDataFolder();
@@ -210,10 +218,11 @@
 		initializeCommonSteps();
 		await GDV.loading.startLoading("Initializing...", "var(--green)");
 		await loadDefaultCsv("Loading database records...", 0, 80);
-		await loadDefaultColumnDetailsJson("Loading column details...", 80, 82.5);
-		await loadDefaultGameKeysJson("Loading game keys...", 82.5, 85);
-		await loadDefaultColumnCategoriesJson("Loading column categories...", 85, 87.5);
-		await loadDefaultTagQuickSearchPatternsJson("Loading tag definitions...", 87.5, 90);
+		await loadDefaultColumnDetailsJson("Loading column details...", 80, 82);
+		await loadDefaultGameKeysJson("Loading game keys...", 82, 84);
+		await loadDefaultColumnCategoriesJson("Loading column categories...", 84, 86);
+		await loadDefaultTagFullMatchPatternsJson("Loading tag full match patterns...", 86, 88);
+		await loadDefaultTagQuickSearchPatternsJson("Loading tag quick search patterns...", 88, 90);
 		await loadDefaultThumbnailsJson("Linking thumbnails...", 90, 100);
 		GDV.prefilter.initializePrefilterOverlayIfNeeded();
 		await GDV.loading.finishLoading("Initialization complete.");
@@ -305,11 +314,27 @@
 		}
 	}
 
+	async function loadDefaultTagFullMatchPatternsJson(label, startPercent, endPercent) {
+		try {
+			const response = await fetchWithProgress("data/tag_full_match_patterns.json", getFileSize("data/tag_full_match_patterns.json"), label, startPercent, endPercent);
+			if (!response.ok) {
+				GDV.utils.reportHardError("Tag Patterns Load Failed", "Failed to fetch the tag full match patterns JSON file.", new Error(`HTTP status: ${response.status}`), {
+					url: "data/tag_full_match_patterns.json",
+				});
+				return;
+			}
+			const tagFullMatchPatterns = await response.json();
+			setTagFullMatchPatterns(tagFullMatchPatterns, "data/tag_full_match_patterns.json");
+		} catch (err) {
+			GDV.utils.reportHardError("Tag Patterns Load Failed", "An unexpected error occurred while loading the tag full match patterns JSON.", err);
+		}
+	}
+
 	async function loadDefaultTagQuickSearchPatternsJson(label, startPercent, endPercent) {
 		try {
 			const response = await fetchWithProgress("data/tag_quick_search_patterns.json", getFileSize("data/tag_quick_search_patterns.json"), label, startPercent, endPercent);
 			if (!response.ok) {
-				GDV.utils.reportHardError("Tag Patterns Load Failed", "Failed to fetch the default tag full patterns JSON file.", new Error(`HTTP status: ${response.status}`), {
+				GDV.utils.reportHardError("Tag Patterns Load Failed", "Failed to fetch the tag quick search patterns JSON file.", new Error(`HTTP status: ${response.status}`), {
 					url: "data/tag_quick_search_patterns.json",
 				});
 				return;
@@ -317,7 +342,7 @@
 			const tagQuickSearchPatterns = await response.json();
 			setTagQuickSearchPatterns(tagQuickSearchPatterns, "data/tag_quick_search_patterns.json");
 		} catch (err) {
-			GDV.utils.reportHardError("Tag Patterns Load Failed", "An unexpected error occurred while loading the default tag full patterns JSON.", err);
+			GDV.utils.reportHardError("Tag Patterns Load Failed", "An unexpected error occurred while loading the tag quick search patterns JSON.", err);
 		}
 	}
 
@@ -455,6 +480,22 @@
 		}
 	}
 
+	async function loadTagFullMatchPatternsFromLocalDataFolder() {
+		if (!dataFolderHandle) return;
+		const fileHandle = await dataFolderHandle.getFileHandle("tag_full_match_patterns.json").catch(() => null);
+		if (!fileHandle) {
+			GDV.utils.reportHardWarning("Missing Tag Patterns", 'The file "tag_full_match_patterns.json" was not found in the selected games folder.');
+			return;
+		}
+		try {
+			const file = await fileHandle.getFile();
+			const tagFullMatchPatterns = JSON.parse(await file.text());
+			setTagFullMatchPatterns(tagFullMatchPatterns, "data/tag_full_match_patterns.json");
+		} catch (err) {
+			GDV.utils.reportHardError("Failed to Load Tag Patterns", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
+		}
+	}
+
 	async function loadTagQuickSearchPatternsFromLocalDataFolder() {
 		if (!dataFolderHandle) return;
 		const fileHandle = await dataFolderHandle.getFileHandle("tag_quick_search_patterns.json").catch(() => null);
@@ -548,20 +589,5 @@
 			GDV.utils.reportHardError("Folder Selection Failed", "An unexpected error occurred while selecting the games folder.", err, { gamesFolderHandle });
 			return false;
 		}
-	}
-
-	function buildTagFullPatternObjects(tagQuickSearchPatterns) {
-		const result = Object.create(null); // faster lookup, no prototype chain
-		for (const tag in tagQuickSearchPatterns) {
-			const pattern = tagQuickSearchPatterns[tag];
-			let regex = null;
-			try {
-				regex = new RegExp(pattern, "i");
-			} catch (err) {
-				GDV.utils.reportSoftWarning("Invalid Regex", `Invalid regex pattern for tag "${tag}".`, err, { regexStr: pattern });
-			}
-			result[tag] = { pattern, regex };
-		}
-		return result;
 	}
 })();
