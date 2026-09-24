@@ -2,6 +2,7 @@
 	const noPrefiltersLabel = "No Prefilters Applied";
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleSectionsBatchSize = 99;
+	const includeFullMatchLengthThreshold = 4;
 	let prefilterOverlay = null;
 	let prefilterSectionArray = null;
 	let maxVisibleSections = visibleSectionsBatchSize;
@@ -451,7 +452,7 @@
 			const fullMatchRegex = tagFullMatchPatterns.get(filterName) ?? null;
 			const quickSearchRegex = tagQuickSearchPatterns.get(filterName) ?? null;
 			prefilterSectionSearchInfo.set(columnName, {
-				description: columnDetail?.type === "tag" ? "" : columnDetail?.description?.toLowerCase() || "",
+				loweredDescription: columnDetail?.type === "tag" ? "" : columnDetail?.description?.toLowerCase() || "",
 				fullMatchRegex,
 				quickSearchRegex
 			});
@@ -1177,7 +1178,7 @@
 			const columnName = section.dataset.col;
 			const searchInfo = prefilterSectionSearchInfo.get(columnName);
 			sortingInfo.set(columnName, {
-				isFullMatch: searchText.length >= 4 && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
+				isFullMatch: searchText.length >= includeFullMatchLengthThreshold && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
 				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
 				order: prefilterColumnOrderMap.get(columnName)
 			});
@@ -1235,7 +1236,7 @@
 		if (!searchInfo) return false;
 		return tokens.every((token) => {
 			if (columnName.toLowerCase().includes(token)) return true;
-			if (searchInfo.description.includes(token)) return true;
+			if (searchInfo.loweredDescription.includes(token)) return true;
 			if (searchInfo.quickSearchRegex?.test(token)) return true;
 			return false;
 		});
