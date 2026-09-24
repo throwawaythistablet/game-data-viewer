@@ -15,7 +15,8 @@
       ["data/game_data_part_9.csv", 44886133],
       ["data/game_keys.json", 1364385],
       ["data/game_thumbnails.json", 20398826],
-      ["data/tag_quick_search_patterns.json", 5545545],
+      ["data/tag_named_regex_patterns.json", 5545545],
+      ["data/tag_quick_search_patterns.json", 4561841],
     ]);
 	// FILE_PATH_TO_SIZE_MAP END
 
