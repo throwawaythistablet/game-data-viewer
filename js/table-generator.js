@@ -315,9 +315,7 @@
 			total++;
 		}
 
-		return total === 0
-			? "0.00"
-			: ((score / total) * 100).toFixed(2);
+		return total === 0 ? "0.00" : ((score / total) * 100).toFixed(2);
 	}
 
 	// Normalize boolean values from strings/CSV/etc

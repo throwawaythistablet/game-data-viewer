@@ -308,7 +308,8 @@
 	}
 
 	GDV.utils.normalizeFilterName = (columnName) => {
-		return columnName.includes(": ") ? columnName.split(": ")[1] : columnName;
+		const separatorIndex = columnName.indexOf(": ");
+		return separatorIndex !== -1 ? columnName.slice(separatorIndex + 2) : columnName;
 	};
 
 	GDV.utils.downloadBlob = (blob, filename) => {
