@@ -145,7 +145,7 @@
 		Object.keys(params).forEach((key) => {
 			if (!key.startsWith("pf_")) return;
 			const columnName = key.substring(3); // remove pf_
-			const val = params[key];
+			const value = params[key];
 
 			const columnDetail = GDV.state.getActiveColumnDetails()[columnName];
 			if (!columnDetail) {
@@ -157,7 +157,7 @@
 				case "float":
 				case "int": {
 					// Range parsing: "min-max" or "-max" or "min-"
-					const [minStr, maxStr] = val.split("-");
+					const [minStr, maxStr] = value.split("-");
 					const min = minStr !== "" ? parseFloat(minStr) : null;
 					const max = maxStr !== "" ? parseFloat(maxStr) : null;
 
@@ -173,7 +173,7 @@
 
 				case "str": {
 					// Comma-separated choices
-					const choices = val.split(",").map((s) => s.trim()).filter(Boolean);
+					const choices = value.split(",").map((s) => s.trim()).filter(Boolean);
 
 					// Optional: validate against allowed choices
 					const validChoices = columnDetail.choices.length ? choices.filter((c) => columnDetail.choices.includes(c)) : choices;
@@ -183,7 +183,7 @@
 
 				case "tag": {
 					// Numeric tag values
-					const tags = val.split(",").map(Number).filter((n) => !Number.isNaN(n));
+					const tags = value.split(",").map(Number).filter((n) => !Number.isNaN(n));
 
 					// Optional: validate against min/max
 					const validTags = tags.filter((n) => n >= columnDetail.min && n <= columnDetail.max);
@@ -193,7 +193,7 @@
 
 				case "bool": {
 					// Accept "true"/"1" as true, "false"/"0" as false
-					const boolVals = val
+					const boolVals = value
 						.split(",")
 						.map((v) => {
 							v = v.toLowerCase();
@@ -207,7 +207,7 @@
 
 				default: {
 					// Treat as free text (multiple tokens allowed)
-					const tokens = val
+					const tokens = value
 						.split(",")
 						.map((s) => s.trim())
 						.filter(Boolean);
@@ -232,41 +232,41 @@
 			GDV.utils.reportSoftWarning("Prefilter validation issue", "Invalid conditions object");
 			return false;
 		}
-		for (const [col, val] of Object.entries(prefilterConditions)) {
-			if (!val || typeof val !== "object" || Array.isArray(val)) {
-				warnings.push(`"${col}" is not a valid condition object`);
+		for (const [column, value] of Object.entries(prefilterConditions)) {
+			if (!value || typeof value !== "object" || Array.isArray(value)) {
+				warnings.push(`"${column}" is not a valid condition object`);
 				continue;
 			}
 			// Numeric
-			if (val.min != null || val.max != null || val.type === "int" || val.type === "float") {
-				if (val.min != null && !Number.isFinite(val.min)) {
-					warnings.push(`"${col}" has invalid min`);
+			if (value.min != null || value.max != null || value.type === "int" || value.type === "float") {
+				if (value.min != null && !Number.isFinite(value.min)) {
+					warnings.push(`"${column}" has invalid min`);
 				}
-				if (val.max != null && !Number.isFinite(val.max)) {
-					warnings.push(`"${col}" has invalid max`);
+				if (value.max != null && !Number.isFinite(value.max)) {
+					warnings.push(`"${column}" has invalid max`);
 				}
-				if (val.min != null && val.max != null && val.min > val.max) {
-					warnings.push(`"${col}" min > max`);
+				if (value.min != null && value.max != null && value.min > value.max) {
+					warnings.push(`"${column}" min > max`);
 				}
 
 				continue;
 			}
 			// Choices
-			if (Array.isArray(val.choices)) {
-				if (!val.choices.every(c => typeof c === "string" || typeof c === "number" || typeof c === "boolean")) {
-					warnings.push(`"${col}" has invalid choices`);
+			if (Array.isArray(value.choices)) {
+				if (!value.choices.every(c => typeof c === "string" || typeof c === "number" || typeof c === "boolean")) {
+					warnings.push(`"${column}" has invalid choices`);
 				}
 				continue;
 			}
 			// Text
-			if (val.text != null) {
-				if (!Array.isArray(val.text) || !val.text.every(t => typeof t === "string")) {
-					warnings.push(`"${col}" has invalid text tokens`);
+			if (value.text != null) {
+				if (!Array.isArray(value.text) || !value.text.every(t => typeof t === "string")) {
+					warnings.push(`"${column}" has invalid text tokens`);
 				}
 				continue;
 			}
 			// Unknown shape
-			warnings.push(`"${col}" has unknown condition structure`);
+			warnings.push(`"${column}" has unknown condition structure`);
 		}
 		// SINGLE BANNER OUTPUT (your rule)
 		if (warnings.length > 0) {

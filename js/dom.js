@@ -161,9 +161,9 @@
 		marker.replaceChildren(container);
 	};
 
-	GDV.dom.createHighlightFromValue = (val, columnName) => {
-		const num = parseFloat(val);
-		if (Number.isNaN(num)) return document.createTextNode(val);
+	GDV.dom.createHighlightFromValue = (value, columnName) => {
+		const num = parseFloat(value);
+		if (Number.isNaN(num)) return document.createTextNode(value);
 
 		const { min, max } = GDV.state.getActiveColumnDetails()[columnName] || {};
 		const intensity = max === min ? 0 : Math.max(0, Math.min(1, (num - min) / (max - min)));
@@ -181,7 +181,7 @@
 		span.className = `highlight-cell ${weightClass}`;
 		span.style.backgroundColor = bgColor;
 		span.style.color = textColor;
-		span.textContent = val;
+		span.textContent = value;
 
 		return span;
 	};
@@ -472,17 +472,17 @@
 
 	function createPrefilterActiveItem(node) {
 		const prefilterConditions = GDV.state.getPrefilterConditions();
-		const col = node.column;
-		const val = prefilterConditions[col];
-		if (!val) return null;
+		const column = node.column;
+		const value = prefilterConditions[column];
+		if (!value) return null;
 
 		const activeItem = document.createElement("span");
 		activeItem.className = "prefilter-active-item";
-		activeItem.dataset.col = col;
-		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
+		activeItem.dataset.col = column;
+		const text = GDV.prefilter.getPrefilterDisplayText(column, value) || "";
 		activeItem.textContent = `${text} `;
-		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
-		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
+		activeItem.title = GDV.datatable.getColumnDescription(column) || "";
+		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(value) || "";
 
 		return activeItem;
 	}

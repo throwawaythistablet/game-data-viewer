@@ -439,7 +439,7 @@
 		const tagFullMatchPatterns = GDV.state.getTagFullMatchPatterns() || {};
 		const tagQuickSearchPatterns = GDV.state.getTagQuickSearchPatterns() || {};
 		const columnOrder = Object.keys(columnDetails);
-		prefilterColumnOrderMap = new Map(columnOrder.map((col, i) => [col, i]));
+		prefilterColumnOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
 		prefilterSectionSearchInfo = new Map();
 		for (const [columnName, columnDetail] of Object.entries(columnDetails)) {
 			grid.appendChild(createFilterSectionForColumnDetails(columnName, columnDetail, prefill[columnName]));
@@ -456,27 +456,27 @@
 		return grid;
 	}
 
-	function createFilterSectionForColumnDetails(col, columnDetail, prefill) {
+	function createFilterSectionForColumnDetails(column, columnDetail, prefill) {
 		const section = document.createElement("section");
 		section.className = "prefilter-section";
-		section.dataset.col = String(col);
-		section.title = GDV.datatable.getColumnDescription(col);
+		section.dataset.col = String(column);
+		section.title = GDV.datatable.getColumnDescription(column);
 
 		const title = document.createElement("h3");
-		title.textContent = col;
+		title.textContent = column;
 		section.appendChild(title);
 
 		if (columnDetail.type === "tag") {
-			section.appendChild(createTagFilter(col, prefill));
+			section.appendChild(createTagFilter(column, prefill));
 		} else if (Array.isArray(columnDetail.choices) && columnDetail.choices.length > 0) {
-			section.appendChild(createChoiceFilter(col, columnDetail.choices, prefill));
+			section.appendChild(createChoiceFilter(column, columnDetail.choices, prefill));
 		} else if (columnDetail.type === "int" || columnDetail.type === "float") {
-			section.appendChild(createRangeFilter(col, columnDetail.min, columnDetail.max, prefill));
+			section.appendChild(createRangeFilter(column, columnDetail.min, columnDetail.max, prefill));
 		} else {
-			section.appendChild(createTextFilterInput(col, prefill));
+			section.appendChild(createTextFilterInput(column, prefill));
 		}
 
-		const tagCount = GDV.datatable.getColumnTagCount(col);
+		const tagCount = GDV.datatable.getColumnTagCount(column);
 		if (tagCount != null) {
 			const footer = document.createElement("div");
 			footer.className = "prefilter-footer";
@@ -753,21 +753,21 @@
 	function createPrefilterActiveItem(form, node) {
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
-		const col = node.column;
-		const val = prefilterConditions[col];
-		if (!val) return null;
+		const column = node.column;
+		const value = prefilterConditions[column];
+		if (!value) return null;
 
 		const activeItem = document.createElement("span");
 		activeItem.className = "prefilter-active-item";
-		activeItem.dataset.col = col;
+		activeItem.dataset.col = column;
 		if (node === prefilterAstCurrentNode) {
 			activeItem.classList.add("is-focused");
 		}
-		const text = GDV.prefilter.getPrefilterDisplayText(col, val) || "";
+		const text = GDV.prefilter.getPrefilterDisplayText(column, value) || "";
 		activeItem.textContent = `${text} `;
-		activeItem.title = GDV.datatable.getColumnDescription(col) || "";
-		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(val) || "";
-		activeItem.appendChild(createPrefilterActiveItemRemoveButton(form, col, activeItem.dataset.type));
+		activeItem.title = GDV.datatable.getColumnDescription(column) || "";
+		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(value) || "";
+		activeItem.appendChild(createPrefilterActiveItemRemoveButton(form, column, activeItem.dataset.type));
 		bindPrefilterAstNodeFocus(form, activeItem, node)
 
 		return activeItem;
@@ -788,15 +788,15 @@
 		return el;
 	}
 
-	function createPrefilterActiveItemRemoveButton(form, col, type) {
+	function createPrefilterActiveItemRemoveButton(form, column, type) {
 		const removeButton = document.createElement("button");
 		removeButton.type = "button";
 		removeButton.className = "prefilter-remove-btn";
 		removeButton.textContent = "×";
-		removeButton.setAttribute("aria-label", `Remove prefilter for ${col}`);
+		removeButton.setAttribute("aria-label", `Remove prefilter for ${column}`);
 		removeButton.addEventListener("click", (e) => {
 			e.stopPropagation();
-			removeColumnWithTypeAndUpdateAll(form, col, type)
+			removeColumnWithTypeAndUpdateAll(form, column, type)
 		});
 		return removeButton;
 	};
@@ -891,13 +891,13 @@
 		return button;
 	}
 
-	function removeColumnWithTypeAndUpdateAll(form, col, type) {
-		clearActiveItemParametersWithType(form, col, type);
-		updateAllBasedFromActiveItemParametersChanges(form, col);
+	function removeColumnWithTypeAndUpdateAll(form, column, type) {
+		clearActiveItemParametersWithType(form, column, type);
+		updateAllBasedFromActiveItemParametersChanges(form, column);
 	}
 
-	function updateAllBasedFromActiveItemParametersChanges(form, col) {
-		GDV.prefilter.updateActiveItemParametersInConditionAndAst(form, col);
+	function updateAllBasedFromActiveItemParametersChanges(form, column) {
+		GDV.prefilter.updateActiveItemParametersInConditionAndAst(form, column);
 		updatePrefilterActiveItemsAndWarning(form);
 	}
 
@@ -983,16 +983,16 @@
 	}
 
 	GDV.prefilter.clearActiveItemParameters = clearActiveItemParameters;
-	function clearActiveItemParameters(col) {
+	function clearActiveItemParameters(column) {
 		const form = document.querySelector(".prefilter-form");
 		if (!form) return;
-		const activeItem = form.querySelector(`.prefilter-active-item[data-col="${col}"]`);
+		const activeItem = form.querySelector(`.prefilter-active-item[data-col="${column}"]`);
 		if (!activeItem) return;
-		clearActiveItemParametersWithType(form, col, activeItem.dataset.type);
+		clearActiveItemParametersWithType(form, column, activeItem.dataset.type);
 	}
 
-	function clearActiveItemParametersWithType(form, col, type) {
-		const colEsc = window.CSS && CSS.escape ? CSS.escape(col) : col;
+	function clearActiveItemParametersWithType(form, column, type) {
+		const colEsc = window.CSS && CSS.escape ? CSS.escape(column) : column;
 		if (type === "checkbox") {
 			form.querySelectorAll(`input[name="${colEsc}"]`).forEach((i) => {
 				i.checked = false;
@@ -1258,8 +1258,8 @@
 
 			// Only text/textarea/range inputs
 			if (input.type === "text" || input.tagName.toLowerCase() === "textarea" || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
-				const col = input.name.replace(/__(min|max)$/, "");
-				updateAllBasedFromActiveItemParametersChanges(form, col);
+				const column = input.name.replace(/__(min|max)$/, "");
+				updateAllBasedFromActiveItemParametersChanges(form, column);
 			}
 		});
 
@@ -1268,8 +1268,8 @@
 			if (!input || input.classList?.contains("prefilter-search-input") || !input.name) return;
 
 			// Only checkboxes, selects, or final number input state
-			const col = input.name.replace(/__(min|max)$/, "");
-			updateAllBasedFromActiveItemParametersChanges(form, col);
+			const column = input.name.replace(/__(min|max)$/, "");
+			updateAllBasedFromActiveItemParametersChanges(form, column);
 		});
 	};
 

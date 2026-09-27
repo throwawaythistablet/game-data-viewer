@@ -1,24 +1,24 @@
 (() => {
-	GDV.prefilter.getPrefilterDisplayText = (col, val) => {
-		if (!val) return "";
-		if (val.type === "tag" || Array.isArray(val.choices)) {
-			return `${col}: ${val.choices?.join(", ") || val.text?.join(", ")}`;
-		} else if (val.type === "int" || val.type === "float") {
+	GDV.prefilter.getPrefilterDisplayText = (column, value) => {
+		if (!value) return "";
+		if (value.type === "tag" || Array.isArray(value.choices)) {
+			return `${column}: ${value.choices?.join(", ") || value.text?.join(", ")}`;
+		} else if (value.type === "int" || value.type === "float") {
 			const minMax = [];
-			if (val.min != null) minMax.push(`min=${val.min}`);
-			if (val.max != null) minMax.push(`max=${val.max}`);
-			return `${col}: ${minMax.join(", ")}`;
-		} else if (val.text) {
-			return `${col}: ${val.text.join(", ")}`;
+			if (value.min != null) minMax.push(`min=${value.min}`);
+			if (value.max != null) minMax.push(`max=${value.max}`);
+			return `${column}: ${minMax.join(", ")}`;
+		} else if (value.text) {
+			return `${column}: ${value.text.join(", ")}`;
 		}
 		return "";
 	};
 
-	GDV.prefilter.getPrefilterDisplayType = (val) => {
-		if (!val) return "";
-		if (val.type === "tag" || Array.isArray(val.choices)) return "checkbox";
-		if (val.type === "int" || val.type === "float") return "range";
-		if (val.text) return "text";
+	GDV.prefilter.getPrefilterDisplayType = (value) => {
+		if (!value) return "";
+		if (value.type === "tag" || Array.isArray(value.choices)) return "checkbox";
+		if (value.type === "int" || value.type === "float") return "range";
+		if (value.text) return "text";
 		return "";
 	};
 })();

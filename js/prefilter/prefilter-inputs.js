@@ -39,28 +39,28 @@
 	};
 
 	GDV.prefilter.addToConditionAndAst = addToConditionAndAst;
-	function addToConditionAndAst(col, condition) {
-		prefilterConditions[col] = condition;
-		addColumnToAst(col);
+	function addToConditionAndAst(column, condition) {
+		prefilterConditions[column] = condition;
+		addColumnToAst(column);
 	}
 
 	GDV.prefilter.removeFromConditionAndAst = removeFromConditionAndAst;
-	function removeFromConditionAndAst(col) {
-		delete prefilterConditions[col];
-		removeColumnFromAst(col);
+	function removeFromConditionAndAst(column) {
+		delete prefilterConditions[column];
+		removeColumnFromAst(column);
 	}
 
 	GDV.prefilter.removeFromConditionAndUi = removeFromConditionAndUi;
-	function removeFromConditionAndUi(col) {
-		delete prefilterConditions[col];
-		GDV.prefilter.clearActiveItemParameters(col);
+	function removeFromConditionAndUi(column) {
+		delete prefilterConditions[column];
+		GDV.prefilter.clearActiveItemParameters(column);
 	}
 
 	GDV.prefilter.removeColumnFromAst = removeColumnFromAst;
-	function removeColumnFromAst(col) {
+	function removeColumnFromAst(column) {
 		if (!prefilterAst) return;
 		const path = [];
-		prefilterAst = removeNodeWithColumn(prefilterAst, col, path);
+		prefilterAst = removeNodeWithColumn(prefilterAst, column, path);
 		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
 	}
 
@@ -73,27 +73,27 @@
 	}
 
 	GDV.prefilter.updateActiveItemParametersInConditionAndAst = updateActiveItemParametersInConditionAndAst;
-	function updateActiveItemParametersInConditionAndAst(form, col) {
+	function updateActiveItemParametersInConditionAndAst(form, column) {
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
-		const def = columnDetails[col];
+		const def = columnDetails[column];
 		if (!def) return;
 		if (isNumericColumn(def)) {
-			updateNumericPrefilter(form, col, def);
-		} else if (isCheckboxColumn(form, col)) {
-			updateCheckboxPrefilter(form, col, def);
-		} else if (isTextColumn(form, col)) {
-			updateTextPrefilter(form, col);
+			updateNumericPrefilter(form, column, def);
+		} else if (isCheckboxColumn(form, column)) {
+			updateCheckboxPrefilter(form, column, def);
+		} else if (isTextColumn(form, column)) {
+			updateTextPrefilter(form, column);
 		} else {
-			removeFromConditionAndAst(col);
+			removeFromConditionAndAst(column);
 		}
 	}
 
 	GDV.prefilter.applyPrefilterConditionsToForm = applyPrefilterConditionsToForm;
 	function applyPrefilterConditionsToForm(form) {
 		if (!form) return;
-		for (const col in prefilterConditions) {
-			const prefilterCondition = prefilterConditions[col];
-			applyPrefilterConditionToField(form, col, prefilterCondition);
+		for (const column in prefilterConditions) {
+			const prefilterCondition = prefilterConditions[column];
+			applyPrefilterConditionToField(form, column, prefilterCondition);
 		}
 	}
 
@@ -148,9 +148,9 @@
 		}
 		return {
 			ast_type: "AND",
-			children: columns.map((col) => ({
+			children: columns.map((column) => ({
 				ast_type: "VALUE",
-				column: col
+				column: column
 			}))
 		};
 	}
@@ -294,9 +294,9 @@
 
 		// --- 1. CLEAN CONDITIONS (schema-level validation only)
 		const cleanConditions = {};
-		for (const col in (prefilterConditions || {})) {
-			if (columnDetails[col]) {
-				cleanConditions[col] = prefilterConditions[col];
+		for (const column in (prefilterConditions || {})) {
+			if (columnDetails[column]) {
+				cleanConditions[column] = prefilterConditions[column];
 			}
 		}
 
@@ -337,11 +337,11 @@
 
 		// --- 4. FIND MISSING CONDITIONS (present in conditions but not AST)
 		const missingNodes = [];
-		for (const col in cleanConditions) {
-			if (!astColumnsSet.has(col)) {
+		for (const column in cleanConditions) {
+			if (!astColumnsSet.has(column)) {
 				missingNodes.push({
 					ast_type: "VALUE",
-					column: col
+					column: column
 				});
 			}
 		}
@@ -423,11 +423,11 @@
 
 	GDV.prefilter.getSortMode = () => sortMode;
 
-	function updateNumericPrefilter(form, col, def) {
-		const [minEl] = getFormElementsByName(form, `${col}__min`);
-		const [maxEl] = getFormElementsByName(form, `${col}__max`);
+	function updateNumericPrefilter(form, column, def) {
+		const [minEl] = getFormElementsByName(form, `${column}__min`);
+		const [maxEl] = getFormElementsByName(form, `${column}__max`);
 		if (!minEl && !maxEl) {
-			removeFromConditionAndAst(col);
+			removeFromConditionAndAst(column);
 			return;
 		}
 		let min = minEl?.value === "" ? null : Number(minEl.value);
@@ -439,34 +439,34 @@
 			if (max != null) max = Math.round(max);
 		}
 		if (min == null && max == null) {
-			removeFromConditionAndAst(col);
+			removeFromConditionAndAst(column);
 		} else {
-			addToConditionAndAst(col, { type: def.type, min, max });
+			addToConditionAndAst(column, { type: def.type, min, max });
 		}
 	}
 
-	function updateCheckboxPrefilter(form, col, def) {
-		const checkboxes = getFormElementsByName(form, col).filter((e) => e.type === "checkbox");
+	function updateCheckboxPrefilter(form, column, def) {
+		const checkboxes = getFormElementsByName(form, column).filter((e) => e.type === "checkbox");
 		const checked = checkboxes.filter((c) => c.checked).map((c) => c.value);
 
 		if (checked.length === 0 || checked.length === checkboxes.length) {
-			removeFromConditionAndAst(col);
+			removeFromConditionAndAst(column);
 		} else {
 			const converted = checked.map((v) => convertCheckboxValue(v, def.type));
-			addToConditionAndAst(col, { type: def.type, choices: converted });
+			addToConditionAndAst(column, { type: def.type, choices: converted });
 		}
 	}
 
-	function updateTextPrefilter(form, col) {
-		const textInputs = getFormElementsByName(form, col).filter((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
+	function updateTextPrefilter(form, column) {
+		const textInputs = getFormElementsByName(form, column).filter((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
 		if (!textInputs.length) return;
 
-		const val = textInputs[0].value?.trim();
-		if (!val) {
-			removeFromConditionAndAst(col);
+		const value = textInputs[0].value?.trim();
+		if (!value) {
+			removeFromConditionAndAst(column);
 		}
 		else {
-			addToConditionAndAst(col, { text: [val] });
+			addToConditionAndAst(column, { text: [value] });
 		}
 	}
 
@@ -484,15 +484,15 @@
 		return [];
 	}
 
-	function convertCheckboxValue(val, type) {
-		if (type === "bool") return val === "true";
-		if (type === "int") return parseInt(val, 10);
-		if (type === "float") return parseFloat(val);
-		if (type === "tag") return parseInt(val, 10);
-		if (type === "str") return String(val);
+	function convertCheckboxValue(value, type) {
+		if (type === "bool") return value === "true";
+		if (type === "int") return parseInt(value, 10);
+		if (type === "float") return parseFloat(value);
+		if (type === "tag") return parseInt(value, 10);
+		if (type === "str") return String(value);
 		// fallback: auto-detect numeric
-		const num = Number(val);
-		return Number.isFinite(num) ? (val.includes(".") ? parseFloat(val) : parseInt(val, 10)) : String(val);
+		const num = Number(value);
+		return Number.isFinite(num) ? (value.includes(".") ? parseFloat(value) : parseInt(value, 10)) : String(value);
 	}
 
 	// Determine column type
@@ -500,39 +500,39 @@
 		return def.type === "int" || def.type === "float";
 	}
 
-	function isCheckboxColumn(form, col) {
-		return getFormElementsByName(form, col).some((e) => e.type === "checkbox");
+	function isCheckboxColumn(form, column) {
+		return getFormElementsByName(form, column).some((e) => e.type === "checkbox");
 	}
 
-	function isTextColumn(form, col) {
-		return getFormElementsByName(form, col).some((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
+	function isTextColumn(form, column) {
+		return getFormElementsByName(form, column).some((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
 	}
 
-	function applyPrefilterConditionToField(form, col, condition) {
+	function applyPrefilterConditionToField(form, column, condition) {
 		if (condition == null) return;
 		if (condition.min != null || condition.max != null) {
-			applyNumericToForm(form, col, condition);
+			applyNumericToForm(form, column, condition);
 			return;
 		}
 		if (condition.choices) {
-			applyCheckboxToForm(form, col, condition);
+			applyCheckboxToForm(form, column, condition);
 			return;
 		}
 		if (condition.text) {
-			applyTextToForm(form, col, condition);
+			applyTextToForm(form, column, condition);
 			return;
 		}
 	}
 
-	function applyNumericToForm(form, col, condition) {
-		const [minEl] = getFormElementsByName(form, `${col}__min`);
-		const [maxEl] = getFormElementsByName(form, `${col}__max`);
+	function applyNumericToForm(form, column, condition) {
+		const [minEl] = getFormElementsByName(form, `${column}__min`);
+		const [maxEl] = getFormElementsByName(form, `${column}__max`);
 		if (minEl) minEl.value = condition.min ?? "";
 		if (maxEl) maxEl.value = condition.max ?? "";
 	}
 
-	function applyCheckboxToForm(form, col, condition) {
-		const checkboxes = getFormElementsByName(form, col).filter(e => e.type === "checkbox");
+	function applyCheckboxToForm(form, column, condition) {
+		const checkboxes = getFormElementsByName(form, column).filter(e => e.type === "checkbox");
 		if (!checkboxes.length) return;
 		const selected = new Set(condition.choices || []);
 		for (const cb of checkboxes) {
@@ -540,8 +540,8 @@
 		}
 	}
 
-	function applyTextToForm(form, col, condition) {
-		const inputs = getFormElementsByName(form, col)
+	function applyTextToForm(form, column, condition) {
+		const inputs = getFormElementsByName(form, column)
 			.filter(e =>
 				e.tagName.toLowerCase() === "input" ||
 				e.tagName.toLowerCase() === "textarea"
@@ -551,19 +551,19 @@
 	}
 
 	function createDefaultPrefilterAst() {
-		const cols = Object.keys(prefilterConditions || {});
-		if (cols.length === 0) return null;
-		if (cols.length === 1) {
+		const columns = Object.keys(prefilterConditions || {});
+		if (columns.length === 0) return null;
+		if (columns.length === 1) {
 			return {
 				ast_type: "VALUE",
-				column: cols[0]
+				column: columns[0]
 			};
 		}
 		return {
 			ast_type: "AND",
-			children: cols.map(col => ({
+			children: columns.map(column => ({
 				ast_type: "VALUE",
-				column: col
+				column: column
 			}))
 		};
 	}
@@ -611,20 +611,20 @@
 		}
 	}
 
-	function astHasColumn(node, col) {
+	function astHasColumn(node, column) {
 		if (!node) return false;
-		if (node.ast_type === "VALUE") return node.column === col;
-		if (node.ast_type === "NOT") return astHasColumn(node.child, col);
-		if (node.ast_type === "AND" || node.ast_type === "OR") return node.children.some(child => astHasColumn(child, col));
+		if (node.ast_type === "VALUE") return node.column === column;
+		if (node.ast_type === "NOT") return astHasColumn(node.child, column);
+		if (node.ast_type === "AND" || node.ast_type === "OR") return node.children.some(child => astHasColumn(child, column));
 		return false;
 	}
 
-	function removeNodeWithColumn(node, col, path) {
+	function removeNodeWithColumn(node, column, path) {
 		if (!node) return null;
 		path.push(node);
 		switch (node.ast_type) {
 			case "VALUE":
-				if (node.column === col) {
+				if (node.column === column) {
 					path.pop();
 					return null;
 				}
@@ -632,7 +632,7 @@
 				return node;
 			case "NOT":
 				if (node.child) {
-					node.child = removeNodeWithColumn(node.child, col, path);
+					node.child = removeNodeWithColumn(node.child, column, path);
 				}
 				if (!node.child) {
 					path.pop();
@@ -647,7 +647,7 @@
 					return node;
 				}
 				node.children = node.children
-					.map(child => removeNodeWithColumn(child, col, path))
+					.map(child => removeNodeWithColumn(child, column, path))
 					.filter(Boolean);
 				if (node.children.length === 0) {
 					path.pop();
@@ -661,7 +661,7 @@
 				path.pop();
 				return node;
 			default:
-				GDV.utils.reportSoftError("Problem removing a filter", "The system encountered an unexpected filter structure while trying to remove a selected filter. Some filters may still appear until refreshed.", null, { nodeType: node.ast_type, node, column: col });
+				GDV.utils.reportSoftError("Problem removing a filter", "The system encountered an unexpected filter structure while trying to remove a selected filter. Some filters may still appear until refreshed.", null, { nodeType: node.ast_type, node, column: column });
 				path.pop();
 				return node;
 		}
@@ -1090,9 +1090,9 @@
 			return ["Invalid conditions object"];
 		}
 		const warnings = [];
-		for (const col in conditions) {
-			if (!columnDetails[col]) {
-				warnings.push(`Condition name is not recognized: "${col}"`);
+		for (const column in conditions) {
+			if (!columnDetails[column]) {
+				warnings.push(`Condition name is not recognized: "${column}"`);
 			}
 		}
 		return warnings;
@@ -1125,14 +1125,14 @@
 		const astColumnsSet = collectColumnsSetFromAst(ast);
 		const conditionColumnsSet = new Set(Object.keys(conditions || {}));
 
-		for (const col of astColumnsSet) {
-			if (!conditionColumnsSet.has(col)) {
-				warnings.push(`Expression references "${col}" but no condition exists for it`);
+		for (const column of astColumnsSet) {
+			if (!conditionColumnsSet.has(column)) {
+				warnings.push(`Expression references "${column}" but no condition exists for it`);
 			}
 		}
-		for (const col of conditionColumnsSet) {
-			if (!astColumnsSet.has(col)) {
-				warnings.push(`Condition "${col}" exists but is not used in the expression`);
+		for (const column of conditionColumnsSet) {
+			if (!astColumnsSet.has(column)) {
+				warnings.push(`Condition "${column}" exists but is not used in the expression`);
 			}
 		}
 		return warnings;

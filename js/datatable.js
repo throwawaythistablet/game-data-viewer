@@ -171,10 +171,10 @@
 	function buildDataColumns(columnNamesInTable) {
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const specialKeys = ["key", GDV.tableGenerator.getSimilarityScoreName()];
-		const prefilterKeys = Object.keys(prefilterConditions || {}).filter(col => !specialKeys.includes(col));
-		const specialColumns = columnNamesInTable.filter((col) => specialKeys.includes(col));
-		const prefilterColumns = prefilterKeys.filter(col => columnNamesInTable.includes(col));
-		const resultKeys = [...specialColumns, ...prefilterColumns, ...columnNamesInTable.filter((col) => !specialColumns.includes(col) && !prefilterColumns.includes(col))];
+		const prefilterKeys = Object.keys(prefilterConditions || {}).filter(column => !specialKeys.includes(column));
+		const specialColumns = columnNamesInTable.filter((column) => specialKeys.includes(column));
+		const prefilterColumns = prefilterKeys.filter(column => columnNamesInTable.includes(column));
+		const resultKeys = [...specialColumns, ...prefilterColumns, ...columnNamesInTable.filter((column) => !specialColumns.includes(column) && !prefilterColumns.includes(column))];
 
 		return resultKeys.map((columnName) => ({
 			title: columnName,
@@ -249,24 +249,24 @@
 		const filterRow = document.createElement("tr");
 		filterRow.classList.add("filters");
 
-		columns.forEach((col) => {
+		columns.forEach((column) => {
 			// Header cell
 			const th = document.createElement("th");
-			th.textContent = col.title;
-			th.dataset.columnKey = col.data;
-			if (col.white_highlight) {
+			th.textContent = column.title;
+			th.dataset.columnKey = column.data;
+			if (column.white_highlight) {
 				th.classList.add("white-highlight");
-			} else if (col.yellow_highlight) {
+			} else if (column.yellow_highlight) {
 				th.classList.add("yellow-highlight");
 			}
 			headerRow.appendChild(th);
 
 			// Filter cell
 			const filterTh = document.createElement("th");
-			filterTh.dataset.columnKey = col.data;
-			if (col.white_highlight) {
+			filterTh.dataset.columnKey = column.data;
+			if (column.white_highlight) {
 				filterTh.classList.add("white-highlight");
-			} else if (col.yellow_highlight) {
+			} else if (column.yellow_highlight) {
 				filterTh.classList.add("yellow-highlight");
 			}
 			filterRow.appendChild(filterTh);
@@ -285,8 +285,8 @@
 			sortColumnIndex = 0;
 		}
 
-		const numericColumnIndexes = columns.reduce((indexes, col, i) => {
-			const type = GDV.state.getActiveColumnDetails()?.[col.data]?.type;
+		const numericColumnIndexes = columns.reduce((indexes, column, i) => {
+			const type = GDV.state.getActiveColumnDetails()?.[column.data]?.type;
 			if (type === "int" || type === "float") indexes.push(i);
 			return indexes;
 		}, []);
@@ -1225,7 +1225,7 @@
 	function findIndexOfColumnByNameInColumns(columns, columnName) {
 		if (!Array.isArray(columns) || !columnName) return null;
 		columnName = columnName.toLowerCase();
-		const idx = columns.findIndex((col) => col?.title?.toLowerCase() === columnName);
+		const idx = columns.findIndex((column) => column?.title?.toLowerCase() === columnName);
 		return idx !== -1 ? idx : null;
 	}
 

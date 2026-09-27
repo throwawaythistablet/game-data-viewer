@@ -200,10 +200,10 @@
 		if (!node) return true;
 		switch (node.ast_type) {
 			case "VALUE": {
-				const col = node.column;
-				const criterion = prefilterConditions?.[col];
+				const column = node.column;
+				const criterion = prefilterConditions?.[column];
 				if (!criterion) return true;
-				return isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetails[col]);
+				return isRowIncludedForPrefilterCondition(rowData, column, criterion, columnDetails[column]);
 			}
 			case "NOT": {
 				if (!node.child) return true;
@@ -229,14 +229,14 @@
 		}
 	}
 
-	function isRowIncludedForPrefilterCondition(rowData, col, criterion, columnDetail) {
+	function isRowIncludedForPrefilterCondition(rowData, column, criterion, columnDetail) {
 		if (!columnDetail) return true;
 
 		const normalize = (v) => (v == null ? "" : typeof v === "string" ? v.trim() : v);
-		if (!(col in rowData)) {
+		if (!(column in rowData)) {
 			return true;
 		}
-		const rawValue = rowData[col];
+		const rawValue = rowData[column];
 		const value = normalize(rawValue);
 
 		if (columnDetail.type === "tag") {
@@ -283,21 +283,23 @@
 		const IGNORE_COLS = new Set([
 			"key",
 			getSimilarityScoreName(),
+			"title",
 			"site_std_version",
 			"site_version",
+			"url",
 			"site_last_update_date",
 			"site_release_date",
-			"url",
-			"platforms",
-			"title"
+			"site_last_visit",
+			"vndb_url",
+			"vndb_last_visit"
 		]);
 
 		const compareKeys = Object.keys(similarGameRowData).filter((k) => !IGNORE_COLS.has(k));
 		let score = 0;
 		let total = 0;
-		for (const col of compareKeys) {
-			const a = similarGameRowData[col];
-			const b = rowData[col];
+		for (const column of compareKeys) {
+			const a = similarGameRowData[column];
+			const b = rowData[column];
 			let similarity = 0;
 			const na = Number(a);
 			const nb = Number(b);
@@ -308,7 +310,6 @@
 			else {
 				const sa = String(a).trim().toLowerCase();
 				const sb = String(b).trim().toLowerCase();
-
 				similarity = sa === sb ? 1 : 0;
 			}
 			score += similarity;
