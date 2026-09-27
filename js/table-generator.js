@@ -320,9 +320,9 @@
 	}
 
 	// Normalize boolean values from strings/CSV/etc
-	function normalizeBool(val) {
-		if (val === true || val === "true" || val === "True" || val === 1 || val === "1") return true;
-		if (val === false || val === "false" || val === "False" || val === 0 || val === "0") return false;
+	function normalizeBool(value) {
+		if (value === true || value === "true" || value === "True" || value === 1 || value === "1") return true;
+		if (value === false || value === "false" || value === "False" || value === 0 || value === "0") return false;
 		return null; // unknown / invalid
 	}
 })();
