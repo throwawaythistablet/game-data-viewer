@@ -8,9 +8,10 @@
   },
   "2d cg": {
     "categories": [
-      "Art and Visual Style"
+      "Art and Visual Style",
+      "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 18
   },
   "2d game": {
     "categories": [
@@ -27,9 +28,10 @@
   },
   "3d cg": {
     "categories": [
-      "Art and Visual Style"
+      "Art and Visual Style",
+      "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 18
   },
   "3d game": {
     "categories": [
@@ -42,7 +44,7 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "abduction": {
     "categories": [
@@ -58,7 +60,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "abnormal art": {
     "categories": [
@@ -72,13 +74,13 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "absurdism": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "absurdist": {
     "categories": [
@@ -86,7 +88,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "accessories": {
     "categories": [
@@ -98,20 +100,20 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "accidental flashing": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "accommodation": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "achievements": {
     "categories": [
@@ -124,13 +126,13 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "active time battle": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "activism": {
     "categories": [
@@ -143,7 +145,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "additional content": {
     "categories": [
@@ -161,7 +163,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "adult man": {
     "categories": [
@@ -185,13 +187,13 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "afterlife": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "age gap": {
     "categories": [
@@ -211,7 +213,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "age regression": {
     "categories": [
@@ -219,14 +221,14 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "agents": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "ahegao": {
     "categories": [
@@ -248,13 +250,14 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "ai cg": {
     "categories": [
-      "Art and Visual Style"
+      "Art and Visual Style",
+      "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 18
   },
   "ai shoujo": {
     "categories": [
@@ -287,14 +290,14 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "aliens": {
     "categories": [
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "alpha": {
     "categories": [
@@ -306,7 +309,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "amateur": {
     "categories": [
@@ -374,13 +377,13 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "ancient": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "angel": {
     "categories": [
@@ -388,7 +391,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "animal gore": {
     "categories": [
@@ -448,7 +451,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "antihero": {
     "categories": [
@@ -473,14 +476,14 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "arabic text": {
     "categories": [
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "arcade": {
     "categories": [
@@ -489,14 +492,14 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "archery": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "arena": {
     "categories": [
@@ -528,7 +531,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "arpg": {
     "categories": [
@@ -541,14 +544,14 @@
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "art_sentiment_label": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "artifacting": {
     "categories": [
@@ -561,7 +564,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "asian man": {
     "categories": [
@@ -587,7 +590,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "ass": {
     "categories": [
@@ -632,7 +635,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "attack on titan": {
     "categories": [
@@ -651,7 +654,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "autowin": {
     "categories": [
@@ -692,7 +695,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "baby maker": {
     "categories": [
@@ -732,7 +735,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "badass": {
     "categories": [
@@ -751,7 +754,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "bald": {
     "categories": [
@@ -822,14 +825,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "bayesian_rating": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "bbb": {
     "categories": [
@@ -877,7 +880,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "beautiful": {
     "categories": [
@@ -946,13 +949,13 @@
       "Character Archetypes and Tropes",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 4
+    "combined_weight": 19
   },
   "betrayal": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "big ass": {
     "categories": [
@@ -1039,7 +1042,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "bimbo": {
     "categories": [
@@ -1053,7 +1056,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "birth": {
     "categories": [
@@ -1064,7 +1067,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 22
+    "combined_weight": 20
   },
   "bisexual": {
     "categories": [
@@ -1096,7 +1099,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "black and white": {
     "categories": [
@@ -1142,7 +1145,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "blackmail": {
     "categories": [
@@ -1164,7 +1167,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "bleach franchise": {
     "categories": [
@@ -1180,7 +1183,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "blender renders": {
     "categories": [
@@ -1281,7 +1284,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 20
+    "combined_weight": 18
   },
   "body art": {
     "categories": [
@@ -1296,7 +1299,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "body attributes": {
     "categories": [
@@ -1319,7 +1322,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 22
+    "combined_weight": 20
   },
   "body customization": {
     "categories": [
@@ -1411,7 +1414,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "boss": {
     "categories": [
@@ -1462,7 +1465,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "brainwash": {
     "categories": [
@@ -1470,7 +1473,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "branding": {
     "categories": [
@@ -1486,14 +1489,14 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "break up": {
     "categories": [
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "breath play": {
     "categories": [
@@ -1513,7 +1516,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "brood mother": {
     "categories": [
@@ -1529,7 +1532,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "brother": {
     "categories": [
@@ -1613,7 +1616,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "bump combat": {
     "categories": [
@@ -1633,7 +1636,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "burping": {
     "categories": [
@@ -1652,14 +1655,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "butterfly effect": {
     "categories": [
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "buttplug": {
     "categories": [
@@ -1758,7 +1761,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "captured": {
     "categories": [
@@ -1774,14 +1777,14 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "cards": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "caress": {
     "categories": [
@@ -1796,7 +1799,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "carnival": {
     "categories": [
@@ -1817,7 +1820,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "castration": {
     "categories": [
@@ -1871,20 +1874,20 @@
       "Content Sensitivities and Flags",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 6
+    "combined_weight": 21
   },
   "censored_details": {
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "centered on art": {
     "categories": [
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "cervix": {
     "categories": [
@@ -1895,9 +1898,10 @@
   "cg": {
     "categories": [
       "Art and Visual Style",
-      "Assets and Content Information"
+      "Assets and Content Information",
+      "Game Metadata and Specifications"
     ],
-    "combined_weight": 3
+    "combined_weight": 19
   },
   "chainsaw man": {
     "categories": [
@@ -1938,7 +1942,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "character selection": {
     "categories": [
@@ -1995,7 +1999,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "cheat available": {
     "categories": [
@@ -2045,7 +2049,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "chibi": {
     "categories": [
@@ -2059,7 +2063,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "chikan": {
     "categories": [
@@ -2089,7 +2093,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "chinese fantasy genre": {
     "categories": [
@@ -2097,7 +2101,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "chinese game": {
     "categories": [
@@ -2105,7 +2109,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "chinese man": {
     "categories": [
@@ -2124,7 +2128,7 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "chinese woman": {
     "categories": [
@@ -2160,7 +2164,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "chuunibyou": {
     "categories": [
@@ -2179,7 +2183,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "city": {
     "categories": [
@@ -2253,7 +2257,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "close up": {
     "categories": [
@@ -2322,7 +2326,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "clussy": {
     "categories": [
@@ -2357,7 +2361,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "coercive sex": {
     "categories": [
@@ -2372,7 +2376,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "collar": {
     "categories": [
@@ -2398,45 +2402,45 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "colonial": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "colonization": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "colorful": {
     "categories": [
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "coming of age": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "communism": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "company": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "competition": {
     "categories": [
@@ -2444,14 +2448,14 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "completed": {
     "categories": [
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "compressed": {
     "categories": [
@@ -2466,7 +2470,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "condoms": {
     "categories": [
@@ -2478,7 +2482,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "consensual": {
     "categories": [
@@ -2494,14 +2498,14 @@
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "content_sentiment_label": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "contraception": {
     "categories": [
@@ -2509,7 +2513,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "copyright": {
     "categories": [
@@ -2530,14 +2534,14 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "corporate": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "corpse gore": {
     "categories": [
@@ -2550,13 +2554,13 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "cosmic": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "cosplay": {
     "categories": [
@@ -2593,7 +2597,7 @@
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "crazy person": {
     "categories": [
@@ -2613,7 +2617,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "creatures": {
     "categories": [
@@ -2626,13 +2630,13 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "crimes": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "crimson": {
     "categories": [
@@ -2645,7 +2649,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "cross dressing": {
     "categories": [
@@ -2658,7 +2662,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "crotch": {
     "categories": [
@@ -2676,7 +2680,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "ctf": {
     "categories": [
@@ -2719,27 +2723,27 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "cult classic": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "cultivation": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "culture": {
     "categories": [
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "cum": {
     "categories": [
@@ -2814,7 +2818,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "curvy": {
     "categories": [
@@ -2848,21 +2852,21 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "cyrillic text": {
     "categories": [
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "dancing": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "dandere": {
     "categories": [
@@ -2881,7 +2885,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "dark elves": {
     "categories": [
@@ -2896,13 +2900,13 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "dark humor": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "dark lord": {
     "categories": [
@@ -2914,7 +2918,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "dating sim": {
     "categories": [
@@ -2922,7 +2926,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "daughter": {
     "categories": [
@@ -2954,7 +2958,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "death note": {
     "categories": [
@@ -2967,14 +2971,14 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "death word": {
     "categories": [
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "decapitation": {
     "categories": [
@@ -2990,7 +2994,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "deep throat": {
     "categories": [
@@ -3019,7 +3023,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "delta": {
     "categories": [
@@ -3032,7 +3036,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "demo": {
     "categories": [
@@ -3040,13 +3044,13 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "democracy": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "demon": {
     "categories": [
@@ -3085,7 +3089,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "deprivation chamber": {
     "categories": [
@@ -3112,7 +3116,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "desert": {
     "categories": [
@@ -3124,7 +3128,7 @@
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "diamond in the rough": {
     "categories": [
@@ -3144,7 +3148,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "dick": {
     "categories": [
@@ -3220,7 +3224,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "diphallism": {
     "categories": [
@@ -3234,7 +3238,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "dirty photo": {
     "categories": [
@@ -3263,21 +3267,21 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "disgusting": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "disney": {
     "categories": [
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "disney princesses": {
     "categories": [
@@ -3285,27 +3289,27 @@
       "Pop Culture Franchise",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "divine": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "divorce": {
     "categories": [
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "dna": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "dog": {
     "categories": [
@@ -3339,7 +3343,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "dominant": {
     "categories": [
@@ -3429,13 +3433,13 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "drama": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "drama queen": {
     "categories": [
@@ -3454,13 +3458,13 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "drink": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "driving simulator": {
     "categories": [
@@ -3474,7 +3478,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "drop the soap": {
     "categories": [
@@ -3495,14 +3499,14 @@
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "drugs": {
     "categories": [
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "dry humping": {
     "categories": [
@@ -3548,7 +3552,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "ear job": {
     "categories": [
@@ -3574,20 +3578,20 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "ecchi": {
     "categories": [
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "economic systems": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "edging": {
     "categories": [
@@ -3602,21 +3606,21 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "eggs": {
     "categories": [
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "eldritch": {
     "categories": [
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "electric play": {
     "categories": [
@@ -3632,7 +3636,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "elves": {
     "categories": [
@@ -3678,13 +3682,13 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "emotional": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "empires location": {
     "categories": [
@@ -3728,7 +3732,7 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "english": {
     "categories": [
@@ -3763,14 +3767,14 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 13
+    "combined_weight": 11
   },
   "erotic": {
     "categories": [
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "escape room": {
     "categories": [
@@ -3778,25 +3782,25 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "escapism": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "espionage": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "esports": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "estranged": {
     "categories": [
@@ -3804,7 +3808,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "exclusive": {
     "categories": [
@@ -3825,13 +3829,13 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "experimentation": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "exploitation": {
     "categories": [
@@ -3840,7 +3844,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "exploitative sex": {
     "categories": [
@@ -3919,14 +3923,14 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 13
+    "combined_weight": 11
   },
   "fantasy world": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "fap material": {
     "categories": [
@@ -3934,7 +3938,7 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "farm": {
     "categories": [
@@ -3952,7 +3956,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fast pace": {
     "categories": [
@@ -3995,13 +3999,13 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "favorite": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fear and hunger": {
     "categories": [
@@ -4009,64 +4013,64 @@
       "Pop Culture Franchise",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "fear of death related things": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fear of flowers and plants": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fear of heights": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fear of insects": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fear of men": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "fear of missing out": {
     "categories": [
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "fear of something": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fear of the dark": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "fear of women": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "feet": {
     "categories": [
@@ -4112,7 +4116,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "female is stolen": {
     "categories": [
@@ -4127,15 +4131,16 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "female protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Gender and Sexual Identity",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 8
+    "combined_weight": 24
   },
   "female submission": {
     "categories": [
@@ -4154,14 +4159,14 @@
       "Gender and Sexual Identity",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "feminist": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "feminization": {
     "categories": [
@@ -4182,7 +4187,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "fetish": {
     "categories": [
@@ -4195,7 +4200,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "fiancee": {
     "categories": [
@@ -4211,14 +4216,14 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "fighting": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "final fantasy": {
     "categories": [
@@ -4263,7 +4268,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "fisting": {
     "categories": [
@@ -4277,7 +4282,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "flashing": {
     "categories": [
@@ -4289,7 +4294,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "flat tits": {
     "categories": [
@@ -4329,26 +4334,26 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "flying": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "fnaf": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "folklore": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "food play": {
     "categories": [
@@ -4426,13 +4431,13 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "forgotten": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "foursome": {
     "categories": [
@@ -4446,14 +4451,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "freak": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "freckles": {
     "categories": [
@@ -4478,7 +4483,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "friendship": {
     "categories": [
@@ -4514,7 +4519,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "futa": {
     "categories": [
@@ -4531,10 +4536,11 @@
   "futa protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Gender and Sexual Identity",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 8
+    "combined_weight": 24
   },
   "futa trans": {
     "categories": [
@@ -4553,7 +4559,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "gacha": {
     "categories": [
@@ -4575,7 +4581,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "gallery": {
     "categories": [
@@ -4589,7 +4595,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "game franchise": {
     "categories": [
@@ -4642,14 +4648,14 @@
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "gameplay_sentiment_label": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "gamer girl": {
     "categories": [
@@ -4689,7 +4695,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "gaping": {
     "categories": [
@@ -4711,7 +4717,7 @@
       "Gender and Sexual Identity",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "gender customization": {
     "categories": [
@@ -4719,7 +4725,7 @@
       "Gender and Sexual Identity",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "gender fluid": {
     "categories": [
@@ -4731,7 +4737,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "genitals": {
     "categories": [
@@ -4751,14 +4757,14 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "ghost": {
     "categories": [
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "giant": {
     "categories": [
@@ -4766,7 +4772,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "giantess": {
     "categories": [
@@ -4774,14 +4780,14 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "gift": {
     "categories": [
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "giga chad": {
     "categories": [
@@ -4805,14 +4811,14 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "gladiator": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "gladiatrix": {
     "categories": [
@@ -4861,7 +4867,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "good ending": {
     "categories": [
@@ -4881,14 +4887,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "gothic": {
     "categories": [
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "grabbing": {
     "categories": [
@@ -4930,7 +4936,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "greek female gods": {
     "categories": [
@@ -4938,7 +4944,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "greek gods": {
     "categories": [
@@ -4946,7 +4952,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "greek male gods": {
     "categories": [
@@ -4954,7 +4960,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "greek man": {
     "categories": [
@@ -4973,7 +4979,7 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "greek woman": {
     "categories": [
@@ -4991,7 +4997,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "grindy": {
     "categories": [
@@ -5044,7 +5050,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "guro": {
     "categories": [
@@ -5071,7 +5077,7 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "h scene": {
     "categories": [
@@ -5087,7 +5093,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "hagmaxxing": {
     "categories": [
@@ -5167,7 +5173,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "hand job": {
     "categories": [
@@ -5201,7 +5207,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "harassment": {
     "categories": [
@@ -5269,7 +5275,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "hazing": {
     "categories": [
@@ -5278,7 +5284,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "headpats": {
     "categories": [
@@ -5302,7 +5308,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "heart eyes": {
     "categories": [
@@ -5324,14 +5330,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "hentai": {
     "categories": [
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "hermaphrodite": {
     "categories": [
@@ -5343,7 +5349,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "heterochromia": {
     "categories": [
@@ -5362,7 +5368,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "high fantasy": {
     "categories": [
@@ -5370,14 +5376,14 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "high quality": {
     "categories": [
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "high resolution": {
     "categories": [
@@ -5396,28 +5402,28 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "historical themes": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "holiday": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "hollywood": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "holy person": {
     "categories": [
@@ -5429,7 +5435,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "honey select": {
     "categories": [
@@ -5442,14 +5448,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "hostel": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "hostess": {
     "categories": [
@@ -5475,7 +5481,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "hotwife": {
     "categories": [
@@ -5491,7 +5497,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "hrpg": {
     "categories": [
@@ -5565,21 +5571,21 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "human settlements": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "humanoid": {
     "categories": [
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "humiliation": {
     "categories": [
@@ -5587,27 +5593,27 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "humor": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "hunger": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "hunt related": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "hunter x hunter": {
     "categories": [
@@ -5641,31 +5647,31 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "idolatry": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "illness": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "imagination": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "immersive": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "immoral": {
     "categories": [
@@ -5673,7 +5679,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "immortal": {
     "categories": [
@@ -5681,7 +5687,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "impact play": {
     "categories": [
@@ -5702,7 +5708,7 @@
       "BDSM and Power Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "in laws": {
     "categories": [
@@ -5738,7 +5744,7 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "incubus": {
     "categories": [
@@ -5751,14 +5757,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "indie game": {
     "categories": [
       "Assets and Content Information",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 7
+    "combined_weight": 5
   },
   "indigenous people": {
     "categories": [
@@ -5766,7 +5772,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "infantilization": {
     "categories": [
@@ -5775,13 +5781,13 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "infection": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "inferiority": {
     "categories": [
@@ -5790,7 +5796,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "infestation": {
     "categories": [
@@ -5798,7 +5804,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "inflatables": {
     "categories": [
@@ -5820,7 +5826,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "innocent girl": {
     "categories": [
@@ -5847,14 +5853,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "intelligence": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "interactive": {
     "categories": [
@@ -5912,7 +5918,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "intersex": {
     "categories": [
@@ -5928,14 +5934,14 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 20
+    "combined_weight": 18
   },
   "intrigue": {
     "categories": [
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "introduction": {
     "categories": [
@@ -5947,7 +5953,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "inventory": {
     "categories": [
@@ -5961,7 +5967,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "iray renders": {
     "categories": [
@@ -5974,7 +5980,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "is_censored": {
     "categories": [
@@ -5982,7 +5988,7 @@
       "Content Sensitivities and Flags",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 6
+    "combined_weight": 21
   },
   "is_vn": {
     "categories": [
@@ -5990,14 +5996,14 @@
       "Game Metadata and Specifications",
       "Gameplay, Mechanics and Features"
     ],
-    "combined_weight": 6
+    "combined_weight": 21
   },
   "isekai": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "island": {
     "categories": [
@@ -6010,7 +6016,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "italian man": {
     "categories": [
@@ -6035,7 +6041,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "japanese character archetypes": {
     "categories": [
@@ -6047,7 +6053,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "japanese game": {
     "categories": [
@@ -6055,14 +6061,14 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "japanese game types": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "japanese man": {
     "categories": [
@@ -6081,14 +6087,14 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "japanese themes": {
     "categories": [
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "japanese woman": {
     "categories": [
@@ -6126,7 +6132,7 @@
       "Pop Culture Franchise",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "josei": {
     "categories": [
@@ -6157,7 +6163,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "juvenility": {
     "categories": [
@@ -6166,7 +6172,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "kagura games": {
     "categories": [
@@ -6189,13 +6195,13 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "karma": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "kemonomimi": {
     "categories": [
@@ -6209,7 +6215,7 @@
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "keyboard": {
     "categories": [
@@ -6234,7 +6240,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "kingdom hearts": {
     "categories": [
@@ -6276,7 +6282,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "knock out": {
     "categories": [
@@ -6285,7 +6291,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "knotting": {
     "categories": [
@@ -6294,7 +6300,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "kobold": {
     "categories": [
@@ -6328,7 +6334,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "korean game": {
     "categories": [
@@ -6336,7 +6342,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "korean man": {
     "categories": [
@@ -6355,7 +6361,7 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "korean woman": {
     "categories": [
@@ -6375,7 +6381,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "lactation": {
     "categories": [
@@ -6388,7 +6394,7 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "latex": {
     "categories": [
@@ -6449,7 +6455,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "leash": {
     "categories": [
@@ -6477,7 +6483,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "legs": {
     "categories": [
@@ -6515,7 +6521,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "lgbt": {
     "categories": [
@@ -6528,7 +6534,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "life is strange": {
     "categories": [
@@ -6547,13 +6553,13 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "light hearted": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "linear storytelling": {
     "categories": [
@@ -6611,7 +6617,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "long game": {
     "categories": [
@@ -6630,14 +6636,14 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "lore": {
     "categories": [
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "loser": {
     "categories": [
@@ -6648,14 +6654,15 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 22
+    "combined_weight": 20
   },
   "loser protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 4
+    "combined_weight": 20
   },
   "loss of humanity": {
     "categories": [
@@ -6663,7 +6670,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "loss of intelligence": {
     "categories": [
@@ -6671,7 +6678,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "lots of cum": {
     "categories": [
@@ -6694,7 +6701,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "love of monsters": {
     "categories": [
@@ -6702,14 +6709,14 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "lovecraft": {
     "categories": [
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "low fantasy": {
     "categories": [
@@ -6717,7 +6724,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "low rank adaptation": {
     "categories": [
@@ -6732,7 +6739,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "lust potion": {
     "categories": [
@@ -6740,7 +6747,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "lusty woman": {
     "categories": [
@@ -6755,19 +6762,19 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "mafia": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "magic": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "magical compulsion": {
     "categories": [
@@ -6776,21 +6783,22 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "magical protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 4
+    "combined_weight": 20
   },
   "magical realm": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "magical woman": {
     "categories": [
@@ -6857,18 +6865,20 @@
   "male protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Gender and Sexual Identity",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 8
+    "combined_weight": 24
   },
   "male protagonist fucks": {
     "categories": [
+      "Game Metadata and Specifications",
       "Sexual Scenarios and Configurations",
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 26
   },
   "male submission": {
     "categories": [
@@ -6913,7 +6923,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "manipulative person": {
     "categories": [
@@ -6941,14 +6951,14 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "martial arts": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "marvel franchise": {
     "categories": [
@@ -6980,7 +6990,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "massage place": {
     "categories": [
@@ -7012,26 +7022,26 @@
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "medieval": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "memes": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "memoirs": {
     "categories": [
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "memory game": {
     "categories": [
@@ -7052,7 +7062,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "mental illness": {
     "categories": [
@@ -7060,14 +7070,14 @@
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "mercenary": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "metroidvania": {
     "categories": [
@@ -7081,28 +7091,28 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "middle east man": {
     "categories": [
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "middle east person": {
     "categories": [
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "middle east woman": {
     "categories": [
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "midget": {
     "categories": [
@@ -7110,7 +7120,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "mihoyo": {
     "categories": [
@@ -7134,7 +7144,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "military branches": {
     "categories": [
@@ -7169,7 +7179,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "mind control": {
     "categories": [
@@ -7177,7 +7187,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "mind transfer": {
     "categories": [
@@ -7186,7 +7196,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "mini games": {
     "categories": [
@@ -7201,7 +7211,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "miniboss": {
     "categories": [
@@ -7221,7 +7231,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "misgendering": {
     "categories": [
@@ -7255,7 +7265,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "mmo": {
     "categories": [
@@ -7311,7 +7321,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "modern europe": {
     "categories": [
@@ -7360,7 +7370,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "moe": {
     "categories": [
@@ -7384,14 +7394,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "money": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "monogamy": {
     "categories": [
@@ -7400,7 +7410,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "monster": {
     "categories": [
@@ -7444,14 +7454,14 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "motel": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "mother": {
     "categories": [
@@ -7508,7 +7518,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "mugen": {
     "categories": [
@@ -7539,7 +7549,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "multiple languages": {
     "categories": [
@@ -7554,7 +7564,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "multiple males or females": {
     "categories": [
@@ -7563,7 +7573,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "multiple orgasms": {
     "categories": [
@@ -7580,7 +7590,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "multiple penetrations": {
     "categories": [
@@ -7595,7 +7605,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "multiple players": {
     "categories": [
@@ -7613,17 +7623,18 @@
   "multiple protagonists": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Gameplay, Mechanics and Features",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 8
+    "combined_weight": 24
   },
   "multiple quests": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "multiple races": {
     "categories": [
@@ -7632,7 +7643,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "multiple routes": {
     "categories": [
@@ -7647,7 +7658,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "multiple writers": {
     "categories": [
@@ -7655,7 +7666,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 9
+    "combined_weight": 7
   },
   "mummy": {
     "categories": [
@@ -7664,7 +7675,7 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "muscular man": {
     "categories": [
@@ -7689,14 +7700,14 @@
       "Animals, Monsters, and Non-Human Entities",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "mutation": {
     "categories": [
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "mutilation": {
     "categories": [
@@ -7712,7 +7723,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "my hero academia": {
     "categories": [
@@ -7730,13 +7741,13 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "myth": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "naizuri": {
     "categories": [
@@ -7751,7 +7762,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "naked female": {
     "categories": [
@@ -7774,7 +7785,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "nanny": {
     "categories": [
@@ -7798,7 +7809,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "necrophilia": {
     "categories": [
@@ -7819,7 +7830,7 @@
       "BDSM and Power Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "neighbor": {
     "categories": [
@@ -7873,19 +7884,19 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "new years": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "newscast": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "nier automata": {
     "categories": [
@@ -7909,14 +7920,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "ninja": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "nipple clamps": {
     "categories": [
@@ -7969,7 +7980,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "no neto genres": {
     "categories": [
@@ -7981,9 +7992,10 @@
   "no protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 4
+    "combined_weight": 20
   },
   "no saves": {
     "categories": [
@@ -8002,7 +8014,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "noir": {
     "categories": [
@@ -8047,7 +8059,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "non renpy": {
     "categories": [
@@ -8060,7 +8072,7 @@
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "non skippable": {
     "categories": [
@@ -8068,7 +8080,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "noon": {
     "categories": [
@@ -8081,7 +8093,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "norse man": {
     "categories": [
@@ -8150,7 +8162,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "objectification": {
     "categories": [
@@ -8163,20 +8175,20 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "odyssey": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "office": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "old and young": {
     "categories": [
@@ -8202,7 +8214,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "onahole": {
     "categories": [
@@ -8239,9 +8251,10 @@
   "one protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 4
+    "combined_weight": 20
   },
   "one punch man": {
     "categories": [
@@ -8256,7 +8269,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "only one naked": {
     "categories": [
@@ -8282,7 +8295,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "oral": {
     "categories": [
@@ -8349,7 +8362,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "otomege": {
     "categories": [
@@ -8361,7 +8374,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "outfit customization": {
     "categories": [
@@ -8374,21 +8387,21 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "overall_sentiment": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "overall_sentiment_label": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "overlord": {
     "categories": [
@@ -8423,7 +8436,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "pain": {
     "categories": [
@@ -8432,7 +8445,7 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "pain play": {
     "categories": [
@@ -8453,7 +8466,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "pansexual": {
     "categories": [
@@ -8472,7 +8485,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "paragon": {
     "categories": [
@@ -8481,7 +8494,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "paralyzed": {
     "categories": [
@@ -8490,13 +8503,13 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "paranormal": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "parasites": {
     "categories": [
@@ -8510,14 +8523,14 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "parody": {
     "categories": [
       "Assets and Content Information",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 7
+    "combined_weight": 5
   },
   "partner is stolen": {
     "categories": [
@@ -8541,7 +8554,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 13
+    "combined_weight": 11
   },
   "patreon like platforms": {
     "categories": [
@@ -8619,14 +8632,14 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "perspective control": {
     "categories": [
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "perversion": {
     "categories": [
@@ -8636,7 +8649,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "pervert character": {
     "categories": [
@@ -8666,13 +8679,13 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "philosophical": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "phimosis": {
     "categories": [
@@ -8686,21 +8699,21 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "photoshoot": {
     "categories": [
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "physics": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "piercing": {
     "categories": [
@@ -8746,7 +8759,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "piss drinking": {
     "categories": [
@@ -8767,7 +8780,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "pixie cut": {
     "categories": [
@@ -8780,7 +8793,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "place of worship": {
     "categories": [
@@ -8820,21 +8833,21 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "play_time_hours": {
     "categories": [
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "play_time_label": {
     "categories": [
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "playboy": {
     "categories": [
@@ -8847,7 +8860,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "plot twist": {
     "categories": [
@@ -8892,7 +8905,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "pokemon": {
     "categories": [
@@ -8906,20 +8919,20 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "police": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "politics": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "polyamory": {
     "categories": [
@@ -8928,7 +8941,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "polygamy": {
     "categories": [
@@ -8937,7 +8950,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "polygon": {
     "categories": [
@@ -8998,7 +9011,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "porn game": {
     "categories": [
@@ -9017,34 +9030,34 @@
       "BDSM and Power Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "possessed": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "post modern era": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "potions": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "poverty": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "power dynamics": {
     "categories": [
@@ -9056,7 +9069,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "power plays": {
     "categories": [
@@ -9071,7 +9084,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "pranks": {
     "categories": [
@@ -9106,7 +9119,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "preteen": {
     "categories": [
@@ -9121,7 +9134,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "prison": {
     "categories": [
@@ -9129,7 +9142,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "prison school": {
     "categories": [
@@ -9142,21 +9155,21 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "procedural generation": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "profanity": {
     "categories": [
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "prolapse": {
     "categories": [
@@ -9202,7 +9215,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "province": {
     "categories": [
@@ -9215,13 +9228,13 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "psychological": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "public sex": {
     "categories": [
@@ -9273,7 +9286,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "punk genres": {
     "categories": [
@@ -9281,13 +9294,13 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "puns": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "puzzle": {
     "categories": [
@@ -9313,7 +9326,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "queer": {
     "categories": [
@@ -9326,7 +9339,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "quest list": {
     "categories": [
@@ -9345,7 +9358,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "race based": {
     "categories": [
@@ -9354,7 +9367,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "race play": {
     "categories": [
@@ -9371,21 +9384,21 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "racing": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "rage": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "rags": {
     "categories": [
@@ -9398,7 +9411,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "random generation": {
     "categories": [
@@ -9428,14 +9441,14 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "real time": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "real time strategy": {
     "categories": [
@@ -9448,14 +9461,14 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "rebel": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "reception": {
     "categories": [
@@ -9468,7 +9481,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "reddit": {
     "categories": [
@@ -9477,13 +9490,13 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "redemption": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "redgifs": {
     "categories": [
@@ -9508,39 +9521,39 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "relationship focused": {
     "categories": [
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "relaxing": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "religion": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "religious things": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "remake": {
     "categories": [
       "Assets and Content Information",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 7
+    "combined_weight": 5
   },
   "renegade": {
     "categories": [
@@ -9549,7 +9562,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "renpy": {
     "categories": [
@@ -9563,21 +9576,21 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "republic": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "repulsive": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "restaurant": {
     "categories": [
@@ -9598,14 +9611,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "retarded": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "retro style": {
     "categories": [
@@ -9618,7 +9631,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "revealing outfits": {
     "categories": [
@@ -9631,7 +9644,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "rewind time": {
     "categories": [
@@ -9639,7 +9652,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "rich character": {
     "categories": [
@@ -9653,7 +9666,7 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "rim job": {
     "categories": [
@@ -9672,7 +9685,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "ritual": {
     "categories": [
@@ -9680,13 +9693,13 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "road trip": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "robot character": {
     "categories": [
@@ -9699,7 +9712,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "rock paper scissors": {
     "categories": [
@@ -9737,7 +9750,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "romans": {
     "categories": [
@@ -9745,14 +9758,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "romantic comedy": {
     "categories": [
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "route dependent": {
     "categories": [
@@ -9777,21 +9790,21 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "russia": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "russian": {
     "categories": [
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "russian game": {
     "categories": [
@@ -9799,7 +9812,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "russian man": {
     "categories": [
@@ -9825,7 +9838,7 @@
       "Assets and Content Information",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 9
+    "combined_weight": 7
   },
   "ryona": {
     "categories": [
@@ -9845,7 +9858,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "sadism": {
     "categories": [
@@ -9884,7 +9897,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "saintess": {
     "categories": [
@@ -9897,7 +9910,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "sandbox": {
     "categories": [
@@ -9909,20 +9922,20 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "sarcastic": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "satire": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "sauna": {
     "categories": [
@@ -9950,7 +9963,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "school female": {
     "categories": [
@@ -9977,7 +9990,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "scissoring": {
     "categories": [
@@ -9996,14 +10009,14 @@
       "Assets and Content Information",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 7
+    "combined_weight": 5
   },
   "secret": {
     "categories": [
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "secret affair": {
     "categories": [
@@ -10011,14 +10024,14 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "seductress": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "seedbed": {
     "categories": [
@@ -10041,7 +10054,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 20
+    "combined_weight": 18
   },
   "self suck": {
     "categories": [
@@ -10057,7 +10070,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "sensation play": {
     "categories": [
@@ -10078,7 +10091,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "sequel": {
     "categories": [
@@ -10098,14 +10111,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "servant": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "sex bot": {
     "categories": [
@@ -10120,7 +10133,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "sex fight": {
     "categories": [
@@ -10129,7 +10142,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "sex illness": {
     "categories": [
@@ -10137,7 +10150,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "sex marathon": {
     "categories": [
@@ -10146,7 +10159,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "sex slave": {
     "categories": [
@@ -10166,13 +10179,13 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "sexpionage": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "sexual harassment": {
     "categories": [
@@ -10189,7 +10202,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "shackles": {
     "categories": [
@@ -10211,7 +10224,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "sharing": {
     "categories": [
@@ -10324,7 +10337,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "shower": {
     "categories": [
@@ -10332,7 +10345,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "shy girl": {
     "categories": [
@@ -10345,7 +10358,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "side scroller": {
     "categories": [
@@ -10359,7 +10372,7 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 9
+    "combined_weight": 7
   },
   "sigma": {
     "categories": [
@@ -10374,7 +10387,7 @@
       "Assets and Content Information",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "similarity_score": {
     "categories": [
@@ -10382,14 +10395,14 @@
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 3
+    "combined_weight": 18
   },
   "simple": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "simulation": {
     "categories": [
@@ -10414,47 +10427,47 @@
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "site_last_visit": {
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "site_rating": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "site_rating_count": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "site_release_date": {
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "site_std_version": {
     "categories": [
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "site_version": {
     "categories": [
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "sitting fetish": {
     "categories": [
@@ -10506,7 +10519,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "skyrim": {
     "categories": [
@@ -10539,7 +10552,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "slideshow": {
     "categories": [
@@ -10548,7 +10561,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 13
+    "combined_weight": 11
   },
   "slime": {
     "categories": [
@@ -10557,7 +10570,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "slow motion": {
     "categories": [
@@ -10583,7 +10596,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "slut": {
     "categories": [
@@ -10659,7 +10672,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "smegma": {
     "categories": [
@@ -10682,7 +10695,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "smothering": {
     "categories": [
@@ -10699,7 +10712,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "sneak peek": {
     "categories": [
@@ -10707,7 +10720,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "sniper": {
     "categories": [
@@ -10737,7 +10750,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "social media": {
     "categories": [
@@ -10746,13 +10759,13 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "socialism": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "sodomy": {
     "categories": [
@@ -10786,7 +10799,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "souls like": {
     "categories": [
@@ -10794,7 +10807,7 @@
       "Pop Culture Franchise",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "sound effects": {
     "categories": [
@@ -10813,7 +10826,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "south asian man": {
     "categories": [
@@ -10838,7 +10851,7 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "south east asian man": {
     "categories": [
@@ -10870,21 +10883,21 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "spaceship": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "spanish": {
     "categories": [
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "spanish man": {
     "categories": [
@@ -10935,27 +10948,27 @@
       "Story Structure and Narrative Progression",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 9
+    "combined_weight": 7
   },
   "spineless": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "spirit world": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "spiritual": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "spit roast": {
     "categories": [
@@ -10976,7 +10989,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "spring": {
     "categories": [
@@ -11010,7 +11023,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "star crossed lovers": {
     "categories": [
@@ -11018,7 +11031,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "star trek": {
     "categories": [
@@ -11037,21 +11050,21 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "stealing": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "stealth": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "step incest": {
     "categories": [
@@ -11115,14 +11128,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "stockholm syndrome": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "stolen art": {
     "categories": [
@@ -11144,7 +11157,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "stomach": {
     "categories": [
@@ -11178,14 +11191,14 @@
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "story_sentiment_label": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "straight": {
     "categories": [
@@ -11213,7 +11226,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "strap on": {
     "categories": [
@@ -11264,7 +11277,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "stuttering": {
     "categories": [
@@ -11291,7 +11304,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "submission": {
     "categories": [
@@ -11333,7 +11346,7 @@
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "summer": {
     "categories": [
@@ -11345,7 +11358,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "superiority": {
     "categories": [
@@ -11354,13 +11367,13 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "supernatural": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "superpowers": {
     "categories": [
@@ -11368,7 +11381,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "supportive": {
     "categories": [
@@ -11376,14 +11389,14 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "surreal": {
     "categories": [
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "survival": {
     "categories": [
@@ -11395,7 +11408,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "swallow": {
     "categories": [
@@ -11424,7 +11437,7 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 12
+    "combined_weight": 10
   },
   "swinging": {
     "categories": [
@@ -11445,7 +11458,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "taboo": {
     "categories": [
@@ -11454,7 +11467,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "taboo love": {
     "categories": [
@@ -11463,7 +11476,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "tail job": {
     "categories": [
@@ -11509,7 +11522,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "tan": {
     "categories": [
@@ -11541,7 +11554,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "teacher": {
     "categories": [
@@ -11559,7 +11572,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "teen": {
     "categories": [
@@ -11591,7 +11604,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "tentacles": {
     "categories": [
@@ -11616,13 +11629,13 @@
       "Appearance and Physical Traits",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "the four seasons": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "thigh changes": {
     "categories": [
@@ -11701,13 +11714,13 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "time traveling": {
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "timed events": {
     "categories": [
@@ -11720,7 +11733,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "tinies": {
     "categories": [
@@ -11758,7 +11771,7 @@
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "tits": {
     "categories": [
@@ -11772,7 +11785,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 11
+    "combined_weight": 9
   },
   "toilet play": {
     "categories": [
@@ -11819,7 +11832,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "torture gore": {
     "categories": [
@@ -11846,7 +11859,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "touhou": {
     "categories": [
@@ -11861,7 +11874,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "town": {
     "categories": [
@@ -11874,7 +11887,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "toys": {
     "categories": [
@@ -11886,14 +11899,14 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "tragic character": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "trainer": {
     "categories": [
@@ -11914,7 +11927,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "trans": {
     "categories": [
@@ -11925,10 +11938,11 @@
   "trans protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Gender and Sexual Identity",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 8
+    "combined_weight": 24
   },
   "transformation": {
     "categories": [
@@ -11945,14 +11959,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "transgender transformation": {
     "categories": [
       "Gender and Sexual Identity",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "translation": {
     "categories": [
@@ -11970,7 +11984,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "traveling": {
     "categories": [
@@ -11978,14 +11992,14 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "tribes": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "true ending": {
     "categories": [
@@ -11998,7 +12012,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "tsundere": {
     "categories": [
@@ -12024,7 +12038,7 @@
       "Sexual Acts, Activities, and Things",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "twin incest": {
     "categories": [
@@ -12061,7 +12075,7 @@
       "Age Dynamics and Family Roles",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "two females": {
     "categories": [
@@ -12130,7 +12144,7 @@
       "Art and Visual Style",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "uncensored": {
     "categories": [
@@ -12138,7 +12152,7 @@
       "Content Sensitivities and Flags",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 6
+    "combined_weight": 21
   },
   "uncle": {
     "categories": [
@@ -12157,7 +12171,7 @@
       "Content Sensitivities and Flags",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "underdressed female": {
     "categories": [
@@ -12224,9 +12238,10 @@
   "unusual protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 4
+    "combined_weight": 20
   },
   "up skirt": {
     "categories": [
@@ -12241,7 +12256,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "urination": {
     "categories": [
@@ -12255,7 +12270,7 @@
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "utsuge": {
     "categories": [
@@ -12287,7 +12302,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "valorant": {
     "categories": [
@@ -12320,7 +12335,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "vehicles": {
     "categories": [
@@ -12328,7 +12343,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "vibrators": {
     "categories": [
@@ -12341,7 +12356,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "village": {
     "categories": [
@@ -12361,7 +12376,7 @@
       "Hardcore and Extreme Content",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "violent sex": {
     "categories": [
@@ -12404,7 +12419,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "virtuous girl": {
     "categories": [
@@ -12423,33 +12438,33 @@
       "Character Archetypes and Tropes",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 3
+    "combined_weight": 18
   },
   "vndb_last_visit": {
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "vndb_rating": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "vndb_rating_count": {
     "categories": [
       "Community Ratings and Metrics",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "vndb_url": {
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "voice acting": {
     "categories": [
@@ -12461,7 +12476,7 @@
     "categories": [
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 1
+    "combined_weight": 16
   },
   "voiced": {
     "categories": [
@@ -12530,7 +12545,7 @@
     "categories": [
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 6
+    "combined_weight": 4
   },
   "warcraft": {
     "categories": [
@@ -12549,14 +12564,14 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "warrior": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "wasd": {
     "categories": [
@@ -12570,7 +12585,7 @@
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "watercolor": {
     "categories": [
@@ -12594,17 +12609,18 @@
   "weapon wielding protagonist": {
     "categories": [
       "Character Archetypes and Tropes",
+      "Game Metadata and Specifications",
       "Gameplay, Mechanics and Features",
       "Story Structure and Narrative Progression"
     ],
-    "combined_weight": 8
+    "combined_weight": 24
   },
   "weapons": {
     "categories": [
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "webbing": {
     "categories": [
@@ -12620,14 +12636,14 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "weird": {
     "categories": [
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "weird art": {
     "categories": [
@@ -12648,7 +12664,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 13
+    "combined_weight": 11
   },
   "wet clothes": {
     "categories": [
@@ -12676,7 +12692,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "white man": {
     "categories": [
@@ -12701,7 +12717,7 @@
       "Softcore, Romance and Erotica",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "widow": {
     "categories": [
@@ -12710,7 +12726,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 14
+    "combined_weight": 12
   },
   "wife": {
     "categories": [
@@ -12727,7 +12743,7 @@
       "Gameplay, Mechanics and Features",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "wincest": {
     "categories": [
@@ -12755,7 +12771,7 @@
       "Character Archetypes and Tropes",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 8
+    "combined_weight": 6
   },
   "witcher": {
     "categories": [
@@ -12768,14 +12784,14 @@
       "Assets and Content Information",
       "Game Metadata and Specifications"
     ],
-    "combined_weight": 2
+    "combined_weight": 17
   },
   "witness protection": {
     "categories": [
       "Settings & Physical Locations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 10
+    "combined_weight": 8
   },
   "wolf cut": {
     "categories": [
@@ -12803,7 +12819,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "yandere": {
     "categories": [
@@ -12824,7 +12840,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 16
+    "combined_weight": 14
   },
   "yoga": {
     "categories": [
@@ -12834,7 +12850,7 @@
       "Sexual Scenarios and Configurations",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "young adult man": {
     "categories": [
@@ -12880,7 +12896,7 @@
       "Social and Relationship Dynamics",
       "Topics, Themes & Tones"
     ],
-    "combined_weight": 18
+    "combined_weight": 16
   },
   "yuri": {
     "categories": [

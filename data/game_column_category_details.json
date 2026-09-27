@@ -13,7 +13,7 @@
     "prefix": "forum recommendation: "
   },
   "Game Metadata and Specifications": {
-    "weight": 1
+    "weight": 16
   },
   "Community Ratings and Metrics": {
     "weight": 1
@@ -31,7 +31,7 @@
     "weight": 2
   },
   "Topics, Themes & Tones": {
-    "weight": 6
+    "weight": 4
   },
   "Pop Culture Franchise": {
     "weight": 2
