@@ -47,10 +47,16 @@
 		GDV.dom.setGameKeys(fileName);
 	}
 
-	GDV.controller.setColumnCategories = setColumnCategories;
-	function setColumnCategories(columnCategories, fileName) {
-		GDV.state.setColumnCategories(columnCategories);
-		GDV.dom.setColumnCategories(fileName);
+	GDV.controller.setColumnCategoryDetails = setColumnCategoryDetails;
+	function setColumnCategoryDetails(columnCategoryDetails, fileName) {
+		GDV.state.setColumnCategoryDetails(columnCategoryDetails);
+		GDV.dom.setColumnCategoryDetails(fileName);
+	}
+
+	GDV.controller.setColumnToCategories = setColumnToCategories;
+	function setColumnToCategories(columnToCategories, fileName) {
+		GDV.state.setColumnToCategories(columnToCategories);
+		GDV.dom.setColumnToCategories(fileName);
 	}
 
 	GDV.controller.setTagFullMatchPatterns = setTagFullMatchPatterns;
@@ -198,8 +204,10 @@
 			await loadColumnDetailsFromLocalDataFolder();
 			GDV.loading.updateLoadingDirectUpdate("Loading game keys...", 82);
 			await loadGameKeysFromLocalDataFolder();
-			GDV.loading.updateLoadingDirectUpdate("Loading column categories...", 84);
-			await loadColumnCategoriesFromLocalDataFolder();
+			GDV.loading.updateLoadingDirectUpdate("Loading column category details...", 84);
+			await loadColumnCategoryDetailsFromLocalDataFolder();
+			GDV.loading.updateLoadingDirectUpdate("Loading column to categories...", 85);
+			await loadColumnToCategoriesFromLocalDataFolder();
 			GDV.loading.updateLoadingDirectUpdate("Loading tag full match patterns...", 86);
 			await loadTagFullMatchPatternsFromLocalDataFolder();
 			GDV.loading.updateLoadingDirectUpdate("Loading tag quick search patterns...", 88);
@@ -221,7 +229,8 @@
 		await loadDefaultCsv("Loading database records...", 0, 80);
 		await loadDefaultColumnDetailsJson("Loading column details...", 80, 82);
 		await loadDefaultGameKeysJson("Loading game keys...", 82, 84);
-		await loadDefaultColumnCategoriesJson("Loading column categories...", 84, 86);
+		await loadDefaultColumnCategoryDetailsJson("Loading column category details...", 84, 85);
+		await loadDefaultColumnToCategoriesJson("Loading column to categories...", 85, 86);
 		await loadDefaultTagFullMatchPatternsJson("Loading tag full match patterns...", 86, 88);
 		await loadDefaultTagQuickSearchPatternsJson("Loading tag quick search patterns...", 88, 90);
 		await loadDefaultThumbnailsJson("Linking thumbnails...", 90, 100);
@@ -299,19 +308,35 @@
 		}
 	}
 
-	async function loadDefaultColumnCategoriesJson(label, startPercent, endPercent) {
+	async function loadDefaultColumnCategoryDetailsJson(label, startPercent, endPercent) {
 		try {
-			const response = await fetchWithProgress("data/game_column_categories.json", getFileSize("data/game_column_categories.json"), label, startPercent, endPercent);
+			const response = await fetchWithProgress("data/game_column_category_details.json", getFileSize("data/game_column_category_details.json"), label, startPercent, endPercent);
 			if (!response.ok) {
-				GDV.utils.reportHardError("Column Categories Load Failed", "Failed to fetch the default column categories JSON file.", new Error(`HTTP status: ${response.status}`), {
-					url: "data/game_column_categories.json",
+				GDV.utils.reportHardError("Column Category Details Load Failed", "Failed to fetch the default column category details JSON file.", new Error(`HTTP status: ${response.status}`), {
+					url: "data/game_column_category_details.json",
 				});
 				return;
 			}
-			const columnCategories = await response.json();
-			setColumnCategories(columnCategories, "data/game_column_categories.json");
+			const columnCategoryDetails = await response.json();
+			setColumnCategoryDetails(columnCategoryDetails, "data/game_column_category_details.json");
 		} catch (err) {
-			GDV.utils.reportHardError("Column Categories Load Failed", "An unexpected error occurred while loading the default column categories JSON.", err);
+			GDV.utils.reportHardError("Column Category Details Load Failed", "An unexpected error occurred while loading the default column category details JSON.", err);
+		}
+	}
+
+	async function loadDefaultColumnToCategoriesJson(label, startPercent, endPercent) {
+		try {
+			const response = await fetchWithProgress("data/game_column_to_categories.json", getFileSize("data/game_column_to_categories.json"), label, startPercent, endPercent);
+			if (!response.ok) {
+				GDV.utils.reportHardError("Column To Categories Load Failed", "Failed to fetch the default column to categories JSON file.", new Error(`HTTP status: ${response.status}`), {
+					url: "data/game_column_to_categories.json",
+				});
+				return;
+			}
+			const columnToCategories = await response.json();
+			setColumnToCategories(columnToCategories, "data/game_column_to_categories.json");
+		} catch (err) {
+			GDV.utils.reportHardError("Column To Categories Load Failed", "An unexpected error occurred while loading the default column to categories JSON.", err);
 		}
 	}
 
@@ -465,19 +490,35 @@
 		}
 	}
 
-	async function loadColumnCategoriesFromLocalDataFolder() {
+	async function loadColumnCategoryDetailsFromLocalDataFolder() {
 		if (!dataFolderHandle) return;
-		const fileHandle = await dataFolderHandle.getFileHandle("game_column_categories.json").catch(() => null);
+		const fileHandle = await dataFolderHandle.getFileHandle("game_column_category_details.json").catch(() => null);
 		if (!fileHandle) {
-			GDV.utils.reportHardWarning("Missing Column Categories", 'The file "game_column_categories.json" was not found in the selected games folder.');
+			GDV.utils.reportHardWarning("Missing Column Category Details", 'The file "game_column_category_details.json" was not found in the selected games folder.');
 			return;
 		}
 		try {
 			const file = await fileHandle.getFile();
-			const columnCategories = JSON.parse(await file.text());
-			setColumnCategories(columnCategories, "data/game_column_categories.json");
+			const columnCategoryDetails = JSON.parse(await file.text());
+			setColumnCategoryDetails(columnCategoryDetails, "data/game_column_category_details.json");
 		} catch (err) {
-			GDV.utils.reportHardError("Failed to Load Column Categories", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
+			GDV.utils.reportHardError("Failed to Load Column Category Details", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
+		}
+	}
+
+	async function loadColumnToCategoriesFromLocalDataFolder() {
+		if (!dataFolderHandle) return;
+		const fileHandle = await dataFolderHandle.getFileHandle("game_column_to_categories.json").catch(() => null);
+		if (!fileHandle) {
+			GDV.utils.reportHardWarning("Missing Column To Categories", 'The file "game_column_to_categories.json" was not found in the selected games folder.');
+			return;
+		}
+		try {
+			const file = await fileHandle.getFile();
+			const columnToCategories = JSON.parse(await file.text());
+			setColumnToCategories(columnToCategories, "data/game_column_to_categories.json");
+		} catch (err) {
+			GDV.utils.reportHardError("Failed to Load Column To Categories", `An error occurred while reading or parsing "${fileHandle.name}".`, err);
 		}
 	}
 

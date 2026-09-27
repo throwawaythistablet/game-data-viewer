@@ -138,16 +138,11 @@
 		select.id = selectId;
 		container.appendChild(select);
 
-		const allOption = document.createElement("option");
-		allOption.value = "__all__";
-		allOption.textContent = "All Categories";
-		select.appendChild(allOption);
-
-		const categories = GDV.state.getColumnCategories() || {};
-		Object.keys(categories).forEach((cat) => {
+		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
+		Object.keys(columnCategoryDetails).forEach((category) => {
 			const opt = document.createElement("option");
-			opt.value = cat;
-			opt.textContent = cat;
+			opt.value = category;
+			opt.textContent = category;
 			select.appendChild(opt);
 		});
 
@@ -328,7 +323,7 @@
 		const categoryElement = document.createElement("span");
 		categoryElement.id = "prefilter-selected-category";
 		categoryElement.className = "prefilter-summary-category-value";
-		categoryElement.dataset.value = "__all__";
+		categoryElement.dataset.value = "All Categories";
 		categoryElement.textContent = "All Categories";
 		categoryWrapper.appendChild(categoryElement);
 		categoryWrapper.appendChild(createPrefilterSortButton(form));
@@ -1095,18 +1090,17 @@
 	}
 
 	function getMatchingPrefilterSections(form) {
-		const searchText = getSearchTextInForm(form);
+		const searchText = getSearchTextInForm(form).trim().toLowerCase();
 		const category = getCategoryInForm(form);
-		const columnCategories = GDV.state.getColumnCategories() || {};
-		const searchTokens = searchText.trim().toLowerCase().split(/\W+/);
-		const isAllCategories = category === "__all__";
-		const categoryColumns = new Set(columnCategories[category] || []);
+		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
+		const columnToCategories = GDV.state.getColumnToCategories() || {};
+		const categoryPrefix = columnCategoryDetails[category]?.prefix;
+		const isAllCategories = category === "All Categories";
+		const searchTokens = searchText ? searchText.split(/\W+/) : [];
 		const matchingSections = [];
 		for (const section of prefilterSectionArray) {
 			const columnName = section.dataset.col;
-			const matchesSearch = searchTokens.length === 0 || sectionMatchesTokens(columnName, searchTokens);
-			const matchesCategory = isAllCategories || categoryColumns.has(columnName);
-			if (matchesSearch && matchesCategory) {
+			if (isACategoryMatch(columnName, category, isAllCategories, categoryPrefix, columnToCategories) && areSearchTokensMatching(columnName, searchTokens)) {
 				matchingSections.push(section);
 			}
 		}
@@ -1231,10 +1225,25 @@
 		renderPrefilterSectionOrder(form);
 	}
 
-	function sectionMatchesTokens(columnName, tokens) {
+	function isACategoryMatch(columnName, category, isAllCategories, categoryPrefix, columnToCategories) {
+		if (isAllCategories) {
+			return true;
+		}
+		if (categoryPrefix && columnName.startsWith(categoryPrefix)) {
+			return true;
+		}
+		const filterName = GDV.utils.normalizeFilterName(columnName);
+		const categoryColumns = new Set(columnToCategories[filterName]?.categories || []);
+		return categoryColumns.has(category);
+	}
+
+	function areSearchTokensMatching(columnName, searchTokens) {
+		if (searchTokens.length === 0) {
+			return true;
+		}
 		const searchInfo = prefilterSectionSearchInfo.get(columnName);
 		if (!searchInfo) return false;
-		return tokens.every((token) => {
+		return searchTokens.every((token) => {
 			if (columnName.toLowerCase().includes(token)) return true;
 			if (searchInfo.loweredDescription.includes(token)) return true;
 			if (searchInfo.quickSearchRegex?.test(token)) return true;
@@ -1379,14 +1388,14 @@
 	function resetPrefilterCategory(form) {
 		const categorySelect = form.querySelector(".prefilter-category-select");
 		if (categorySelect) {
-			categorySelect.value = "__all__";
+			categorySelect.value = "All Categories";
 			updatePrefilterSections(form);
 		}
 	}
 
 	function getCategoryInForm(form) {
 		const categorySelect = form.querySelector(".prefilter-category-select");
-		return categorySelect?.value || "__all__";
+		return categorySelect?.value || "All Categories";
 	}
 
 	function getSearchTextInForm(form) {

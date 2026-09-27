@@ -1,0 +1,78 @@
+{
+  "All Categories": {},
+  "Site Tags": {
+    "prefix": "site: "
+  },
+  "Assigned Tags": {
+    "prefix": "assigned: "
+  },
+  "Text Search Tags": {
+    "prefix": "text search: "
+  },
+  "Forum Recommendation Tags": {
+    "prefix": "forum recommendation: "
+  },
+  "Game Metadata and Specifications": {
+    "weight": 1
+  },
+  "Community Ratings and Metrics": {
+    "weight": 1
+  },
+  "Assets and Content Information": {
+    "weight": 1
+  },
+  "Art and Visual Style": {
+    "weight": 2
+  },
+  "Gameplay, Mechanics and Features": {
+    "weight": 4
+  },
+  "Story Structure and Narrative Progression": {
+    "weight": 2
+  },
+  "Topics, Themes & Tones": {
+    "weight": 6
+  },
+  "Pop Culture Franchise": {
+    "weight": 2
+  },
+  "Settings & Physical Locations": {
+    "weight": 4
+  },
+  "Softcore, Romance and Erotica": {
+    "weight": 2
+  },
+  "Character Archetypes and Tropes": {
+    "weight": 2
+  },
+  "Gender and Sexual Identity": {
+    "weight": 4
+  },
+  "Animals, Monsters, and Non-Human Entities": {
+    "weight": 2
+  },
+  "Appearance and Physical Traits": {
+    "weight": 2
+  },
+  "Sexual Acts, Activities, and Things": {
+    "weight": 4
+  },
+  "Sexual Scenarios and Configurations": {
+    "weight": 4
+  },
+  "BDSM and Power Dynamics": {
+    "weight": 4
+  },
+  "Social and Relationship Dynamics": {
+    "weight": 2
+  },
+  "Age Dynamics and Family Roles": {
+    "weight": 2
+  },
+  "Hardcore and Extreme Content": {
+    "weight": 4
+  },
+  "Content Sensitivities and Flags": {
+    "weight": 4
+  }
+}

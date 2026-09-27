@@ -22,7 +22,8 @@
 	const gameKeysDisplay = document.getElementById("gameKeysDisplay");
 	const tagFullMatchPatternsDisplay = document.getElementById("tagFullMatchPatternsDisplay");
 	const tagQuickSearchPatternsDisplay = document.getElementById("tagQuickSearchPatternsDisplay");
-	const columnCategories = document.getElementById("columnCategories");
+	const columnCategoryDetails = document.getElementById("columnCategoryDetails");
+	const columnToCategories = document.getElementById("columnToCategories");
 	const thumbnailsDisplay = document.getElementById("thumbnailsDisplay");
 	const gamesFolderDisplay = document.getElementById("gamesFolderDisplay");
 	const csvDropZone = document.getElementById("csvDropZone");
@@ -59,8 +60,12 @@
 		gameKeysDisplay.textContent = description || "(None)";
 	};
 
-	GDV.dom.setColumnCategories = (fileName) => {
-		columnCategories.textContent = fileName || "(None)";
+	GDV.dom.setColumnCategoryDetails = (fileName) => {
+		columnCategoryDetails.textContent = fileName || "(None)";
+	};
+
+	GDV.dom.setColumnToCategories = (fileName) => {
+		columnToCategories.textContent = fileName || "(None)";
 	};
 
 	GDV.dom.setTagFullMatchPatterns = (fileName) => {
