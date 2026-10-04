@@ -1692,3 +1692,7 @@ td {
 	max-width: 90%;
 	max-height: 90%;
 }
+
+div.dt-buttons>.btn+.btn {
+	margin-left: 16px;
+}

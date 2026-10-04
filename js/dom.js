@@ -5,7 +5,6 @@
 	const feedbackButton = document.getElementById("feedbackButton");
 	const tagPatternsButton = document.getElementById("tagPatternsButton");
 	const downloadDataCsvButton = document.getElementById("downloadDataCsvButton");
-	const resetFiltersButton = document.getElementById("resetFiltersButton");
 	const findGamesButton = document.getElementById("findGamesButton");
 	const mainPrefiltersPanelSection = document.getElementById("mainPrefiltersPanelSection");
 	const controlsPanelGrid = document.querySelector(".controls-main-grid");
@@ -514,11 +513,6 @@
 		}
 
 		await GDV.tableGenerator.showPrefiltersAndGenerateTable(GDV.state.getActiveCsvFile());
-	});
-
-	// Reset filters button
-	resetFiltersButton.addEventListener("click", async () => {
-		await GDV.datatable.resetAllFilters();
 	});
 
 	// Download Data CSV button

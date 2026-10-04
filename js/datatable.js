@@ -320,8 +320,22 @@
 				},
 				buttons: [
 					{
+						text: "🔄 Reset Column Filters",
+						titleAttr: "Reset all filters and sorting to their default state",
+						attr: {
+							"aria-label": "Reset all filters and sorting to default"
+						},
+						action: async () => {
+							await GDV.datatable.resetAllFilters();
+						}
+					},
+					{
 						extend: "csv",
-						text: "Download Table as CSV",
+						text: "⬇️ Download Table as CSV",
+						titleAttr: "Download the table data as a CSV file",
+						attr: {
+							"aria-label": "Download table as CSV"
+						},
 						exportOptions: {
 							columns: ":visible",
 							orthogonal: "export",
