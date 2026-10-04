@@ -14,6 +14,19 @@
 		await renderCsvTable(parsedData, columns);
 	};
 
+	GDV.datatable.destroyExistingTable = destroyExistingTable;
+	function destroyExistingTable() {
+		try {
+			if ($.fn.DataTable.isDataTable(csvTableElement)) {
+				csvTableElement.DataTable().destroy();
+			}
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Destroy DataTable Failed", "Failed to destroy existing DataTable.", err, { csvTableElement });
+		} finally {
+			csvTableElement.empty();
+		}
+	}
+
 	GDV.datatable.resetAllFilters = async () => {
 		await GDV.loading.startLoading("Resetting filters...", "var(--yellow)");
 		if (!$.fn.DataTable.isDataTable(csvTableElement)) {
@@ -229,18 +242,6 @@
 				return "";
 			}
 		};
-	}
-
-	function destroyExistingTable() {
-		try {
-			if ($.fn.DataTable.isDataTable(csvTableElement)) {
-				csvTableElement.DataTable().destroy();
-			}
-		} catch (err) {
-			GDV.utils.reportSoftWarning("Destroy DataTable Failed", "Failed to destroy existing DataTable.", err, { csvTableElement });
-		} finally {
-			csvTableElement.empty();
-		}
 	}
 
 	function createTableHeader(columns) {

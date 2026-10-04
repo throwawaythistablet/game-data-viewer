@@ -77,6 +77,7 @@
 		const similarityGame = GDV.state.getSimilarityGame();
 		let rowsData = null;
 
+		GDV.datatable.destroyExistingTable(); // Destroy table early to free up memory
 		if (similarityGame) {
 			const similarityGameRowDataRaw = await getSimilarityGameRowDataRaw(file, similarityGame, 0, 10);
 			const filterDetails = { columnDetails, prefilterAst, prefilterConditions, similarityGame, similarityGameRowDataRaw };
