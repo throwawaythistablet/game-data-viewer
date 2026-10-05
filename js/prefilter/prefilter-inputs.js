@@ -226,9 +226,13 @@
 	}
 
 	function updatePrefilterColumnNamesInConditions(conditions, mapping) {
+		// Nothing to update when the conditions object is missing.
+		if (!conditions) {
+			return;
+		}
 		// Update condition keys while preserving their values.
 		const updatedConditions = {};
-		for (const [oldColumn, value] of Object.entries(conditions || {})) {
+		for (const [oldColumn, value] of Object.entries(conditions)) {
 			const newColumn = mapping.get(oldColumn) || oldColumn;
 			updatedConditions[newColumn] = value;
 		}
@@ -1086,6 +1090,9 @@
 	}
 
 	function validatePrefilterConditions(conditions, columnDetails) {
+		if (conditions === null) {
+			return [];
+		}
 		if (!conditions || typeof conditions !== "object") {
 			return ["Invalid conditions object"];
 		}

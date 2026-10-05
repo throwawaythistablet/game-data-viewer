@@ -1,24 +1,24 @@
 (() => {
 	// FILE_PATH_TO_SIZE_MAP START
-    const filePathToSizeMap = new Map([
-      ["data/.gitattributes", 0],
-      ["data/game_column_category_details.json", 1617],
-      ["data/game_column_details.json", 1877113],
-      ["data/game_column_to_categories.json", 466981],
-      ["data/game_data_part_1.csv", 45479314],
-      ["data/game_data_part_2.csv", 45290308],
-      ["data/game_data_part_3.csv", 45297831],
-      ["data/game_data_part_4.csv", 45290690],
-      ["data/game_data_part_5.csv", 45292298],
-      ["data/game_data_part_6.csv", 45293768],
-      ["data/game_data_part_7.csv", 45291391],
-      ["data/game_data_part_8.csv", 45296826],
-      ["data/game_data_part_9.csv", 45316292],
-      ["data/game_keys.json", 1377188],
-      ["data/game_thumbnails.json", 20589453],
-      ["data/tag_full_match_patterns.json", 5545545],
-      ["data/tag_quick_search_patterns.json", 4572046],
-    ]);
+	const filePathToSizeMap = new Map([
+		["data/.gitattributes", 0],
+		["data/game_column_category_details.json", 1617],
+		["data/game_column_details.json", 1877113],
+		["data/game_column_to_categories.json", 466981],
+		["data/game_data_part_1.csv", 45479314],
+		["data/game_data_part_2.csv", 45290308],
+		["data/game_data_part_3.csv", 45297831],
+		["data/game_data_part_4.csv", 45290690],
+		["data/game_data_part_5.csv", 45292298],
+		["data/game_data_part_6.csv", 45293768],
+		["data/game_data_part_7.csv", 45291391],
+		["data/game_data_part_8.csv", 45296826],
+		["data/game_data_part_9.csv", 45316292],
+		["data/game_keys.json", 1377188],
+		["data/game_thumbnails.json", 20589453],
+		["data/tag_full_match_patterns.json", 5545545],
+		["data/tag_quick_search_patterns.json", 4572046],
+	]);
 	// FILE_PATH_TO_SIZE_MAP END
 
 	GDV.controller.initialize = async () => {
@@ -388,11 +388,11 @@
 	}
 
 	async function applyUrlPrefiltersOrPrompt() {
-		let { prefilterConditions = null, prefilterAst = null, similarityGame = null } = GDV.urlParameters.getDataFromUrlParameters();
+		let { prefilterConditions = null, prefilterAst = null, similarityCriteria = null } = GDV.urlParameters.getDataFromUrlParameters();
 		const hasConditions = prefilterConditions && Object.keys(prefilterConditions).length > 0;
 		let hasAst = prefilterAst && (typeof prefilterAst === "object") && Object.keys(prefilterAst).length > 0;
-		const hasSimilarityGame = !!similarityGame;
-		const bannerMessage = getUrlParameterMessage(hasConditions, hasAst, hasSimilarityGame);
+		const hasSimilarityCriteria = similarityCriteria && (typeof similarityCriteria === "object") && Object.keys(similarityCriteria).length > 0;
+		const bannerMessage = getUrlParameterMessage(hasConditions, hasAst, hasSimilarityCriteria);
 		if (hasConditions && !hasAst) {
 			prefilterAst = GDV.prefilter.createPrefilterAstFromConditions(prefilterConditions);
 			hasAst = true;
@@ -408,10 +408,17 @@
 			GDV.state.setPrefilterConditions(prefilterConditions);
 			GDV.state.setPrefilterAst(prefilterAst);
 		}
-		if (similarityGame) {
+		if (similarityCriteria) {
 			applied = true;
-			const nearestGame = GDV.utils.findNearestGameKey(similarityGame);
-			GDV.state.setSimilarityGame(nearestGame);
+			const referenceGame = similarityCriteria?.referenceGame;
+			if (referenceGame) {
+				const nearestGame = GDV.utils.findNearestGameKey(referenceGame);
+				GDV.state.setSimilarityReferenceGame(nearestGame);
+			}
+			const comparisonScope = similarityCriteria?.comparisonScope;
+			if (comparisonScope) {
+				GDV.state.setSimilarityComparisonScope(comparisonScope);
+			}
 		}
 		const activeCsv = GDV.state.getActiveCsvFile();
 		if (applied) {

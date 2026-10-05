@@ -421,40 +421,98 @@
 	}
 
 	function addGameSimilaritySearch(container) {
-		const similarityWrapper = document.createElement("div");
-		similarityWrapper.className = "filters-similarity";
+		const tableSimilarityWrapper = document.createElement("div");
+		tableSimilarityWrapper.className = "similarity-criteria";
+		tableSimilarityWrapper.appendChild(createTableSimilarityLabel("Find games similar to:"));
+		tableSimilarityWrapper.appendChild(createTableSimilarityGameInput());
+		tableSimilarityWrapper.appendChild(createTableSimilarityLabel("Look for similarities in:"));
+		tableSimilarityWrapper.appendChild(createTableSimilarityScopeDropDown());
+		tableSimilarityWrapper.appendChild(createTableSimilarityButtons());
+		container.appendChild(tableSimilarityWrapper);
+	}
 
-		// Input + label (nest input inside label)
-		const similarityLabelInput = document.createElement("label");
-		similarityLabelInput.className = "label-input";
-		similarityLabelInput.textContent = "Find Similar Games To:";
-		const br = document.createElement("br");
-		similarityLabelInput.appendChild(br);
+	function createTableSimilarityLabel(labelText) {
+		const label = document.createElement("label");
+		label.className = "similarity-criteria-label";
+		label.textContent = labelText;
+		return label;
+	}
+
+	function createTableSimilarityGameInput() {
+		const similarityGameInputWrapper = document.createElement("div");
+		similarityGameInputWrapper.className = "similarity-criteria";
+
 		const similarityInput = document.createElement("input");
+		similarityInput.className = "similarity-criteria-game-input";
 		similarityInput.type = "text";
-		similarityInput.className = "text-input-input";
-		similarityInput.placeholder = "Find a game...";
 		similarityInput.name = "similaritySearch";
-		similarityLabelInput.appendChild(similarityInput);
-		similarityWrapper.appendChild(similarityLabelInput);
+		similarityInput.placeholder = "Find a game...";
+		similarityInput.spellcheck = false;
+		similarityGameInputWrapper.appendChild(similarityInput);
 
-		// Nearest match display
-		const nearestMatchWrapper = document.createElement("div");
-		nearestMatchWrapper.className = "filters-line-wrapper";
-		const nearestMatchLabel = document.createElement("span");
-		nearestMatchLabel.className = "nearest-match-label";
-		nearestMatchLabel.textContent = "Nearest game match: ";
-		const nearestMatchValue = document.createElement("span");
-		nearestMatchValue.className = "nearest-match-value";
-		nearestMatchValue.textContent = "—";
-		nearestMatchValue.dataset.gameKey = "";
-		nearestMatchWrapper.appendChild(nearestMatchLabel);
-		nearestMatchWrapper.appendChild(nearestMatchValue);
-		similarityWrapper.appendChild(nearestMatchWrapper);
+		const ghostText = document.createElement("div");
+		ghostText.className = "similarity-criteria-game-input-ghost";
+		similarityGameInputWrapper.appendChild(ghostText);
 
-		// Buttons
+		const existingGame = GDV.state.getSimilarityReferenceGame();
+		if (existingGame) {
+			similarityInput.value = existingGame;
+			ghostText.textContent = "";
+		}
+
+		let debounceTimer = null;
+		similarityInput.addEventListener("input", function () {
+			const query = this.value.trim();
+			clearTimeout(debounceTimer);
+			if (!query) {
+				ghostText.textContent = "";
+				GDV.state.resetSimilarityReferenceGame();
+				GDV.dom.resetSimilarityGameInputs();
+				return;
+			}
+			const nearest = GDV.utils.findNearestGameKey(query);
+			if (nearest && nearest.toLowerCase() !== query.toLowerCase()) ghostText.textContent = nearest;
+			else ghostText.textContent = "";
+			debounceTimer = setTimeout(async () => {
+				const latestQuery = similarityInput.value.trim();
+				const latestNearest = GDV.utils.findNearestGameKey(latestQuery);
+				if (!latestNearest) return;
+				similarityInput.value = latestNearest;
+				ghostText.textContent = "";
+				GDV.state.setSimilarityReferenceGame(latestNearest);
+				GDV.dom.syncSimilarityGameInputs(latestNearest);
+			}, 2000);
+		});
+		return similarityGameInputWrapper;
+	}
+
+	function createTableSimilarityScopeDropDown() {
+		const select = document.createElement("select");
+		select.className = "similarity-scope-dropdown-select";
+
+		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
+		Object.keys(columnCategoryDetails).forEach((category) => {
+			const opt = document.createElement("option");
+			opt.value = category;
+			opt.textContent = category;
+			select.appendChild(opt);
+		});
+
+		const exisitingScope = GDV.state.getSimilarityComparisonScope();
+		if (exisitingScope) {
+			select.value = exisitingScope;
+		}
+
+		select.addEventListener("change", () => {
+			GDV.state.setSimilarityComparisonScope(select.value);
+			GDV.dom.syncSimilarityScopeDropdowns(select.value);
+		});
+		return select;
+	}
+
+	function createTableSimilarityButtons() {
 		const btnWrapper = document.createElement("div");
-		btnWrapper.className = "filters-line-wrapper";
+		btnWrapper.className = "similarity-criteria-button-wrapper";
 		const similarityButton = document.createElement("button");
 		similarityButton.type = "button";
 		similarityButton.className = "btn btn-secondary";
@@ -465,42 +523,23 @@
 		resetButton.textContent = "Reset";
 		btnWrapper.appendChild(similarityButton);
 		btnWrapper.appendChild(resetButton);
-		similarityWrapper.appendChild(btnWrapper);
-		container.appendChild(similarityWrapper);
-
-		// Input handler
-		similarityInput.addEventListener("input", function () {
-			const query = this.value.trim();
-			if (!query) {
-				nearestMatchValue.textContent = "—";
-				nearestMatchValue.dataset.gameKey = "";
-				return;
-			}
-			const nearest = GDV.utils.findNearestGameKey(query);
-			if (nearest) {
-				nearestMatchValue.textContent = nearest;
-				nearestMatchValue.dataset.gameKey = nearest;
-			} else {
-				nearestMatchValue.textContent = "(none)";
-				nearestMatchValue.dataset.gameKey = "";
-			}
-		});
 
 		// Button click
 		similarityButton.addEventListener("click", async () => {
-			const gameKey = nearestMatchValue.dataset.gameKey;
-			if (!gameKey) {
+			if (!GDV.state.getSimilarityReferenceGame()) {
 				GDV.utils.reportHardWarning("No Game Title Provided", "Please enter a game title first.");
 				return;
 			}
-			setSimilarityGame(gameKey);
+			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
 
 		resetButton.addEventListener("click", async () => {
-			resetSimilarityGame();
+			GDV.state.resetSimilarityReferenceGame();
+			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
+		return btnWrapper;
 	}
 
 	function addColumnFilterItems(container, columnName, columnDetail) {
@@ -1014,7 +1053,8 @@
 		findSimilarGames.setAttribute("role", "button");
 		findSimilarGames.addEventListener("click", async (e) => {
 			e.preventDefault();
-			setSimilarityGame(key);
+			GDV.state.setSimilarityReferenceGame(key);
+			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
 		overlay.appendChild(findSimilarGames);
@@ -1059,7 +1099,7 @@
 	}
 
 	function getDefaultSortColumnName() {
-		return GDV.state.getSimilarityGame() ? GDV.tableGenerator.getSimilarityScoreName() : "bayesian_rating";
+		return GDV.state.getSimilarityReferenceGame() ? GDV.tableGenerator.getSimilarityScoreName() : "bayesian_rating";
 	}
 
 	function createExcelHyperlinkNode(text) {
@@ -1269,16 +1309,6 @@
 
 	function isInvalidColumnIndex(columnIndex) {
 		return columnIndex === null || columnIndex === -1;
-	}
-
-	function setSimilarityGame(gameName) {
-		GDV.state.setSimilarityGame(gameName);
-		GDV.dom.refreshMainPanelSimilarityGameSection();
-	}
-
-	function resetSimilarityGame() {
-		GDV.state.resetSimilarityGame();
-		GDV.dom.refreshMainPanelSimilarityGameSection();
 	}
 
 	// Delegated event listeners for thumbnails

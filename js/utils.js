@@ -312,6 +312,28 @@
 		return separatorIndex !== -1 ? columnName.slice(separatorIndex + 2) : columnName;
 	};
 
+	GDV.utils.createCategoryMatchDetails = (category_) => {
+		const category = category_ || "All Categories"
+		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
+		const columnToCategories = GDV.state.getColumnToCategories() || {};
+		const categoryPrefix = columnCategoryDetails[category]?.prefix;
+		const isAllCategories = category === "All Categories";
+		return { category, isAllCategories, categoryPrefix, columnToCategories };
+	}
+
+	GDV.utils.isACategoryMatch = (columnName, categoryMatchDetails) => {
+		if (categoryMatchDetails.isAllCategories) {
+			return true;
+		}
+		if (categoryMatchDetails.categoryPrefix && columnName.startsWith(categoryMatchDetails.categoryPrefix)) {
+			return true;
+		}
+		const filterName = GDV.utils.normalizeFilterName(columnName);
+		return (categoryMatchDetails.columnToCategories[filterName]?.categories || []).includes(
+			categoryMatchDetails.category
+		);
+	};
+
 	GDV.utils.downloadBlob = (blob, filename) => {
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement("a");

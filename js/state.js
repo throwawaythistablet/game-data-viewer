@@ -10,7 +10,8 @@
 	let activeGameKeys = null;
 	let prefilterConditions = {};
 	let prefilterAst = null;
-	let similarityGame = null;
+	let similarityReferenceGame = null;
+	let similarityComparisonScope = null;
 
 	GDV.state.getActiveCsvFile = () => activeCsvFile;
 
@@ -86,13 +87,36 @@
 		prefilterAst = prefilterAst_;
 	};
 
-	GDV.state.getSimilarityGame = () => similarityGame;
-
-	GDV.state.setSimilarityGame = (gameName) => {
-		similarityGame = gameName || null;
+	GDV.state.getSimilarityCriteria = () => {
+		if (!similarityReferenceGame && !similarityComparisonScope) {
+			return null;
+		}
+		return { referenceGame: similarityReferenceGame, comparisonScope: similarityComparisonScope };
 	};
 
-	GDV.state.resetSimilarityGame = () => {
-		similarityGame = null;
+	GDV.state.resetSimilarityCriteria = () => {
+		similarityReferenceGame = null;
+		similarityComparisonScope = null;
 	};
+
+	GDV.state.getSimilarityReferenceGame = () => similarityReferenceGame;
+
+	GDV.state.setSimilarityReferenceGame = (similarityReferenceGame_) => {
+		similarityReferenceGame = similarityReferenceGame_ || null;
+	};
+
+	GDV.state.resetSimilarityReferenceGame = () => {
+		similarityReferenceGame = null;
+	};
+
+	GDV.state.getSimilarityComparisonScope = () => similarityComparisonScope;
+
+	GDV.state.setSimilarityComparisonScope = (similarityComparisonScope_) => {
+		similarityComparisonScope = similarityComparisonScope_ || null;
+	};
+
+	GDV.state.resetSimilarityComparisonScope = () => {
+		similarityComparisonScope = null;
+	};
+
 })();

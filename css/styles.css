@@ -609,35 +609,6 @@ td {
 	transform: translateY(0);
 }
 
-.filters-similarity {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	align-items: stretch;
-}
-
-.filters-similarity .label-input {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	font-weight: bold;
-	font-size: 16px;
-	color: var(--accent);
-}
-
-.filters-similarity .nearest-match-label {
-	font-weight: normal;
-	font-size: 14px;
-	color: var(--text-subtle);
-	margin-right: 6px;
-}
-
-.filters-similarity .nearest-match-value {
-	font-weight: bold;
-	font-size: 14px;
-	color: var(--accent);
-}
-
 .filters-line-wrapper {
 	display: inline-flex;
 	gap: 16px;
@@ -923,6 +894,121 @@ td {
 }
 
 /* ==========================================================================
+   SIMILARITY CRITERIA
+   ========================================================================== */
+
+.similarity-criteria {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: stretch;
+}
+
+.similarity-criteria-label {
+	font-weight: bold;
+	font-size: 14px;
+	color: var(--green);
+}
+
+.similarity-criteria-game-input {
+	position: relative;
+	z-index: 2;
+	background: transparent;
+
+	border: 1px solid var(--border-subtle);
+	padding: 6px 8px;
+	border-radius: 4px;
+
+	font-weight: bold;
+	font-size: 14px;
+	color: var(--accent);
+}
+
+.similarity-criteria-game-input-width {
+	width: 300px;
+}
+
+.similarity-criteria-game-input-ghost {
+	position: absolute;
+	left: 8px;
+	transform: translateY(3px);
+	z-index: 3;
+
+	color: var(--text-muted);
+	font-style: italic;
+	opacity: 0.6;
+	pointer-events: none;
+
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 100%;
+}
+
+.similarity-criteria-button-wrapper {
+	display: inline-flex;
+	gap: 16px;
+	justify-content: center;
+	align-items: center;
+	margin: 0;
+}
+
+/* ==========================================================================
+   CATEGORY
+   ========================================================================== */
+
+/* Individual dropdown container */
+.category-dropdown-container {
+	max-width: 500px;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 6px;
+	margin: 0;
+}
+
+/* The dropdown itself */
+.category-dropdown-select,
+.similarity-scope-dropdown-select {
+	width: 100%;
+	padding: 8px 12px;
+	font-size: 14px;
+	border: 2px solid var(--bg-surface);
+	border-radius: 6px;
+	background: var(--bg-elevated);
+	color: var(--text-main);
+	box-sizing: border-box;
+	appearance: none;
+	/* remove default arrow for consistency */
+	cursor: pointer;
+	background-image: linear-gradient(45deg, transparent 50%, var(--text-main) 50%), linear-gradient(135deg, var(--text-main) 50%, transparent 50%);
+	background-position:
+		calc(100% - 20px) calc(50% - 5px),
+		calc(100% - 15px) calc(50% - 5px);
+	background-size: 5px 5px;
+	background-repeat: no-repeat;
+	background-color: var(--bg-elevated);
+}
+
+.category-dropdown-select {
+	color: var(--text-main);
+}
+
+.similarity-scope-dropdown-select {
+	color: var(--accent);
+}
+
+/* Dropdown arrow styling for better look */
+.category-dropdown-select::-ms-expand,
+.similarity-scope-dropdown-select::-ms-expand {
+	display: none;
+}
+
+.category-dropdown-select:focus,
+.similarity-scope-dropdown-select:focus {
+	outline: none;
+}
+
+/* ==========================================================================
    PREFILTER OVERLAY
    ========================================================================== */
 
@@ -984,7 +1070,7 @@ td {
 .prefilter-main-panel {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: 16px;
 	align-items: center;
 	background: var(--bg-panel);
 	border: 1px solid var(--border-subtle);
@@ -993,6 +1079,14 @@ td {
 	margin-bottom: 12px;
 	font-size: 13px;
 	color: var(--text-main);
+}
+
+.prefilter-main-panel-similarity,
+.prefilter-main-panel-last-searched {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 16px;
 }
 
 .prefilter-main-panel-label {
@@ -1019,61 +1113,6 @@ td {
 	align-items: center;
 	gap: 56px;
 	margin: 16px 0;
-}
-
-/* Individual dropdown container */
-.prefilter-category-dropdown {
-	max-width: 500px;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	margin: 0;
-}
-
-/* The dropdown itself */
-.prefilter-category-select {
-	width: 100%;
-	padding: 8px 12px;
-	font-size: 14px;
-	border: 2px solid var(--bg-surface);
-	border-radius: 6px;
-	background: var(--bg-elevated);
-	color: var(--text-main);
-	box-sizing: border-box;
-	box-shadow:
-		inset 0 1px 3px rgba(0, 0, 0, 0.4),
-		0 0 10px var(--bg-surface),
-		0 0 20px var(--bg-surface);
-	transition:
-		box-shadow 0.2s,
-		border-color 0.2s;
-	appearance: none;
-	/* remove default arrow for consistency */
-	cursor: pointer;
-}
-
-/* Dropdown arrow styling for better look */
-.prefilter-category-select::-ms-expand {
-	display: none;
-}
-
-.prefilter-category-select:focus {
-	outline: none;
-	box-shadow:
-		inset 0 1px 3px rgba(0, 0, 0, 0.4),
-		0 0 14px var(--bg-hover),
-		0 0 28px var(--bg-hover);
-}
-
-/* Optional: add a custom arrow using background */
-.prefilter-category-select {
-	background-image: linear-gradient(45deg, transparent 50%, var(--text-main) 50%), linear-gradient(135deg, var(--text-main) 50%, transparent 50%);
-	background-position:
-		calc(100% - 20px) calc(50% - 5px),
-		calc(100% - 15px) calc(50% - 5px);
-	background-size: 5px 5px;
-	background-repeat: no-repeat;
-	background-color: var(--bg-elevated);
 }
 
 .prefilter-search-box {
@@ -1130,7 +1169,7 @@ td {
 		gap: 8px;
 	}
 
-	.prefilter-category-dropdown,
+	.category-dropdown-container,
 	.prefilter-search-box {
 		width: 90%;
 		max-width: 300px;
@@ -1172,47 +1211,21 @@ td {
 	gap: 12px;
 }
 
-.prefilter-summary-label {
+.prefilter-summary-label,
+.prefilter-similarity-label {
 	font-weight: bold;
 	font-size: 14px;
 	margin-right: 8px;
 	white-space: nowrap;
 }
 
+.prefilter-similarity-label {
+	color: var(--green);
+}
+
 .prefilter-summary-input-wrapper {
 	position: relative;
 	display: inline-block;
-}
-
-.prefilter-summary-input-ghost {
-	position: absolute;
-	left: 8px;
-	transform: translateY(3px);
-	z-index: 3;
-
-	color: var(--text-muted);
-	font-style: italic;
-	opacity: 0.6;
-	pointer-events: none;
-
-	white-space: nowrap;
-	overflow: hidden;
-	max-width: 100%;
-}
-
-.prefilter-summary-input {
-	position: relative;
-	z-index: 2;
-	background: transparent;
-
-	border: 1px solid var(--border-subtle);
-	padding: 6px 8px;
-	border-radius: 4px;
-	width: 300px;
-
-	font-weight: bold;
-	font-size: 14px;
-	color: var(--accent);
 }
 
 .prefilter-summary-category {
@@ -1234,9 +1247,10 @@ td {
 	box-shadow: 0 0 8px var(--border-subtle);
 }
 
-.prefilter-summary-buttons {
+.prefilter-summary-row {
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
 	gap: 8px;
 }
 

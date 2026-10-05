@@ -349,8 +349,8 @@
 
 		shareBtn.addEventListener("click", async () => {
 			try {
-				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst(), GDV.state.getSimilarityGame());
-				if (!encoded) {
+				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst(), GDV.state.getSimilarityCriteria());
+				if (!encoded && encoded !== "") {
 					GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode prefilters for sharing.");
 					return;
 				}
@@ -366,6 +366,24 @@
 		return shareBtn;
 	}
 
+	GDV.dom.resetSimilarityGameInputs = () => {
+		document.querySelectorAll(".similarity-criteria-game-input").forEach((input) => {
+			input.value = "";
+		});
+	};
+
+	GDV.dom.syncSimilarityGameInputs = (value) => {
+		document.querySelectorAll(".similarity-criteria-game-input").forEach((input) => {
+			input.value = value;
+		});
+	};
+
+	GDV.dom.syncSimilarityScopeDropdowns = (value) => {
+		document.querySelectorAll(".similarity-scope-dropdown-select").forEach((select) => {
+			select.value = value;
+		});
+	};
+
 	GDV.dom.refreshMainPanelSimilarityGameAndLastSearchPrefilters = refreshMainPanelSimilarityGameAndLastSearchPrefilters;
 	function refreshMainPanelSimilarityGameAndLastSearchPrefilters() {
 		refreshMainPanelSimilarityGameSection();
@@ -374,7 +392,7 @@
 
 	GDV.dom.refreshMainPanelSimilarityGameSection = refreshMainPanelSimilarityGameSection;
 	function refreshMainPanelSimilarityGameSection() {
-		const container = document.querySelector(".prefilter-main-panel-similarity-game");
+		const container = document.querySelector(".prefilter-main-panel-similarity");
 		if (!container) return;
 		container.replaceChildren();
 		addSimilarityGameSectionElements(container);
@@ -382,25 +400,39 @@
 
 	function createMainPanelSimilarityGameSection() {
 		const container = document.createElement("div");
-		container.className = "prefilter-main-panel-similarity-game";
+		container.className = "prefilter-main-panel-similarity";
 		addSimilarityGameSectionElements(container);
 		return container;
 	}
 
 	function addSimilarityGameSectionElements(container) {
-		const similarityGame = GDV.state.getSimilarityGame();
-		if (!similarityGame) return;
+		const similarityReferenceGame = GDV.state.getSimilarityReferenceGame();
+		if (similarityReferenceGame) {
+			const gamelabel = document.createElement("span");
+			gamelabel.className = "prefilter-main-panel-label";
+			gamelabel.textContent = "Games Found Similar To:";
+			container.appendChild(gamelabel);
 
-		const similarGamelabel = document.createElement("span");
-		similarGamelabel.className = "prefilter-main-panel-label";
-		similarGamelabel.textContent = "Similarity Score compared with:";
-		container.appendChild(similarGamelabel);
+			const gameValue = document.createElement("span");
+			gameValue.className = "prefilter-active-item";
+			gameValue.title = similarityReferenceGame;
+			gameValue.textContent = similarityReferenceGame;
+			container.appendChild(gameValue);
 
-		const similarGameValue = document.createElement("span");
-		similarGameValue.className = "prefilter-active-item";
-		similarGameValue.title = similarityGame;
-		similarGameValue.textContent = similarityGame;
-		container.appendChild(similarGameValue);
+			const similarityComparisonScope = GDV.state.getSimilarityComparisonScope();
+			if (similarityComparisonScope) {
+				const scopelabel = document.createElement("span");
+				scopelabel.className = "prefilter-main-panel-label";
+				scopelabel.textContent = "Comparison Based On:";
+				container.appendChild(scopelabel);
+
+				const scopeValue = document.createElement("span");
+				scopeValue.className = "prefilter-active-item";
+				scopeValue.title = similarityComparisonScope;
+				scopeValue.textContent = similarityComparisonScope;
+				container.appendChild(scopeValue);
+			}
+		}
 	}
 
 	GDV.dom.refreshLastSearchedPrefiltersSection = refreshLastSearchedPrefiltersSection;

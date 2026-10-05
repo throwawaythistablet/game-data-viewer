@@ -116,27 +116,33 @@
 	function createPrefilterSearchAndCategoryGroup(form) {
 		const container = document.createElement("div");
 		container.className = "prefilter-search-category-group";
-		container.appendChild(createPrefilterCategoryDropdown(form));
+		container.appendChild(createPrefilterCategoryLabelAndDropdown(form));
 		container.appendChild(createPrefilterSearchBox(form));
 		return container;
 	}
 
 	// Category drop down
-	function createPrefilterCategoryDropdown(form) {
+	function createPrefilterCategoryLabelAndDropdown(form) {
 		const container = document.createElement("div");
-		container.className = "prefilter-search-box";
+		container.className = "category-dropdown-container";
+		const selectId = "category-dropdown-select";
+		container.appendChild(createPrefilterCategoryLabel(selectId));
+		container.appendChild(createPrefilterCategoryDropdown(form, selectId));
+		return container;
+	}
 
-		const selectId = "prefilter-category-select";
+	function createPrefilterCategoryLabel(selectId) {
 		const label = document.createElement("label");
 		label.setAttribute("for", selectId);
 		label.className = "prefilter-search-label";
 		label.textContent = "Categories:";
-		container.appendChild(label);
+		return label;
+	}
 
+	function createPrefilterCategoryDropdown(form, selectId) {
 		const select = document.createElement("select");
-		select.className = "prefilter-category-select";
+		select.className = "category-dropdown-select";
 		select.id = selectId;
-		container.appendChild(select);
 
 		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
 		Object.keys(columnCategoryDetails).forEach((category) => {
@@ -154,8 +160,7 @@
 				categoryElement.textContent = select.selectedOptions[0].textContent;
 			}
 		});
-
-		return container;
+		return select;
 	}
 
 	// Search box
@@ -232,14 +237,15 @@
 		rightGroup.className = "prefilter-summary-right";
 		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus));
 		rightGroup.appendChild(createPrefiltersSummaryPrefilterButtonsRow(form));
-		rightGroup.appendChild(createPrefilterSimilarityRow());
+		rightGroup.appendChild(createPrefilterSimilarityGameRow());
+		rightGroup.appendChild(createPrefilterSimilarityScopeRow());
 		rightGroup.appendChild(createPrefiltersSummaryCategoryRow(form));
 		return rightGroup;
 	}
 
 	function createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus) {
 		const buttonWrapper = document.createElement("div");
-		buttonWrapper.className = "prefilter-summary-buttons";
+		buttonWrapper.className = "prefilter-summary-row";
 		buttonWrapper.appendChild(createPrefiltersCloseButton(resolve, cleanupFocus));
 		buttonWrapper.appendChild(createPrefilterSubmitButton("Generate Table"));
 		return buttonWrapper;
@@ -247,7 +253,7 @@
 
 	function createPrefiltersSummaryPrefilterButtonsRow(form) {
 		const buttonWrapper = document.createElement("div");
-		buttonWrapper.className = "prefilter-summary-buttons";
+		buttonWrapper.className = "prefilter-summary-row";
 		buttonWrapper.appendChild(createFixExpressionButton(form));
 		buttonWrapper.appendChild(createCopyClipboardButton(form));
 		buttonWrapper.appendChild(createPasteClipboardButton(form));
@@ -255,33 +261,46 @@
 		return buttonWrapper;
 	}
 
-	function createPrefilterSimilarityRow() {
+	function createPrefilterSimilarityGameRow() {
 		const similarityWrapper = document.createElement("div");
-		similarityWrapper.className = "prefilter-summary-similarity";
+		similarityWrapper.className = "prefilter-summary-row";
+		similarityWrapper.appendChild(createPrefilterSimilarityLabel("Find games similar to:"));
+		similarityWrapper.appendChild(createPrefilterSimilarityGameInput());
+		return similarityWrapper;
+	}
 
+	function createPrefilterSimilarityScopeRow() {
+		const similarityWrapper = document.createElement("div");
+		similarityWrapper.className = "prefilter-summary-row";
+		similarityWrapper.appendChild(createPrefilterSimilarityLabel("Look for similarities in:"));
+		similarityWrapper.appendChild(createPrefilterSimilarityScopeDropDown());
+		return similarityWrapper;
+	}
+
+	function createPrefilterSimilarityLabel(labelText) {
 		const label = document.createElement("span");
-		label.className = "prefilter-summary-label";
-		label.textContent = "Find Similar Games To:";
-		similarityWrapper.appendChild(label);
+		label.className = "prefilter-similarity-label";
+		label.textContent = labelText;
+		return label;
+	}
 
-		const inputWrapper = document.createElement("div");
-		inputWrapper.className = "prefilter-summary-input-wrapper";
+	function createPrefilterSimilarityGameInput() {
+		const similarityGameInputWrapper = document.createElement("div");
+		similarityGameInputWrapper.className = "prefilter-summary-input-wrapper";
 
 		const similarityInput = document.createElement("input");
+		similarityInput.className = "similarity-criteria-game-input similarity-criteria-game-input-width";
 		similarityInput.type = "text";
 		similarityInput.name = "similaritySearch";
 		similarityInput.placeholder = "Find a game...";
-		similarityInput.className = "prefilter-summary-input";
 		similarityInput.spellcheck = false;
-		inputWrapper.appendChild(similarityInput);
+		similarityGameInputWrapper.appendChild(similarityInput);
 
 		const ghostText = document.createElement("div");
-		ghostText.className = "prefilter-summary-input-ghost";
-		inputWrapper.appendChild(ghostText);
+		ghostText.className = "similarity-criteria-game-input-ghost";
+		similarityGameInputWrapper.appendChild(ghostText);
 
-		similarityWrapper.appendChild(inputWrapper);
-
-		const existingGame = GDV.state.getSimilarityGame();
+		const existingGame = GDV.state.getSimilarityReferenceGame();
 		if (existingGame) {
 			similarityInput.value = existingGame;
 			ghostText.textContent = "";
@@ -293,7 +312,8 @@
 			clearTimeout(debounceTimer);
 			if (!query) {
 				ghostText.textContent = "";
-				GDV.state.resetSimilarityGame();
+				GDV.state.resetSimilarityReferenceGame();
+				GDV.dom.resetSimilarityGameInputs();
 				return;
 			}
 			const nearest = GDV.utils.findNearestGameKey(query);
@@ -305,11 +325,35 @@
 				if (!latestNearest) return;
 				similarityInput.value = latestNearest;
 				ghostText.textContent = "";
-				GDV.state.setSimilarityGame(latestNearest);
+				GDV.state.setSimilarityReferenceGame(latestNearest);
+				GDV.dom.syncSimilarityGameInputs(latestNearest);
 			}, 2000);
 		});
+		return similarityGameInputWrapper;
+	}
 
-		return similarityWrapper;
+	function createPrefilterSimilarityScopeDropDown() {
+		const select = document.createElement("select");
+		select.className = "similarity-scope-dropdown-select";
+
+		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
+		Object.keys(columnCategoryDetails).forEach((category) => {
+			const opt = document.createElement("option");
+			opt.value = category;
+			opt.textContent = category;
+			select.appendChild(opt);
+		});
+
+		const exisitingScope = GDV.state.getSimilarityComparisonScope();
+		if (exisitingScope) {
+			select.value = exisitingScope;
+		}
+
+		select.addEventListener("change", () => {
+			GDV.state.setSimilarityComparisonScope(select.value);
+			GDV.dom.syncSimilarityScopeDropdowns(select.value);
+		});
+		return select;
 	}
 
 	function createPrefiltersSummaryCategoryRow(form) {
@@ -317,7 +361,7 @@
 		categoryWrapper.className = "prefilter-summary-category";
 		const categoryLabel = document.createElement("span");
 		categoryLabel.className = "prefilter-summary-label";
-		categoryLabel.textContent = "Category:";
+		categoryLabel.textContent = "Displayed Category:";
 		categoryWrapper.appendChild(categoryLabel);
 
 		const categoryElement = document.createElement("span");
@@ -1092,15 +1136,12 @@
 	function getMatchingPrefilterSections(form) {
 		const searchText = getSearchTextInForm(form).trim().toLowerCase();
 		const category = getCategoryInForm(form);
-		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
-		const columnToCategories = GDV.state.getColumnToCategories() || {};
-		const categoryPrefix = columnCategoryDetails[category]?.prefix;
-		const isAllCategories = category === "All Categories";
+		const categoryMatchDetails = GDV.utils.createCategoryMatchDetails(category);
 		const searchTokens = searchText ? searchText.split(/\W+/) : [];
 		const matchingSections = [];
 		for (const section of prefilterSectionArray) {
 			const columnName = section.dataset.col;
-			if (isACategoryMatch(columnName, category, isAllCategories, categoryPrefix, columnToCategories) && areSearchTokensMatching(columnName, searchTokens)) {
+			if (GDV.utils.isACategoryMatch(columnName, categoryMatchDetails) && areSearchTokensMatching(columnName, searchTokens)) {
 				matchingSections.push(section);
 			}
 		}
@@ -1225,18 +1266,6 @@
 		renderPrefilterSectionOrder(form);
 	}
 
-	function isACategoryMatch(columnName, category, isAllCategories, categoryPrefix, columnToCategories) {
-		if (isAllCategories) {
-			return true;
-		}
-		if (categoryPrefix && columnName.startsWith(categoryPrefix)) {
-			return true;
-		}
-		const filterName = GDV.utils.normalizeFilterName(columnName);
-		const categoryColumns = new Set(columnToCategories[filterName]?.categories || []);
-		return categoryColumns.has(category);
-	}
-
 	function areSearchTokensMatching(columnName, searchTokens) {
 		if (searchTokens.length === 0) {
 			return true;
@@ -1358,7 +1387,7 @@
 
 		// Clear choice checkboxes
 		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((inp) => {
-			inp.checked = true;
+			inp.checked = false;
 		});
 		form.querySelectorAll(".prefilter-box .toggle-all").forEach((toggle) => {
 			toggle.dispatchEvent(new Event("change"));
@@ -1374,11 +1403,15 @@
 			inp.value = "";
 		});
 
-		// Reset Prefilter Category
-		resetPrefilterCategory(form);
+		// Reset Similarity Game Inputs
+		GDV.dom.resetSimilarityGameInputs();
 
-		// Reset Similarity Game
-		GDV.state.resetSimilarityGame();
+		// Reset Drop Downs
+		resetPrefilterCategory(form);
+		resetPrefilterSimilarityScope(form);
+
+		// Reset Similarity Criteria
+		GDV.state.resetSimilarityCriteria();
 
 		// Reset and update
 		GDV.prefilter.resetPrefilterConditionsAndAst();
@@ -1386,15 +1419,23 @@
 	}
 
 	function resetPrefilterCategory(form) {
-		const categorySelect = form.querySelector(".prefilter-category-select");
+		const categorySelect = form.querySelector(".category-dropdown-select");
 		if (categorySelect) {
 			categorySelect.value = "All Categories";
 			updatePrefilterSections(form);
 		}
 	}
 
+	function resetPrefilterSimilarityScope(form) {
+		const scopeSelect = form.querySelector(".similarity-scope-dropdown-select");
+		if (scopeSelect) {
+			scopeSelect.value = "All Categories";
+			GDV.dom.syncSimilarityScopeDropdowns(scopeSelect.value);
+		}
+	}
+
 	function getCategoryInForm(form) {
-		const categorySelect = form.querySelector(".prefilter-category-select");
+		const categorySelect = form.querySelector(".category-dropdown-select");
 		return categorySelect?.value || "All Categories";
 	}
 
