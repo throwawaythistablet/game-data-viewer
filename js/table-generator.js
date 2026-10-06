@@ -141,7 +141,7 @@
 		const rowsData = [];
 		const { columnDetails, prefilterAst, prefilterConditions, similarityReferenceGame, similarityGameRowDataRaw } = filterDetails;
 		const hasNoPrefilters = !prefilterConditions || Object.keys(prefilterConditions).length === 0 || !prefilterAst;
-		const comparisonScopeMatchDetails = GDV.utils.createCategoryMatchDetails(GDV.state.getSimilarityComparisonScope());
+		const columnsToCompare = getColumnsToCompare(similarityGameRowDataRaw);
 		let rowsCount = 0;
 		const rowsTotal = GDV.state.getGameKeys().length;
 		return new Promise((resolve, reject) => {
@@ -159,7 +159,7 @@
 					for (const rowDataRaw of results.data) {
 						const rowData = filterColumnsInRowData(rowDataRaw, columnDetails, prefilterConditions);
 						if (similarityGameRowDataRaw) {
-							rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, comparisonScopeMatchDetails);
+							rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, columnsToCompare);
 						}
 						if (hasNoPrefilters || isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityReferenceGame)) {
 							rowsData.push(rowData);
@@ -286,19 +286,24 @@
 
 		return true;
 	}
-	function computeRowSimilarityPercent(similarGameRowData, rowData, comparisonScopeMatchDetails) {
+
+	function getColumnsToCompare(similarityGameRowDataRaw) {
+		if (!similarityGameRowDataRaw) {
+			return [];
+		}
+		const comparisonScopeMatchDetails = GDV.utils.createCategoryMatchDetails(GDV.state.getSimilarityComparisonScope());
+		return Object.keys(similarityGameRowDataRaw).filter((columnName) => !IGNORED_COLUMNS.has(columnName) && GDV.utils.isACategoryMatch(columnName, comparisonScopeMatchDetails));
+	}
+
+	function computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, columnsToCompare) {
 		const columnToCategories = GDV.state.getColumnToCategories() || {};
-		const columnsToCompare = Object.keys(similarGameRowData).filter((k) => !IGNORED_COLUMNS.has(k));
 		let score = 0;
 		let total = 0;
 		for (const columnName of columnsToCompare) {
-			if (!GDV.utils.isACategoryMatch(columnName, comparisonScopeMatchDetails)) {
-				continue;
-			}
 			const filterName = GDV.utils.normalizeFilterName(columnName);
 			const categoryWeight = columnToCategories[filterName]?.combined_weight || 1;
-			const a = similarGameRowData[columnName];
-			const b = rowData[columnName];
+			const a = similarityGameRowDataRaw[columnName];
+			const b = rowDataRaw[columnName];
 			const na = Number(a);
 			const nb = Number(b);
 			let similarity = 0;
