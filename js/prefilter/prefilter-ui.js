@@ -1101,10 +1101,15 @@
 	}
 
 	const schedulePrefilterGridUpdate = GDV.utils.debounce((form) => {
-		updatePrefilterSections(form);
-		requestAnimationFrame(() => {
-			stopPrefilterGridLoading(form);
-		});
+		try {
+			updatePrefilterSections(form);
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Prefilter Search Failure", "The prefilter sections could not be updated.", err);
+		} finally {
+			requestAnimationFrame(() => {
+				stopPrefilterGridLoading(form);
+			});
+		}
 	}, 100);
 
 	function startPrefilterGridLoading(form) {
@@ -1436,9 +1441,6 @@
 		// Clear choice checkboxes
 		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((inp) => {
 			inp.checked = false;
-		});
-		form.querySelectorAll(".prefilter-box .toggle-all").forEach((toggle) => {
-			toggle.dispatchEvent(new Event("change"));
 		});
 
 		// Clear range inputs
