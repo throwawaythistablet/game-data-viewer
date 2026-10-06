@@ -3,6 +3,7 @@
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleSectionsBatchSize = 99;
 	const includeFullMatchLengthThreshold = 4;
+	let isPrefilterSubmissionPending = false;
 	let prefilterOverlay = null;
 	let prefilterSectionArray = null;
 	let maxVisibleSections = visibleSectionsBatchSize;
@@ -25,8 +26,8 @@
 			resetForNewPrefilterOverlay(form);
 			showPrefilterOverlay();
 
-			// Return a fresh Promise for this open
-			return new Promise((resolve) => {
+			// Return a fresh Promise for this overlay opening; await keeps Promise rejections within this try/catch.
+			return await new Promise((resolve) => {
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
 				replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
 				updatePrefilterConditionsRelatedItems(form);
@@ -154,14 +155,17 @@
 		});
 
 		select.addEventListener("change", () => {
+			updatePrefilterCategorySummary(form, select);
 			updatePrefilterSections(form);
-			const categoryElement = form.querySelector("#prefilter-selected-category");
-			if (categoryElement) {
-				categoryElement.dataset.value = select.value;
-				categoryElement.textContent = select.selectedOptions[0].textContent;
-			}
 		});
 		return select;
+	}
+
+	function updatePrefilterCategorySummary(form, select) {
+		const categoryElement = form.querySelector("#prefilter-selected-category");
+		if (!categoryElement) return;
+		categoryElement.dataset.value = select.value;
+		categoryElement.textContent = select.selectedOptions[0]?.textContent || select.value;
 	}
 
 	// Search box
@@ -449,6 +453,7 @@
 		btn.textContent = "Close";
 		btn.className = "btn btn-danger btn-close";
 		btn.addEventListener("click", () => {
+			if (isPrefilterSubmissionPending) return;
 			if (cleanupFocus) cleanupFocus();
 			finalizeAndClose();
 			resolve(null);
@@ -1327,11 +1332,25 @@
 	function waitForPrefilterFormSubmission(form, resolve, cleanupFocus) {
 		form.onsubmit = async (e) => {
 			e.preventDefault();
-			const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-			if (Object.keys(prefilterConditions).length === 0) {
-				const proceed = await confirmPrefiltersWarning();
-				if (!proceed) return;
+			if (isPrefilterSubmissionPending) return;
+			isPrefilterSubmissionPending = true;
+
+			let proceed = true;
+			if (Object.keys(GDV.prefilter.getPrefilterConditions()).length === 0) {
+				try {
+					proceed = await confirmPrefiltersWarning();
+				} catch (err) {
+					isPrefilterSubmissionPending = false;
+					GDV.utils.reportSoftWarning("Prefilter Confirmation Failed", "The confirmation dialog could not be completed.", err);
+					return;
+				}
 			}
+			if (!proceed) {
+				isPrefilterSubmissionPending = false;
+				return;
+			}
+
+			const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 			if (cleanupFocus) cleanupFocus();
 			flushAndCommitSimilarityGameInput(form);
 			finalizeAndClose();
@@ -1379,6 +1398,7 @@
 
 		function onKeydown(e) {
 			if (e.key === "Escape") {
+				if (isPrefilterSubmissionPending) return;
 				cleanupFocus();
 				finalizeAndClose();
 				resolve(null);
@@ -1449,10 +1469,10 @@
 
 	function resetPrefilterCategory(form) {
 		const categorySelect = form.querySelector(".category-dropdown-select");
-		if (categorySelect) {
-			categorySelect.value = "All Categories";
-			updatePrefilterSections(form);
-		}
+		if (!categorySelect) return;
+		categorySelect.value = "All Categories";
+		updatePrefilterCategorySummary(form, categorySelect);
+		updatePrefilterSections(form);
 	}
 
 	function resetPrefilterSimilarityScope(form) {
