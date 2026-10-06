@@ -898,6 +898,7 @@ td {
    ========================================================================== */
 
 .similarity-criteria {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
@@ -935,7 +936,9 @@ td {
 	z-index: 3;
 
 	color: var(--text-muted);
+	font-size: 14px;
 	font-style: italic;
+	font-weight: normal;
 	opacity: 0.6;
 	pointer-events: none;
 
