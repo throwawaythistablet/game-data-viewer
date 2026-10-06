@@ -521,7 +521,8 @@
 		const section = document.createElement("section");
 		section.className = "prefilter-section";
 		section.dataset.col = String(column);
-		section.title = GDV.datatable.getColumnDescription(column);
+		// Avoid storing description strings on every prefilter section to reduce memory usage.
+		// section.title = GDV.datatable.getColumnDescription(column);
 
 		const title = document.createElement("h3");
 		title.textContent = column;
