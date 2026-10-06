@@ -535,7 +535,7 @@
 		});
 
 		resetButton.addEventListener("click", async () => {
-			GDV.state.resetSimilarityReferenceGame();
+			GDV.state.resetSimilarityCriteria();
 			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
 		});
