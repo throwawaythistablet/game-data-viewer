@@ -294,7 +294,7 @@
 		const similarityInput = document.createElement("input");
 		similarityInput.className = "similarity-criteria-game-input similarity-criteria-game-input-width";
 		similarityInput.type = "text";
-		similarityInput.name = "similaritySearch";
+		similarityInput.name = "prefilterSimilaritySearch";
 		similarityInput.placeholder = "Find a game...";
 		similarityInput.spellcheck = false;
 		similarityGameInputWrapper.appendChild(similarityInput);
@@ -1340,7 +1340,7 @@
 	}
 
 	function flushAndCommitSimilarityGameInput(form) {
-		const similarityInput = form.querySelector('input[name="similaritySearch"]');
+		const similarityInput = form.querySelector('input[name="prefilterSimilaritySearch"]');
 		if (!similarityInput) return;
 		const ghostText = similarityInput.parentElement.querySelector(".similarity-criteria-game-input-ghost");
 		commitSimilarityGameInput(similarityInput, ghostText);
@@ -1432,6 +1432,7 @@
 		});
 
 		// Reset Similarity Game Inputs
+		clearSimilarityGameInputCommitTimer();
 		GDV.dom.resetSimilarityGameInputs();
 
 		// Reset Drop Downs

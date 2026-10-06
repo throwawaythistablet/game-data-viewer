@@ -448,7 +448,7 @@
 		const similarityInput = document.createElement("input");
 		similarityInput.className = "similarity-criteria-game-input";
 		similarityInput.type = "text";
-		similarityInput.name = "similaritySearch";
+		similarityInput.name = "tableSimilaritySearch";
 		similarityInput.placeholder = "Find a game...";
 		similarityInput.spellcheck = false;
 		similarityGameInputWrapper.appendChild(similarityInput);
@@ -502,6 +502,13 @@
 		GDV.dom.resetSimilarityGameInputs();
 	}
 
+	function flushAndCommitSimilarityGameInput() {
+		const similarityInput = document.querySelector('input[name="tableSimilaritySearch"]');
+		if (!similarityInput) return;
+		const ghostText = similarityInput.parentElement.querySelector(".similarity-criteria-game-input-ghost");
+		commitSimilarityGameInput(similarityInput, ghostText);
+	}
+
 	function createTableSimilarityScopeDropDown() {
 		const select = document.createElement("select");
 		select.className = "similarity-scope-dropdown-select";
@@ -542,6 +549,7 @@
 
 		// Button click
 		similarityButton.addEventListener("click", async () => {
+			flushAndCommitSimilarityGameInput();
 			if (!GDV.state.getSimilarityReferenceGame()) {
 				GDV.utils.reportHardWarning("No Game Title Provided", "Please enter a game title first.");
 				return;
@@ -551,6 +559,7 @@
 		});
 
 		resetButton.addEventListener("click", async () => {
+			clearSimilarityGameInputCommitTimer();
 			GDV.state.resetSimilarityCriteria();
 			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
