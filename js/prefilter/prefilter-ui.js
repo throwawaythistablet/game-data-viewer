@@ -8,6 +8,7 @@
 	let maxVisibleSections = visibleSectionsBatchSize;
 	let prefilterSectionSearchInfo = new Map();
 	let prefilterColumnOrderMap = new Map();
+	let similarityGameInputCommitTimer = null;
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
 	function initializePrefilterOverlayIfNeeded() {
@@ -19,7 +20,7 @@
 	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async () => {
 		try {
 			initializePrefilterOverlayIfNeeded();
-			const { overlay, form } = prefilterOverlay
+			const { overlay, form } = prefilterOverlay;
 
 			resetForNewPrefilterOverlay(form);
 			showPrefilterOverlay();
@@ -102,7 +103,7 @@
 		return overlay;
 	}
 
-	// Category drop down and search box
+	// Category dropdown, search box, summary, and loading indicator
 	function createPrefilterSearchAndSummaryGroup(form) {
 		const container = document.createElement("div");
 		container.className = "prefilter-search-summary-group";
@@ -185,7 +186,7 @@
 		input.id = inputId;
 		input.name = inputId;
 
-		// Input event handler
+		/// Input and change event handler
 		const handler = () => {
 			handlePrefilterGridSearchInput(form);
 		};
@@ -285,6 +286,8 @@
 	}
 
 	function createPrefilterSimilarityGameInput() {
+		clearSimilarityGameInputCommitTimer();
+
 		const similarityGameInputWrapper = document.createElement("div");
 		similarityGameInputWrapper.className = "prefilter-summary-input-wrapper";
 
@@ -306,30 +309,39 @@
 			ghostText.textContent = "";
 		}
 
-		let debounceTimer = null;
 		similarityInput.addEventListener("input", function () {
+			clearSimilarityGameInputCommitTimer();
 			const query = this.value.trim();
-			clearTimeout(debounceTimer);
 			if (!query) {
-				ghostText.textContent = "";
-				GDV.state.resetSimilarityReferenceGame();
-				GDV.dom.resetSimilarityGameInputs();
+				resetSimilarityBecauseOfEmptyInput(ghostText);
 				return;
 			}
 			const nearest = GDV.utils.findNearestGameKey(query);
-			if (nearest && nearest.toLowerCase() !== query.toLowerCase()) ghostText.textContent = nearest;
-			else ghostText.textContent = "";
-			debounceTimer = setTimeout(async () => {
-				const latestQuery = similarityInput.value.trim();
-				const latestNearest = GDV.utils.findNearestGameKey(latestQuery);
-				if (!latestNearest) return;
-				similarityInput.value = latestNearest;
-				ghostText.textContent = "";
-				GDV.state.setSimilarityReferenceGame(latestNearest);
-				GDV.dom.syncSimilarityGameInputs(latestNearest);
-			}, 2000);
+			ghostText.textContent = nearest.toLowerCase() !== query.toLowerCase() ? nearest : "";
+			similarityGameInputCommitTimer = setTimeout(() => { commitSimilarityGameInput(similarityInput, ghostText); }, 2000);
 		});
+
 		return similarityGameInputWrapper;
+	}
+
+	function commitSimilarityGameInput(similarityInput, ghostText) {
+		similarityGameInputCommitTimer = null;
+		const query = similarityInput.value.trim();
+		if (!query) {
+			resetSimilarityBecauseOfEmptyInput(ghostText);
+			return;
+		}
+		const nearest = GDV.utils.findNearestGameKey(query);
+		similarityInput.value = nearest;
+		ghostText.textContent = "";
+		GDV.state.setSimilarityReferenceGame(nearest);
+		GDV.dom.syncSimilarityGameInputs(nearest);
+	}
+
+	function resetSimilarityBecauseOfEmptyInput(ghostText) {
+		ghostText.textContent = "";
+		GDV.state.resetSimilarityReferenceGame();
+		GDV.dom.resetSimilarityGameInputs();
 	}
 
 	function createPrefilterSimilarityScopeDropDown() {
@@ -344,9 +356,9 @@
 			select.appendChild(opt);
 		});
 
-		const exisitingScope = GDV.state.getSimilarityComparisonScope();
-		if (exisitingScope) {
-			select.value = exisitingScope;
+		const existingScope = GDV.state.getSimilarityComparisonScope();
+		if (existingScope) {
+			select.value = existingScope;
 		}
 
 		select.addEventListener("change", () => {
@@ -580,6 +592,7 @@
 			input.type = "checkbox";
 			input.name = name;
 			input.value = String(value);
+			input.dataset.prefilterColumn = name;
 
 			// Generate a unique id for accessibility
 			const sanitizedName = name.replace(/\s+/g, "-").replace(/[^\w-]/g, "");
@@ -641,6 +654,7 @@
 			input.type = "checkbox";
 			input.name = name;
 			input.value = String(choice);
+			input.dataset.prefilterColumn = name;
 			input.checked = checkedValues.includes(choice) || checkedValues.includes(String(choice));
 
 			// Unique ID for accessibility
@@ -687,19 +701,19 @@
 
 		const minWrap = document.createElement("div");
 		minWrap.className = "range-input-wrapper";
-		minWrap.appendChild(createNumberInput(`${name}__min`, minVal, "Min", "range-input-min", String(min ?? "")));
+		minWrap.appendChild(createNumberInput(`${name}__min`, minVal, "Min", "range-input-min", String(min ?? ""), name));
 
 		const maxWrap = document.createElement("div");
 		maxWrap.className = "range-input-wrapper";
-		maxWrap.appendChild(createNumberInput(`${name}__max`, maxVal, "Max", "range-input-max", String(max ?? "")));
+		maxWrap.appendChild(createNumberInput(`${name}__max`, maxVal, "Max", "range-input-max", String(max ?? ""), name));
 
 		wrapper.appendChild(minWrap);
 		wrapper.appendChild(maxWrap);
 		return wrapper;
 	}
 
-	// Create labeled number input with optional class for styling
-	function createNumberInput(name, value = null, labelText = "", inputClass = "", placeholder = "") {
+	// Create a labeled number input
+	function createNumberInput(name, value = null, labelText = "", inputClass = "", placeholder = "", prefilterColumn = null) {
 		const container = document.createElement("div");
 		container.className = "number-input-wrapper";
 
@@ -721,6 +735,7 @@
 		input.type = "number";
 		input.id = inputId;
 		input.name = name;
+		if (prefilterColumn) input.dataset.prefilterColumn = prefilterColumn;
 		input.step = "any";
 		input.min = "";
 		input.max = "";
@@ -762,6 +777,7 @@
 		input.type = "text";
 		input.id = inputId;
 		input.name = name;
+		input.dataset.prefilterColumn = name;
 		input.className = "text-input-input";
 		input.placeholder = `Prefilter ${name}...`;
 
@@ -790,7 +806,7 @@
 		const astGroup = document.createElement("span");
 		astGroup.className = "prefilter-ast-group";
 		if (node === prefilterAstCurrentNode) astGroup.classList.add("is-focused");
-		bindPrefilterAstNodeFocus(form, astGroup, node)
+		bindPrefilterAstNodeFocus(form, astGroup, node);
 		return astGroup;
 	}
 
@@ -812,7 +828,7 @@
 		activeItem.title = GDV.datatable.getColumnDescription(column) || "";
 		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(value) || "";
 		activeItem.appendChild(createPrefilterActiveItemRemoveButton(form, column, activeItem.dataset.type));
-		bindPrefilterAstNodeFocus(form, activeItem, node)
+		bindPrefilterAstNodeFocus(form, activeItem, node);
 
 		return activeItem;
 	}
@@ -821,7 +837,7 @@
 		const operator = document.createElement("span");
 		operator.className = "prefilter-ast-operator";
 		operator.textContent = type;
-		bindPrefilterAstNodeFocus(form, operator, node)
+		bindPrefilterAstNodeFocus(form, operator, node);
 		return operator;
 	}
 
@@ -843,7 +859,7 @@
 			removeColumnWithTypeAndUpdateAll(form, column, type)
 		});
 		return removeButton;
-	};
+	}
 
 	function createToolbarContent(form, node) {
 		const container = document.createElement("div");
@@ -1192,10 +1208,10 @@
 
 	function hidePrefilterGridIndicators(form) {
 		const indicator = form.querySelector(".prefilter-grid-limit-indicator");
-		if (indicator) indicator.style.display = "none"
+		if (indicator) indicator.style.display = "none";
 
 		const noResults = form.querySelector(".prefilter-grid-no-results");
-		if (noResults) noResults.style.display = "none"
+		if (noResults) noResults.style.display = "none";
 	}
 
 	function sortPrefilterSectionsAlphabetically(sectionArray) {
@@ -1283,24 +1299,22 @@
 	function bindPrefilterGridInputs(form) {
 		form.addEventListener("input", (e) => {
 			const input = e.target;
-			if (!input || input.classList?.contains("prefilter-search-input") || !input.name) return;
-
-			// Only text/textarea/range inputs
-			if (input.type === "text" || input.tagName.toLowerCase() === "textarea" || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
-				const column = input.name.replace(/__(min|max)$/, "");
+			if (!(input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement)) return;
+			const column = input.dataset.prefilterColumn;
+			if (!column) return;
+			if (input.type === "text" || input instanceof HTMLTextAreaElement || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
 				updateAllBasedFromActiveItemParametersChanges(form, column);
 			}
 		});
 
 		form.addEventListener("change", (e) => {
 			const input = e.target;
-			if (!input || input.classList?.contains("prefilter-search-input") || !input.name) return;
-
-			// Only checkboxes, selects, or final number input state
-			const column = input.name.replace(/__(min|max)$/, "");
+			if (!(input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement)) return;
+			const column = input.dataset.prefilterColumn;
+			if (!column) return;
 			updateAllBasedFromActiveItemParametersChanges(form, column);
 		});
-	};
+	}
 
 	function bindPrefilterAstNodeFocus(form, element, node) {
 		element.addEventListener("click", (e) => {
@@ -1319,22 +1333,36 @@
 				if (!proceed) return;
 			}
 			if (cleanupFocus) cleanupFocus();
+			flushAndCommitSimilarityGameInput(form);
 			finalizeAndClose();
 			resolve(prefilterConditions);
 		};
 	}
 
-	function updateStateBeforeClosing() {
+	function flushAndCommitSimilarityGameInput(form) {
+		const similarityInput = form.querySelector('input[name="similaritySearch"]');
+		if (!similarityInput) return;
+		const ghostText = similarityInput.parentElement.querySelector(".similarity-criteria-game-input-ghost");
+		commitSimilarityGameInput(similarityInput, ghostText);
+	}
+
+	function finalizeAndClose() {
+		clearSimilarityGameInputCommitTimer();
+		updateStateOfPrefiltersBeforeClosing();
+		hidePrefilterWarning();
+		closePrefilterOverlay();
+	}
+
+	function clearSimilarityGameInputCommitTimer() {
+		clearTimeout(similarityGameInputCommitTimer);
+		similarityGameInputCommitTimer = null;
+	}
+
+	function updateStateOfPrefiltersBeforeClosing() {
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 		const prefilterAst = GDV.prefilter.getPrefilterAst();
 		GDV.state.setPrefilterConditions(prefilterConditions);
 		GDV.state.setPrefilterAst(prefilterAst);
-	}
-
-	function finalizeAndClose() {
-		updateStateBeforeClosing();
-		hidePrefilterWarning();
-		closePrefilterOverlay();
 	}
 
 	async function confirmPrefiltersWarning() {
