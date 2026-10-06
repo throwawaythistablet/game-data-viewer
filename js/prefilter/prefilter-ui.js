@@ -1158,7 +1158,7 @@
 		const searchText = getSearchTextInForm(form).trim().toLowerCase();
 		const category = getCategoryInForm(form);
 		const categoryMatchDetails = GDV.utils.createCategoryMatchDetails(category);
-		const searchTokens = searchText ? searchText.split(/\W+/) : [];
+		const searchTokens = searchText ? searchText.split(/\W+/).filter(Boolean) : [];
 		const matchingSections = [];
 		for (const section of prefilterSectionArray) {
 			const columnName = section.dataset.col;
