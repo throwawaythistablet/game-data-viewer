@@ -1455,34 +1455,34 @@
 			event.dataTransfer.setData("text/plain", draggedColumn);
 		});
 
-		container.addEventListener("dragover", (event) => {
-			const item = event.target.closest(".columns-to-display-item");
-			if (!item || !draggedColumn || item.dataset.column === draggedColumn) return;
-			event.preventDefault();
-			event.dataTransfer.dropEffect = "move";
-		});
-
-		container.addEventListener("drop", (event) => {
-			const target = event.target.closest(".columns-to-display-item");
-			if (!target || !draggedColumn) return;
-			event.preventDefault();
-
+		container.addEventListener("dragend", (event) => {
+			if (!draggedColumn) return;
 			const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
 			const oldIndex = columnsToDisplay.indexOf(draggedColumn);
-			const targetIndex = columnsToDisplay.indexOf(target.dataset.column);
-			if (oldIndex === -1 || targetIndex === -1 || oldIndex === targetIndex) return;
+			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumn);
 
-			const targetRect = target.getBoundingClientRect();
-			const insertAfter = event.clientX >= targetRect.left + targetRect.width / 2;
-			const newIndex = targetIndex + (insertAfter ? 1 : 0) - (oldIndex < targetIndex + (insertAfter ? 1 : 0) ? 1 : 0);
-
-			GDV.prefilter.moveColumnsToDisplay(draggedColumn, newIndex);
+			draggedColumn = null;
+			if (oldIndex === -1 || newIndex === oldIndex) return;
+			GDV.prefilter.moveColumnsToDisplay(columnsToDisplay[oldIndex], newIndex);
 			updateColumnsToDisplaySummary(container.closest(".prefilter-form"));
 		});
+	}
 
-		container.addEventListener("dragend", () => {
-			draggedColumn = null;
-		});
+	function getColumnsToDisplayDropIndex(container, screenX, draggedColumn) {
+		let newIndex = 0;
+
+		for (const item of container.querySelectorAll(".columns-to-display-item")) {
+			if (item.dataset.column === draggedColumn) continue;
+
+			const rect = item.getBoundingClientRect();
+			const itemLeft = window.screenX + rect.left;
+			const itemMiddle = itemLeft + rect.width / 2;
+
+			if (screenX < itemMiddle) return newIndex;
+			newIndex++;
+		}
+
+		return newIndex;
 	}
 
 	function flushAndCommitSimilarityGameInput(form) {
