@@ -157,7 +157,7 @@
 			const columnName = key.substring(3); // remove pf_
 			const value = params[key];
 
-			const columnDetail = GDV.state.getActiveColumnDetails()[columnName];
+			const columnDetail = GDV.state.getColumnDetails()[columnName];
 			if (!columnDetail) {
 				GDV.utils.reportSoftWarning("Unknown Column in URL Prefilters", `The column '${columnName}' in the URL prefilters is unknown and will be ignored.`);
 				return;

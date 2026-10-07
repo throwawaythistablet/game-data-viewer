@@ -1,67 +1,72 @@
 (() => {
-	let activeCsvFile = null;
-	let activeColumnDetails = {};
-	let activeColumnCategoryDetails = {};
-	let activeColumnToCategories = {};
-	let activeTagFullMatchPatterns = {};
-	let activeTagQuickSearchPatterns = {};
+	let csvFile = null;
+	let columnDetails = {};
+	let nonTagColumnNamesSet = new Set();
+	let gameKeys = null;
+	let columnCategoryDetails = {};
+	let columnToCategories = {};
+	let tagFullMatchPatterns = {};
+	let tagQuickSearchPatterns = {};
+	let thumbnails = null;
 	let gamesFolderHandle = null;
 	let dataFolderHandle = null;
-	let activeGameKeys = null;
 	let prefilterConditions = {};
 	let prefilterAst = null;
 	let columnsToDisplay = null;
 	let similarityReferenceGame = null;
 	let similarityComparisonScope = null;
 
-	GDV.state.getActiveCsvFile = () => activeCsvFile;
+	GDV.state.getCsvFile = () => csvFile;
 
-	GDV.state.setActiveCsvFile = (file) => {
-		activeCsvFile = file;
+	GDV.state.setCsvFile = (csvFile_) => {
+		csvFile = csvFile_;
 	};
 
-	GDV.state.getActiveColumnDetails = () => activeColumnDetails;
+	GDV.state.getColumnDetails = () => columnDetails;
 
-	GDV.state.hasValidColumnDetails = () => activeColumnDetails && Object.keys(activeColumnDetails).length > 0;
-
-	GDV.state.getGameKeys = () => activeGameKeys;
-
-	GDV.state.getColumnCategoryDetails = () => activeColumnCategoryDetails;
-
-	GDV.state.getColumnToCategories = () => activeColumnToCategories;
-
-	GDV.state.getTagFullMatchPatterns = () => activeTagFullMatchPatterns;
-
-	GDV.state.getTagQuickSearchPatterns = () => activeTagQuickSearchPatterns;
-
-	GDV.state.getThumbnails = () => activeThumbnails;
-
-	GDV.state.setColumnDetails = (columnDetails) => {
-		activeColumnDetails = columnDetails;
+	GDV.state.setColumnDetails = (columnDetails_) => {
+		columnDetails = columnDetails_;
+		nonTagColumnNamesSet = new Set(Object.entries(columnDetails || {}).filter(([, detail]) => detail.type !== "tag").map(([column]) => column));
 	};
 
-	GDV.state.setGameKeys = (gameKeys) => {
-		activeGameKeys = gameKeys;
+	GDV.state.hasValidColumnDetails = () => columnDetails && Object.keys(columnDetails).length > 0;
+
+	GDV.state.getNonTagColumnNamesSet = () => nonTagColumnNamesSet;
+
+	GDV.state.getGameKeys = () => gameKeys;
+
+	GDV.state.setGameKeys = (gameKeys_) => {
+		gameKeys = gameKeys_;
 	};
 
-	GDV.state.setColumnCategoryDetails = (columnCategoryDetails) => {
-		activeColumnCategoryDetails = columnCategoryDetails;
+	GDV.state.getColumnCategoryDetails = () => columnCategoryDetails;
+
+	GDV.state.setColumnCategoryDetails = (columnCategoryDetails_) => {
+		columnCategoryDetails = columnCategoryDetails_;
 	};
 
-	GDV.state.setColumnToCategories = (columnToCategories) => {
-		activeColumnToCategories = columnToCategories;
+	GDV.state.getColumnToCategories = () => columnToCategories;
+
+	GDV.state.setColumnToCategories = (columnToCategories_) => {
+		columnToCategories = columnToCategories_;
 	};
 
-	GDV.state.setTagFullMatchPatterns = (tagFullMatchPatterns) => {
-		activeTagFullMatchPatterns = tagFullMatchPatterns;
+	GDV.state.getTagFullMatchPatterns = () => tagFullMatchPatterns;
+
+	GDV.state.setTagFullMatchPatterns = (tagFullMatchPatterns_) => {
+		tagFullMatchPatterns = tagFullMatchPatterns_;
 	};
 
-	GDV.state.setTagQuickSearchPatterns = (tagQuickSearchPatterns) => {
-		activeTagQuickSearchPatterns = tagQuickSearchPatterns;
+	GDV.state.getTagQuickSearchPatterns = () => tagQuickSearchPatterns;
+
+	GDV.state.setTagQuickSearchPatterns = (tagQuickSearchPatterns_) => {
+		tagQuickSearchPatterns = tagQuickSearchPatterns_;
 	};
 
-	GDV.state.setThumbnails = (thumbnails) => {
-		activeThumbnails = thumbnails;
+	GDV.state.getThumbnails = () => thumbnails;
+
+	GDV.state.setThumbnails = (thumbnails_) => {
+		thumbnails = thumbnails_;
 	};
 
 	GDV.state.getGamesFolderHandle = () => gamesFolderHandle;

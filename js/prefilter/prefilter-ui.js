@@ -533,7 +533,7 @@
 	function createPrefilterGrid(prefill) {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getColumnDetails() || {};
 		const tagFullMatchPatterns = GDV.state.getTagFullMatchPatterns() || {};
 		const tagQuickSearchPatterns = GDV.state.getTagQuickSearchPatterns() || {};
 		const columnOrder = Object.keys(columnDetails);

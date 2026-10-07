@@ -30,10 +30,10 @@
 		}
 	};
 
-	GDV.controller.setActiveCsvFile = setActiveCsvFile;
-	function setActiveCsvFile(file) {
-		GDV.state.setActiveCsvFile(file);
-		GDV.dom.setActiveCsvFile(file);
+	GDV.controller.setCsvFile = setCsvFile;
+	function setCsvFile(file) {
+		GDV.state.setCsvFile(file);
+		GDV.dom.setCsvFile(file);
 	}
 
 	GDV.controller.setColumnDetails = setColumnDetails;
@@ -104,7 +104,7 @@
 			GDV.utils.reportHardWarning("Invalid File Type", "Invalid file. Please provide a CSV file.");
 			return;
 		}
-		setActiveCsvFile(file);
+		setCsvFile(file);
 		await GDV.tableGenerator.showPrefiltersAndGenerateTable(file);
 	};
 
@@ -146,7 +146,7 @@
 
 	GDV.controller.downloadDataCsvFile = () => {
 		try {
-			const file = GDV.state.getActiveCsvFile();
+			const file = GDV.state.getCsvFile();
 			const url = URL.createObjectURL(file);
 			const a = document.createElement("a");
 			a.href = url;
@@ -157,7 +157,7 @@
 			URL.revokeObjectURL(url);
 			GDV.utils.reportInformation("CSV Download Started", `Downloading ${a.download}.`);
 		} catch (err) {
-			GDV.utils.reportSoftError("CSV Download Failed", "The CSV file could not be downloaded.", err, { file: GDV.state.getActiveCsvFile() });
+			GDV.utils.reportSoftError("CSV Download Failed", "The CSV file could not be downloaded.", err, { file: GDV.state.getCsvFile() });
 		}
 	};
 
@@ -241,7 +241,7 @@
 	}
 
 	async function loadDefaultCsv(label, startPercent, endPercent) {
-		if (GDV.state.getActiveCsvFile()) return;
+		if (GDV.state.getCsvFile()) return;
 		const files = [...filePathToSizeMap.entries()]
 			.filter(([path]) => path.includes("game_data_part"))
 			.map(([url, size]) => ({ url, size }))
@@ -268,9 +268,9 @@
 		}
 		const blob = new Blob(chunks, { type: "text/csv" });
 		const file = new File([blob], "game_data.csv", { type: "text/csv" });
-		setActiveCsvFile(file);
+		setCsvFile(file);
 		// GDV.utils.downloadBlob(blob, "game_data.csv"); // debug if needed
-		// GDV.utils.downloadBlob(GDV.state.getActiveCsvFile(), "game_data.csv"); // console debug
+		// GDV.utils.downloadBlob(GDV.state.getCsvFile(), "game_data.csv"); // console debug
 	}
 
 	async function loadDefaultColumnDetailsJson(label, startPercent, endPercent) {
@@ -420,7 +420,7 @@
 				GDV.state.setSimilarityComparisonScope(comparisonScope);
 			}
 		}
-		const activeCsv = GDV.state.getActiveCsvFile();
+		const activeCsv = GDV.state.getCsvFile();
 		if (applied) {
 			GDV.utils.showInfoBanner("URL Parameters Detected", bannerMessage);
 			await GDV.tableGenerator.runTableGeneration(activeCsv);
@@ -462,7 +462,7 @@
 		}
 		const blob = new Blob(chunks, { type: "text/csv" });
 		const file = new File([blob], "game_data.csv", { type: "text/csv" });
-		setActiveCsvFile(file);
+		setCsvFile(file);
 		// GDV.utils.downloadBlob(blob, "game_data.csv"); // for debugging if needed
 	}
 

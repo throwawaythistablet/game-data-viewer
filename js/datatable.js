@@ -137,7 +137,7 @@
 
 	GDV.datatable.getColumnDescription = getColumnDescription;
 	function getColumnDescription(columnName) {
-		const description = GDV.state.getActiveColumnDetails()?.[columnName]?.description || "";
+		const description = GDV.state.getColumnDetails()?.[columnName]?.description || "";
 
 		// If it's a site tag or unprefixed, skip regex completely
 		if (columnName.startsWith("site: ") || !columnName.includes(": ")) {
@@ -151,7 +151,7 @@
 		return [description, patternDesc].filter(Boolean).join("\n");
 	}
 
-	GDV.datatable.getColumnTagCount = (columnName) => GDV.state.getActiveColumnDetails()?.[columnName]?.tag_count ?? null;
+	GDV.datatable.getColumnTagCount = (columnName) => GDV.state.getColumnDetails()?.[columnName]?.tag_count ?? null;
 
 	function createTableColumns(parsedData) {
 		if (!parsedData || !parsedData.length) return [];
@@ -183,27 +183,35 @@
 	}
 
 	function buildDataColumns(columnNamesInTable) {
-		const prefilterConditions = GDV.state.getPrefilterConditions();
-		const specialKeys = ["key", GDV.tableGenerator.getSimilarityScoreName()];
-		const prefilterKeys = Object.keys(prefilterConditions || {}).filter(column => !specialKeys.includes(column));
-		const specialColumns = columnNamesInTable.filter((column) => specialKeys.includes(column));
-		const prefilterColumns = prefilterKeys.filter(column => columnNamesInTable.includes(column));
-		const resultKeys = [...specialColumns, ...prefilterColumns, ...columnNamesInTable.filter((column) => !specialColumns.includes(column) && !prefilterColumns.includes(column))];
+		const prefilterConditions = GDV.state.getPrefilterConditions() || {};
+		const columnsToDisplay = GDV.state.getColumnsToDisplay() || [];
+		const specialColumnSet = GDV.tableGenerator.getSpecialColumnSet();
+		const displayColumnSet = new Set(columnsToDisplay);
+		const tableColumnSet = new Set(columnNamesInTable);
 
-		return resultKeys.map((columnName) => ({
-			title: columnName,
-			data: columnName,
-			render: (data, type) => type === "display" ? renderCellValueNode(data, columnName) : data,
-			createdCell: (td) => {
-				if (prefilterColumns.includes(columnName)) {
-					td.classList.add("white-highlight");
-				} else if (specialColumns.includes(columnName)) {
-					td.classList.add("yellow-highlight");
-				}
-			},
-			white_highlight: prefilterColumns.includes(columnName),
-			yellow_highlight: specialColumns.includes(columnName),
-		}));
+		const specialColumns = columnNamesInTable.filter((column) => specialColumnSet.has(column));
+		const displayColumns = columnsToDisplay.filter((column) => tableColumnSet.has(column));
+		const prefilterColumns = Object.keys(prefilterConditions).filter((column) => tableColumnSet.has(column));
+		const resultColumns = [...new Set([...specialColumns, ...displayColumns, ...prefilterColumns, ...columnNamesInTable])];
+
+		return resultColumns.map((columnName) => {
+			const isYellowHighlight = specialColumnSet.has(columnName);
+			const isWhiteHighlight = !isYellowHighlight && (displayColumnSet.has(columnName) || !!prefilterConditions[columnName]);
+			return {
+				title: columnName,
+				data: columnName,
+				render: (data, type) => type === "display" ? renderCellValueNode(data, columnName) : data,
+				createdCell: (td) => {
+					if (isYellowHighlight) {
+						td.classList.add("yellow-highlight");
+					} else if (isWhiteHighlight) {
+						td.classList.add("white-highlight");
+					}
+				},
+				white_highlight: isWhiteHighlight,
+				yellow_highlight: isYellowHighlight,
+			};
+		});
 	}
 
 	function buildThumbnailColumn() {
@@ -288,7 +296,7 @@
 		}
 
 		const numericColumnIndexes = columns.reduce((indexes, column, i) => {
-			const type = GDV.state.getActiveColumnDetails()?.[column.data]?.type;
+			const type = GDV.state.getColumnDetails()?.[column.data]?.type;
 			if (type === "int" || type === "float") indexes.push(i);
 			return indexes;
 		}, []);
@@ -384,7 +392,7 @@
 
 	async function addColumnFilters(api) {
 		const colCount = api.columns().count();
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getColumnDetails() || {};
 		const ths = csvTableElement[0].querySelectorAll(".filters th");
 
 		for (let columnIndex = 0; columnIndex < colCount; columnIndex++) {
@@ -555,14 +563,14 @@
 				return;
 			}
 			GDV.dom.refreshMainPanelSimilarityGameSection();
-			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
+			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});
 
 		resetButton.addEventListener("click", async () => {
 			clearSimilarityGameInputCommitTimer();
 			GDV.state.resetSimilarityCriteria();
 			GDV.dom.refreshMainPanelSimilarityGameSection();
-			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
+			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});
 		return btnWrapper;
 	}
@@ -1080,7 +1088,7 @@
 			e.preventDefault();
 			GDV.state.setSimilarityReferenceGame(key);
 			GDV.dom.refreshMainPanelSimilarityGameSection();
-			await GDV.tableGenerator.runTableGeneration(GDV.state.getActiveCsvFile());
+			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});
 		overlay.appendChild(findSimilarGames);
 
@@ -1148,7 +1156,7 @@
 	function createHighlightedNode(text, columnName) {
 		if (!columnName) return null;
 
-		const columnDetail = GDV.state.getActiveColumnDetails()?.[columnName];
+		const columnDetail = GDV.state.getColumnDetails()?.[columnName];
 		if (!columnDetail) return null;
 		const columnNameLower = columnName.toLowerCase();
 

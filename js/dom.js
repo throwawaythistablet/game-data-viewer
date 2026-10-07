@@ -46,7 +46,7 @@
 
 	GDV.dom.getCsvTableElement = () => csvTableElement;
 
-	GDV.dom.setActiveCsvFile = (file) => {
+	GDV.dom.setCsvFile = (file) => {
 		csvFileDisplay.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
 		csvFileDisplay.title = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
 	};
@@ -164,7 +164,7 @@
 		const num = parseFloat(value);
 		if (Number.isNaN(num)) return document.createTextNode(value);
 
-		const { min, max } = GDV.state.getActiveColumnDetails()[columnName] || {};
+		const { min, max } = GDV.state.getColumnDetails()[columnName] || {};
 		const intensity = max === min ? 0 : Math.max(0, Math.min(1, (num - min) / (max - min)));
 
 		const { low, high } = getRangeColors();
@@ -336,7 +336,7 @@
 		if (expanded) {
 			controlsPanelGrid.classList.add("is-expanded");
 			controlsPanelGrid.classList.remove("is-collapsed");
-		} else if (!controlsPanelGridPinned && GDV.state.getActiveCsvFile()) {
+		} else if (!controlsPanelGridPinned && GDV.state.getCsvFile()) {
 			controlsPanelGrid.classList.remove("is-expanded");
 			controlsPanelGrid.classList.add("is-collapsed");
 		}
@@ -534,7 +534,7 @@
 
 	// Find Games button
 	findGamesButton.addEventListener("click", async () => {
-		if (!GDV.state.getActiveCsvFile()) {
+		if (!GDV.state.getCsvFile()) {
 			GDV.utils.reportHardWarning("CSV Not Loaded", "No CSV file has been loaded yet.");
 			return;
 		}
@@ -544,7 +544,7 @@
 			return;
 		}
 
-		await GDV.tableGenerator.showPrefiltersAndGenerateTable(GDV.state.getActiveCsvFile());
+		await GDV.tableGenerator.showPrefiltersAndGenerateTable(GDV.state.getCsvFile());
 	});
 
 	// Download Data CSV button

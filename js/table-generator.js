@@ -1,5 +1,6 @@
 (() => {
 	const SIMILARITY_SCORE_NAME = "similarity_score";
+	const SPECIAL_COLUMNS_SET = new Set(["key", SIMILARITY_SCORE_NAME]);
 	const IGNORED_COLUMNS = new Set([
 		"key",
 		getSimilarityScoreName(),
@@ -21,13 +22,18 @@
 		return SIMILARITY_SCORE_NAME;
 	}
 
-	GDV.tableGenerator.shouldIncludeColumn = shouldIncludeColumn;
-	function shouldIncludeColumn(columnName, columnDetails, prefilterConditions) {
-		if (columnName === SIMILARITY_SCORE_NAME || columnName in (prefilterConditions || {})) {
-			return true;
-		}
-		const columnDetail = columnDetails?.[columnName];
-		return !columnDetail || columnDetail.type !== "tag";
+	GDV.tableGenerator.getSpecialColumnSet = getSpecialColumnSet;
+	function getSpecialColumnSet() {
+		return SPECIAL_COLUMNS_SET;
+	}
+
+	function createDataTableColumnsSet(columnsToDisplay, prefilterConditions) {
+		return new Set([
+			...GDV.tableGenerator.getSpecialColumnSet(),
+			...(columnsToDisplay || []),
+			...Object.keys(prefilterConditions || {}),
+			...GDV.state.getNonTagColumnNamesSet(),
+		]);
 	}
 
 	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file) => {
@@ -71,19 +77,21 @@
 	}
 
 	async function generateTable(file) {
+		const columnDetails = GDV.state.getColumnDetails();
 		const prefilterAst = GDV.state.getPrefilterAst();
 		const prefilterConditions = GDV.state.getPrefilterConditions();
-		const columnDetails = GDV.state.getActiveColumnDetails();
+		const columnsToDisplay = GDV.state.getColumnsToDisplay();
 		const similarityReferenceGame = GDV.state.getSimilarityReferenceGame();
+		const dataTableColumnsSet = createDataTableColumnsSet(columnsToDisplay, prefilterConditions);
 		let rowsData = null;
 
 		GDV.datatable.destroyExistingTable(); // Destroy table early to free up memory
 		if (similarityReferenceGame) {
 			const similarityGameRowDataRaw = await getSimilarityReferenceGameRowDataRaw(file, similarityReferenceGame, 0, 10);
-			const filterDetails = { columnDetails, prefilterAst, prefilterConditions, similarityReferenceGame, similarityGameRowDataRaw };
+			const filterDetails = { columnDetails, dataTableColumnsSet, prefilterAst, prefilterConditions, similarityReferenceGame, similarityGameRowDataRaw };
 			rowsData = await getRowsDataFromCsv(file, filterDetails, 10, 90);
 		} else {
-			const filterDetails = { columnDetails, prefilterAst, prefilterConditions, similarityReferenceGame, similarityGameRowDataRaw: null };
+			const filterDetails = { columnDetails, dataTableColumnsSet, prefilterAst, prefilterConditions, similarityReferenceGame, similarityGameRowDataRaw: null };
 			rowsData = await getRowsDataFromCsv(file, filterDetails, 0, 90);
 		}
 
@@ -139,7 +147,7 @@
 
 	function getRowsDataFromCsv(file, filterDetails, startPercent, endPercent) {
 		const rowsData = [];
-		const { columnDetails, prefilterAst, prefilterConditions, similarityReferenceGame, similarityGameRowDataRaw } = filterDetails;
+		const { columnDetails, dataTableColumnsSet, prefilterAst, prefilterConditions, similarityReferenceGame, similarityGameRowDataRaw } = filterDetails;
 		const hasNoPrefilters = !prefilterConditions || Object.keys(prefilterConditions).length === 0 || !prefilterAst;
 		const columnsToCompare = getColumnsToCompare(similarityGameRowDataRaw);
 		let rowsCount = 0;
@@ -157,7 +165,7 @@
 						return;
 					}
 					for (const rowDataRaw of results.data) {
-						const rowData = filterColumnsInRowData(rowDataRaw, columnDetails, prefilterConditions);
+						const rowData = filterColumnsInRowData(rowDataRaw, dataTableColumnsSet);
 						if (similarityGameRowDataRaw) {
 							rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, columnsToCompare);
 						}
@@ -181,10 +189,10 @@
 		});
 	}
 
-	function filterColumnsInRowData(rowData, columnDetails, prefilterConditions) {
+	function filterColumnsInRowData(rowData, dataTableColumnsSet) {
 		const filteredRowData = {};
 		for (const [columnName, value] of Object.entries(rowData)) {
-			if (shouldIncludeColumn(columnName, columnDetails, prefilterConditions)) {
+			if (dataTableColumnsSet.has(columnName)) {
 				filteredRowData[columnName] = value;
 			}
 		}

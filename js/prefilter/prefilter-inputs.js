@@ -94,7 +94,7 @@
 	}
 
 	function updatePrefilterInConditionAndAst(form, column) {
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getColumnDetails() || {};
 		const def = columnDetails[column];
 		if (!def) return;
 		if (isNumericColumn(def)) {
@@ -231,7 +231,7 @@
 
 	GDV.prefilter.normalizePrefilterColumnNames = normalizePrefilterColumnNames;
 	function normalizePrefilterColumnNames(conditions_, ast_, columnsToDisplay_) {
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getColumnDetails() || {};
 		const astColumnNamesSet = collectColumnsSetFromAst(ast_);
 		const conditionColumnNamesSet = new Set(Object.keys(conditions_ || {}));
 		const columnsToDisplayNamesSet = new Set(columnsToDisplay_ || []);
@@ -363,7 +363,7 @@
 
 	GDV.prefilter.arePrefiltersCorrect = arePrefiltersCorrect;
 	function arePrefiltersCorrect(conditions, ast) {
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getColumnDetails() || {};
 		const conditionWarnings = validatePrefilterConditions(conditions, columnDetails);
 		const astWarnings = validatePrefilterAst(ast, columnDetails);
 		const consistencyWarnings = validatePrefilterConsistency(conditions, ast);
@@ -384,7 +384,7 @@
 
 	GDV.prefilter.repairPrefilterConditionsAndAst = repairPrefilterConditionsAndAst;
 	function repairPrefilterConditionsAndAst(prefilterConditions, prefilterAst) {
-		const columnDetails = GDV.state.getActiveColumnDetails() || {};
+		const columnDetails = GDV.state.getColumnDetails() || {};
 
 		// --- 1. CLEAN CONDITIONS (schema-level validation only)
 		const cleanConditions = {};
