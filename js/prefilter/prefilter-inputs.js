@@ -4,12 +4,19 @@
 	let prefilterConditions = {};
 	let prefilterAst = null;
 	let prefilterAstCurrentNode = null;
+	let columnsToDisplay = [];
+	let columnsToDisplaySet = new Set();
 	let sortMode = "nearest";
 
 	GDV.prefilter.getSearchText = () => searchText;
 
 	GDV.prefilter.setSearchText = (searchText_) => {
 		searchText = searchText_;
+	};
+
+	GDV.prefilter.resetPrefilterAndColumnsToDisplay = () => {
+		resetPrefilterConditionsAndAst();
+		resetColumnsToDisplay();
 	};
 
 	GDV.prefilter.getPrefilterConditions = () => prefilterConditions;
@@ -28,7 +35,8 @@
 		prefilterAstCurrentNode = prefilterAst;
 	};
 
-	GDV.prefilter.resetPrefilterConditionsAndAst = () => {
+	GDV.prefilter.resetPrefilterConditionsAndAst = resetPrefilterConditionsAndAst;
+	function resetPrefilterConditionsAndAst() {
 		prefilterConditions = {};
 		prefilterAst = null;
 		prefilterAstCurrentNode = null;
@@ -42,6 +50,7 @@
 	function addToConditionAndAst(column, condition) {
 		prefilterConditions[column] = condition;
 		addColumnToAst(column);
+		addColumnsToDisplay(column);
 	}
 
 	GDV.prefilter.removeFromConditionAndAst = removeFromConditionAndAst;
@@ -64,7 +73,13 @@
 		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
 	}
 
-	GDV.prefilter.removeFromAstConditionsAndUi = removeFromAstConditionsAndUi;
+	GDV.prefilter.removeFromPrefilterAndColumnsToDisplay = removeFromPrefilterAndColumnsToDisplay;
+	function removeFromPrefilterAndColumnsToDisplay(form, node) {
+		const removedColumns = GDV.prefilter.collectColumnsFromAst(node);
+		removeFromAstConditionsAndUi(node);
+		updateColumnsToDisplayForColumns(form, removedColumns);
+	}
+
 	function removeFromAstConditionsAndUi(targetNode) {
 		if (!prefilterAst) return;
 		const path = [];
@@ -72,8 +87,13 @@
 		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
 	}
 
-	GDV.prefilter.updateActiveItemParametersInConditionAndAst = updateActiveItemParametersInConditionAndAst;
-	function updateActiveItemParametersInConditionAndAst(form, column) {
+	GDV.prefilter.updatePrefilterAndColumnsToDisplayForColumn = updatePrefilterAndColumnsToDisplayForColumn;
+	function updatePrefilterAndColumnsToDisplayForColumn(form, column) {
+		updatePrefilterInConditionAndAst(form, column);
+		updateColumnsToDisplayForColumn(form, column);
+	}
+
+	function updatePrefilterInConditionAndAst(form, column) {
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
 		const def = columnDetails[column];
 		if (!def) return;
@@ -88,13 +108,33 @@
 		}
 	}
 
-	GDV.prefilter.applyPrefilterConditionsToForm = applyPrefilterConditionsToForm;
-	function applyPrefilterConditionsToForm(form) {
+	GDV.prefilter.applyPrefilterConditionsAndColumnsToDisplayToForm = applyPrefilterConditionsAndColumnsToDisplayToForm;
+	function applyPrefilterConditionsAndColumnsToDisplayToForm(form) {
 		if (!form) return;
+		applyPrefilterConditionsToForm(form);
+		applyColumnsToDisplayToForm(form);
+	}
+
+	function applyPrefilterConditionsToForm(form) {
 		for (const column in prefilterConditions) {
 			const prefilterCondition = prefilterConditions[column];
 			applyPrefilterConditionToField(form, column, prefilterCondition);
 		}
+	}
+
+	function applyColumnsToDisplayToForm(form) {
+		for (const column of columnsToDisplay) {
+			applyColumnsToDisplayToField(form, column);
+		}
+	}
+
+	function applyColumnsToDisplayToField(form, column) {
+		const elements = getFormElementsByName(form, column);
+		const toggle = elements.find((element) => element.classList.contains("column-display-toggle"));
+		if (!toggle) return;
+
+		toggle.isOn = !prefilterConditions[column];
+		updateColumnDisplayToggleState(toggle);
 	}
 
 	GDV.prefilter.applyNotToNode = applyNotToNode;
@@ -189,15 +229,56 @@
 		return columns;
 	}
 
-	GDV.prefilter.updatePrefilterColumnNames = updatePrefilterColumnNames;
-	function updatePrefilterColumnNames(conditions, ast) {
+	GDV.prefilter.normalizePrefilterColumnNames = normalizePrefilterColumnNames;
+	function normalizePrefilterColumnNames(conditions_, ast_, columnsToDisplay_) {
 		const columnDetails = GDV.state.getActiveColumnDetails() || {};
-		const astColumnNamesSet = collectColumnsSetFromAst(ast);
-		const conditionColumnNamesSet = new Set(Object.keys(conditions || {}));
-		const allColumnNames = [...new Set([...astColumnNamesSet, ...conditionColumnNamesSet])];
+		const astColumnNamesSet = collectColumnsSetFromAst(ast_);
+		const conditionColumnNamesSet = new Set(Object.keys(conditions_ || {}));
+		const columnsToDisplayNamesSet = new Set(columnsToDisplay_ || []);
+		const allColumnNames = [...new Set([...astColumnNamesSet, ...conditionColumnNamesSet, ...columnsToDisplayNamesSet])];
 		const mapping = mapColumnNamesToColumnDetailsNames(allColumnNames, columnDetails);
-		updatePrefilterColumnNamesInConditions(conditions, mapping);
-		updatePrefilterColumnNamesInAst(ast, mapping);
+		normalizePrefilterColumnNamesInConditions(conditions_, mapping);
+		normalizePrefilterColumnNamesInAst(ast_, mapping);
+		normalizePrefilterColumnNamesInColumnsToDisplay(columnsToDisplay_, mapping);
+	}
+
+	GDV.prefilter.getColumnsToDisplay = () => columnsToDisplay;
+
+	GDV.prefilter.setColumnsToDisplay = (columnsToDisplay_) => {
+		columnsToDisplay = columnsToDisplay_;
+		columnsToDisplaySet = new Set(columnsToDisplay_);
+	};
+
+	GDV.prefilter.addColumnsToDisplay = addColumnsToDisplay;
+	function addColumnsToDisplay(column) {
+		if (columnsToDisplaySet.has(column)) return;
+		columnsToDisplay.push(column);
+		columnsToDisplaySet.add(column);
+	}
+
+	GDV.prefilter.removeColumnsToDisplay = removeColumnsToDisplay;
+	function removeColumnsToDisplay(column) {
+		if (!columnsToDisplaySet.has(column)) return;
+		const index = columnsToDisplay.indexOf(column);
+		if (index === -1) return;
+		columnsToDisplay.splice(index, 1);
+		columnsToDisplaySet.delete(column);
+	}
+
+	GDV.prefilter.resetColumnsToDisplay = resetColumnsToDisplay;
+	function resetColumnsToDisplay() {
+		columnsToDisplay = [];
+		columnsToDisplaySet = new Set();
+	}
+
+	GDV.prefilter.moveColumnsToDisplay = moveColumnsToDisplay;
+	function moveColumnsToDisplay(column, newIndex) {
+		if (!columnsToDisplaySet.has(column)) return;
+		if (!Number.isInteger(newIndex) || newIndex < 0 || newIndex >= columnsToDisplay.length) return;
+		const currentIndex = columnsToDisplay.indexOf(column);
+		if (currentIndex === -1 || currentIndex === newIndex) return;
+		columnsToDisplay.splice(currentIndex, 1);
+		columnsToDisplay.splice(newIndex, 0, column);
 	}
 
 	function mapColumnNamesToColumnDetailsNames(columnNames, columnDetails) {
@@ -225,7 +306,7 @@
 		return mapping;
 	}
 
-	function updatePrefilterColumnNamesInConditions(conditions, mapping) {
+	function normalizePrefilterColumnNamesInConditions(conditions, mapping) {
 		// Nothing to update when the conditions object is missing.
 		if (!conditions) {
 			return;
@@ -243,7 +324,7 @@
 		Object.assign(conditions, updatedConditions);
 	}
 
-	function updatePrefilterColumnNamesInAst(ast, mapping) {
+	function normalizePrefilterColumnNamesInAst(ast, mapping) {
 		function traverse(node) {
 			if (!node) return;
 			switch (node.ast_type) {
@@ -269,6 +350,15 @@
 			}
 		}
 		traverse(ast);
+	}
+
+	function normalizePrefilterColumnNamesInColumnsToDisplay(columnsToDisplay, mapping) {
+		if (!columnsToDisplay) {
+			return;
+		}
+		for (let i = 0; i < columnsToDisplay.length; i++) {
+			columnsToDisplay[i] = mapping.get(columnsToDisplay[i]) || columnsToDisplay[i];
+		}
 	}
 
 	GDV.prefilter.arePrefiltersCorrect = arePrefiltersCorrect;
@@ -382,7 +472,9 @@
 	GDV.prefilter.copyPrefiltersToClipboard = copyPrefiltersToClipboard;
 	function copyPrefiltersToClipboard() {
 		normalizePrefilterAst();
-		navigator.clipboard.writeText(serializePrefilters());
+		navigator.clipboard.writeText(serializePrefilters()).catch((err) => {
+			GDV.utils.reportSoftError("Clipboard write failed", "Could not write prefilters to clipboard.", err);
+		});
 	}
 
 	GDV.prefilter.pastePrefiltersFromClipboard = pastePrefiltersFromClipboard;
@@ -472,6 +564,40 @@
 		else {
 			addToConditionAndAst(column, { text: [value] });
 		}
+	}
+
+	GDV.prefilter.restoreColumnDisplayToggles = restoreColumnDisplayToggles;
+	function restoreColumnDisplayToggles(form, prefilterConditions, columnsToDisplaySet) {
+		form.querySelectorAll(".column-display-toggle").forEach((toggle) => {
+			const column = toggle.name;
+			if (!column) return;
+			toggle.isOn = columnsToDisplaySet.has(column) && !prefilterConditions[column];
+			updateColumnDisplayToggleState(toggle);
+		});
+	}
+
+	function updateColumnsToDisplayForColumns(form, columns) {
+		columns.forEach((column) => {
+			updateColumnsToDisplayForColumn(form, column);
+		});
+	}
+
+	function updateColumnsToDisplayForColumn(form, column) {
+		const toggle = getFormElementsByName(form, column).find((input) => input.classList.contains("column-display-toggle"));
+		if (!toggle) return;
+
+		if (toggle.isOn || !!prefilterConditions[column]) {
+			addColumnsToDisplay(column);
+		} else {
+			removeColumnsToDisplay(column);
+		}
+	}
+
+	GDV.prefilter.updateColumnDisplayToggleState = updateColumnDisplayToggleState;
+	function updateColumnDisplayToggleState(toggle) {
+		toggle.classList.toggle("is-on", toggle.isOn);
+		toggle.setAttribute("aria-pressed", String(toggle.isOn));
+		toggle.setAttribute("aria-label", toggle.isOn ? `Remove from Columns to Display` : `Add to Columns to Display`);
 	}
 
 	function getFormElementsByName(form, name) {
@@ -1148,21 +1274,27 @@
 	function serializePrefilters() {
 		const astText = convertAstNodeToString(prefilterAst);
 		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
-		return `---EXPRESSION---\n${astText}\n\n---CONDITIONS---\n${conditionsText}`;
+		const columnsToDisplayText = JSON.stringify(columnsToDisplay, null, 2);
+		return `---EXPRESSION---\n${astText}\n\n---CONDITIONS---\n${conditionsText}\n\n---COLUMNS TO DISPLAY---\n${columnsToDisplayText}`;
 	}
 
-	async function deserializePrefilters(text) {
+	function deserializePrefilters(text) {
 		if (!text || typeof text !== "string") return;
+
 		const astMarker = "---EXPRESSION---";
 		const conditionsMarker = "---CONDITIONS---";
+		const columnsToDisplayMarker = "---COLUMNS TO DISPLAY---";
 		const astIndex = text.indexOf(astMarker);
 		const conditionsIndex = text.indexOf(conditionsMarker);
-		if (astIndex === -1 || conditionsIndex === -1) {
-			GDV.utils.reportSoftWarning("Invalid clipboard format", "Clipboard is missing EXPRESSION or CONDITIONS sections.");
+		const columnsToDisplayIndex = text.indexOf(columnsToDisplayMarker);
+		if (astIndex === -1 || conditionsIndex === -1 || columnsToDisplayIndex === -1) {
+			GDV.utils.reportSoftWarning("Invalid clipboard format", "Clipboard is missing EXPRESSION, CONDITIONS, or COLUMNS TO DISPLAY sections.");
 			return;
 		}
+
 		const astText = text.slice(astIndex + astMarker.length, conditionsIndex).trim();
-		const conditionsText = text.slice(conditionsIndex + conditionsMarker.length).trim();
+		const conditionsText = text.slice(conditionsIndex + conditionsMarker.length, columnsToDisplayIndex).trim();
+		const columnsToDisplayText = text.slice(columnsToDisplayIndex + columnsToDisplayMarker.length).trim();
 		let parsedConditions;
 		try {
 			parsedConditions = JSON.parse(conditionsText);
@@ -1178,9 +1310,24 @@
 		if (!arePrefiltersCorrect(parsedConditions, parsedAst)) {
 			return;
 		}
+		let parsedColumnsToDisplay;
+		try {
+			parsedColumnsToDisplay = JSON.parse(columnsToDisplayText);
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Invalid Columns to Display JSON", "Could not parse Columns to Display from clipboard.", err);
+			return;
+		}
+
+		if (!Array.isArray(parsedColumnsToDisplay)) {
+			GDV.utils.reportSoftWarning("Invalid Columns to Display JSON", "Columns to Display must be an array.");
+			return;
+		}
+
 		prefilterAst = normalizeNode(parsedAst);
 		prefilterAstCurrentNode = prefilterAst;
 		prefilterConditions = parsedConditions;
+		columnsToDisplay = parsedColumnsToDisplay;
+		columnsToDisplaySet = new Set(columnsToDisplay);
 	}
 
 })();

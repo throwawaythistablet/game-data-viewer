@@ -7,8 +7,9 @@
 	let prefilterOverlay = null;
 	let prefilterSectionArray = null;
 	let maxVisibleSections = visibleSectionsBatchSize;
-	let prefilterSectionSearchInfo = new Map();
-	let prefilterColumnOrderMap = new Map();
+	let prefilterColumnToSearchInfoMap = new Map();
+	let prefilterColumnToOrderMap = new Map();
+	let prefilterColumnToSectionMap = new Map();
 	let similarityGameInputCommitTimer = null;
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
@@ -52,7 +53,19 @@
 
 	function resetForNewPrefilterOverlay(form) {
 		maxVisibleSections = visibleSectionsBatchSize;
+		restoreColumnsToDisplayFromState(form);
 		updatePrefilterSections(form);
+	}
+
+	function restoreColumnsToDisplayFromState(form) {
+		const prefilterConditions = GDV.state.getPrefilterConditions() || {};
+		const columnsToDisplay = GDV.state.getColumnsToDisplay();
+		const columnsToDisplaySet = new Set(Array.isArray(columnsToDisplay) ? columnsToDisplay : []);
+		GDV.prefilter.setColumnsToDisplay(Array.isArray(columnsToDisplay) ? [...columnsToDisplay] : []);
+		for (const column of Object.keys(prefilterConditions)) {
+			GDV.prefilter.addColumnsToDisplay(column);
+		}
+		GDV.prefilter.restoreColumnDisplayToggles(form, prefilterConditions, columnsToDisplaySet);
 	}
 
 	function showPrefilterOverlay() {
@@ -213,28 +226,49 @@
 	function createPrefiltersSummary(form, resolve, cleanupFocus) {
 		const container = document.createElement("div");
 		container.className = "prefilter-summary-container";
-
 		container.appendChild(createPrefiltersSummaryLeft());
 		container.appendChild(createPrefiltersSummaryRight(form, resolve, cleanupFocus));
-
 		return container;
 	}
 
 	function createPrefiltersSummaryLeft() {
 		const leftGroup = document.createElement("div");
 		leftGroup.className = "prefilter-summary-left";
+		leftGroup.appendChild(createPrefilterExpressionSummary());
+		leftGroup.appendChild(createColumnsToDisplaySummary());
+		return leftGroup;
+	}
+
+	function createPrefilterExpressionSummary() {
+		const prefilterExpressionSummary = document.createElement("div");
+		prefilterExpressionSummary.className = "prefilter-expression-summary";
 
 		const prefilterLabel = document.createElement("span");
 		prefilterLabel.className = "prefilter-summary-label";
 		prefilterLabel.textContent = "Prefilter Expression:";
-		leftGroup.appendChild(prefilterLabel);
+		prefilterExpressionSummary.appendChild(prefilterLabel);
 
 		const activeItems = document.createElement("div");
 		activeItems.id = "prefilter-active-items";
 		activeItems.className = "prefilter-active-items";
-		leftGroup.appendChild(activeItems);
+		prefilterExpressionSummary.appendChild(activeItems);
+		return prefilterExpressionSummary;
+	}
 
-		return leftGroup;
+	function createColumnsToDisplaySummary() {
+		const columnsToDisplaySummary = document.createElement("div");
+		columnsToDisplaySummary.className = "columns-to-display-summary";
+
+		const columnsToDisplayLabel = document.createElement("span");
+		columnsToDisplayLabel.className = "prefilter-summary-label";
+		columnsToDisplayLabel.textContent = "Columns to Display:";
+		columnsToDisplaySummary.appendChild(columnsToDisplayLabel);
+
+		const columnsToDisplayItems = document.createElement("div");
+		columnsToDisplayItems.id = "columns-to-display-items";
+		columnsToDisplayItems.className = "columns-to-display-items";
+		columnsToDisplaySummary.appendChild(columnsToDisplayItems);
+		return columnsToDisplaySummary;
 	}
 
 	function createPrefiltersSummaryRight(form, resolve, cleanupFocus) {
@@ -304,7 +338,7 @@
 		similarityGameInputWrapper.appendChild(similarityInput);
 
 		const ghostText = document.createElement("div");
-		ghostText.className = "similarity-criteria-game-input-ghost";
+		ghostText.className = "similarity-criteria-game-input-ghost similarity-criteria-game-input-ghost-prefilter-extra";
 		similarityGameInputWrapper.appendChild(ghostText);
 
 		const existingGame = GDV.state.getSimilarityReferenceGame();
@@ -414,7 +448,7 @@
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => {
 			GDV.prefilter.normalizePrefilterAst();
-			updatePrefilterActiveItemsAndWarning(form);
+			updateSummariesAndWarning(form);
 		});
 		return btn;
 	}
@@ -426,7 +460,7 @@
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => {
 			GDV.prefilter.copyPrefiltersToClipboard();
-			updatePrefilterActiveItemsAndWarning(form);
+			updateSummariesAndWarning(form);
 			GDV.utils.showInfoBanner("Prefilters Copied", "The prefilter expression and conditions have been copied to your clipboard.");
 		});
 		return btn;
@@ -439,10 +473,11 @@
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", async () => {
 			hidePrefilterWarning();
-			GDV.prefilter.resetPrefilterConditionsAndAst();
+			GDV.prefilter.resetPrefilterAndColumnsToDisplay();
+
 			await GDV.prefilter.pastePrefiltersFromClipboard();
-			GDV.prefilter.applyPrefilterConditionsToForm(form);
-			updatePrefilterActiveItems(form);
+			GDV.prefilter.applyPrefilterConditionsAndColumnsToDisplayToForm(form);
+			updateSummariesAndWarning(form);
 		});
 		return btn;
 	}
@@ -500,14 +535,19 @@
 		const tagFullMatchPatterns = GDV.state.getTagFullMatchPatterns() || {};
 		const tagQuickSearchPatterns = GDV.state.getTagQuickSearchPatterns() || {};
 		const columnOrder = Object.keys(columnDetails);
-		prefilterColumnOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
-		prefilterSectionSearchInfo = new Map();
+		const savedColumnsToDisplaySet = new Set(GDV.state.getColumnsToDisplay() || []);
+		prefilterColumnToOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
+		prefilterColumnToSearchInfoMap = new Map();
+		prefilterColumnToSectionMap = new Map();
 		for (const [columnName, columnDetail] of Object.entries(columnDetails)) {
-			grid.appendChild(createFilterSectionForColumnDetails(columnName, columnDetail, prefill[columnName]));
+			const section = createFilterSectionForColumnDetails(columnName, columnDetail, prefill[columnName], savedColumnsToDisplaySet);
+			grid.appendChild(section);
+			prefilterColumnToSectionMap.set(columnName, section);
+
 			const filterName = GDV.utils.normalizeFilterName(columnName);
 			const fullMatchRegex = tagFullMatchPatterns.get(filterName) ?? null;
 			const quickSearchRegex = tagQuickSearchPatterns.get(filterName) ?? null;
-			prefilterSectionSearchInfo.set(columnName, {
+			prefilterColumnToSearchInfoMap.set(columnName, {
 				loweredDescription: columnDetail?.type === "tag" ? "" : columnDetail?.description?.toLowerCase() || "",
 				fullMatchRegex,
 				quickSearchRegex
@@ -517,16 +557,20 @@
 		return grid;
 	}
 
-	function createFilterSectionForColumnDetails(column, columnDetail, prefill) {
+	function createFilterSectionForColumnDetails(column, columnDetail, prefill, savedColumnsToDisplaySet) {
 		const section = document.createElement("section");
 		section.className = "prefilter-section";
 		section.dataset.col = String(column);
 		// Avoid storing description strings on every prefilter section to reduce memory usage.
 		// section.title = GDV.datatable.getColumnDescription(column);
 
+		const header = document.createElement("header");
+		header.className = "prefilter-section-header";
 		const title = document.createElement("h3");
 		title.textContent = column;
-		section.appendChild(title);
+		header.appendChild(title);
+		header.appendChild(createColumnDisplayToggle(column, prefill != null, savedColumnsToDisplaySet));
+		section.appendChild(header);
 
 		if (columnDetail.type === "tag") {
 			section.appendChild(createTagFilter(column, prefill));
@@ -545,8 +589,30 @@
 			footer.textContent = `${tagCount} matches`;
 			section.appendChild(footer);
 		}
-
 		return section;
+	}
+
+	function createColumnDisplayToggle(column, isPrefilterActive, savedColumnsToDisplaySet) {
+		const toggle = document.createElement("button");
+		toggle.type = "button";
+		toggle.className = "column-display-toggle";
+		toggle.textContent = "👁︎";
+		toggle.name = column;
+		toggle.isOn = savedColumnsToDisplaySet.has(column) && !isPrefilterActive;
+		GDV.prefilter.updateColumnDisplayToggleState(toggle);
+
+		toggle.addEventListener("click", () => {
+			toggle.isOn = !toggle.isOn;
+			GDV.prefilter.updateColumnDisplayToggleState(toggle);
+			if (toggle.isOn) {
+				GDV.prefilter.addColumnsToDisplay(column);
+			} else if (!GDV.prefilter.getPrefilterConditions()[column]) {
+				GDV.prefilter.removeColumnsToDisplay(column);
+			}
+			const form = toggle.closest(".prefilter-form");
+			if (form) updateColumnsToDisplaySummary(form);
+		});
+		return toggle;
 	}
 
 	function createPrefilterGridLimitIndicator(form) {
@@ -886,8 +952,8 @@
 		button.textContent = "Remove";
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
-			GDV.prefilter.removeFromAstConditionsAndUi(node);
-			updatePrefilterActiveItemsAndWarning(form);
+			GDV.prefilter.removeFromPrefilterAndColumnsToDisplay(form, node);
+			updateSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -900,7 +966,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyNotToNode(node);
-			updatePrefilterActiveItemsAndWarning(form);
+			updateSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -913,7 +979,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyAndToNode(node);
-			updatePrefilterActiveItemsAndWarning(form);
+			updateSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -926,7 +992,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyOrToNode(node);
-			updatePrefilterActiveItemsAndWarning(form);
+			updateSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -939,7 +1005,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeIntoGroup(node);
-			updatePrefilterActiveItemsAndWarning(form);
+			updateSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -952,7 +1018,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeOutOfGroup(node);
-			updatePrefilterActiveItemsAndWarning(form);
+			updateSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -963,16 +1029,17 @@
 	}
 
 	function updateAllBasedFromActiveItemParametersChanges(form, column) {
-		GDV.prefilter.updateActiveItemParametersInConditionAndAst(form, column);
-		updatePrefilterActiveItemsAndWarning(form);
+		GDV.prefilter.updatePrefilterAndColumnsToDisplayForColumn(form, column);
+		updateSummariesAndWarning(form);
 	}
 
-	function updatePrefilterActiveItemsAndWarning(form) {
-		updatePrefilterActiveItems(form);
+	function updateSummariesAndWarning(form) {
+		updatePrefilterActiveItemsSummary(form);
+		updateColumnsToDisplaySummary(form);
 		updatePrefilterWarning();
 	}
 
-	function updatePrefilterActiveItems(form) {
+	function updatePrefilterActiveItemsSummary(form) {
 		const activeItems = form.querySelector("#prefilter-active-items");
 		if (!activeItems) return;
 
@@ -1074,6 +1141,19 @@
 		}
 	}
 
+	function updateColumnsToDisplaySummary(form) {
+		const columnsToDisplayItems = form.querySelector("#columns-to-display-items");
+		if (!columnsToDisplayItems) return;
+		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
+		columnsToDisplayItems.replaceChildren();
+		for (const column of columnsToDisplay) {
+			const item = document.createElement("span");
+			item.className = "columns-to-display-item";
+			item.textContent = column;
+			columnsToDisplayItems.appendChild(item);
+		}
+	}
+
 	function updatePrefilterWarning() {
 		if (!doesPrefilterOverlayExist()) return;
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
@@ -1091,7 +1171,7 @@
 
 	function updatePrefilterConditionsRelatedItems(form) {
 		GDV.prefilter.setPrefilterConditionsAndAst(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst());
-		updatePrefilterActiveItemsAndWarning(form);
+		updateSummariesAndWarning(form);
 	}
 
 	function handlePrefilterGridSearchInput(form) {
@@ -1238,11 +1318,11 @@
 		const sortingInfo = new Map();
 		for (const section of sectionArray) {
 			const columnName = section.dataset.col;
-			const searchInfo = prefilterSectionSearchInfo.get(columnName);
+			const searchInfo = prefilterColumnToSearchInfoMap.get(columnName);
 			sortingInfo.set(columnName, {
 				isFullMatch: searchText.length >= includeFullMatchLengthThreshold && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
 				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
-				order: prefilterColumnOrderMap.get(columnName)
+				order: prefilterColumnToOrderMap.get(columnName)
 			});
 		}
 
@@ -1261,7 +1341,7 @@
 
 	function sortPrefilterSectionsByUsage(sectionArray) {
 		sectionArray.sort((a, b) => {
-			return prefilterColumnOrderMap.get(a.dataset.col) - prefilterColumnOrderMap.get(b.dataset.col);
+			return prefilterColumnToOrderMap.get(a.dataset.col) - prefilterColumnToOrderMap.get(b.dataset.col);
 		});
 	}
 
@@ -1297,7 +1377,7 @@
 		if (searchTokens.length === 0) {
 			return true;
 		}
-		const searchInfo = prefilterSectionSearchInfo.get(columnName);
+		const searchInfo = prefilterColumnToSearchInfoMap.get(columnName);
 		if (!searchInfo) return false;
 		return searchTokens.every((token) => {
 			if (columnName.toLowerCase().includes(token)) return true;
@@ -1331,7 +1411,7 @@
 		element.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.setPrefilterAstCurrentNode(node);
-			updatePrefilterActiveItems(form);
+			updatePrefilterActiveItemsSummary(form);
 		});
 	}
 
@@ -1386,8 +1466,10 @@
 	function updateStateOfPrefiltersBeforeClosing() {
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 		const prefilterAst = GDV.prefilter.getPrefilterAst();
+		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
 		GDV.state.setPrefilterConditions(prefilterConditions);
 		GDV.state.setPrefilterAst(prefilterAst);
+		GDV.state.setColumnsToDisplay(columnsToDisplay);
 	}
 
 	async function confirmPrefiltersWarning() {
@@ -1435,23 +1517,29 @@
 		if (!form) return;
 
 		// Clear tag checkboxes
-		form.querySelectorAll('.prefilter-tag-group input[type="checkbox"]').forEach((inp) => {
-			inp.checked = false;
+		form.querySelectorAll('.prefilter-tag-group input[type="checkbox"]').forEach((input) => {
+			input.checked = false;
 		});
 
 		// Clear choice checkboxes
-		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((inp) => {
-			inp.checked = false;
+		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((input) => {
+			input.checked = false;
 		});
 
 		// Clear range inputs
-		form.querySelectorAll('.prefilter-range input[type="number"]').forEach((inp) => {
-			inp.value = "";
+		form.querySelectorAll('.prefilter-range input[type="number"]').forEach((input) => {
+			input.value = "";
 		});
 
 		// Clear text inputs (excluding search box)
-		form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea').forEach((inp) => {
-			inp.value = "";
+		form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea').forEach((input) => {
+			input.value = "";
+		});
+
+		// Clear column display toggles
+		form.querySelectorAll(".column-display-toggle").forEach((toggle) => {
+			toggle.isOn = false;
+			GDV.prefilter.updateColumnDisplayToggleState(toggle);
 		});
 
 		// Reset Similarity Game Inputs
@@ -1466,8 +1554,8 @@
 		GDV.state.resetSimilarityCriteria();
 
 		// Reset and update
-		GDV.prefilter.resetPrefilterConditionsAndAst();
-		updatePrefilterActiveItemsAndWarning(form);
+		GDV.prefilter.resetPrefilterAndColumnsToDisplay();
+		updateSummariesAndWarning(form);
 	}
 
 	function resetPrefilterCategory(form) {

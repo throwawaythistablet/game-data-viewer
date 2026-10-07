@@ -397,7 +397,7 @@
 			prefilterAst = GDV.prefilter.createPrefilterAstFromConditions(prefilterConditions);
 			hasAst = true;
 		}
-		GDV.prefilter.updatePrefilterColumnNames(prefilterConditions, prefilterAst);
+		GDV.prefilter.normalizePrefilterColumnNames(prefilterConditions, prefilterAst, []);
 		if (!GDV.prefilter.arePrefiltersCorrect(prefilterConditions, prefilterAst)) {
 			({ prefilterConditions, prefilterAst } = GDV.prefilter.repairPrefilterConditionsAndAst(prefilterConditions, prefilterAst));
 		}

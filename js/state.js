@@ -10,6 +10,7 @@
 	let activeGameKeys = null;
 	let prefilterConditions = {};
 	let prefilterAst = null;
+	let columnsToDisplay = null;
 	let similarityReferenceGame = null;
 	let similarityComparisonScope = null;
 
@@ -85,6 +86,12 @@
 
 	GDV.state.setPrefilterAst = (prefilterAst_) => {
 		prefilterAst = prefilterAst_;
+	};
+
+	GDV.state.getColumnsToDisplay = () => columnsToDisplay;
+
+	GDV.state.setColumnsToDisplay = (columnsToDisplay_) => {
+		columnsToDisplay = columnsToDisplay_;
 	};
 
 	GDV.state.getSimilarityCriteria = () => {

@@ -454,7 +454,7 @@
 		similarityGameInputWrapper.appendChild(similarityInput);
 
 		const ghostText = document.createElement("div");
-		ghostText.className = "similarity-criteria-game-input-ghost";
+		ghostText.className = "similarity-criteria-game-input-ghost similarity-criteria-game-input-ghost-table-extra";
 		similarityGameInputWrapper.appendChild(ghostText);
 
 		const existingGame = GDV.state.getSimilarityReferenceGame();
