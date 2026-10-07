@@ -9,7 +9,6 @@
 	let maxVisibleSections = visibleSectionsBatchSize;
 	let prefilterColumnToSearchInfoMap = new Map();
 	let prefilterColumnToOrderMap = new Map();
-	let prefilterColumnToSectionMap = new Map();
 	let similarityGameInputCommitTimer = null;
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
@@ -538,11 +537,9 @@
 		const savedColumnsToDisplaySet = new Set(GDV.state.getColumnsToDisplay() || []);
 		prefilterColumnToOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
 		prefilterColumnToSearchInfoMap = new Map();
-		prefilterColumnToSectionMap = new Map();
 		for (const [columnName, columnDetail] of Object.entries(columnDetails)) {
 			const section = createFilterSectionForColumnDetails(columnName, columnDetail, prefill[columnName], savedColumnsToDisplaySet);
 			grid.appendChild(section);
-			prefilterColumnToSectionMap.set(columnName, section);
 
 			const filterName = GDV.utils.normalizeFilterName(columnName);
 			const fullMatchRegex = tagFullMatchPatterns.get(filterName) ?? null;
