@@ -1513,31 +1513,8 @@
 	function resetPrefilters(form) {
 		if (!form) return;
 
-		// Clear tag checkboxes
-		form.querySelectorAll('.prefilter-tag-group input[type="checkbox"]').forEach((input) => {
-			input.checked = false;
-		});
-
-		// Clear choice checkboxes
-		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((input) => {
-			input.checked = false;
-		});
-
-		// Clear range inputs
-		form.querySelectorAll('.prefilter-range input[type="number"]').forEach((input) => {
-			input.value = "";
-		});
-
-		// Clear text inputs (excluding search box)
-		form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea').forEach((input) => {
-			input.value = "";
-		});
-
-		// Clear column display toggles
-		form.querySelectorAll(".column-display-toggle").forEach((toggle) => {
-			toggle.isOn = false;
-			GDV.prefilter.updateColumnDisplayToggleState(toggle);
-		});
+		// Clear All Prefilter Form Controls
+		GDV.prefilter.resetPrefilterFormInputs(form);
 
 		// Reset Similarity Game Inputs
 		clearSimilarityGameInputCommitTimer();

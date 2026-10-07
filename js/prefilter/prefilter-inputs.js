@@ -519,6 +519,37 @@
 
 	GDV.prefilter.getSortMode = () => sortMode;
 
+	GDV.prefilter.resetPrefilterFormInputs = resetPrefilterFormInputs;
+	function resetPrefilterFormInputs(form) {
+		if (!form) return;
+
+		// Clear tag checkboxes
+		form.querySelectorAll('.prefilter-tag-group input[type="checkbox"]').forEach((input) => {
+			input.checked = false;
+		});
+
+		// Clear choice checkboxes
+		form.querySelectorAll('.prefilter-box input[type="checkbox"]').forEach((input) => {
+			input.checked = false;
+		});
+
+		// Clear range inputs
+		form.querySelectorAll('.prefilter-range input[type="number"]').forEach((input) => {
+			input.value = "";
+		});
+
+		// Clear text inputs (excluding search box)
+		form.querySelectorAll('input[type="text"]:not(.prefilter-search-input), textarea').forEach((input) => {
+			input.value = "";
+		});
+
+		// Clear column display toggles
+		form.querySelectorAll(".column-display-toggle").forEach((toggle) => {
+			toggle.isOn = false;
+			updateColumnDisplayToggleState(toggle);
+		});
+	}
+
 	function updateNumericPrefilter(form, column, def) {
 		const [minEl] = getFormElementsByName(form, `${column}__min`);
 		const [maxEl] = getFormElementsByName(form, `${column}__max`);
