@@ -266,7 +266,9 @@
 		const columnsToDisplayItems = document.createElement("div");
 		columnsToDisplayItems.id = "columns-to-display-items";
 		columnsToDisplayItems.className = "columns-to-display-items";
+		bindColumnsToDisplayDragAndDrop(columnsToDisplayItems);
 		columnsToDisplaySummary.appendChild(columnsToDisplayItems);
+
 		return columnsToDisplaySummary;
 	}
 
@@ -1141,11 +1143,12 @@
 	function updateColumnsToDisplaySummary(form) {
 		const columnsToDisplayItems = form.querySelector("#columns-to-display-items");
 		if (!columnsToDisplayItems) return;
-		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
 		columnsToDisplayItems.replaceChildren();
-		for (const column of columnsToDisplay) {
+		for (const column of GDV.prefilter.getColumnsToDisplay()) {
 			const item = document.createElement("span");
 			item.className = "columns-to-display-item";
+			item.dataset.column = column;
+			item.draggable = true;
 			item.textContent = column;
 			columnsToDisplayItems.appendChild(item);
 		}
@@ -1439,6 +1442,47 @@
 			finalizeAndClose();
 			resolve(prefilterConditions);
 		};
+	}
+
+	function bindColumnsToDisplayDragAndDrop(container) {
+		let draggedColumn = null;
+
+		container.addEventListener("dragstart", (event) => {
+			const item = event.target.closest(".columns-to-display-item");
+			if (!item) return;
+			draggedColumn = item.dataset.column;
+			event.dataTransfer.effectAllowed = "move";
+			event.dataTransfer.setData("text/plain", draggedColumn);
+		});
+
+		container.addEventListener("dragover", (event) => {
+			const item = event.target.closest(".columns-to-display-item");
+			if (!item || !draggedColumn || item.dataset.column === draggedColumn) return;
+			event.preventDefault();
+			event.dataTransfer.dropEffect = "move";
+		});
+
+		container.addEventListener("drop", (event) => {
+			const target = event.target.closest(".columns-to-display-item");
+			if (!target || !draggedColumn) return;
+			event.preventDefault();
+
+			const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
+			const oldIndex = columnsToDisplay.indexOf(draggedColumn);
+			const targetIndex = columnsToDisplay.indexOf(target.dataset.column);
+			if (oldIndex === -1 || targetIndex === -1 || oldIndex === targetIndex) return;
+
+			const targetRect = target.getBoundingClientRect();
+			const insertAfter = event.clientX >= targetRect.left + targetRect.width / 2;
+			const newIndex = targetIndex + (insertAfter ? 1 : 0) - (oldIndex < targetIndex + (insertAfter ? 1 : 0) ? 1 : 0);
+
+			GDV.prefilter.moveColumnsToDisplay(draggedColumn, newIndex);
+			updateColumnsToDisplaySummary(container.closest(".prefilter-form"));
+		});
+
+		container.addEventListener("dragend", () => {
+			draggedColumn = null;
+		});
 	}
 
 	function flushAndCommitSimilarityGameInput(form) {
