@@ -1441,6 +1441,7 @@
 			if (cleanupFocus) cleanupFocus();
 			flushAndCommitSimilarityGameInput(form);
 			finalizeAndClose();
+			isPrefilterSubmissionPending = false;
 			resolve(prefilterConditions);
 		};
 	}
