@@ -10,6 +10,7 @@
 	let prefilterColumnToSearchInfoMap = new Map();
 	let prefilterColumnToOrderMap = new Map();
 	let similarityGameInputCommitTimer = null;
+	let draggedColumnsToDisplayColumn = null;
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
 	function initializePrefilterOverlayIfNeeded() {
@@ -84,6 +85,7 @@
 		const overlay = createPrefilterOverlayContainer("Refine Your Search Using Prefilters");
 		document.body.appendChild(overlay);
 		overlay.style.display = "none";
+		bindPrefilterOverlayDragAndDrop(overlay);
 		overlay.appendChild(GDV.helpNotice.createHelpNotice());
 
 		const form = document.createElement("form");
@@ -94,7 +96,6 @@
 		form.appendChild(createPrefilterGridLimitIndicator(form));
 		form.appendChild(createPrefilterGridNoResultsDisplay());
 		updatePrefilterSections(form);
-
 		bindPrefilterGridInputs(form);
 		return { overlay, form };
 	}
@@ -1444,44 +1445,51 @@
 		};
 	}
 
-	function bindColumnsToDisplayDragAndDrop(container) {
-		let draggedColumn = null;
+	function bindPrefilterOverlayDragAndDrop(overlay) {
+		overlay.addEventListener("dragover", (event) => {
+			if (!draggedColumnsToDisplayColumn) return;
+			event.preventDefault();
+			event.dataTransfer.dropEffect = "move";
+		});
+	}
 
+	function bindColumnsToDisplayDragAndDrop(container) {
 		container.addEventListener("dragstart", (event) => {
 			const item = event.target.closest(".columns-to-display-item");
 			if (!item) return;
-			draggedColumn = item.dataset.column;
+
+			draggedColumnsToDisplayColumn = item.dataset.column;
 			event.dataTransfer.effectAllowed = "move";
-			event.dataTransfer.setData("text/plain", draggedColumn);
+			event.dataTransfer.setData("text/plain", draggedColumnsToDisplayColumn);
 		});
 
 		container.addEventListener("dragend", (event) => {
-			if (!draggedColumn) return;
+			if (!draggedColumnsToDisplayColumn) return;
+
+			const draggedColumn = draggedColumnsToDisplayColumn;
+			draggedColumnsToDisplayColumn = null;
+
 			const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
 			const oldIndex = columnsToDisplay.indexOf(draggedColumn);
 			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumn);
 
-			draggedColumn = null;
 			if (oldIndex === -1 || newIndex === oldIndex) return;
-			GDV.prefilter.moveColumnsToDisplay(columnsToDisplay[oldIndex], newIndex);
+
+			GDV.prefilter.moveColumnsToDisplay(draggedColumn, newIndex);
 			updateColumnsToDisplaySummary(container.closest(".prefilter-form"));
 		});
 	}
 
 	function getColumnsToDisplayDropIndex(container, screenX, draggedColumn) {
 		let newIndex = 0;
-
 		for (const item of container.querySelectorAll(".columns-to-display-item")) {
 			if (item.dataset.column === draggedColumn) continue;
-
 			const rect = item.getBoundingClientRect();
 			const itemLeft = window.screenX + rect.left;
 			const itemMiddle = itemLeft + rect.width / 2;
-
 			if (screenX < itemMiddle) return newIndex;
 			newIndex++;
 		}
-
 		return newIndex;
 	}
 
