@@ -107,6 +107,15 @@
 		}
 	}
 
+	GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns = applyPrefilterAndColumnsToDisplayToFormForColumns;
+	function applyPrefilterAndColumnsToDisplayToFormForColumns(form, columns) {
+		if (!form) return;
+		columns.forEach((column) => {
+			applyPrefilterConditionToField(form, column);
+			applyColumnsToDisplayToField(form, column);
+		});
+	}
+
 	GDV.prefilter.applyPrefilterConditionsAndColumnsToDisplayToForm = applyPrefilterConditionsAndColumnsToDisplayToForm;
 	function applyPrefilterConditionsAndColumnsToDisplayToForm(form) {
 		if (!form) return;
@@ -116,8 +125,7 @@
 
 	function applyPrefilterConditionsToForm(form) {
 		for (const column in prefilterConditions) {
-			const prefilterCondition = prefilterConditions[column];
-			applyPrefilterConditionToField(form, column, prefilterCondition);
+			applyPrefilterConditionToField(form, column);
 		}
 	}
 
@@ -458,16 +466,6 @@
 		}
 	}
 
-	GDV.prefilter.restoreColumnDisplayToggles = restoreColumnDisplayToggles;
-	function restoreColumnDisplayToggles(form, prefilterConditions, columnsToDisplaySet) {
-		form.querySelectorAll(".column-display-toggle").forEach((toggle) => {
-			const column = toggle.name;
-			if (!column) return;
-			toggle.isOn = columnsToDisplaySet.has(column) && !prefilterConditions[column];
-			updateColumnDisplayToggleState(toggle);
-		});
-	}
-
 	function updateColumnsToDisplayForColumns(form, columns) {
 		columns.forEach((column) => {
 			updateColumnsToDisplayForColumn(form, column);
@@ -530,18 +528,19 @@
 		return getFormElementsByName(form, column).some((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
 	}
 
-	function applyPrefilterConditionToField(form, column, condition) {
-		if (condition == null) return;
-		if (condition.min != null || condition.max != null) {
-			applyNumericToForm(form, column, condition);
+	function applyPrefilterConditionToField(form, column) {
+		const prefilterCondition = prefilterConditions[column];
+		if (prefilterCondition == null) return;
+		if (prefilterCondition.min != null || prefilterCondition.max != null) {
+			applyNumericToForm(form, column, prefilterCondition);
 			return;
 		}
-		if (condition.choices) {
-			applyCheckboxToForm(form, column, condition);
+		if (prefilterCondition.choices) {
+			applyCheckboxToForm(form, column, prefilterCondition);
 			return;
 		}
-		if (condition.text) {
-			applyTextToForm(form, column, condition);
+		if (prefilterCondition.text) {
+			applyTextToForm(form, column, prefilterCondition);
 			return;
 		}
 	}

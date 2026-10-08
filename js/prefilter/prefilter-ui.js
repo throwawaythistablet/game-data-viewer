@@ -31,7 +31,7 @@
 			return await new Promise((resolve) => {
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
 				replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
-				updatePrefilterConditionsRelatedItems(form);
+				restoreAndUpdateFromState(form);
 				waitForPrefilterFormSubmission(form, resolve, cleanupFocus);
 			});
 		} catch (err) {
@@ -52,20 +52,7 @@
 	}
 
 	function resetForNewPrefilterOverlay(form) {
-		maxVisibleSections = visibleSectionsBatchSize;
-		restoreColumnsToDisplayFromState(form);
-		updatePrefilterSections(form);
-	}
-
-	function restoreColumnsToDisplayFromState(form) {
-		const prefilterConditions = GDV.state.getPrefilterConditions() || {};
-		const columnsToDisplay = GDV.state.getColumnsToDisplay();
-		const columnsToDisplaySet = new Set(Array.isArray(columnsToDisplay) ? columnsToDisplay : []);
-		GDV.prefilter.setColumnsToDisplay(Array.isArray(columnsToDisplay) ? [...columnsToDisplay] : []);
-		for (const column of Object.keys(prefilterConditions)) {
-			GDV.prefilter.addColumnsToDisplay(column);
-		}
-		GDV.prefilter.restoreColumnDisplayToggles(form, prefilterConditions, columnsToDisplaySet);
+		resetPrefilterSections(form);
 	}
 
 	function showPrefilterOverlay() {
@@ -1170,9 +1157,24 @@
 		return !!document.getElementById("prefilterOverlay");
 	}
 
-	function updatePrefilterConditionsRelatedItems(form) {
-		GDV.prefilter.setPrefilterConditionsAndAst(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst());
+	function restoreAndUpdateFromState(form) {
+		restorePrefiltersAndColumnsToDisplayFromState(form);
 		updateSummariesAndWarning(form);
+	}
+
+	function restorePrefiltersAndColumnsToDisplayFromState(form) {
+		const prefilterPrefilterConditions = GDV.prefilter.getPrefilterConditions() || {};
+		const prefilterColumnsToDisplay = GDV.prefilter.getColumnsToDisplay() || [];
+		const statePrefilterConditions = GDV.state.getPrefilterConditions() || {};
+		const statePrefilterAst = GDV.state.getPrefilterAst();
+		const stateColumnsToDisplay = GDV.state.getColumnsToDisplay() || [];
+		GDV.prefilter.setPrefilterConditionsAndAst(statePrefilterConditions, statePrefilterAst);
+		GDV.prefilter.setColumnsToDisplay(stateColumnsToDisplay);
+		for (const column of Object.keys(statePrefilterConditions)) {
+			GDV.prefilter.addColumnsToDisplay(column);
+		}
+		const allColumns = [...new Set([...Object.keys(prefilterPrefilterConditions), ...prefilterColumnsToDisplay, ...Object.keys(statePrefilterConditions), ...stateColumnsToDisplay])];
+		GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns(form, allColumns);
 	}
 
 	function handlePrefilterGridSearchInput(form) {
@@ -1209,6 +1211,11 @@
 
 		const grid = form.querySelector(".prefilter-grid");
 		if (grid) grid.style.display = "";
+	}
+
+	function resetPrefilterSections(form) {
+		maxVisibleSections = visibleSectionsBatchSize;
+		updatePrefilterSections(form);
 	}
 
 	function updatePrefilterSections(form, isSortModeChange = false) {
