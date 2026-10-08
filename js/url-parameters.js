@@ -5,12 +5,13 @@
 		return {
 			prefilterConditions: extractPrefilterConditions(params),
 			prefilterAst: extractPrefilterAst(params),
+			columnsToDisplay: extractColumnsToDisplay(params),
 			similarityCriteria: extractSimilarityCriteria(params),
 		};
 	}
 
 	GDV.urlParameters.encodeDataAsUrlParameters = encodeDataAsUrlParameters;
-	function encodeDataAsUrlParameters(prefilterConditions, prefilterAst, similarityCriteria) {
+	function encodeDataAsUrlParameters(prefilterConditions, prefilterAst, columnsToDisplay, similarityCriteria) {
 		const parts = [];
 		const pfPart = encodePrefilterConditions(prefilterConditions);
 		if (pfPart) {
@@ -19,6 +20,10 @@
 		const astPart = encodePrefilterAst(prefilterAst);
 		if (astPart) {
 			parts.push(astPart);
+		}
+		const cdPart = encodeColumnsToDisplay(columnsToDisplay);
+		if (cdPart) {
+			parts.push(cdPart);
 		}
 		const sgPart = encodeSimilarityCriteria(similarityCriteria);
 		if (sgPart) {
@@ -58,6 +63,18 @@
 		return null;
 	}
 
+	function extractColumnsToDisplay(params) {
+		if (params.cd) {
+			const columnsToDisplay = decodeBase64UrlJson(params.cd);
+			if (columnsToDisplay === null) {
+				GDV.utils.reportSoftWarning("Invalid URL Columns to Display Parameter", "The URL contained an invalid 'cd' parameter and it will be ignored.");
+				return null;
+			}
+			return columnsToDisplay;
+		}
+		return null;
+	}
+
 	function extractSimilarityCriteria(params) {
 		if (params.sg) {
 			const sgObj = decodeBase64UrlJson(params.sg);
@@ -93,6 +110,15 @@
 		const encoded = encodeJsonToBase64Url(prefilterAst);
 		if (!encoded) return null;
 		return `ast=${encoded}`;
+	}
+
+	function encodeColumnsToDisplay(columnsToDisplay) {
+		if (!Array.isArray(columnsToDisplay) || columnsToDisplay.length === 0) {
+			return null;
+		}
+		const encoded = encodeJsonToBase64Url(columnsToDisplay);
+		if (!encoded) return null;
+		return `cd=${encoded}`;
 	}
 
 	function encodeSimilarityCriteria(similarityCriteria) {

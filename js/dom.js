@@ -346,19 +346,22 @@
 		const shareBtn = document.createElement("button");
 		shareBtn.className = "btn";
 		shareBtn.textContent = "Copy Shareable URL";
-
 		shareBtn.addEventListener("click", async () => {
 			try {
-				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(GDV.state.getPrefilterConditions(), GDV.state.getPrefilterAst(), GDV.state.getSimilarityCriteria());
+				const prefilterConditions = GDV.state.getPrefilterConditions();
+				const prefilterAst = GDV.state.getPrefilterAst();
+				const similarityCriteria = GDV.state.getSimilarityCriteria();
+				const reducedColumnsToDisplay = GDV.prefilter.removeRedundantColumnsToDisplay(GDV.state.getColumnsToDisplay(), prefilterConditions);
+				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(prefilterConditions, prefilterAst, reducedColumnsToDisplay, similarityCriteria);
 				if (!encoded && encoded !== "") {
-					GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode prefilters for sharing.");
+					GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode the data for sharing.");
 					return;
 				}
 
 				const baseUrl = "https://throwawaythistablet.github.io/game-data-viewer/";
-				const shareUrl = `${baseUrl}?${encoded}`;
+				const shareUrl = encoded ? `${baseUrl}?${encoded}` : baseUrl;
 				await navigator.clipboard.writeText(shareUrl);
-				GDV.utils.showInfoBanner("Shareable URL Copied", "The encoded prefilter URL has been copied to your clipboard.");
+				GDV.utils.showInfoBanner("Shareable URL Copied", "The shareable URL has been copied to your clipboard.");
 			} catch (err) {
 				GDV.utils.reportSoftWarning("Clipboard Copy Failed", "Failed to copy the shareable URL to the clipboard.", err);
 			}

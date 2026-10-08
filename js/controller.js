@@ -388,11 +388,13 @@
 	}
 
 	async function applyUrlPrefiltersOrPrompt() {
-		let { prefilterConditions = null, prefilterAst = null, similarityCriteria = null } = GDV.urlParameters.getDataFromUrlParameters();
+		let { prefilterConditions = null, prefilterAst = null, columnsToDisplay = null, similarityCriteria = null } = GDV.urlParameters.getDataFromUrlParameters();
 		const hasConditions = prefilterConditions && Object.keys(prefilterConditions).length > 0;
 		let hasAst = prefilterAst && (typeof prefilterAst === "object") && Object.keys(prefilterAst).length > 0;
+		const hasColumnsToDisplay = Array.isArray(columnsToDisplay) && columnsToDisplay.length > 0;
 		const hasSimilarityCriteria = similarityCriteria && (typeof similarityCriteria === "object") && Object.keys(similarityCriteria).length > 0;
-		const bannerMessage = getUrlParameterMessage(hasConditions, hasAst, hasSimilarityCriteria);
+		const bannerMessage = getUrlParameterMessage(hasConditions, hasAst, hasColumnsToDisplay, hasSimilarityCriteria);
+
 		if (hasConditions && !hasAst) {
 			prefilterAst = GDV.prefilter.createPrefilterAstFromConditions(prefilterConditions);
 			hasAst = true;
@@ -408,7 +410,11 @@
 			GDV.state.setPrefilterConditions(prefilterConditions);
 			GDV.state.setPrefilterAst(prefilterAst);
 		}
-		if (similarityCriteria) {
+		if (hasColumnsToDisplay) {
+			applied = true;
+			GDV.state.setColumnsToDisplay(GDV.prefilter.completeColumnsToDisplay(columnsToDisplay, prefilterConditions));
+		}
+		if (hasSimilarityCriteria) {
 			applied = true;
 			const referenceGame = similarityCriteria?.referenceGame;
 			if (referenceGame) {
@@ -420,16 +426,16 @@
 				GDV.state.setSimilarityComparisonScope(comparisonScope);
 			}
 		}
-		const activeCsv = GDV.state.getCsvFile();
+		const csvFile = GDV.state.getCsvFile();
 		if (applied) {
 			GDV.utils.showInfoBanner("URL Parameters Detected", bannerMessage);
-			await GDV.tableGenerator.runTableGeneration(activeCsv);
+			await GDV.tableGenerator.runTableGeneration(csvFile);
 		} else {
-			await GDV.tableGenerator.showPrefiltersAndGenerateTable(activeCsv);
+			await GDV.tableGenerator.showPrefiltersAndGenerateTable(csvFile);
 		}
 	}
 
-	function getUrlParameterMessage(hasConditions, hasAst, hasSimilarityGame) {
+	function getUrlParameterMessage(hasConditions, hasAst, hasColumnsToDisplay, hasSimilarityCriteria) {
 		const appliedListParts = [];
 		if (hasConditions) {
 			appliedListParts.push("Prefilter Conditions");
@@ -437,7 +443,10 @@
 		if (hasAst) {
 			appliedListParts.push("Prefilter Expression");
 		}
-		if (hasSimilarityGame) {
+		if (hasColumnsToDisplay) {
+			appliedListParts.push("Columns To Display");
+		}
+		if (hasSimilarityCriteria) {
 			appliedListParts.push("Similarity Game");
 		}
 		const appliedList = appliedListParts.join(" & ");
