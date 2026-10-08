@@ -530,8 +530,13 @@
 
 	function applyPrefilterConditionToField(form, column) {
 		const prefilterCondition = prefilterConditions[column];
-		if (prefilterCondition == null) return;
-		if (prefilterCondition.min != null || prefilterCondition.max != null) {
+		if (!prefilterCondition) {
+			applyNumericToForm(form, column, { min: null, max: null });
+			applyCheckboxToForm(form, column, { choices: [] });
+			applyTextToForm(form, column, { text: [] });
+			return;
+		}
+		if (prefilterCondition.type === "int" || prefilterCondition.type === "float") {
 			applyNumericToForm(form, column, prefilterCondition);
 			return;
 		}
