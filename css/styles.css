@@ -1297,6 +1297,15 @@ td {
 	text-shadow: 0 0 8px var(--gray-weakest);
 }
 
+.prefilter-columns-to-display-drag-handle {
+	color: var(--gray-strongest);
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 1;
+	user-select: none;
+	cursor: grab;
+}
+
 .prefilter-summary-input-wrapper {
 	position: relative;
 	display: inline-block;
@@ -1382,6 +1391,7 @@ td {
 .prefilter-similarity-active-item {
 	display: inline-flex;
 	align-items: center;
+	gap: 6px;
 	padding: 4px 10px;
 	border-radius: 6px;
 	font-size: 13px;
@@ -1392,15 +1402,17 @@ td {
 	border: 1px solid var(--gray-weak);
 	cursor: pointer;
 	box-shadow: 0 0 3px transparent;
-	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease, opacity 0.1s ease;
 }
 
 .prefilter-columns-to-display-item {
 	color: var(--text-muted);
+	background: var(--bg-panel);
 	border: 1px solid var(--gray-weak);
-	cursor: pointer;
+	cursor: grab;
 	box-shadow: 0 0 3px transparent;
-	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+	user-select: none;
+	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease, opacity 0.1s ease;
 }
 
 .prefilter-similarity-active-item {
@@ -1424,7 +1436,6 @@ td {
 .prefilter-active-item .prefilter-remove-btn {
 	background: transparent;
 	border: none;
-	margin-left: 6px;
 	cursor: pointer;
 	font-weight: bold;
 	color: var(--danger);
@@ -1436,6 +1447,42 @@ td {
 	color: var(--glow-strong);
 	transform: scale(1.2);
 	transition: transform 0.15s ease;
+}
+
+.prefilter-columns-to-display-item.is-dragging {
+	opacity: 0.45;
+	cursor: grabbing;
+	box-shadow: 0 0 6px var(--gray-strong);
+}
+
+.prefilter-columns-to-display-item.is-dragging .prefilter-columns-to-display-drag-handle {
+	cursor: grabbing;
+}
+
+.prefilter-columns-to-display-item.is-drop-before,
+.prefilter-columns-to-display-item.is-drop-after {
+	position: relative;
+}
+
+.prefilter-columns-to-display-item.is-drop-before::before,
+.prefilter-columns-to-display-item.is-drop-after::after {
+	content: "";
+	position: absolute;
+	top: -2px;
+	bottom: -2px;
+	width: 3px;
+	border-radius: 3px;
+	background: var(--gray-strongest);
+	box-shadow: 0 0 4px var(--gray-strong);
+	pointer-events: none;
+}
+
+.prefilter-columns-to-display-item.is-drop-before::before {
+	left: -6px;
+}
+
+.prefilter-columns-to-display-item.is-drop-after::after {
+	right: -6px;
 }
 
 .prefilter-ast-toolbar {

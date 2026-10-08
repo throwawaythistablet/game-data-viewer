@@ -252,7 +252,7 @@
 
 		const columnsToDisplayLabel = document.createElement("span");
 		columnsToDisplayLabel.className = "prefilter-columns-to-display-label";
-		columnsToDisplayLabel.textContent = "Columns to Display (in order):";
+		columnsToDisplayLabel.textContent = "Columns to Display (drag to reorder):";
 		columnsToDisplaySummary.appendChild(columnsToDisplayLabel);
 
 		const columnsToDisplayItems = document.createElement("div");
@@ -1136,14 +1136,22 @@
 		const columnsToDisplayItems = form.querySelector("#prefilter-columns-to-display-items");
 		if (!columnsToDisplayItems) return;
 		columnsToDisplayItems.replaceChildren();
-		for (const column of GDV.prefilter.getColumnsToDisplay()) {
+
+		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
+		columnsToDisplay.forEach((column, index) => {
 			const item = document.createElement("span");
 			item.className = "prefilter-columns-to-display-item";
 			item.dataset.column = column;
 			item.draggable = true;
-			item.textContent = column;
+
+			const dragHandle = document.createElement("span");
+			dragHandle.className = "prefilter-columns-to-display-drag-handle";
+			dragHandle.textContent = `${index + 1} ⋮⋮`;
+			item.appendChild(dragHandle);
+
+			item.appendChild(document.createTextNode(column));
 			columnsToDisplayItems.appendChild(item);
-		}
+		});
 	}
 
 	function updatePrefilterWarning() {
@@ -1469,24 +1477,44 @@
 		container.addEventListener("dragstart", (event) => {
 			const item = event.target.closest(".prefilter-columns-to-display-item");
 			if (!item) return;
-
 			draggedColumnsToDisplayColumn = item.dataset.column;
+			item.classList.add("is-dragging");
 			event.dataTransfer.effectAllowed = "move";
 			event.dataTransfer.setData("text/plain", draggedColumnsToDisplayColumn);
 		});
 
-		container.addEventListener("dragend", (event) => {
+		container.addEventListener("dragover", (event) => {
 			if (!draggedColumnsToDisplayColumn) return;
+			event.preventDefault();
+			event.dataTransfer.dropEffect = "move";
+			clearColumnsToDisplayDropIndicators(container);
+			const columnsToDisplayItems = Array.from(container.querySelectorAll(".prefilter-columns-to-display-item"))
+				.filter((item) => item.dataset.column !== draggedColumnsToDisplayColumn);
+			if (!columnsToDisplayItems.length) return;
 
+			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumnsToDisplayColumn);
+			const targetItem = columnsToDisplayItems[newIndex] || columnsToDisplayItems[columnsToDisplayItems.length - 1];
+			if (newIndex >= columnsToDisplayItems.length) {
+				targetItem.classList.add("is-drop-after");
+			} else {
+				targetItem.classList.add("is-drop-before");
+			}
+		});
+
+		container.addEventListener("dragend", (event) => {
+			const item = event.target.closest(".prefilter-columns-to-display-item");
+			if (item) {
+				item.classList.remove("is-dragging");
+			}
+			clearColumnsToDisplayDropIndicators(container);
+			if (!draggedColumnsToDisplayColumn) return;
 			const draggedColumn = draggedColumnsToDisplayColumn;
 			draggedColumnsToDisplayColumn = null;
 
 			const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
 			const oldIndex = columnsToDisplay.indexOf(draggedColumn);
 			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumn);
-
 			if (oldIndex === -1 || newIndex === oldIndex) return;
-
 			GDV.prefilter.moveColumnsToDisplay(draggedColumn, newIndex);
 			updateColumnsToDisplaySummary(container.closest(".prefilter-form"));
 		});
@@ -1503,6 +1531,12 @@
 			newIndex++;
 		}
 		return newIndex;
+	}
+
+	function clearColumnsToDisplayDropIndicators(container) {
+		container.querySelectorAll(".prefilter-columns-to-display-item").forEach((item) => {
+			item.classList.remove("is-drop-before", "is-drop-after");
+		});
 	}
 
 	function flushAndCommitSimilarityGameInput(form) {
