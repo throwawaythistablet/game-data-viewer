@@ -105,7 +105,7 @@
 			return;
 		}
 		setCsvFile(file);
-		await GDV.tableGenerator.showPrefiltersAndGenerateTable(file, false);
+		await GDV.tableGenerator.showPrefiltersAndGenerateTable(file, true);
 	};
 
 	GDV.controller.loadColumnDetailsFile = async (file) => {
