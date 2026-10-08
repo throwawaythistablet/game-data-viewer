@@ -86,6 +86,20 @@
 		return completedColumnsToDisplay;
 	};
 
+	GDV.prefilter.cleanSimilarityCriteria = (similarityCriteria) => {
+		if (!similarityCriteria) return null;
+		if (!similarityCriteria.referenceGame) {
+			delete similarityCriteria.referenceGame;
+		}
+		if (!similarityCriteria.comparisonScope || similarityCriteria.comparisonScope === "All Categories") {
+			delete similarityCriteria.comparisonScope;
+		}
+		if (Object.keys(similarityCriteria).length === 0) {
+			return null;
+		}
+		return similarityCriteria;
+	};
+
 	GDV.prefilter.getPrefilterDisplayText = (column, value) => {
 		if (!value) return "";
 		if (value.type === "tag" || Array.isArray(value.choices)) {

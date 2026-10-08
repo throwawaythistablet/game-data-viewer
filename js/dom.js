@@ -350,9 +350,9 @@
 			try {
 				const prefilterConditions = GDV.state.getPrefilterConditions();
 				const prefilterAst = GDV.state.getPrefilterAst();
-				const similarityCriteria = GDV.state.getSimilarityCriteria();
+				const reducedSimilarityCriteria = GDV.prefilter.cleanSimilarityCriteria(GDV.state.getSimilarityCriteria());
 				const reducedColumnsToDisplay = GDV.prefilter.removeRedundantColumnsToDisplay(GDV.state.getColumnsToDisplay(), prefilterConditions);
-				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(prefilterConditions, prefilterAst, reducedColumnsToDisplay, similarityCriteria);
+				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(prefilterConditions, prefilterAst, reducedColumnsToDisplay, reducedSimilarityCriteria);
 				if (!encoded && encoded !== "") {
 					GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode the data for sharing.");
 					return;
