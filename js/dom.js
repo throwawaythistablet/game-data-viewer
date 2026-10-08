@@ -417,7 +417,7 @@
 			container.appendChild(gamelabel);
 
 			const gameValue = document.createElement("span");
-			gameValue.className = "prefilter-active-item";
+			gameValue.className = "prefilter-similarity-active-item";
 			gameValue.title = similarityReferenceGame;
 			gameValue.textContent = similarityReferenceGame;
 			container.appendChild(gameValue);
@@ -430,7 +430,7 @@
 				container.appendChild(scopelabel);
 
 				const scopeValue = document.createElement("span");
-				scopeValue.className = "prefilter-active-item";
+				scopeValue.className = "prefilter-similarity-active-item";
 				scopeValue.title = similarityComparisonScope;
 				scopeValue.textContent = similarityComparisonScope;
 				container.appendChild(scopeValue);

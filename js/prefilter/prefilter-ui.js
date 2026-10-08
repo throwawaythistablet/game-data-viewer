@@ -235,7 +235,7 @@
 		prefilterExpressionSummary.className = "prefilter-expression-summary";
 
 		const prefilterLabel = document.createElement("span");
-		prefilterLabel.className = "prefilter-summary-label";
+		prefilterLabel.className = "prefilter-expression-label";
 		prefilterLabel.textContent = "Prefilter Expression:";
 		prefilterExpressionSummary.appendChild(prefilterLabel);
 
@@ -251,13 +251,13 @@
 		columnsToDisplaySummary.className = "columns-to-display-summary";
 
 		const columnsToDisplayLabel = document.createElement("span");
-		columnsToDisplayLabel.className = "prefilter-summary-label";
-		columnsToDisplayLabel.textContent = "Columns to Display:";
+		columnsToDisplayLabel.className = "prefilter-columns-to-display-label";
+		columnsToDisplayLabel.textContent = "Columns to Display (in order):";
 		columnsToDisplaySummary.appendChild(columnsToDisplayLabel);
 
 		const columnsToDisplayItems = document.createElement("div");
-		columnsToDisplayItems.id = "columns-to-display-items";
-		columnsToDisplayItems.className = "columns-to-display-items";
+		columnsToDisplayItems.id = "prefilter-columns-to-display-items";
+		columnsToDisplayItems.className = "prefilter-columns-to-display-items";
 		bindColumnsToDisplayDragAndDrop(columnsToDisplayItems);
 		columnsToDisplaySummary.appendChild(columnsToDisplayItems);
 
@@ -323,7 +323,7 @@
 		similarityGameInputWrapper.className = "prefilter-summary-input-wrapper";
 
 		const similarityInput = document.createElement("input");
-		similarityInput.className = "similarity-criteria-game-input similarity-criteria-game-input-width";
+		similarityInput.className = "similarity-criteria-game-input similarity-criteria-input-item-width";
 		similarityInput.type = "text";
 		similarityInput.name = "prefilterSimilaritySearch";
 		similarityInput.placeholder = "Find a game...";
@@ -377,7 +377,7 @@
 
 	function createPrefilterSimilarityScopeDropDown() {
 		const select = document.createElement("select");
-		select.className = "similarity-scope-dropdown-select";
+		select.className = "similarity-scope-dropdown-select similarity-criteria-input-item-width";
 
 		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
 		Object.keys(columnCategoryDetails).forEach((category) => {
@@ -404,7 +404,7 @@
 		categoryWrapper.className = "prefilter-summary-category";
 		const categoryLabel = document.createElement("span");
 		categoryLabel.className = "prefilter-summary-label";
-		categoryLabel.textContent = "Displayed Category:";
+		categoryLabel.textContent = "Currently Viewing:";
 		categoryWrapper.appendChild(categoryLabel);
 
 		const categoryElement = document.createElement("span");
@@ -586,7 +586,7 @@
 	function createColumnDisplayToggle(column, isPrefilterActive, savedColumnsToDisplaySet) {
 		const toggle = document.createElement("button");
 		toggle.type = "button";
-		toggle.className = "column-display-toggle";
+		toggle.className = "prefilter-column-to-display-toggle";
 		toggle.textContent = "👁︎";
 		toggle.name = column;
 		toggle.isOn = savedColumnsToDisplaySet.has(column) && !isPrefilterActive;
@@ -1133,12 +1133,12 @@
 	}
 
 	function updateColumnsToDisplaySummary(form) {
-		const columnsToDisplayItems = form.querySelector("#columns-to-display-items");
+		const columnsToDisplayItems = form.querySelector("#prefilter-columns-to-display-items");
 		if (!columnsToDisplayItems) return;
 		columnsToDisplayItems.replaceChildren();
 		for (const column of GDV.prefilter.getColumnsToDisplay()) {
 			const item = document.createElement("span");
-			item.className = "columns-to-display-item";
+			item.className = "prefilter-columns-to-display-item";
 			item.dataset.column = column;
 			item.draggable = true;
 			item.textContent = column;
@@ -1467,7 +1467,7 @@
 
 	function bindColumnsToDisplayDragAndDrop(container) {
 		container.addEventListener("dragstart", (event) => {
-			const item = event.target.closest(".columns-to-display-item");
+			const item = event.target.closest(".prefilter-columns-to-display-item");
 			if (!item) return;
 
 			draggedColumnsToDisplayColumn = item.dataset.column;
@@ -1494,7 +1494,7 @@
 
 	function getColumnsToDisplayDropIndex(container, screenX, draggedColumn) {
 		let newIndex = 0;
-		for (const item of container.querySelectorAll(".columns-to-display-item")) {
+		for (const item of container.querySelectorAll(".prefilter-columns-to-display-item")) {
 			if (item.dataset.column === draggedColumn) continue;
 			const rect = item.getBoundingClientRect();
 			const itemLeft = window.screenX + rect.left;

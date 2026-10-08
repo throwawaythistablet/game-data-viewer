@@ -137,7 +137,7 @@
 
 	function applyColumnsToDisplayToField(form, column) {
 		const elements = getFormElementsByName(form, column);
-		const toggle = elements.find((element) => element.classList.contains("column-display-toggle"));
+		const toggle = elements.find((element) => element.classList.contains("prefilter-column-to-display-toggle"));
 		if (!toggle) return;
 
 		toggle.isOn = !prefilterConditions[column];
@@ -413,7 +413,7 @@
 		});
 
 		// Clear column display toggles
-		form.querySelectorAll(".column-display-toggle").forEach((toggle) => {
+		form.querySelectorAll(".prefilter-column-to-display-toggle").forEach((toggle) => {
 			toggle.isOn = false;
 			updateColumnDisplayToggleState(toggle);
 		});
@@ -473,7 +473,7 @@
 	}
 
 	function updateColumnsToDisplayForColumn(form, column) {
-		const toggle = getFormElementsByName(form, column).find((input) => input.classList.contains("column-display-toggle"));
+		const toggle = getFormElementsByName(form, column).find((input) => input.classList.contains("prefilter-column-to-display-toggle"));
 		if (!toggle) return;
 
 		if (toggle.isOn || !!prefilterConditions[column]) {

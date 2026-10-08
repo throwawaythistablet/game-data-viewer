@@ -194,20 +194,25 @@
 		const prefilterColumns = Object.keys(prefilterConditions).filter((column) => tableColumnSet.has(column));
 		const resultColumns = [...new Set([...specialColumns, ...displayColumns, ...prefilterColumns, ...columnNamesInTable])];
 
+		const similarityScoreName = GDV.tableGenerator.getSimilarityScoreName();
 		return resultColumns.map((columnName) => {
-			const isYellowHighlight = specialColumnSet.has(columnName);
-			const isWhiteHighlight = !isYellowHighlight && (displayColumnSet.has(columnName) || !!prefilterConditions[columnName]);
+			const isTealHighlight = similarityScoreName === columnName;
+			const isYellowHighlight = !isTealHighlight && specialColumnSet.has(columnName);
+			const isWhiteHighlight = !isTealHighlight && !isYellowHighlight && (displayColumnSet.has(columnName) || !!prefilterConditions[columnName]);
 			return {
 				title: columnName,
 				data: columnName,
 				render: (data, type) => type === "display" ? renderCellValueNode(data, columnName) : data,
 				createdCell: (td) => {
-					if (isYellowHighlight) {
+					if (isTealHighlight) {
+						td.classList.add("teal-highlight");
+					} else if (isYellowHighlight) {
 						td.classList.add("yellow-highlight");
 					} else if (isWhiteHighlight) {
 						td.classList.add("white-highlight");
 					}
 				},
+				teal_highlight: isTealHighlight,
 				white_highlight: isWhiteHighlight,
 				yellow_highlight: isYellowHighlight,
 			};
@@ -264,20 +269,24 @@
 			const th = document.createElement("th");
 			th.textContent = column.title;
 			th.dataset.columnKey = column.data;
-			if (column.white_highlight) {
-				th.classList.add("white-highlight");
+			if (column.teal_highlight) {
+				th.classList.add("teal-highlight");
 			} else if (column.yellow_highlight) {
 				th.classList.add("yellow-highlight");
+			} else if (column.white_highlight) {
+				th.classList.add("white-highlight");
 			}
 			headerRow.appendChild(th);
 
 			// Filter cell
 			const filterTh = document.createElement("th");
 			filterTh.dataset.columnKey = column.data;
-			if (column.white_highlight) {
-				filterTh.classList.add("white-highlight");
+			if (column.teal_highlight) {
+				filterTh.classList.add("teal-highlight");
 			} else if (column.yellow_highlight) {
 				filterTh.classList.add("yellow-highlight");
+			} else if (column.white_highlight) {
+				filterTh.classList.add("white-highlight");
 			}
 			filterRow.appendChild(filterTh);
 		});
@@ -546,11 +555,11 @@
 		btnWrapper.className = "similarity-criteria-button-wrapper";
 		const similarityButton = document.createElement("button");
 		similarityButton.type = "button";
-		similarityButton.className = "btn btn-secondary";
+		similarityButton.className = "btn btn-teal";
 		similarityButton.textContent = "Update Similarity Scores";
 		const resetButton = document.createElement("button");
 		resetButton.type = "button";
-		resetButton.className = "btn btn-secondary";
+		resetButton.className = "btn btn-teal";
 		resetButton.textContent = "Reset";
 		btnWrapper.appendChild(similarityButton);
 		btnWrapper.appendChild(resetButton);
