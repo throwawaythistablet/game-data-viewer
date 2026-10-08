@@ -36,10 +36,10 @@
 		]);
 	}
 
-	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file) => {
+	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file, shouldRestore) => {
 		if (!file) return false;
 		try {
-			const collectedPrefilters = GDV.state.hasValidColumnDetails() ? await GDV.prefilter.showPrefilterOverlayAndCollectFilters() : {};
+			const collectedPrefilters = GDV.state.hasValidColumnDetails() ? await GDV.prefilter.showPrefilterOverlayAndCollectFilters(shouldRestore) : {};
 			if (collectedPrefilters === null) {
 				return false;
 			}

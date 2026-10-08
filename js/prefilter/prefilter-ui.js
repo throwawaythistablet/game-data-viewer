@@ -19,19 +19,23 @@
 		}
 	}
 
-	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async () => {
+	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async (shouldRestore) => {
 		try {
 			initializePrefilterOverlayIfNeeded();
 			const { overlay, form } = prefilterOverlay;
 
-			resetForNewPrefilterOverlay(form);
+			if (shouldRestore) {
+				resetForNewPrefilterOverlay(form);
+			}
 			showPrefilterOverlay();
 
 			// Return a fresh Promise for this overlay opening; await keeps Promise rejections within this try/catch.
 			return await new Promise((resolve) => {
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
-				replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
-				restoreAndUpdateFromState(form);
+				if (shouldRestore) {
+					replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
+					restoreAndUpdateFromState(form);
+				}
 				waitForPrefilterFormSubmission(form, resolve, cleanupFocus);
 			});
 		} catch (err) {
@@ -1163,8 +1167,8 @@
 	}
 
 	function restorePrefiltersAndColumnsToDisplayFromState(form) {
-		const prefilterPrefilterConditions = GDV.prefilter.getPrefilterConditions() || {};
-		const prefilterColumnsToDisplay = GDV.prefilter.getColumnsToDisplay() || [];
+		const previousPrefilterConditions = GDV.prefilter.getPrefilterConditions() || {};
+		const previousColumnsToDisplay = GDV.prefilter.getColumnsToDisplay() || [];
 		const statePrefilterConditions = GDV.state.getPrefilterConditions() || {};
 		const statePrefilterAst = GDV.state.getPrefilterAst();
 		const stateColumnsToDisplay = GDV.state.getColumnsToDisplay() || [];
@@ -1173,7 +1177,7 @@
 		for (const column of Object.keys(statePrefilterConditions)) {
 			GDV.prefilter.addColumnsToDisplay(column);
 		}
-		const allColumns = [...new Set([...Object.keys(prefilterPrefilterConditions), ...prefilterColumnsToDisplay, ...Object.keys(statePrefilterConditions), ...stateColumnsToDisplay])];
+		const allColumns = [...new Set([...Object.keys(previousPrefilterConditions), ...previousColumnsToDisplay, ...Object.keys(statePrefilterConditions), ...stateColumnsToDisplay])];
 		GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns(form, allColumns);
 	}
 
