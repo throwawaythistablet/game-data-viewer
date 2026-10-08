@@ -1617,12 +1617,15 @@ td {
 }
 
 .prefilter-column-to-display-toggle {
-	flex: 0 0 auto;
+	position: absolute;
+	top: 8px;
+	right: 8px;
 	padding: 1px 3px;
 	margin: 0;
 	border: 0;
 	background: transparent;
 	color: var(--gray-normal);
+	text-shadow: 0 0 8px var(--gray-weakest), 0 0 16px var(--gray-weakest);
 	font-family: sans-serif;
 	font-size: 24px;
 	line-height: 1;
@@ -1642,7 +1645,7 @@ td {
 .prefilter-column-to-display-toggle.is-on {
 	color: var(--glow);
 	opacity: 1;
-	text-shadow: 0 0 6px var(--bg-main);
+	text-shadow: 0 0 8px var(--bg-main);
 }
 
 .prefilter-section input[type="text"] {

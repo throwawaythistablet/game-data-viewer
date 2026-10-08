@@ -560,8 +560,8 @@
 		const title = document.createElement("h3");
 		title.textContent = column;
 		header.appendChild(title);
-		header.appendChild(createColumnDisplayToggle(column, prefill != null, savedColumnsToDisplaySet));
 		section.appendChild(header);
+		header.appendChild(createColumnDisplayToggle(column, prefill != null, savedColumnsToDisplaySet));
 
 		if (columnDetail.type === "tag") {
 			section.appendChild(createTagFilter(column, prefill));
@@ -588,6 +588,7 @@
 		toggle.type = "button";
 		toggle.className = "prefilter-column-to-display-toggle";
 		toggle.textContent = "👁︎";
+		toggle.title = "Add column to display list.";
 		toggle.name = column;
 		toggle.isOn = savedColumnsToDisplaySet.has(column) && !isPrefilterActive;
 		GDV.prefilter.updateColumnDisplayToggleState(toggle);
