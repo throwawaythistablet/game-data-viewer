@@ -1306,6 +1306,31 @@ td {
 	cursor: grab;
 }
 
+.prefilter-columns-to-display-move-button {
+	padding: 4px 7px;
+	margin: 0;
+	color: var(--text-main);
+	border: 1px solid var(--gray-weak);
+	border-radius: 4px;
+	background: var(--bg-surface);
+	font-size: 14px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.prefilter-columns-to-display-move-button:hover:not(:disabled) {
+	color: var(--text-main);
+	border-color: var(--gray-normal);
+	background: var(--bg-hover);
+}
+
+.prefilter-columns-to-display-move-button:disabled {
+	color: var(--text-subtle);
+	border-color: transparent;
+	background: transparent;
+	cursor: default;
+}
+
 .prefilter-summary-input-wrapper {
 	position: relative;
 	display: inline-block;
@@ -1350,7 +1375,7 @@ td {
 .prefilter-columns-to-display-items {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 4px;
+	gap: 16px;
 	position: relative;
 	border: none;
 }
@@ -1427,7 +1452,8 @@ td {
 	box-shadow: 0 0 4px var(--gray-strong);
 }
 
-.prefilter-active-item.is-focused {
+.prefilter-active-item.is-focused,
+.prefilter-columns-to-display-item:focus {
 	background: rgba(var(--glow-rgb-numbers), 0.10);
 	border: 1px solid var(--glow);
 	box-shadow: 0 0 4px var(--glow-strong);

@@ -1080,6 +1080,49 @@
 		}
 	}
 
+	function createColumnsToDisplayItem(form, column, index, columnCount) {
+		const item = document.createElement("span");
+		item.className = "prefilter-columns-to-display-item";
+		item.dataset.column = column;
+		item.draggable = true;
+		item.tabIndex = 0;
+
+		const dragHandle = document.createElement("span");
+		dragHandle.className = "prefilter-columns-to-display-drag-handle";
+		dragHandle.textContent = `${index + 1} ⋮⋮`;
+		item.appendChild(dragHandle);
+
+		item.appendChild(createColumnsToDisplayMoveButton(form, column, -1, index === 0, "left"));
+		item.appendChild(document.createTextNode(column));
+		item.appendChild(createColumnsToDisplayMoveButton(form, column, 1, index === columnCount - 1, "right"));
+
+		return item;
+	}
+
+	function createColumnsToDisplayMoveButton(form, column, direction, disabled, directionName) {
+		const button = document.createElement("button");
+		button.type = "button";
+		button.className = "prefilter-columns-to-display-move-button";
+		button.textContent = direction < 0 ? "←" : "→";
+		button.title = `Move ${column} ${directionName}`;
+		button.disabled = disabled;
+		button.tabIndex = -1;
+		button.addEventListener("click", () => moveColumnsToDisplayColumn(form, column, direction));
+		return button;
+	}
+
+	function moveColumnsToDisplayColumn(form, column, direction) {
+		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
+		const oldIndex = columnsToDisplay.indexOf(column);
+		const newIndex = oldIndex + direction;
+		if (oldIndex === -1 || newIndex < 0 || newIndex >= columnsToDisplay.length) return;
+		GDV.prefilter.moveColumnsToDisplay(column, newIndex);
+		updateColumnsToDisplaySummary(form);
+		const item = Array.from(form.querySelectorAll(".prefilter-columns-to-display-item"))
+			.find((item) => item.dataset.column === column);
+		item?.focus();
+	}
+
 	function renderPrefilterAstToolbar(form) {
 		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
 		if (!prefilterAstCurrentNode) return;
@@ -1139,18 +1182,7 @@
 
 		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
 		columnsToDisplay.forEach((column, index) => {
-			const item = document.createElement("span");
-			item.className = "prefilter-columns-to-display-item";
-			item.dataset.column = column;
-			item.draggable = true;
-
-			const dragHandle = document.createElement("span");
-			dragHandle.className = "prefilter-columns-to-display-drag-handle";
-			dragHandle.textContent = `${index + 1} ⋮⋮`;
-			item.appendChild(dragHandle);
-
-			item.appendChild(document.createTextNode(column));
-			columnsToDisplayItems.appendChild(item);
+			columnsToDisplayItems.appendChild(createColumnsToDisplayItem(form, column, index, columnsToDisplay.length));
 		});
 	}
 
@@ -1574,38 +1606,71 @@
 	// Accessibility: trap focus inside overlay and restore on close
 	function showModalAccessibility(overlay, resolve) {
 		const previousActive = document.activeElement;
+		focusFirstModalElement(overlay);
 
-		// Focus first focusable element
-		const first = overlay.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-		if (first) first.focus();
-
-		function onKeydown(e) {
-			if (e.key === "Escape") {
-				if (isPrefilterSubmissionPending) return;
-				cleanupFocus();
-				finalizeAndClose();
-				resolve(null);
-				return;
-			}
-			if (e.key === "Tab") {
-				const focusables = Array.from(overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((el) => !el.disabled && el.offsetParent !== null);
-				if (!focusables.length) return;
-				const idx = focusables.indexOf(document.activeElement);
-				if (e.shiftKey && idx === 0) {
-					e.preventDefault();
-					focusables[focusables.length - 1].focus();
-				} else if (!e.shiftKey && idx === focusables.length - 1) {
-					e.preventDefault();
-					focusables[0].focus();
-				}
-			}
+		function onKeydown(event) {
+			handleModalKeydown(event, overlay, resolve, cleanupFocus);
 		}
 		const cleanupFocus = () => {
 			overlay.removeEventListener("keydown", onKeydown);
-			if (previousActive?.focus) previousActive.focus();
+			previousActive?.focus?.();
 		};
 		overlay.addEventListener("keydown", onKeydown);
 		return cleanupFocus;
+	}
+
+	function handleModalKeydown(event, overlay, resolve, cleanupFocus) {
+		if (event.key === "Escape") {
+			handleModalEscapeKey(resolve, cleanupFocus);
+		} else if (event.key === "Tab") {
+			handleModalTabKey(event, overlay);
+		} else if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+			handleColumnsToDisplayArrowKey(event);
+		}
+	}
+
+	function handleModalEscapeKey(resolve, cleanupFocus) {
+		if (isPrefilterSubmissionPending) return;
+		cleanupFocus();
+		finalizeAndClose();
+		resolve(null);
+	}
+
+	function handleModalTabKey(event, overlay) {
+		trapModalFocus(event, overlay);
+	}
+
+	function handleColumnsToDisplayArrowKey(event) {
+		const item = event.target.closest(".prefilter-columns-to-display-item");
+		if (!item) return;
+		const form = item.closest(".prefilter-form");
+		if (!form) return;
+		event.preventDefault();
+		moveColumnsToDisplayColumn(form, item.dataset.column, event.key === "ArrowLeft" ? -1 : 1);
+	}
+
+	function trapModalFocus(event, overlay) {
+		const focusables = getModalFocusableElements(overlay);
+		if (!focusables.length) return;
+
+		const index = focusables.indexOf(document.activeElement);
+		if (event.shiftKey && index === 0) {
+			event.preventDefault();
+			focusables[focusables.length - 1].focus();
+		} else if (!event.shiftKey && index === focusables.length - 1) {
+			event.preventDefault();
+			focusables[0].focus();
+		}
+	}
+
+	function getModalFocusableElements(overlay) {
+		return Array.from(overlay.querySelectorAll(
+			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+		)).filter((element) => !element.disabled && element.offsetParent !== null);
+	}
+
+	function focusFirstModalElement(overlay) {
+		getModalFocusableElements(overlay)[0]?.focus();
 	}
 
 	function resetPrefilters(form) {
