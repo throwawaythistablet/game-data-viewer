@@ -258,7 +258,6 @@
 		const columnsToDisplayItems = document.createElement("div");
 		columnsToDisplayItems.id = "prefilter-columns-to-display-items";
 		columnsToDisplayItems.className = "prefilter-columns-to-display-items";
-		bindColumnsToDisplayDragAndDrop(columnsToDisplayItems);
 		columnsToDisplaySummary.appendChild(columnsToDisplayItems);
 
 		return columnsToDisplaySummary;
@@ -1467,32 +1466,27 @@
 	}
 
 	function bindPrefilterOverlayDragAndDrop(overlay) {
-		overlay.addEventListener("dragover", (event) => {
-			if (!draggedColumnsToDisplayColumn) return;
-			event.preventDefault();
-			event.dataTransfer.dropEffect = "move";
-		});
-	}
-
-	function bindColumnsToDisplayDragAndDrop(container) {
-		container.addEventListener("dragstart", (event) => {
+		overlay.addEventListener("dragstart", (event) => {
 			const item = event.target.closest(".prefilter-columns-to-display-item");
 			if (!item) return;
+
 			draggedColumnsToDisplayColumn = item.dataset.column;
 			item.classList.add("is-dragging");
 			event.dataTransfer.effectAllowed = "move";
 			event.dataTransfer.setData("text/plain", draggedColumnsToDisplayColumn);
 		});
 
-		container.addEventListener("dragover", (event) => {
+		overlay.addEventListener("dragover", (event) => {
 			if (!draggedColumnsToDisplayColumn) return;
 			event.preventDefault();
 			event.dataTransfer.dropEffect = "move";
+			const container = overlay.querySelector("#prefilter-columns-to-display-items");
+			if (!container) return;
+
 			clearColumnsToDisplayDropIndicators(container);
 			const columnsToDisplayItems = Array.from(container.querySelectorAll(".prefilter-columns-to-display-item"))
 				.filter((item) => item.dataset.column !== draggedColumnsToDisplayColumn);
 			if (!columnsToDisplayItems.length) return;
-
 			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumnsToDisplayColumn);
 			const targetItem = columnsToDisplayItems[newIndex] || columnsToDisplayItems[columnsToDisplayItems.length - 1];
 			if (newIndex >= columnsToDisplayItems.length) {
@@ -1502,16 +1496,21 @@
 			}
 		});
 
-		container.addEventListener("dragend", (event) => {
+		overlay.addEventListener("dragend", (event) => {
 			const item = event.target.closest(".prefilter-columns-to-display-item");
 			if (item) {
 				item.classList.remove("is-dragging");
 			}
+			const container = overlay.querySelector("#prefilter-columns-to-display-items");
+			if (!container) {
+				draggedColumnsToDisplayColumn = null;
+				return;
+			}
+
 			clearColumnsToDisplayDropIndicators(container);
 			if (!draggedColumnsToDisplayColumn) return;
 			const draggedColumn = draggedColumnsToDisplayColumn;
 			draggedColumnsToDisplayColumn = null;
-
 			const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
 			const oldIndex = columnsToDisplay.indexOf(draggedColumn);
 			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumn);
