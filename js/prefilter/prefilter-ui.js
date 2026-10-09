@@ -55,6 +55,12 @@
 		GDV.utils.showPermanentWarningBanner(noPrefiltersLabel, noPrefiltersMessage);
 	}
 
+	GDV.prefilter.flushAndCommitPrefilterSimilarityInForm = flushAndCommitPrefilterSimilarityInForm;
+	function flushAndCommitPrefilterSimilarityInForm() {
+		const form = document.querySelector(".prefilter-form");
+		flushAndCommitSimilarityGameInput(form);
+	}
+
 	function resetForNewPrefilterOverlay(form) {
 		resetPrefilterSections(form);
 	}
@@ -364,8 +370,7 @@
 		const nearest = GDV.utils.findNearestGameKey(query);
 		similarityInput.value = nearest;
 		ghostText.textContent = "";
-		GDV.prefilter.setSimilarityReferenceGame(nearest);
-		GDV.dom.syncSimilarityGameInputs(nearest);
+		GDV.prefilter.updatePrefilterSimilarityReferenceGame(nearest);
 	}
 
 	function resetSimilarityBecauseOfEmptyInput(ghostText) {
@@ -392,8 +397,7 @@
 		}
 
 		select.addEventListener("change", () => {
-			GDV.prefilter.setSimilarityComparisonScope(select.value);
-			GDV.dom.syncSimilarityScopeDropdowns(select.value);
+			GDV.prefilter.updatePrefilterSimilarityComparisonScope(select.value);
 		});
 		return select;
 	}
@@ -440,7 +444,7 @@
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => {
 			GDV.prefilter.normalizePrefilterAst();
-			updateSummariesAndWarning(form);
+			updateExpressionRelatedSummariesAndWarning(form);
 		});
 		return btn;
 	}
@@ -452,7 +456,7 @@
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => {
 			GDV.prefilter.copyPrefiltersToClipboard();
-			updateSummariesAndWarning(form);
+			updateAllSummariesAndWarning(form);
 			GDV.utils.showInfoBanner("Prefilters Copied", "The prefilter expression and conditions have been copied to your clipboard.");
 		});
 		return btn;
@@ -469,7 +473,7 @@
 
 			await GDV.prefilter.pastePrefiltersFromClipboard();
 			GDV.prefilter.applyPrefilterConditionsAndColumnsToDisplayToForm(form);
-			updateSummariesAndWarning(form);
+			updateAllSummariesAndWarning(form);
 		});
 		return btn;
 	}
@@ -601,7 +605,7 @@
 				GDV.prefilter.removeColumnsToDisplay(column);
 			}
 			const form = toggle.closest(".prefilter-form");
-			if (form) updateColumnsToDisplaySummary(form);
+			if (form) updatePrefilterColumnsToDisplaySummary(form);
 		});
 		return toggle;
 	}
@@ -944,7 +948,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.removeFromPrefilterAndColumnsToDisplay(form, node);
-			updateSummariesAndWarning(form);
+			updateExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -957,7 +961,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyNotToNode(node);
-			updateSummariesAndWarning(form);
+			updateExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -970,7 +974,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyAndToNode(node);
-			updateSummariesAndWarning(form);
+			updateExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -983,7 +987,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyOrToNode(node);
-			updateSummariesAndWarning(form);
+			updateExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -996,7 +1000,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeIntoGroup(node);
-			updateSummariesAndWarning(form);
+			updateExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -1009,7 +1013,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeOutOfGroup(node);
-			updateSummariesAndWarning(form);
+			updateExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -1021,16 +1025,23 @@
 
 	function updateAllBasedFromActiveItemParametersChanges(form, column) {
 		GDV.prefilter.updatePrefilterAndColumnsToDisplayForColumn(form, column);
-		updateSummariesAndWarning(form);
+		updateExpressionRelatedSummariesAndWarning(form);
 	}
 
-	function updateSummariesAndWarning(form) {
-		updatePrefilterActiveItemsSummary(form);
-		updateColumnsToDisplaySummary(form);
+	function updateExpressionRelatedSummariesAndWarning(form) {
+		updatePrefilterExpressionSummary(form);
+		updatePrefilterColumnsToDisplaySummary(form);
 		updatePrefilterWarning();
 	}
 
-	function updatePrefilterActiveItemsSummary(form) {
+	function updateAllSummariesAndWarning(form) {
+		updatePrefilterExpressionSummary(form);
+		updatePrefilterColumnsToDisplaySummary(form);
+		updatePrefilterSimilaritySummary(form);
+		updatePrefilterWarning();
+	}
+
+	function updatePrefilterExpressionSummary(form) {
 		const activeItems = form.querySelector("#prefilter-active-items");
 		if (!activeItems) return;
 
@@ -1117,7 +1128,7 @@
 		const newIndex = oldIndex + direction;
 		if (oldIndex === -1 || newIndex < 0 || newIndex >= columnsToDisplay.length) return;
 		GDV.prefilter.moveColumnsToDisplay(column, newIndex);
-		updateColumnsToDisplaySummary(form);
+		updatePrefilterColumnsToDisplaySummary(form);
 		const item = Array.from(form.querySelectorAll(".prefilter-columns-to-display-item"))
 			.find((item) => item.dataset.column === column);
 		item?.focus();
@@ -1175,7 +1186,7 @@
 		}
 	}
 
-	function updateColumnsToDisplaySummary(form) {
+	function updatePrefilterColumnsToDisplaySummary(form) {
 		const columnsToDisplayItems = form.querySelector("#prefilter-columns-to-display-items");
 		if (!columnsToDisplayItems) return;
 		columnsToDisplayItems.replaceChildren();
@@ -1184,6 +1195,28 @@
 		columnsToDisplay.forEach((column, index) => {
 			columnsToDisplayItems.appendChild(createColumnsToDisplayItem(form, column, index, columnsToDisplay.length));
 		});
+	}
+
+	GDV.prefilter.updatePrefilterSimilaritySummary = updatePrefilterSimilaritySummary;
+	function updatePrefilterSimilaritySummary() {
+		GDV.dom.syncSimilarityGameInputs(GDV.prefilter.getSimilarityReferenceGame());
+		syncSimilarityScopeDropdowns(GDV.prefilter.getSimilarityComparisonScope());
+	}
+
+	GDV.prefilter.updatePrefilterSimilarityReferenceGame = updatePrefilterSimilarityReferenceGame;
+	function updatePrefilterSimilarityReferenceGame(value) {
+		GDV.prefilter.setSimilarityReferenceGame(value);
+		GDV.dom.syncSimilarityGameInputs(value);
+	}
+
+	GDV.prefilter.updatePrefilterSimilarityComparisonScope = updatePrefilterSimilarityComparisonScope;
+	function updatePrefilterSimilarityComparisonScope(value) {
+		GDV.prefilter.setSimilarityComparisonScope(value);
+		syncSimilarityScopeDropdowns(value);
+	}
+
+	function syncSimilarityScopeDropdowns(value) {
+		GDV.dom.syncSimilarityScopeDropdowns(value || "All Categories");
 	}
 
 	function updatePrefilterWarning() {
@@ -1203,7 +1236,7 @@
 
 	function restoreAndUpdateFromState(form) {
 		restorePrefilterValuesFromState(form);
-		updateSummariesAndWarning(form);
+		updateAllSummariesAndWarning(form);
 	}
 
 	function restorePrefilterValuesFromState(form) {
@@ -1465,7 +1498,7 @@
 		element.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.setPrefilterAstCurrentNode(node);
-			updatePrefilterActiveItemsSummary(form);
+			updatePrefilterExpressionSummary(form);
 		});
 	}
 
@@ -1550,7 +1583,7 @@
 			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumn);
 			if (oldIndex === -1 || newIndex === oldIndex) return;
 			GDV.prefilter.moveColumnsToDisplay(draggedColumn, newIndex);
-			updateColumnsToDisplaySummary(container.closest(".prefilter-form"));
+			updatePrefilterColumnsToDisplaySummary(container.closest(".prefilter-form"));
 		});
 	}
 
@@ -1679,20 +1712,16 @@
 		// Clear All Prefilter Form Controls
 		GDV.prefilter.resetPrefilterFormInputs(form);
 
-		// Reset Similarity Game Inputs
-		clearSimilarityGameInputCommitTimer();
-		GDV.dom.resetSimilarityGameInputs();
-
 		// Reset Drop Downs
 		resetPrefilterCategory(form);
-		resetPrefilterSimilarityScope(form);
 
-		// Reset Similarity Criteria
-		GDV.prefilter.resetSimilarityCriteria();
+		// Reset Similarity Timer
+		clearSimilarityGameInputCommitTimer();
 
 		// Reset and update
 		GDV.prefilter.resetPrefilterAndColumnsToDisplay();
-		updateSummariesAndWarning(form);
+		GDV.prefilter.resetSimilarityCriteria();
+		updateAllSummariesAndWarning(form);
 	}
 
 	function resetPrefilterCategory(form) {
@@ -1701,14 +1730,6 @@
 		categorySelect.value = "All Categories";
 		updatePrefilterCategorySummary(form, categorySelect);
 		updatePrefilterSections(form);
-	}
-
-	function resetPrefilterSimilarityScope(form) {
-		const scopeSelect = form.querySelector(".similarity-scope-dropdown-select");
-		if (scopeSelect) {
-			scopeSelect.value = "All Categories";
-			GDV.dom.syncSimilarityScopeDropdowns(scopeSelect.value);
-		}
 	}
 
 	function getCategoryInForm(form) {

@@ -509,8 +509,7 @@
 		const nearest = GDV.utils.findNearestGameKey(query);
 		similarityInput.value = nearest;
 		ghostText.textContent = "";
-		GDV.prefilter.setSimilarityReferenceGame(nearest);
-		GDV.dom.syncSimilarityGameInputs(nearest);
+		GDV.prefilter.updatePrefilterSimilarityReferenceGame(nearest);
 	}
 
 	function resetSimilarityBecauseOfEmptyInput(ghostText) {
@@ -544,8 +543,7 @@
 		}
 
 		select.addEventListener("change", () => {
-			GDV.prefilter.setSimilarityComparisonScope(select.value);
-			GDV.dom.syncSimilarityScopeDropdowns(select.value);
+			GDV.prefilter.updatePrefilterSimilarityComparisonScope(select.value);
 		});
 		return select;
 	}

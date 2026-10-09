@@ -343,8 +343,9 @@
 	GDV.prefilter.copyPrefiltersToClipboard = copyPrefiltersToClipboard;
 	function copyPrefiltersToClipboard() {
 		normalizePrefilterAst();
+		GDV.prefilter.flushAndCommitPrefilterSimilarityInForm();
 		navigator.clipboard.writeText(serializePrefilters()).catch((err) => {
-			GDV.utils.reportSoftError("Clipboard write failed", "Could not write prefilters to clipboard.", err);
+			GDV.utils.reportSoftError("Clipboard write failed", "Could not write content to clipboard.", err);
 		});
 	}
 
@@ -1117,7 +1118,10 @@
 		const astText = convertAstNodeToString(prefilterAst);
 		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
 		const columnsToDisplayText = JSON.stringify(columnsToDisplay, null, 2);
-		return `---EXPRESSION---\n${astText}\n\n---CONDITIONS---\n${conditionsText}\n\n---COLUMNS TO DISPLAY---\n${columnsToDisplayText}`;
+		const similarityReferenceGameText = JSON.stringify(similarityReferenceGame, null, 2);
+		const similarityComparisonScopeText = JSON.stringify(similarityComparisonScope, null, 2);
+
+		return `---EXPRESSION---\n${astText}\n\n---CONDITIONS---\n${conditionsText}\n\n---COLUMNS TO DISPLAY---\n${columnsToDisplayText}\n\n---SIMILARITY REFERENCE GAME---\n${similarityReferenceGameText}\n\n---SIMILARITY COMPARISON SCOPE---\n${similarityComparisonScopeText}`;
 	}
 
 	function deserializePrefilters(text) {
@@ -1126,42 +1130,63 @@
 		const astMarker = "---EXPRESSION---";
 		const conditionsMarker = "---CONDITIONS---";
 		const columnsToDisplayMarker = "---COLUMNS TO DISPLAY---";
+		const similarityReferenceGameMarker = "---SIMILARITY REFERENCE GAME---";
+		const similarityComparisonScopeMarker = "---SIMILARITY COMPARISON SCOPE---";
 		const astIndex = text.indexOf(astMarker);
 		const conditionsIndex = text.indexOf(conditionsMarker);
 		const columnsToDisplayIndex = text.indexOf(columnsToDisplayMarker);
-		if (astIndex === -1 || conditionsIndex === -1 || columnsToDisplayIndex === -1) {
-			GDV.utils.reportSoftWarning("Invalid clipboard format", "Clipboard is missing EXPRESSION, CONDITIONS, or COLUMNS TO DISPLAY sections.");
+		const similarityReferenceGameIndex = text.indexOf(similarityReferenceGameMarker);
+		const similarityComparisonScopeIndex = text.indexOf(similarityComparisonScopeMarker);
+
+		if (astIndex === -1 || conditionsIndex === -1 || columnsToDisplayIndex === -1 || similarityReferenceGameIndex === -1 || similarityComparisonScopeIndex === -1) {
+			GDV.utils.reportSoftWarning("Invalid clipboard format", "Clipboard is missing EXPRESSION, CONDITIONS, COLUMNS TO DISPLAY, SIMILARITY REFERENCE GAME, or SIMILARITY COMPARISON SCOPE sections.");
 			return;
 		}
 
 		const astText = text.slice(astIndex + astMarker.length, conditionsIndex).trim();
 		const conditionsText = text.slice(conditionsIndex + conditionsMarker.length, columnsToDisplayIndex).trim();
-		const columnsToDisplayText = text.slice(columnsToDisplayIndex + columnsToDisplayMarker.length).trim();
+		const columnsToDisplayText = text.slice(columnsToDisplayIndex + columnsToDisplayMarker.length, similarityReferenceGameIndex).trim();
+		const similarityReferenceGameText = text.slice(similarityReferenceGameIndex + similarityReferenceGameMarker.length, similarityComparisonScopeIndex).trim();
+		const similarityComparisonScopeText = text.slice(similarityComparisonScopeIndex + similarityComparisonScopeMarker.length).trim();
+
 		let parsedConditions;
 		try {
 			parsedConditions = JSON.parse(conditionsText);
 		} catch (err) {
-			GDV.utils.reportSoftWarning("Invalid CONDITIONS JSON", "Could not parse filter conditions from clipboard.", err);
+			GDV.utils.reportSoftWarning("Invalid Prefilter Conditions JSON", "Failed to parse the Prefilter Conditions JSON from clipboard.", err);
 			return;
 		}
+
 		const parsedAst = convertStringToAst(astText);
 		if (!parsedAst) {
-			GDV.utils.reportSoftWarning("Invalid EXPRESSION format", "Could not parse expression from clipboard.");
+			GDV.utils.reportSoftWarning("Invalid Expression Format", "Failed to parse the expression from clipboard.");
 			return;
 		}
 		if (!GDV.prefilter.arePrefiltersCorrect(parsedConditions, parsedAst)) {
 			return;
 		}
+
 		let parsedColumnsToDisplay;
 		try {
 			parsedColumnsToDisplay = JSON.parse(columnsToDisplayText);
 		} catch (err) {
-			GDV.utils.reportSoftWarning("Invalid Columns to Display JSON", "Could not parse Columns to Display from clipboard.", err);
+			GDV.utils.reportSoftWarning("Invalid Columns To Display JSON", "Failed to parse the Columns To Display JSON from clipboard.", err);
 			return;
 		}
 
-		if (!Array.isArray(parsedColumnsToDisplay)) {
-			GDV.utils.reportSoftWarning("Invalid Columns to Display JSON", "Columns to Display must be an array.");
+		let parsedSimilarityReferenceGame;
+		try {
+			parsedSimilarityReferenceGame = JSON.parse(similarityReferenceGameText);
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Invalid Similarity Reference Game JSON", "Failed to parse the Similarity Reference Game JSON from clipboard.", err);
+			return;
+		}
+
+		let parsedSimilarityComparisonScope;
+		try {
+			parsedSimilarityComparisonScope = JSON.parse(similarityComparisonScopeText);
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Invalid Similarity Comparison Scope JSON", "Failed to parse the Similarity Comparison Scope JSON from clipboard.", err);
 			return;
 		}
 
@@ -1170,6 +1195,8 @@
 		prefilterConditions = parsedConditions;
 		columnsToDisplay = parsedColumnsToDisplay;
 		columnsToDisplaySet = new Set(columnsToDisplay);
+		similarityReferenceGame = parsedSimilarityReferenceGame;
+		similarityComparisonScope = parsedSimilarityComparisonScope;
 	}
 
 	GDV.prefilter.getSimilarityCriteria = () => {
