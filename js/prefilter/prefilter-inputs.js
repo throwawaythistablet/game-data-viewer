@@ -5,6 +5,8 @@
 	let prefilterAstCurrentNode = null;
 	let columnsToDisplay = [];
 	let columnsToDisplaySet = new Set();
+	let similarityReferenceGame = null;
+	let similarityComparisonScope = null;
 	let sortMode = "nearest";
 
 	GDV.prefilter.getSearchText = () => searchText;
@@ -1169,5 +1171,42 @@
 		columnsToDisplay = parsedColumnsToDisplay;
 		columnsToDisplaySet = new Set(columnsToDisplay);
 	}
+
+	GDV.prefilter.getSimilarityCriteria = () => {
+		if (!similarityReferenceGame && !similarityComparisonScope) {
+			return null;
+		}
+		return { referenceGame: similarityReferenceGame, comparisonScope: similarityComparisonScope };
+	};
+
+	GDV.prefilter.resetSimilarityCriteria = () => {
+		similarityReferenceGame = null;
+		similarityComparisonScope = null;
+	};
+
+	GDV.prefilter.setSimilarityCriteria = (similarityReferenceGame_, similarityComparisonScope_) => {
+		similarityReferenceGame = similarityReferenceGame_;
+		similarityComparisonScope = similarityComparisonScope_;
+	};
+
+	GDV.prefilter.getSimilarityReferenceGame = () => similarityReferenceGame;
+
+	GDV.prefilter.setSimilarityReferenceGame = (similarityReferenceGame_) => {
+		similarityReferenceGame = similarityReferenceGame_ || null;
+	};
+
+	GDV.prefilter.resetSimilarityReferenceGame = () => {
+		similarityReferenceGame = null;
+	};
+
+	GDV.prefilter.getSimilarityComparisonScope = () => similarityComparisonScope;
+
+	GDV.prefilter.setSimilarityComparisonScope = (similarityComparisonScope_) => {
+		similarityComparisonScope = similarityComparisonScope_ || null;
+	};
+
+	GDV.prefilter.resetSimilarityComparisonScope = () => {
+		similarityComparisonScope = null;
+	};
 
 })();

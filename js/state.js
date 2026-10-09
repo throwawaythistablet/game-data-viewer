@@ -111,6 +111,11 @@
 		similarityComparisonScope = null;
 	};
 
+	GDV.state.setSimilarityCriteria = (similarityReferenceGame_, similarityComparisonScope_) => {
+		similarityReferenceGame = similarityReferenceGame_;
+		similarityComparisonScope = similarityComparisonScope_;
+	};
+
 	GDV.state.getSimilarityReferenceGame = () => similarityReferenceGame;
 
 	GDV.state.setSimilarityReferenceGame = (similarityReferenceGame_) => {

@@ -474,7 +474,7 @@
 		ghostText.className = "similarity-criteria-game-input-ghost similarity-criteria-game-input-ghost-table-extra";
 		similarityGameInputWrapper.appendChild(ghostText);
 
-		const existingGame = GDV.state.getSimilarityReferenceGame();
+		const existingGame = GDV.prefilter.getSimilarityReferenceGame();
 		if (existingGame) {
 			similarityInput.value = existingGame;
 			ghostText.textContent = "";
@@ -509,13 +509,13 @@
 		const nearest = GDV.utils.findNearestGameKey(query);
 		similarityInput.value = nearest;
 		ghostText.textContent = "";
-		GDV.state.setSimilarityReferenceGame(nearest);
+		GDV.prefilter.setSimilarityReferenceGame(nearest);
 		GDV.dom.syncSimilarityGameInputs(nearest);
 	}
 
 	function resetSimilarityBecauseOfEmptyInput(ghostText) {
 		ghostText.textContent = "";
-		GDV.state.resetSimilarityReferenceGame();
+		GDV.prefilter.resetSimilarityReferenceGame();
 		GDV.dom.resetSimilarityGameInputs();
 	}
 
@@ -538,13 +538,13 @@
 			select.appendChild(opt);
 		});
 
-		const exisitingScope = GDV.state.getSimilarityComparisonScope();
+		const exisitingScope = GDV.prefilter.getSimilarityComparisonScope();
 		if (exisitingScope) {
 			select.value = exisitingScope;
 		}
 
 		select.addEventListener("change", () => {
-			GDV.state.setSimilarityComparisonScope(select.value);
+			GDV.prefilter.setSimilarityComparisonScope(select.value);
 			GDV.dom.syncSimilarityScopeDropdowns(select.value);
 		});
 		return select;
@@ -567,17 +567,19 @@
 		// Button click
 		similarityButton.addEventListener("click", async () => {
 			flushAndCommitSimilarityGameInput();
-			if (!GDV.state.getSimilarityReferenceGame()) {
+			if (!GDV.prefilter.getSimilarityReferenceGame()) {
 				GDV.utils.reportHardWarning("No Game Title Provided", "Please enter a game title first.");
 				return;
 			}
+			GDV.state.setSimilarityCriteria(structuredClone(GDV.prefilter.getSimilarityReferenceGame()), structuredClone(GDV.prefilter.getSimilarityComparisonScope()));
 			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});
 
 		resetButton.addEventListener("click", async () => {
 			clearSimilarityGameInputCommitTimer();
-			GDV.state.resetSimilarityCriteria();
+			GDV.prefilter.resetSimilarityCriteria();
+			GDV.state.setSimilarityCriteria(structuredClone(GDV.prefilter.getSimilarityReferenceGame()), structuredClone(GDV.prefilter.getSimilarityComparisonScope()));
 			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});

@@ -333,7 +333,7 @@
 		ghostText.className = "similarity-criteria-game-input-ghost similarity-criteria-game-input-ghost-prefilter-extra";
 		similarityGameInputWrapper.appendChild(ghostText);
 
-		const existingGame = GDV.state.getSimilarityReferenceGame();
+		const existingGame = GDV.prefilter.getSimilarityReferenceGame();
 		if (existingGame) {
 			similarityInput.value = existingGame;
 			ghostText.textContent = "";
@@ -364,13 +364,13 @@
 		const nearest = GDV.utils.findNearestGameKey(query);
 		similarityInput.value = nearest;
 		ghostText.textContent = "";
-		GDV.state.setSimilarityReferenceGame(nearest);
+		GDV.prefilter.setSimilarityReferenceGame(nearest);
 		GDV.dom.syncSimilarityGameInputs(nearest);
 	}
 
 	function resetSimilarityBecauseOfEmptyInput(ghostText) {
 		ghostText.textContent = "";
-		GDV.state.resetSimilarityReferenceGame();
+		GDV.prefilter.resetSimilarityReferenceGame();
 		GDV.dom.resetSimilarityGameInputs();
 	}
 
@@ -386,13 +386,13 @@
 			select.appendChild(opt);
 		});
 
-		const existingScope = GDV.state.getSimilarityComparisonScope();
+		const existingScope = GDV.prefilter.getSimilarityComparisonScope();
 		if (existingScope) {
 			select.value = existingScope;
 		}
 
 		select.addEventListener("change", () => {
-			GDV.state.setSimilarityComparisonScope(select.value);
+			GDV.prefilter.setSimilarityComparisonScope(select.value);
 			GDV.dom.syncSimilarityScopeDropdowns(select.value);
 		});
 		return select;
@@ -1202,21 +1202,23 @@
 	}
 
 	function restoreAndUpdateFromState(form) {
-		restorePrefiltersAndColumnsToDisplayFromState(form);
+		restorePrefilterValuesFromState(form);
 		updateSummariesAndWarning(form);
 	}
 
-	function restorePrefiltersAndColumnsToDisplayFromState(form) {
+	function restorePrefilterValuesFromState(form) {
 		const previousPrefilterConditions = GDV.prefilter.getPrefilterConditions() || {};
 		const previousColumnsToDisplay = GDV.prefilter.getColumnsToDisplay() || [];
-		const statePrefilterConditions = GDV.state.getPrefilterConditions() || {};
-		const statePrefilterAst = GDV.state.getPrefilterAst();
-		const stateColumnsToDisplay = GDV.state.getColumnsToDisplay() || [];
+		const statePrefilterConditions = structuredClone(GDV.state.getPrefilterConditions() || {});
+		const statePrefilterAst = structuredClone(GDV.state.getPrefilterAst());
+		const stateColumnsToDisplay = structuredClone(GDV.state.getColumnsToDisplay() || []);
 		GDV.prefilter.setPrefilterConditionsAndAst(statePrefilterConditions, statePrefilterAst);
 		GDV.prefilter.setColumnsToDisplay(stateColumnsToDisplay);
+		GDV.prefilter.setSimilarityCriteria(structuredClone(GDV.state.getSimilarityReferenceGame()), structuredClone(GDV.state.getSimilarityComparisonScope()));
 		for (const column of Object.keys(statePrefilterConditions)) {
 			GDV.prefilter.addColumnsToDisplay(column);
 		}
+
 		const allColumns = [...new Set([...Object.keys(previousPrefilterConditions), ...previousColumnsToDisplay, ...Object.keys(statePrefilterConditions), ...stateColumnsToDisplay])];
 		GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns(form, allColumns);
 	}
@@ -1580,7 +1582,7 @@
 
 	function finalizeAndClose() {
 		clearSimilarityGameInputCommitTimer();
-		updateStateOfPrefiltersBeforeClosing();
+		commitPrefilterValuesToStateBeforeClosing();
 		hidePrefilterWarning();
 		closePrefilterOverlay();
 	}
@@ -1590,13 +1592,11 @@
 		similarityGameInputCommitTimer = null;
 	}
 
-	function updateStateOfPrefiltersBeforeClosing() {
-		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-		const prefilterAst = GDV.prefilter.getPrefilterAst();
-		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
-		GDV.state.setPrefilterConditions(prefilterConditions);
-		GDV.state.setPrefilterAst(prefilterAst);
-		GDV.state.setColumnsToDisplay(columnsToDisplay);
+	function commitPrefilterValuesToStateBeforeClosing() {
+		GDV.state.setPrefilterConditions(structuredClone(GDV.prefilter.getPrefilterConditions()));
+		GDV.state.setPrefilterAst(structuredClone(GDV.prefilter.getPrefilterAst()));
+		GDV.state.setColumnsToDisplay(structuredClone(GDV.prefilter.getColumnsToDisplay()));
+		GDV.state.setSimilarityCriteria(structuredClone(GDV.prefilter.getSimilarityReferenceGame()), structuredClone(GDV.prefilter.getSimilarityComparisonScope()));
 	}
 
 	async function confirmPrefiltersWarning() {
@@ -1688,7 +1688,7 @@
 		resetPrefilterSimilarityScope(form);
 
 		// Reset Similarity Criteria
-		GDV.state.resetSimilarityCriteria();
+		GDV.prefilter.resetSimilarityCriteria();
 
 		// Reset and update
 		GDV.prefilter.resetPrefilterAndColumnsToDisplay();
