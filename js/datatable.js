@@ -572,7 +572,6 @@
 				return;
 			}
 			GDV.state.setSimilarityCriteria(structuredClone(GDV.prefilter.getSimilarityReferenceGame()), structuredClone(GDV.prefilter.getSimilarityComparisonScope()));
-			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});
 
@@ -580,7 +579,6 @@
 			clearSimilarityGameInputCommitTimer();
 			GDV.prefilter.resetSimilarityCriteria();
 			GDV.state.setSimilarityCriteria(structuredClone(GDV.prefilter.getSimilarityReferenceGame()), structuredClone(GDV.prefilter.getSimilarityComparisonScope()));
-			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});
 		return btnWrapper;
@@ -1098,7 +1096,6 @@
 		findSimilarGames.addEventListener("click", async (e) => {
 			e.preventDefault();
 			GDV.state.setSimilarityReferenceGame(key);
-			GDV.dom.refreshMainPanelSimilarityGameSection();
 			await GDV.tableGenerator.runTableGeneration(GDV.state.getCsvFile());
 		});
 		overlay.appendChild(findSimilarGames);

@@ -15,6 +15,7 @@
 	let columnsToDisplay = null;
 	let similarityReferenceGame = null;
 	let similarityComparisonScope = null;
+	let lastSearchParameters = null;
 
 	GDV.state.getCsvFile = () => csvFile;
 
@@ -134,6 +135,18 @@
 
 	GDV.state.resetSimilarityComparisonScope = () => {
 		similarityComparisonScope = null;
+	};
+
+	GDV.state.getLastSearchParameters = () => lastSearchParameters;
+
+	GDV.state.saveLastSearchParameters = () => {
+		lastSearchParameters = {
+			prefilterConditions: structuredClone(prefilterConditions),
+			prefilterAst: structuredClone(prefilterAst),
+			columnsToDisplay: structuredClone(columnsToDisplay),
+			similarityReferenceGame: structuredClone(similarityReferenceGame),
+			similarityComparisonScope: structuredClone(similarityComparisonScope)
+		};
 	};
 
 })();

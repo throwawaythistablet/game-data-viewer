@@ -71,6 +71,7 @@
 	}
 
 	async function finishTableGenerationUi() {
+		GDV.state.saveLastSearchParameters();
 		GDV.dom.refreshMainPagePrefiltersPanel();
 		GDV.dom.showMainPrefiltersPanelSection();
 		await GDV.loading.finishLoading("Table Generation Complete.");

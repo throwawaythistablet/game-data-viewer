@@ -57,6 +57,9 @@
 	};
 
 	GDV.prefilter.removeRedundantColumnsToDisplay = (columnsToDisplay, prefilterConditions) => {
+		if (!columnsToDisplay || (Array.isArray(columnsToDisplay) && columnsToDisplay.length === 0)) {
+			return null;
+		}
 		const prefilterColumns = Object.keys(prefilterConditions || {});
 		let columnsToDisplayIndex = columnsToDisplay.length - 1;
 		let prefilterColumnsIndex = prefilterColumns.length - 1;

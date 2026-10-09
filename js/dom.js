@@ -348,10 +348,11 @@
 		shareBtn.textContent = "Copy Shareable URL";
 		shareBtn.addEventListener("click", async () => {
 			try {
-				const prefilterConditions = GDV.state.getPrefilterConditions();
-				const prefilterAst = GDV.state.getPrefilterAst();
-				const reducedSimilarityCriteria = GDV.prefilter.cleanSimilarityCriteria(GDV.state.getSimilarityCriteria());
-				const reducedColumnsToDisplay = GDV.prefilter.removeRedundantColumnsToDisplay(GDV.state.getColumnsToDisplay(), prefilterConditions);
+				const lastSearchParameters = GDV.state.getLastSearchParameters();
+				const prefilterConditions = lastSearchParameters.prefilterConditions;
+				const prefilterAst = lastSearchParameters.prefilterAst;
+				const reducedSimilarityCriteria = GDV.prefilter.cleanSimilarityCriteria({ referenceGame: lastSearchParameters.similarityReferenceGame, comparisonScope: lastSearchParameters.similarityComparisonScope });
+				const reducedColumnsToDisplay = GDV.prefilter.removeRedundantColumnsToDisplay(lastSearchParameters.columnsToDisplay, prefilterConditions);
 				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(prefilterConditions, prefilterAst, reducedColumnsToDisplay, reducedSimilarityCriteria);
 				if (!encoded && encoded !== "") {
 					GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode the data for sharing.");
@@ -386,20 +387,6 @@
 			select.value = value;
 		});
 	};
-
-	GDV.dom.refreshMainPanelSimilarityGameAndLastSearchPrefilters = refreshMainPanelSimilarityGameAndLastSearchPrefilters;
-	function refreshMainPanelSimilarityGameAndLastSearchPrefilters() {
-		refreshMainPanelSimilarityGameSection();
-		refreshLastSearchedPrefiltersSection();
-	}
-
-	GDV.dom.refreshMainPanelSimilarityGameSection = refreshMainPanelSimilarityGameSection;
-	function refreshMainPanelSimilarityGameSection() {
-		const container = document.querySelector(".prefilter-main-panel-similarity");
-		if (!container) return;
-		container.replaceChildren();
-		addSimilarityGameSectionElements(container);
-	}
 
 	function createMainPanelSimilarityGameSection() {
 		const container = document.createElement("div");
@@ -436,14 +423,6 @@
 				container.appendChild(scopeValue);
 			}
 		}
-	}
-
-	GDV.dom.refreshLastSearchedPrefiltersSection = refreshLastSearchedPrefiltersSection;
-	function refreshLastSearchedPrefiltersSection() {
-		const container = document.querySelector(".prefilter-main-panel-last-searched");
-		if (!container) return;
-		container.replaceChildren();
-		addSimilarityGameSectionElements(container);
 	}
 
 	function createLastSearchedPrefiltersSection() {
