@@ -1427,7 +1427,7 @@ td {
 	border: 1px solid var(--gray-weak);
 	cursor: pointer;
 	box-shadow: 0 0 3px transparent;
-	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease, opacity 0.1s ease;
+	transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease, opacity 0.1s ease;
 }
 
 .prefilter-columns-to-display-item {
@@ -1437,7 +1437,7 @@ td {
 	cursor: grab;
 	box-shadow: 0 0 3px transparent;
 	user-select: none;
-	transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease, opacity 0.1s ease;
+	transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease, opacity 0.1s ease;
 }
 
 .prefilter-similarity-active-item {
@@ -1448,12 +1448,14 @@ td {
 .prefilter-active-item:hover,
 .prefilter-columns-to-display-item:hover {
 	color: var(--text-main);
+	background: transparent;
 	border: 1px solid var(--gray-strongest);
 	box-shadow: 0 0 4px var(--gray-strong);
 }
 
 .prefilter-active-item.is-focused,
-.prefilter-columns-to-display-item:focus {
+.prefilter-columns-to-display-item:focus,
+.prefilter-columns-to-display-item:focus-visible {
 	background: rgba(var(--glow-rgb-numbers), 0.10);
 	border: 1px solid var(--glow);
 	box-shadow: 0 0 4px var(--glow-strong);
