@@ -1149,7 +1149,7 @@
 			GDV.utils.reportSoftWarning("Invalid EXPRESSION format", "Could not parse expression from clipboard.");
 			return;
 		}
-		if (!arePrefiltersCorrect(parsedConditions, parsedAst)) {
+		if (!GDV.prefilter.arePrefiltersCorrect(parsedConditions, parsedAst)) {
 			return;
 		}
 		let parsedColumnsToDisplay;
