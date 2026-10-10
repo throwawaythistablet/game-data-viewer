@@ -524,7 +524,7 @@
 		return loader;
 	}
 
-	function createPrefilterGrid(prefill) {
+	function createPrefilterGrid(prefilterConditions) {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
 		const columnDetails = GDV.state.getColumnDetails() || {};
@@ -535,7 +535,7 @@
 		prefilterColumnToOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
 		prefilterColumnToSearchInfoMap = new Map();
 		for (const [columnName, columnDetail] of Object.entries(columnDetails)) {
-			const section = createFilterSectionForColumnDetails(columnName, columnDetail, prefill[columnName], savedColumnsToDisplaySet);
+			const section = createFilterSectionForColumnDetails(columnName, columnDetail, prefilterConditions[columnName], savedColumnsToDisplaySet);
 			grid.appendChild(section);
 
 			const filterName = GDV.utils.normalizeFilterName(columnName);
@@ -551,7 +551,7 @@
 		return grid;
 	}
 
-	function createFilterSectionForColumnDetails(column, columnDetail, prefill, savedColumnsToDisplaySet) {
+	function createFilterSectionForColumnDetails(column, columnDetail, prefilterCondition, savedColumnsToDisplaySet) {
 		const section = document.createElement("section");
 		section.className = "prefilter-section";
 		section.dataset.col = String(column);
@@ -564,16 +564,16 @@
 		title.textContent = column;
 		header.appendChild(title);
 		section.appendChild(header);
-		header.appendChild(createColumnDisplayToggle(column, prefill != null, savedColumnsToDisplaySet));
+		header.appendChild(createColumnDisplayToggle(column, prefilterCondition != null, savedColumnsToDisplaySet));
 
 		if (columnDetail.type === "tag") {
-			section.appendChild(createTagFilter(column, prefill));
+			section.appendChild(createTagFilter(column, prefilterCondition));
 		} else if (Array.isArray(columnDetail.choices) && columnDetail.choices.length > 0) {
-			section.appendChild(createChoiceFilter(column, columnDetail.choices, prefill));
+			section.appendChild(createChoiceFilter(column, columnDetail.choices, prefilterCondition));
 		} else if (columnDetail.type === "int" || columnDetail.type === "float") {
-			section.appendChild(createRangeFilter(column, columnDetail.min, columnDetail.max, prefill));
+			section.appendChild(createRangeFilter(column, columnDetail.min, columnDetail.max, prefilterCondition));
 		} else {
-			section.appendChild(createTextFilterInput(column, prefill));
+			section.appendChild(createTextFilterInput(column, prefilterCondition));
 		}
 
 		const tagCount = GDV.datatable.getColumnTagCount(column);
@@ -645,10 +645,10 @@
 	}
 
 	// Tag checkboxes
-	function createTagFilter(name, prefill = null) {
+	function createTagFilter(name, prefilterCondition) {
 		const container = document.createElement("div");
 		container.className = "prefilter-tag-group";
-		const checkedValues = Array.isArray(prefill?.choices) ? prefill.choices : [];
+		const checkedValues = Array.isArray(prefilterCondition?.choices) ? prefilterCondition.choices : [];
 
 		// Helper to create individual checkboxes
 		function createCheckbox(value, labelText) {
@@ -685,10 +685,10 @@
 	}
 
 	// Choice checkbox group with toggle-all
-	function createChoiceFilter(name, choices, prefill = null) {
+	function createChoiceFilter(name, choices, prefilterCondition) {
 		const container = document.createElement("div");
 		container.className = "prefilter-box";
-		const checkedValues = Array.isArray(prefill?.choices) ? prefill.choices : [];
+		const checkedValues = Array.isArray(prefilterCondition?.choices) ? prefilterCondition.choices : [];
 
 		// Helper to sanitize names/ids
 		const sanitizedName = String(name)
@@ -759,12 +759,12 @@
 	}
 
 	// Range prefilter (min / max inputs)
-	function createRangeFilter(name, min = null, max = null, prefill = null) {
+	function createRangeFilter(name, min, max, prefilterCondition) {
 		const wrapper = document.createElement("div");
 		wrapper.className = "prefilter-range";
 
-		const minVal = prefill?.min != null ? prefill.min : "";
-		const maxVal = prefill?.max != null ? prefill.max : "";
+		const minVal = prefilterCondition?.min != null ? prefilterCondition.min : "";
+		const maxVal = prefilterCondition?.max != null ? prefilterCondition.max : "";
 
 		const minWrap = document.createElement("div");
 		minWrap.className = "range-input-wrapper";
@@ -780,7 +780,7 @@
 	}
 
 	// Create a labeled number input
-	function createNumberInput(name, value = null, labelText = "", inputClass = "", placeholder = "", prefilterColumn = null) {
+	function createNumberInput(name, value, labelText, inputClass, placeholder, prefilterColumn) {
 		const container = document.createElement("div");
 		container.className = "number-input-wrapper";
 
@@ -822,7 +822,7 @@
 	}
 
 	// Text input prefilter (fallback)
-	function createTextFilterInput(name, prefill = null) {
+	function createTextFilterInput(name, prefilterCondition) {
 		const container = document.createElement("div");
 		container.className = "text-input-wrapper";
 
@@ -848,8 +848,8 @@
 		input.className = "text-input-input";
 		input.placeholder = `Prefilter ${name}...`;
 
-		if (prefill?.text?.[0] !== undefined) {
-			input.value = prefill.text[0];
+		if (prefilterCondition?.text?.[0] !== undefined) {
+			input.value = prefilterCondition.text[0];
 		}
 
 		container.appendChild(input);
