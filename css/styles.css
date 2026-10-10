@@ -1615,7 +1615,7 @@ td {
 	}
 }
 
-.prefilter-section {
+.prefilter-card {
 	position: relative;
 	z-index: 600;
 
@@ -1631,7 +1631,7 @@ td {
 	overflow: hidden;
 }
 
-.prefilter-section-header {
+.prefilter-card-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1640,7 +1640,7 @@ td {
 	flex-shrink: 0;
 }
 
-.prefilter-section h3 {
+.prefilter-card h3 {
 	margin: 0;
 	font-size: 14px;
 	font-weight: 600;
@@ -1679,7 +1679,7 @@ td {
 	text-shadow: 0 0 8px var(--bg-main);
 }
 
-.prefilter-section input[type="text"] {
+.prefilter-card input[type="text"] {
 	width: 100%;
 	padding: 6px;
 	background: var(--bg-panel);

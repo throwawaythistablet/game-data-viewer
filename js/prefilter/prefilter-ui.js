@@ -1,12 +1,12 @@
 (() => {
 	const noPrefiltersLabel = "No Prefilters Applied";
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
-	const visibleSectionsBatchSize = 99;
+	const visibleCardsBatchSize = 99;
 	const includeFullMatchLengthThreshold = 4;
 	let isPrefilterSubmissionPending = false;
 	let prefilterOverlay = null;
-	let prefilterSectionArray = null;
-	let maxVisibleSections = visibleSectionsBatchSize;
+	let prefilterCards = null;
+	let maxVisibleCards = visibleCardsBatchSize;
 	let prefilterColumnToSearchInfoMap = new Map();
 	let prefilterColumnToOrderMap = new Map();
 	let similarityGameInputCommitTimer = null;
@@ -62,7 +62,7 @@
 	}
 
 	function resetForNewPrefilterOverlay(form) {
-		resetPrefilterSections(form);
+		resetPrefilterCards(form);
 	}
 
 	function showPrefilterOverlay() {
@@ -92,7 +92,7 @@
 		form.appendChild(createPrefilterGrid(GDV.state.getPrefilterConditions()));
 		form.appendChild(createPrefilterGridLimitIndicator(form));
 		form.appendChild(createPrefilterGridNoResultsDisplay());
-		updatePrefilterSections(form);
+		updatePrefilterCards(form);
 		bindPrefilterGridInputs(form);
 		return { overlay, form };
 	}
@@ -166,7 +166,7 @@
 
 		select.addEventListener("change", () => {
 			updatePrefilterCategorySummary(form, select);
-			updatePrefilterSections(form);
+			updatePrefilterCards(form);
 		});
 		return select;
 	}
@@ -501,7 +501,7 @@
 		btn.addEventListener("click", () => {
 			GDV.prefilter.toggleSortMode();
 			btn.textContent = GDV.prefilter.getSortButtonDisplayText();
-			updatePrefilterSections(form, true);
+			updatePrefilterCards(form, true);
 		});
 		return btn;
 	}
@@ -535,8 +535,8 @@
 		prefilterColumnToOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
 		prefilterColumnToSearchInfoMap = new Map();
 		for (const [columnName, columnDetail] of Object.entries(columnDetails)) {
-			const section = createFilterSectionForColumnDetails(columnName, columnDetail, prefilterConditions[columnName], savedColumnsToDisplaySet);
-			grid.appendChild(section);
+			const card = createPrefilterCard(columnName, columnDetail, prefilterConditions[columnName], savedColumnsToDisplaySet);
+			grid.appendChild(card);
 
 			const filterName = GDV.utils.normalizeFilterName(columnName);
 			const fullMatchRegex = tagFullMatchPatterns.get(filterName) ?? null;
@@ -547,33 +547,33 @@
 				quickSearchRegex
 			});
 		}
-		prefilterSectionArray = Array.from(grid.querySelectorAll(".prefilter-section"));
+		prefilterCards = Array.from(grid.querySelectorAll(".prefilter-card"));
 		return grid;
 	}
 
-	function createFilterSectionForColumnDetails(column, columnDetail, prefilterCondition, savedColumnsToDisplaySet) {
-		const section = document.createElement("section");
-		section.className = "prefilter-section";
-		section.dataset.col = String(column);
-		// Avoid storing description strings on every prefilter section to reduce memory usage.
-		// section.title = GDV.datatable.getColumnDescription(column);
+	function createPrefilterCard(column, columnDetail, prefilterCondition, savedColumnsToDisplaySet) {
+		const card = document.createElement("section");
+		card.className = "prefilter-card";
+		card.dataset.col = String(column);
+		// Avoid storing description strings on every prefilter card to reduce memory usage.
+		// card.title = GDV.datatable.getColumnDescription(column);
 
 		const header = document.createElement("header");
-		header.className = "prefilter-section-header";
+		header.className = "prefilter-card-header";
 		const title = document.createElement("h3");
 		title.textContent = column;
 		header.appendChild(title);
-		section.appendChild(header);
+		card.appendChild(header);
 		header.appendChild(createColumnDisplayToggle(column, prefilterCondition != null, savedColumnsToDisplaySet));
 
 		if (columnDetail.type === "tag") {
-			section.appendChild(createTagFilter(column, prefilterCondition));
+			card.appendChild(createTagFilter(column, prefilterCondition));
 		} else if (Array.isArray(columnDetail.choices) && columnDetail.choices.length > 0) {
-			section.appendChild(createChoiceFilter(column, columnDetail.choices, prefilterCondition));
+			card.appendChild(createChoiceFilter(column, columnDetail.choices, prefilterCondition));
 		} else if (columnDetail.type === "int" || columnDetail.type === "float") {
-			section.appendChild(createRangeFilter(column, columnDetail.min, columnDetail.max, prefilterCondition));
+			card.appendChild(createRangeFilter(column, columnDetail.min, columnDetail.max, prefilterCondition));
 		} else {
-			section.appendChild(createTextFilterInput(column, prefilterCondition));
+			card.appendChild(createTextFilterInput(column, prefilterCondition));
 		}
 
 		const tagCount = GDV.datatable.getColumnTagCount(column);
@@ -581,9 +581,9 @@
 			const footer = document.createElement("div");
 			footer.className = "prefilter-footer";
 			footer.textContent = `${tagCount} matches`;
-			section.appendChild(footer);
+			card.appendChild(footer);
 		}
-		return section;
+		return card;
 	}
 
 	function createColumnDisplayToggle(column, isPrefilterActive, savedColumnsToDisplaySet) {
@@ -628,8 +628,8 @@
 		showMoreBtn.textContent = "Show More";
 
 		showMoreBtn.addEventListener("click", () => {
-			maxVisibleSections += visibleSectionsBatchSize;
-			filterPrefilterSections(form);
+			maxVisibleCards += visibleCardsBatchSize;
+			filterPrefilterCards(form);
 		});
 
 		indicator.appendChild(showMoreBtn);
@@ -1265,9 +1265,9 @@
 
 	const schedulePrefilterGridUpdate = GDV.utils.debounce((form) => {
 		try {
-			updatePrefilterSections(form);
+			updatePrefilterCards(form);
 		} catch (err) {
-			GDV.utils.reportSoftWarning("Prefilter Search Failure", "The prefilter sections could not be updated.", err);
+			GDV.utils.reportSoftWarning("Prefilter Search Failure", "The prefilter cards could not be updated.", err);
 		} finally {
 			requestAnimationFrame(() => {
 				stopPrefilterGridLoading(form);
@@ -1292,71 +1292,71 @@
 		if (grid) grid.style.display = "";
 	}
 
-	function resetPrefilterSections(form) {
-		maxVisibleSections = visibleSectionsBatchSize;
-		updatePrefilterSections(form);
+	function resetPrefilterCards(form) {
+		maxVisibleCards = visibleCardsBatchSize;
+		updatePrefilterCards(form);
 	}
 
-	function updatePrefilterSections(form, isSortModeChange = false) {
+	function updatePrefilterCards(form, isSortModeChange = false) {
 		const searchText = getSearchTextInForm(form);
-		const matchingSections = getMatchingPrefilterSections(form);
+		const matchingCards = getMatchingPrefilterCards(form);
 		const sortMode = GDV.prefilter.getSortMode();
 		if (sortMode === "nearest") {
 			if (searchText.trim()) {
-				sortPrefilterSectionsByNearestMatch(searchText, matchingSections);
-				reorderMatchingPrefilterSections(form, matchingSections);
+				sortPrefilterCardsByNearestMatch(searchText, matchingCards);
+				reorderMatchingPrefilterCards(form, matchingCards);
 			} else {
-				sortPrefilterSectionsByUsage(prefilterSectionArray);
-				renderPrefilterSectionOrder(form);
+				sortPrefilterCardsByUsage(prefilterCards);
+				renderPrefilterCards(form);
 			}
 		} else if (isSortModeChange) {
 			if (sortMode === "alpha") {
-				sortPrefilterSectionsAlphabetically(prefilterSectionArray);
+				sortPrefilterCardsAlphabetically(prefilterCards);
 			} else {
-				sortPrefilterSectionsByUsage(prefilterSectionArray);
+				sortPrefilterCardsByUsage(prefilterCards);
 			}
-			renderPrefilterSectionOrder(form);
+			renderPrefilterCards(form);
 		}
-		applyPrefilterSectionVisibility(form, matchingSections);
+		applyPrefilterCardsVisibility(form, matchingCards);
 		GDV.prefilter.setSearchText(searchText);
 	}
 
-	function filterPrefilterSections(form) {
-		const matchingSections = getMatchingPrefilterSections(form);
-		applyPrefilterSectionVisibility(form, matchingSections);
-		return matchingSections;
+	function filterPrefilterCards(form) {
+		const matchingCards = getMatchingPrefilterCards(form);
+		applyPrefilterCardsVisibility(form, matchingCards);
+		return matchingCards;
 	}
 
-	function getMatchingPrefilterSections(form) {
+	function getMatchingPrefilterCards(form) {
 		const searchText = getSearchTextInForm(form).trim().toLowerCase();
 		const category = getCategoryInForm(form);
 		const categoryMatchDetails = GDV.utils.createCategoryMatchDetails(category);
 		const searchTokens = searchText ? searchText.split(/\W+/).filter(Boolean) : [];
-		const matchingSections = [];
-		for (const section of prefilterSectionArray) {
-			const columnName = section.dataset.col;
+		const matchingCards = [];
+		for (const cards of prefilterCards) {
+			const columnName = cards.dataset.col;
 			if (GDV.utils.isACategoryMatch(columnName, categoryMatchDetails) && areSearchTokensMatching(columnName, searchTokens)) {
-				matchingSections.push(section);
+				matchingCards.push(cards);
 			}
 		}
-		return matchingSections;
+		return matchingCards;
 	}
 
-	function applyPrefilterSectionVisibility(form, matchingSections) {
-		const matchingSet = new Set(matchingSections);
+	function applyPrefilterCardsVisibility(form, matchingCards) {
+		const matchingSet = new Set(matchingCards);
 		let visibleCount = 0;
 		let hiddenPastLimit = 0;
-		prefilterSectionArray.forEach((section) => {
-			if (!matchingSet.has(section)) {
-				section.style.display = "none";
+		prefilterCards.forEach((cards) => {
+			if (!matchingSet.has(cards)) {
+				cards.style.display = "none";
 				return;
 			}
 			visibleCount++;
-			if (visibleCount > maxVisibleSections) {
-				section.style.display = "none";
+			if (visibleCount > maxVisibleCards) {
+				cards.style.display = "none";
 				hiddenPastLimit++;
 			} else {
-				section.style.display = "";
+				cards.style.display = "";
 			}
 		});
 		updatePrefilterGridLimitIndicator(form, hiddenPastLimit);
@@ -1392,19 +1392,19 @@
 		if (noResults) noResults.style.display = "none";
 	}
 
-	function sortPrefilterSectionsAlphabetically(sectionArray) {
-		sectionArray.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
+	function sortPrefilterCardsAlphabetically(cardsToSort) {
+		cardsToSort.sort((a, b) => a.dataset.col.localeCompare(b.dataset.col));
 	}
 
-	function sortPrefilterSectionsByNearestMatch(searchText, sectionArray) {
+	function sortPrefilterCardsByNearestMatch(searchText, cardsToSort) {
 		if (!searchText.trim()) {
-			sortPrefilterSectionsByUsage(sectionArray);
+			sortPrefilterCardsByUsage(cardsToSort);
 			return;
 		}
 
 		const sortingInfo = new Map();
-		for (const section of sectionArray) {
-			const columnName = section.dataset.col;
+		for (const card of cardsToSort) {
+			const columnName = card.dataset.col;
 			const searchInfo = prefilterColumnToSearchInfoMap.get(columnName);
 			sortingInfo.set(columnName, {
 				isFullMatch: searchText.length >= includeFullMatchLengthThreshold && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
@@ -1413,7 +1413,7 @@
 			});
 		}
 
-		sectionArray.sort((a, b) => {
+		cardsToSort.sort((a, b) => {
 			const A = sortingInfo.get(a.dataset.col);
 			const B = sortingInfo.get(b.dataset.col);
 			if (A.isFullMatch !== B.isFullMatch) {
@@ -1426,38 +1426,38 @@
 		});
 	}
 
-	function sortPrefilterSectionsByUsage(sectionArray) {
-		sectionArray.sort((a, b) => {
+	function sortPrefilterCardsByUsage(cardsToSort) {
+		cardsToSort.sort((a, b) => {
 			return prefilterColumnToOrderMap.get(a.dataset.col) - prefilterColumnToOrderMap.get(b.dataset.col);
 		});
 	}
 
-	function renderPrefilterSectionOrder(form) {
+	function renderPrefilterCards(form) {
 		const grid = form.querySelector(".prefilter-grid");
 		if (!grid) return;
 		const fragment = document.createDocumentFragment();
-		prefilterSectionArray.forEach((section) => {
-			fragment.appendChild(section);
+		prefilterCards.forEach((cards) => {
+			fragment.appendChild(cards);
 		});
 		grid.appendChild(fragment);
 	}
 
-	function reorderMatchingPrefilterSections(form, matchingSections) {
-		const matchingSet = new Set(matchingSections);
-		const reorderedSections = prefilterSectionArray.slice();
+	function reorderMatchingPrefilterCards(form, matchingCards) {
+		const matchingSet = new Set(matchingCards);
+		const reorderedCards = prefilterCards.slice();
 		let matchingIndex = 0;
 		let orderChanged = false;
-		for (let i = 0; i < reorderedSections.length; i++) {
-			if (!matchingSet.has(reorderedSections[i])) continue;
-			const replacement = matchingSections[matchingIndex++];
-			if (reorderedSections[i] !== replacement) {
-				reorderedSections[i] = replacement;
+		for (let i = 0; i < reorderedCards.length; i++) {
+			if (!matchingSet.has(reorderedCards[i])) continue;
+			const replacement = matchingCards[matchingIndex++];
+			if (reorderedCards[i] !== replacement) {
+				reorderedCards[i] = replacement;
 				orderChanged = true;
 			}
 		}
 		if (!orderChanged) return;
-		prefilterSectionArray = reorderedSections;
-		renderPrefilterSectionOrder(form);
+		prefilterCards = reorderedCards;
+		renderPrefilterCards(form);
 	}
 
 	function areSearchTokensMatching(columnName, searchTokens) {
@@ -1729,7 +1729,7 @@
 		if (!categorySelect) return;
 		categorySelect.value = "All Categories";
 		updatePrefilterCategorySummary(form, categorySelect);
-		updatePrefilterSections(form);
+		updatePrefilterCards(form);
 	}
 
 	function getCategoryInForm(form) {
