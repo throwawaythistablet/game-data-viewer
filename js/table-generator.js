@@ -104,6 +104,11 @@
 		await GDV.datatable.loadTable(rowsData);
 	}
 
+	// Reduce memory consumption by detaching sliced strings from large CSV backing strings, allowing unused source strings to be garbage-collected.
+	function detachRowFromCsvBackingString(rowData) {
+		return JSON.parse(JSON.stringify(rowData));
+	}
+
 	function getSimilarityReferenceGameRowDataRaw(file, similarityReferenceGame, startPercent, endPercent) {
 		let rowsCount = 0;
 		const rowsTotal = GDV.state.getGameKeys().length;
@@ -122,7 +127,7 @@
 					}
 					for (const rowDataRaw of results.data) {
 						if (isSimilarityReferenceGame(similarityReferenceGame, rowDataRaw)) {
-							similarityGameRowDataRaw = rowDataRaw;
+							similarityGameRowDataRaw = detachRowFromCsvBackingString(rowDataRaw);
 							parser.abort();
 							return;
 						}
@@ -171,7 +176,7 @@
 							rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, columnsToCompare);
 						}
 						if (hasNoPrefilters || isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityReferenceGame)) {
-							rowsData.push(rowData);
+							rowsData.push(detachRowFromCsvBackingString(rowData));
 						}
 						rowsCount++;
 					}
