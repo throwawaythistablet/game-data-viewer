@@ -185,19 +185,19 @@
 	function buildDataColumns(columnNamesInTable) {
 		const prefilterConditions = GDV.state.getPrefilterConditions() || {};
 		const columnsToDisplay = GDV.state.getColumnsToDisplay() || [];
-		const specialColumnSet = GDV.tableGenerator.getSpecialColumnSet();
+		const prioritizedColumnSet = GDV.tableGenerator.getPrioritizedColumnSet();
 		const displayColumnSet = new Set(columnsToDisplay);
 		const tableColumnSet = new Set(columnNamesInTable);
 
-		const specialColumns = columnNamesInTable.filter((column) => specialColumnSet.has(column));
+		const prioritizedColumns = columnNamesInTable.filter((column) => prioritizedColumnSet.has(column));
 		const displayColumns = columnsToDisplay.filter((column) => tableColumnSet.has(column));
 		const prefilterColumns = Object.keys(prefilterConditions).filter((column) => tableColumnSet.has(column));
-		const resultColumns = [...new Set([...specialColumns, ...displayColumns, ...prefilterColumns, ...columnNamesInTable])];
+		const resultColumns = [...new Set([...prioritizedColumns, ...displayColumns, ...prefilterColumns, ...columnNamesInTable])];
 
 		const similarityScoreName = GDV.tableGenerator.getSimilarityScoreName();
 		return resultColumns.map((columnName) => {
 			const isTealHighlight = similarityScoreName === columnName;
-			const isYellowHighlight = !isTealHighlight && specialColumnSet.has(columnName);
+			const isYellowHighlight = !isTealHighlight && prioritizedColumnSet.has(columnName);
 			const isWhiteHighlight = !isTealHighlight && !isYellowHighlight && (displayColumnSet.has(columnName) || !!prefilterConditions[columnName]);
 			return {
 				title: columnName,

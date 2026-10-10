@@ -2,6 +2,7 @@
   "key": {
     "type": "str",
     "choices": [],
+    "is_visible": true,
     "description": "Unique identifier for the game, includes the title and developer in brackets."
   },
   "similarity_score": {
@@ -9,6 +10,7 @@
     "choices": [],
     "min": 0,
     "max": 100,
+    "is_visible": true,
     "description": "Numeric score representing the similarity of this game to the selected reference game, where 0 means no similarity and 100 means identical."
   },
   "status": {
@@ -19,6 +21,7 @@
       "Ongoing",
       "Onhold"
     ],
+    "is_visible": true,
     "description": "Current development status of the game (e.g., Abandoned, Completed, Ongoing, Onhold)."
   },
   "engine": {
@@ -42,6 +45,7 @@
       "WebGL",
       "Wolf RPG"
     ],
+    "is_visible": true,
     "description": "The game engine used (e.g., Ren’Py, Unity)."
   },
   "bayesian_rating": {
@@ -49,6 +53,7 @@
     "choices": [],
     "min": 0,
     "max": 100,
+    "is_visible": true,
     "description": "Bayesian estimate of overall game quality based on F95 and VNDB ratings, weighted by rating confidence and review volume."
   },
   "play_time_hours": {
@@ -56,6 +61,7 @@
     "choices": [],
     "min": 0.0,
     "max": 240.0,
+    "is_visible": true,
     "description": "Estimated time to play the game, in hours."
   },
   "play_time_label": {
@@ -67,6 +73,7 @@
       "4. Short Game",
       "5. Unknown Length"
     ],
+    "is_visible": true,
     "description": "Human-readable label describing the estimated play time of the game (e.g., Short, Medium, Long, Very Long)."
   },
   "overall_sentiment": {
@@ -74,6 +81,7 @@
     "choices": [],
     "min": -100,
     "max": 100,
+    "is_visible": true,
     "description": "Aggregated sentiment score for the game based on user feedback and reviews."
   },
   "overall_sentiment_label": {
@@ -88,6 +96,7 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
+    "is_visible": true,
     "description": "Human-readable label for the overall sentiment score"
   },
   "art_sentiment": {
@@ -95,6 +104,7 @@
     "choices": [],
     "min": -100,
     "max": 100,
+    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s visual presentation, art style, animations, and overall visual quality."
   },
   "art_sentiment_label": {
@@ -109,6 +119,7 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
+    "is_visible": true,
     "description": "Human-readable label for the art sentiment score"
   },
   "story_sentiment": {
@@ -116,6 +127,7 @@
     "choices": [],
     "min": -100,
     "max": 100,
+    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s story, writing quality, characters, pacing, and narrative structure."
   },
   "story_sentiment_label": {
@@ -130,6 +142,7 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
+    "is_visible": true,
     "description": "Human-readable label for the story sentiment score."
   },
   "content_sentiment": {
@@ -137,6 +150,7 @@
     "choices": [],
     "min": -100,
     "max": 100,
+    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s content, including themes, fetishes/tags, variety, and depth of available content."
   },
   "content_sentiment_label": {
@@ -151,6 +165,7 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
+    "is_visible": true,
     "description": "Human-readable label for the content sentiment score."
   },
   "gameplay_sentiment": {
@@ -158,6 +173,7 @@
     "choices": [],
     "min": -100,
     "max": 100,
+    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s mechanics, controls, level design, difficulty, and overall gameplay experience."
   },
   "gameplay_sentiment_label": {
@@ -173,6 +189,7 @@
       "8. Negative",
       "9. Very Negative"
     ],
+    "is_visible": true,
     "description": "Human-readable label for the gameplay sentiment score."
   },
   "site_rating": {
@@ -269,6 +286,7 @@
   "url": {
     "type": "str",
     "choices": [],
+    "is_visible": true,
     "description": "Direct link to the game’s thread or page on the source site."
   },
   "site_last_update_date": {
@@ -289,6 +307,7 @@
   "vndb_url": {
     "type": "str",
     "choices": [],
+    "is_visible": true,
     "description": "Direct link to the game’s page on VNDB."
   },
   "vndb_last_visit": {

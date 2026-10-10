@@ -1,7 +1,7 @@
 (() => {
 	const SIMILARITY_SCORE_NAME = "similarity_score";
-	const SPECIAL_COLUMNS_SET = new Set(["key", SIMILARITY_SCORE_NAME]);
-	const IGNORED_COLUMNS = new Set([
+	const PRIORITIZED_COLUMNS_SET = new Set(["key", SIMILARITY_SCORE_NAME]);
+	const SIMILARITY_EXCLUDED_COLUMNS = new Set([
 		"key",
 		getSimilarityScoreName(),
 		"platforms",
@@ -22,17 +22,17 @@
 		return SIMILARITY_SCORE_NAME;
 	}
 
-	GDV.tableGenerator.getSpecialColumnSet = getSpecialColumnSet;
-	function getSpecialColumnSet() {
-		return SPECIAL_COLUMNS_SET;
+	GDV.tableGenerator.getPrioritizedColumnSet = getPrioritizedColumnSet;
+	function getPrioritizedColumnSet() {
+		return PRIORITIZED_COLUMNS_SET;
 	}
 
 	function createDataTableColumnsSet(columnsToDisplay, prefilterConditions) {
 		return new Set([
-			...GDV.tableGenerator.getSpecialColumnSet(),
+			...GDV.tableGenerator.getPrioritizedColumnSet(),
 			...(columnsToDisplay || []),
 			...Object.keys(prefilterConditions || {}),
-			...GDV.state.getNonTagColumnNamesSet(),
+			...GDV.state.getVisibleColumnSet(),
 		]);
 	}
 
@@ -301,7 +301,7 @@
 			return [];
 		}
 		const comparisonScopeMatchDetails = GDV.utils.createCategoryMatchDetails(GDV.state.getSimilarityComparisonScope());
-		return Object.keys(similarityGameRowDataRaw).filter((columnName) => !IGNORED_COLUMNS.has(columnName) && GDV.utils.isACategoryMatch(columnName, comparisonScopeMatchDetails));
+		return Object.keys(similarityGameRowDataRaw).filter((columnName) => !SIMILARITY_EXCLUDED_COLUMNS.has(columnName) && GDV.utils.isACategoryMatch(columnName, comparisonScopeMatchDetails));
 	}
 
 	function computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, columnsToCompare) {

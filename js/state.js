@@ -1,7 +1,7 @@
 (() => {
 	let csvFile = null;
 	let columnDetails = {};
-	let nonTagColumnNamesSet = new Set();
+	let visibleColumnSet = new Set();
 	let gameKeys = null;
 	let columnCategoryDetails = {};
 	let columnToCategories = {};
@@ -27,12 +27,12 @@
 
 	GDV.state.setColumnDetails = (columnDetails_) => {
 		columnDetails = columnDetails_;
-		nonTagColumnNamesSet = new Set(Object.entries(columnDetails || {}).filter(([, detail]) => detail.type !== "tag").map(([column]) => column));
+		visibleColumnSet = new Set(Object.entries(columnDetails || {}).filter(([, detail]) => detail?.is_visible === true).map(([column]) => column));
 	};
 
 	GDV.state.hasValidColumnDetails = () => columnDetails && Object.keys(columnDetails).length > 0;
 
-	GDV.state.getNonTagColumnNamesSet = () => nonTagColumnNamesSet;
+	GDV.state.getVisibleColumnSet = () => visibleColumnSet;
 
 	GDV.state.getGameKeys = () => gameKeys;
 
