@@ -1325,10 +1325,14 @@ td {
 }
 
 .prefilter-columns-to-display-move-button:disabled {
+	display: none;
+	/* Retained for reference if the button's disabled styles are needed again. */
+	/*
 	color: var(--text-subtle);
 	border-color: transparent;
 	background: transparent;
 	cursor: default;
+	*/
 }
 
 .prefilter-summary-input-wrapper {

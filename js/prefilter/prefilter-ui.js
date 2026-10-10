@@ -1097,17 +1097,18 @@
 		item.dataset.column = column;
 		item.draggable = true;
 		item.tabIndex = 0;
+		item.appendChild(createColumnsToDisplayMoveButton(form, column, -1, index === 0, "left"));
+		item.appendChild(createColumnsToDisplayDragHandle(index));
+		item.appendChild(document.createTextNode(column));
+		item.appendChild(createColumnsToDisplayMoveButton(form, column, 1, index === columnCount - 1, "right"));
+		return item;
+	}
 
+	function createColumnsToDisplayDragHandle(index) {
 		const dragHandle = document.createElement("span");
 		dragHandle.className = "prefilter-columns-to-display-drag-handle";
 		dragHandle.textContent = `${index + 1} ⋮⋮`;
-		item.appendChild(dragHandle);
-
-		item.appendChild(createColumnsToDisplayMoveButton(form, column, -1, index === 0, "left"));
-		item.appendChild(document.createTextNode(column));
-		item.appendChild(createColumnsToDisplayMoveButton(form, column, 1, index === columnCount - 1, "right"));
-
-		return item;
+		return dragHandle;
 	}
 
 	function createColumnsToDisplayMoveButton(form, column, direction, disabled, directionName) {
