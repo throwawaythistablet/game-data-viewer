@@ -5,9 +5,18 @@
 	let prefilterAstCurrentNode = null;
 	let columnsToDisplay = [];
 	let columnsToDisplaySet = new Set();
+	let tableSortColumn = null;
+	let tableSortDirection = null;
 	let similarityReferenceGame = null;
 	let similarityComparisonScope = null;
 	let sortMode = "nearest";
+	const astMarker = "---EXPRESSION---";
+	const conditionsMarker = "---CONDITIONS---";
+	const columnsToDisplayMarker = "---COLUMNS TO DISPLAY---";
+	const tableSortColumnMarker = "---TABLE SORT COLUMN---";
+	const tableSortDirectionMarker = "---TABLE SORT DIRECTION---";
+	const similarityReferenceGameMarker = "---SIMILARITY REFERENCE GAME---";
+	const similarityComparisonScopeMarker = "---SIMILARITY COMPARISON SCOPE---";
 
 	GDV.prefilter.getSearchText = () => searchText;
 
@@ -47,23 +56,23 @@
 		prefilterAstCurrentNode = prefilterAstCurrentNode_;
 	};
 
-	GDV.prefilter.addToConditionAndAst = addToConditionAndAst;
-	function addToConditionAndAst(column, condition) {
+	GDV.prefilter.addInConditionAndAst = addInConditionAndAst;
+	function addInConditionAndAst(column, condition) {
 		prefilterConditions[column] = condition;
 		addColumnToAst(column);
-		addColumnsToDisplay(column);
+		addInColumnsToDisplayIfNeeded(column);
 	}
 
-	GDV.prefilter.removeFromConditionAndAst = removeFromConditionAndAst;
-	function removeFromConditionAndAst(column) {
+	GDV.prefilter.removeInConditionAndAst = removeInConditionAndAst;
+	function removeInConditionAndAst(column) {
 		delete prefilterConditions[column];
 		removeColumnFromAst(column);
 	}
 
-	GDV.prefilter.removeFromConditionAndUi = removeFromConditionAndUi;
-	function removeFromConditionAndUi(column) {
+	GDV.prefilter.removeInConditionAndUi = removeInConditionAndUi;
+	function removeInConditionAndUi(column) {
 		delete prefilterConditions[column];
-		GDV.prefilter.clearActiveItemParameters(column);
+		GDV.prefilter.renderClearedPrefilterParameters(column);
 	}
 
 	GDV.prefilter.removeColumnFromAst = removeColumnFromAst;
@@ -74,39 +83,65 @@
 		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
 	}
 
-	GDV.prefilter.removeFromPrefilterAndColumnsToDisplay = removeFromPrefilterAndColumnsToDisplay;
-	function removeFromPrefilterAndColumnsToDisplay(form, node) {
+	GDV.prefilter.removeInPrefilterAndColumnsToDisplay = removeInPrefilterAndColumnsToDisplay;
+	function removeInPrefilterAndColumnsToDisplay(form, node) {
 		const removedColumns = GDV.prefilter.collectColumnsFromAst(node);
-		removeFromAstConditionsAndUi(node);
-		updateColumnsToDisplayForColumns(form, removedColumns);
+		removeInConditionsAndAstAndUi(node);
+		mutateColumnsToDisplayForColumns(form, removedColumns);
 	}
 
-	function removeFromAstConditionsAndUi(targetNode) {
+	function removeInConditionsAndAstAndUi(targetNode) {
 		if (!prefilterAst) return;
 		const path = [];
-		prefilterAst = removeNodeFromAstConditionsAndUi(prefilterAst, targetNode, path);
+		prefilterAst = removeNodeFromConditionsAndAstAndUi(prefilterAst, targetNode, path);
 		prefilterAstCurrentNode = path.length ? path[path.length - 1] : prefilterAst;
 	}
 
-	GDV.prefilter.updatePrefilterAndColumnsToDisplayForColumn = updatePrefilterAndColumnsToDisplayForColumn;
-	function updatePrefilterAndColumnsToDisplayForColumn(form, column) {
-		updatePrefilterInConditionAndAst(form, column);
-		updateColumnsToDisplayForColumn(form, column);
+	GDV.prefilter.mutateConditionsAndAstAndColumnsToDisplayForColumn = mutateConditionsAndAstAndColumnsToDisplayForColumn;
+	function mutateConditionsAndAstAndColumnsToDisplayForColumn(form, column) {
+		mutateConditionAndAstForColumn(form, column);
+		mutateColumnsToDisplayForColumn(form, column);
 	}
 
-	function updatePrefilterInConditionAndAst(form, column) {
+	function mutateConditionAndAstForColumn(form, column) {
 		const columnDetails = GDV.state.getColumnDetails() || {};
 		const def = columnDetails[column];
 		if (!def) return;
 		if (isNumericColumn(def)) {
-			updateNumericPrefilter(form, column, def);
+			mutateConditionAndAstForNumericPrefilter(form, column, def);
 		} else if (isCheckboxColumn(form, column)) {
-			updateCheckboxPrefilter(form, column, def);
+			mutateConditionAndAstForCheckboxPrefilter(form, column, def);
 		} else if (isTextColumn(form, column)) {
-			updateTextPrefilter(form, column);
+			mutateConditionAndAstForTextPrefilter(form, column);
 		} else {
-			removeFromConditionAndAst(column);
+			removeInConditionAndAst(column);
 		}
+	}
+
+	GDV.prefilter.forceToBeInFrontInColumnsToDisplay = forceToBeInFrontInColumnsToDisplay;
+	function forceToBeInFrontInColumnsToDisplay(column) {
+		const columnIndex = columnsToDisplay.indexOf(column);
+		if (columnIndex > 0) {
+			columnsToDisplay.unshift(columnsToDisplay.splice(columnIndex, 1)[0]);
+		}
+	}
+
+	GDV.prefilter.shouldBeIncludedInColumnsToDisplay = shouldBeIncludedInColumnsToDisplay;
+	function shouldBeIncludedInColumnsToDisplay(form, column) {
+		if (isImplicitlyIncludedInColumnsToDisplay(column)) return true;
+		const toggle = getFormElementsByName(form, column).find((input) =>
+			input.classList.contains("prefilter-column-to-display-toggle")
+		);
+		return Boolean(toggle?.isOn);
+	}
+
+	GDV.prefilter.isImplicitlyIncludedInColumnsToDisplay = isImplicitlyIncludedInColumnsToDisplay;
+	function isImplicitlyIncludedInColumnsToDisplay(column) {
+		return Boolean(
+			prefilterConditions[column] ||
+			column === tableSortColumn ||
+			(similarityReferenceGame && column === GDV.utils.getSimilarityScoreName())
+		);
 	}
 
 	GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns = applyPrefilterAndColumnsToDisplayToFormForColumns;
@@ -142,8 +177,15 @@
 		const toggle = elements.find((element) => element.classList.contains("prefilter-column-to-display-toggle"));
 		if (!toggle) return;
 
-		toggle.isOn = !prefilterConditions[column];
-		updateColumnDisplayToggleState(toggle);
+		toggle.isOn = columnsToDisplaySet.has(column) && !isImplicitlyIncludedInColumnsToDisplay(column);
+		applyColumnDisplayToggleState(toggle);
+	}
+
+	GDV.prefilter.applyColumnDisplayToggleState = applyColumnDisplayToggleState;
+	function applyColumnDisplayToggleState(toggle) {
+		toggle.classList.toggle("is-on", toggle.isOn);
+		toggle.setAttribute("aria-pressed", String(toggle.isOn));
+		toggle.setAttribute("aria-label", toggle.isOn ? `Remove from Columns to Display` : `Add to Columns to Display`);
 	}
 
 	GDV.prefilter.applyNotToNode = applyNotToNode;
@@ -216,20 +258,22 @@
 
 	GDV.prefilter.getColumnsToDisplay = () => columnsToDisplay;
 
+	GDV.prefilter.getColumnsToDisplaySet = () => columnsToDisplaySet;
+
 	GDV.prefilter.setColumnsToDisplay = (columnsToDisplay_) => {
 		columnsToDisplay = columnsToDisplay_;
 		columnsToDisplaySet = new Set(columnsToDisplay_);
 	};
 
-	GDV.prefilter.addColumnsToDisplay = addColumnsToDisplay;
-	function addColumnsToDisplay(column) {
+	GDV.prefilter.addInColumnsToDisplay = addInColumnsToDisplayIfNeeded;
+	function addInColumnsToDisplayIfNeeded(column) {
 		if (columnsToDisplaySet.has(column)) return;
 		columnsToDisplay.push(column);
 		columnsToDisplaySet.add(column);
 	}
 
-	GDV.prefilter.removeColumnsToDisplay = removeColumnsToDisplay;
-	function removeColumnsToDisplay(column) {
+	GDV.prefilter.removeInColumnsToDisplay = removeInColumnsToDisplay;
+	function removeInColumnsToDisplay(column) {
 		if (!columnsToDisplaySet.has(column)) return;
 		const index = columnsToDisplay.indexOf(column);
 		if (index === -1) return;
@@ -243,8 +287,8 @@
 		columnsToDisplaySet = new Set();
 	}
 
-	GDV.prefilter.moveColumnsToDisplay = moveColumnsToDisplay;
-	function moveColumnsToDisplay(column, newIndex) {
+	GDV.prefilter.moveInColumnsToDisplay = moveInColumnsToDisplay;
+	function moveInColumnsToDisplay(column, newIndex) {
 		if (!columnsToDisplaySet.has(column)) return;
 		if (!Number.isInteger(newIndex) || newIndex < 0 || newIndex >= columnsToDisplay.length) return;
 		const currentIndex = columnsToDisplay.indexOf(column);
@@ -418,15 +462,15 @@
 		// Clear column display toggles
 		form.querySelectorAll(".prefilter-column-to-display-toggle").forEach((toggle) => {
 			toggle.isOn = false;
-			updateColumnDisplayToggleState(toggle);
+			applyColumnDisplayToggleState(toggle);
 		});
 	}
 
-	function updateNumericPrefilter(form, column, def) {
+	function mutateConditionAndAstForNumericPrefilter(form, column, def) {
 		const [minEl] = getFormElementsByName(form, `${column}__min`);
 		const [maxEl] = getFormElementsByName(form, `${column}__max`);
 		if (!minEl && !maxEl) {
-			removeFromConditionAndAst(column);
+			removeInConditionAndAst(column);
 			return;
 		}
 		let min = minEl?.value === "" ? null : Number(minEl.value);
@@ -438,59 +482,50 @@
 			if (max != null) max = Math.round(max);
 		}
 		if (min == null && max == null) {
-			removeFromConditionAndAst(column);
+			removeInConditionAndAst(column);
 		} else {
-			addToConditionAndAst(column, { type: def.type, min, max });
+			addInConditionAndAst(column, { type: def.type, min, max });
 		}
 	}
 
-	function updateCheckboxPrefilter(form, column, def) {
+	function mutateConditionAndAstForCheckboxPrefilter(form, column, def) {
 		const checkboxes = getFormElementsByName(form, column).filter((e) => e.type === "checkbox");
 		const checked = checkboxes.filter((c) => c.checked).map((c) => c.value);
 
 		if (checked.length === 0 || checked.length === checkboxes.length) {
-			removeFromConditionAndAst(column);
+			removeInConditionAndAst(column);
 		} else {
 			const converted = checked.map((v) => convertCheckboxValue(v, def.type));
-			addToConditionAndAst(column, { type: def.type, choices: converted });
+			addInConditionAndAst(column, { type: def.type, choices: converted });
 		}
 	}
 
-	function updateTextPrefilter(form, column) {
+	function mutateConditionAndAstForTextPrefilter(form, column) {
 		const textInputs = getFormElementsByName(form, column).filter((e) => e.tagName.toLowerCase() === "input" || e.tagName.toLowerCase() === "textarea");
 		if (!textInputs.length) return;
 
 		const value = textInputs[0].value?.trim();
 		if (!value) {
-			removeFromConditionAndAst(column);
+			removeInConditionAndAst(column);
 		}
 		else {
-			addToConditionAndAst(column, { text: [value] });
+			addInConditionAndAst(column, { text: [value] });
 		}
 	}
 
-	function updateColumnsToDisplayForColumns(form, columns) {
+	function mutateColumnsToDisplayForColumns(form, columns) {
 		columns.forEach((column) => {
-			updateColumnsToDisplayForColumn(form, column);
+			mutateColumnsToDisplayForColumn(form, column);
 		});
 	}
 
-	function updateColumnsToDisplayForColumn(form, column) {
-		const toggle = getFormElementsByName(form, column).find((input) => input.classList.contains("prefilter-column-to-display-toggle"));
-		if (!toggle) return;
-
-		if (toggle.isOn || !!prefilterConditions[column]) {
-			addColumnsToDisplay(column);
+	GDV.prefilter.mutateColumnsToDisplayForColumn = mutateColumnsToDisplayForColumn;
+	function mutateColumnsToDisplayForColumn(form, column) {
+		if (shouldBeIncludedInColumnsToDisplay(form, column)) {
+			addInColumnsToDisplayIfNeeded(column);
 		} else {
-			removeColumnsToDisplay(column);
+			removeInColumnsToDisplay(column);
 		}
-	}
-
-	GDV.prefilter.updateColumnDisplayToggleState = updateColumnDisplayToggleState;
-	function updateColumnDisplayToggleState(toggle) {
-		toggle.classList.toggle("is-on", toggle.isOn);
-		toggle.setAttribute("aria-pressed", String(toggle.isOn));
-		toggle.setAttribute("aria-label", toggle.isOn ? `Remove from Columns to Display` : `Add to Columns to Display`);
 	}
 
 	function getFormElementsByName(form, name) {
@@ -696,7 +731,7 @@
 		}
 	}
 
-	function removeNodeFromAstConditionsAndUi(node, targetNode, path) {
+	function removeNodeFromConditionsAndAstAndUi(node, targetNode, path) {
 		if (!node) return null;
 		path.push(node);
 		switch (node.ast_type) {
@@ -714,7 +749,7 @@
 					path.pop();
 					return null;
 				}
-				if (node.child) node.child = removeNodeFromAstConditionsAndUi(node.child, targetNode, path);
+				if (node.child) node.child = removeNodeFromConditionsAndAstAndUi(node.child, targetNode, path);
 				if (!node.child) {
 					path.pop();
 					return null;
@@ -732,7 +767,7 @@
 					path.pop();
 					return node;
 				}
-				node.children = node.children.map(child => removeNodeFromAstConditionsAndUi(child, targetNode, path)).filter(Boolean);
+				node.children = node.children.map(child => removeNodeFromConditionsAndAstAndUi(child, targetNode, path)).filter(Boolean);
 				if (node.children.length === 0) {
 					path.pop();
 					return null;
@@ -755,7 +790,7 @@
 		if (!node) return;
 		switch (node.ast_type) {
 			case "VALUE":
-				GDV.prefilter.removeFromConditionAndUi(node.column);
+				GDV.prefilter.removeInConditionAndUi(node.column);
 				return;
 			case "NOT":
 				removeAllConditionsAndUiInSubtree(node.child);
@@ -1118,23 +1153,28 @@
 		const astText = convertAstNodeToString(prefilterAst);
 		const conditionsText = JSON.stringify(prefilterConditions, null, 2);
 		const columnsToDisplayText = JSON.stringify(columnsToDisplay, null, 2);
+		const tableSortColumnText = JSON.stringify(tableSortColumn, null, 2);
+		const tableSortDirectionText = JSON.stringify(tableSortDirection, null, 2);
 		const similarityReferenceGameText = JSON.stringify(similarityReferenceGame, null, 2);
 		const similarityComparisonScopeText = JSON.stringify(similarityComparisonScope, null, 2);
 
-		return `---EXPRESSION---\n${astText}\n\n---CONDITIONS---\n${conditionsText}\n\n---COLUMNS TO DISPLAY---\n${columnsToDisplayText}\n\n---SIMILARITY REFERENCE GAME---\n${similarityReferenceGameText}\n\n---SIMILARITY COMPARISON SCOPE---\n${similarityComparisonScopeText}`;
+		return `${astMarker}\n${astText}\n\n` +
+			`${conditionsMarker}\n${conditionsText}\n\n` +
+			`${columnsToDisplayMarker}\n${columnsToDisplayText}\n\n` +
+			`${tableSortColumnMarker}\n${tableSortColumnText}\n\n` +
+			`${tableSortDirectionMarker}\n${tableSortDirectionText}\n\n` +
+			`${similarityReferenceGameMarker}\n${similarityReferenceGameText}\n\n` +
+			`${similarityComparisonScopeMarker}\n${similarityComparisonScopeText}`;
 	}
 
 	function deserializePrefilters(text) {
 		if (!text || typeof text !== "string") return;
 
-		const astMarker = "---EXPRESSION---";
-		const conditionsMarker = "---CONDITIONS---";
-		const columnsToDisplayMarker = "---COLUMNS TO DISPLAY---";
-		const similarityReferenceGameMarker = "---SIMILARITY REFERENCE GAME---";
-		const similarityComparisonScopeMarker = "---SIMILARITY COMPARISON SCOPE---";
 		const astIndex = text.indexOf(astMarker);
 		const conditionsIndex = text.indexOf(conditionsMarker);
 		const columnsToDisplayIndex = text.indexOf(columnsToDisplayMarker);
+		const tableSortColumnIndex = text.indexOf(tableSortColumnMarker);
+		const tableSortDirectionIndex = text.indexOf(tableSortDirectionMarker);
 		const similarityReferenceGameIndex = text.indexOf(similarityReferenceGameMarker);
 		const similarityComparisonScopeIndex = text.indexOf(similarityComparisonScopeMarker);
 
@@ -1145,7 +1185,9 @@
 
 		const astText = text.slice(astIndex + astMarker.length, conditionsIndex).trim();
 		const conditionsText = text.slice(conditionsIndex + conditionsMarker.length, columnsToDisplayIndex).trim();
-		const columnsToDisplayText = text.slice(columnsToDisplayIndex + columnsToDisplayMarker.length, similarityReferenceGameIndex).trim();
+		const columnsToDisplayText = text.slice(columnsToDisplayIndex + columnsToDisplayMarker.length, tableSortColumnIndex).trim();
+		const tableSortColumnText = text.slice(tableSortColumnIndex + tableSortColumnMarker.length, tableSortDirectionIndex).trim();
+		const tableSortDirectionText = text.slice(tableSortDirectionIndex + tableSortDirectionMarker.length, similarityReferenceGameIndex).trim();
 		const similarityReferenceGameText = text.slice(similarityReferenceGameIndex + similarityReferenceGameMarker.length, similarityComparisonScopeIndex).trim();
 		const similarityComparisonScopeText = text.slice(similarityComparisonScopeIndex + similarityComparisonScopeMarker.length).trim();
 
@@ -1158,7 +1200,7 @@
 		}
 
 		const parsedAst = convertStringToAst(astText);
-		if (!parsedAst) {
+		if (astText && !parsedAst) {
 			GDV.utils.reportSoftWarning("Invalid Expression Format", "Failed to parse the expression from clipboard.");
 			return;
 		}
@@ -1171,6 +1213,22 @@
 			parsedColumnsToDisplay = JSON.parse(columnsToDisplayText);
 		} catch (err) {
 			GDV.utils.reportSoftWarning("Invalid Columns To Display JSON", "Failed to parse the Columns To Display JSON from clipboard.", err);
+			return;
+		}
+
+		let parsedTableSortColumn;
+		try {
+			parsedTableSortColumn = JSON.parse(tableSortColumnText);
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Invalid Table Sort Column JSON", "Failed to parse the Table Sort Column JSON from clipboard.", err);
+			return;
+		}
+
+		let parsedTableSortDirection;
+		try {
+			parsedTableSortDirection = JSON.parse(tableSortDirectionText);
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Invalid Table Sort Direction JSON", "Failed to parse the Table Sort Direction JSON from clipboard.", err);
 			return;
 		}
 
@@ -1195,9 +1253,48 @@
 		prefilterConditions = parsedConditions;
 		columnsToDisplay = parsedColumnsToDisplay;
 		columnsToDisplaySet = new Set(columnsToDisplay);
+		tableSortColumn = parsedTableSortColumn;
+		tableSortDirection = parsedTableSortDirection;
 		similarityReferenceGame = parsedSimilarityReferenceGame;
 		similarityComparisonScope = parsedSimilarityComparisonScope;
 	}
+
+	GDV.prefilter.getTableSortParameters = () => {
+		if (!tableSortColumn && !tableSortDirection) {
+			return null;
+		}
+		return { tableSortColumn, tableSortDirection };
+	};
+
+	GDV.prefilter.setTableSortParameters = (tableSortColumn_, tableSortDirection_) => {
+		tableSortColumn = tableSortColumn_;
+		tableSortDirection = tableSortDirection_;
+	};
+
+	GDV.prefilter.resetTableSortParameters = () => {
+		tableSortColumn = null;
+		tableSortDirection = null;
+	};
+
+	GDV.prefilter.getTableSortColumn = () => tableSortColumn;
+
+	GDV.prefilter.setTableSortColumn = (tableSortColumn_) => {
+		tableSortColumn = tableSortColumn_ || null;
+	};
+
+	GDV.prefilter.resetTableSortColumn = () => {
+		tableSortColumn = null;
+	};
+
+	GDV.prefilter.getTableSortDirection = () => tableSortDirection;
+
+	GDV.prefilter.setTableSortDirection = (tableSortDirection_) => {
+		tableSortDirection = tableSortDirection_ || null;
+	};
+
+	GDV.prefilter.resetTableSortDirection = () => {
+		tableSortDirection = null;
+	};
 
 	GDV.prefilter.getSimilarityCriteria = () => {
 		if (!similarityReferenceGame && !similarityComparisonScope) {
@@ -1206,14 +1303,14 @@
 		return { referenceGame: similarityReferenceGame, comparisonScope: similarityComparisonScope };
 	};
 
-	GDV.prefilter.resetSimilarityCriteria = () => {
-		similarityReferenceGame = null;
-		similarityComparisonScope = null;
-	};
-
 	GDV.prefilter.setSimilarityCriteria = (similarityReferenceGame_, similarityComparisonScope_) => {
 		similarityReferenceGame = similarityReferenceGame_;
 		similarityComparisonScope = similarityComparisonScope_;
+	};
+
+	GDV.prefilter.resetSimilarityCriteria = () => {
+		similarityReferenceGame = null;
+		similarityComparisonScope = null;
 	};
 
 	GDV.prefilter.getSimilarityReferenceGame = () => similarityReferenceGame;
@@ -1234,6 +1331,10 @@
 
 	GDV.prefilter.resetSimilarityComparisonScope = () => {
 		similarityComparisonScope = null;
+	};
+
+	GDV.prefilter.getSearchParameters = () => {
+		return { prefilterConditions, prefilterAst, columnsToDisplay, tableSortColumn, tableSortDirection, similarityReferenceGame, similarityComparisonScope };
 	};
 
 })();

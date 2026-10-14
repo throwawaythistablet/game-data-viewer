@@ -12,7 +12,8 @@
 	--bg-hover: rgba(56, 56, 56, 1);
 	--bg-gray: rgba(42, 42, 42, 1);
 	--bg-yellow: rgba(48, 44, 24, 1);
-	--bg-teal: rgba(30, 40, 36, 1);
+	--bg-teal: rgba(20, 45, 40, 1);
+	--bg-green: rgba(5, 45, 15, 1);
 
 	--text-main: rgba(240, 240, 240, 1);
 	--text-muted: rgba(160, 160, 160, 1);
@@ -26,8 +27,12 @@
 	--btn-regular-hover: var(--bg-hover);
 	--btn-main-bg: var(--accent);
 	--btn-main-hover: var(--accent-soft);
+	--btn-blue-bg: rgba(0, 20, 60, 1);
+	--btn-blue-hover: rgba(0, 40, 120, 1);
 	--btn-teal-bg: rgba(20, 40, 35, 1);
 	--btn-teal-hover: rgba(40, 60, 55, 1);
+	--btn-copper-bg: rgba(60, 20, 0, 1);
+	--btn-copper-hover: rgba(120, 40, 0, 1);
 	--btn-danger-bg: rgba(240, 120, 120, 1);
 	--btn-danger-hover: rgba(240, 160, 160, 1);
 
@@ -60,8 +65,8 @@
 	--blue-soft: rgba(0, 40, 80, 1);
 	--green: rgba(80, 200, 120, 1);
 	--green-soft: rgba(0, 120, 40, 1);
-	--copper: rgba(250, 150, 75, 1);
-	--copper-soft: rgba(170, 70, 15, 1);
+	--copper: rgba(180, 80, 40, 1);
+	--copper-soft: rgba(120, 20, 0, 1);
 	--teal: rgba(100, 220, 215, 1);
 	--teal-soft: rgba(20, 140, 135, 1);
 	--purple: rgba(156, 104, 200, 1);
@@ -79,6 +84,7 @@ body.light-theme {
 	--bg-gray: rgba(240, 240, 240, 1);
 	--bg-yellow: rgba(240, 240, 192, 1);
 	--bg-teal: rgba(200, 240, 235, 1);
+	--bg-green: rgba(200, 240, 200, 1);
 
 	--text-main: rgba(16, 16, 16, 1);
 	--text-muted: rgba(32, 32, 32, 1);
@@ -92,8 +98,12 @@ body.light-theme {
 	--btn-regular-hover: var(--bg-hover);
 	--btn-main-bg: var(--accent);
 	--btn-main-hover: var(--accent-soft);
+	--btn-blue-bg: rgba(100, 200, 250, 1);
+	--btn-blue-hover: rgba(60, 160, 210, 1);
 	--btn-teal-bg: rgba(180, 220, 215, 1);
 	--btn-teal-hover: rgba(140, 180, 175, 1);
+	--btn-copper-bg: rgba(240, 160, 100, 1);
+	--btn-copper-hover: rgba(200, 120, 60, 1);
 	--btn-danger-bg: rgba(240, 120, 120, 1);
 	--btn-danger-hover: rgba(240, 160, 160, 1);
 
@@ -155,22 +165,28 @@ td {
 	overflow: visible;
 }
 
-.teal-highlight {
-	background-color: var(--bg-teal);
+.teal-highlight,
+.green-highlight,
+.yellow-highlight,
+.white-highlight {
 	font-weight: bold;
 	border: 1px solid var(--border-strong);
+}
+
+.teal-highlight {
+	background-color: var(--bg-teal);
+}
+
+.green-highlight {
+	background-color: var(--bg-green);
 }
 
 .yellow-highlight {
 	background-color: var(--bg-yellow);
-	font-weight: bold;
-	border: 1px solid var(--border-strong);
 }
 
 .white-highlight {
 	background-color: var(--bg-gray);
-	font-weight: bold;
-	border: 1px solid var(--border-strong);
 }
 
 /* ==========================================================================
@@ -464,6 +480,12 @@ td {
    BUTTONS
    ========================================================================== */
 
+.btn-group {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
 .btn {
 	background: var(--btn-regular-bg);
 	color: var(--text-muted);
@@ -519,16 +541,6 @@ td {
 		0 0 10px 2px var(--glow);
 }
 
-.btn-teal {
-	background: var(--btn-teal-bg);
-	color: var(--text-main);
-	font-weight: 600;
-}
-
-.btn-teal:hover {
-	background: var(--btn-teal-hover);
-}
-
 .btn-danger {
 	background: var(--btn-danger-bg);
 	color: var(--text-inverse);
@@ -540,10 +552,43 @@ td {
 	color: var(--text-inverse);
 }
 
-.btn-group {
-	display: flex;
-	gap: 8px;
-	flex-wrap: wrap;
+.btn-blue,
+.btn-teal,
+.btn-copper {
+	color: var(--text-main);
+	font-weight: 600;
+}
+
+.btn-gray {
+	background: var(--gray-weakest);
+}
+
+.btn-gray:hover {
+	background: var(--gray-weak);
+}
+
+.btn-blue {
+	background: var(--btn-blue-bg);
+}
+
+.btn-blue:hover {
+	background: var(--btn-blue-hover);
+}
+
+.btn-teal {
+	background: var(--btn-teal-bg);
+}
+
+.btn-teal:hover {
+	background: var(--btn-teal-hover);
+}
+
+.btn-copper {
+	background: var(--btn-copper-bg);
+}
+
+.btn-copper:hover {
+	background: var(--btn-copper-hover);
 }
 
 #csvFile {
@@ -963,10 +1008,6 @@ td {
 	color: var(--teal);
 }
 
-.similarity-criteria-input-item-width {
-	width: 400px;
-}
-
 .similarity-criteria-game-input-ghost {
 	position: absolute;
 	left: 8px;
@@ -1016,6 +1057,8 @@ td {
 
 /* The dropdown itself */
 .category-dropdown-select,
+.table-sort-column-dropdown-select,
+.table-sort-direction-dropdown-select,
 .similarity-scope-dropdown-select {
 	padding: 8px 12px;
 	font-size: 14px;
@@ -1039,6 +1082,12 @@ td {
 .category-dropdown-select {
 	border: 2px solid var(--glow-soft);
 	color: var(--gray-strongest);
+}
+
+.table-sort-column-dropdown-select,
+.table-sort-direction-dropdown-select {
+	border: 2px solid var(--green-soft);
+	color: var(--green);
 }
 
 .similarity-scope-dropdown-select {
@@ -1276,21 +1325,25 @@ td {
 
 .prefilter-summary-label,
 .prefilter-expression-label,
+.prefilter-table-sort-label,
 .prefilter-similarity-label,
 .prefilter-columns-to-display-label {
 	font-weight: bold;
 	font-size: 14px;
-	margin-right: 8px;
 	white-space: nowrap;
-}
-
-.prefilter-similarity-label {
-	color: var(--teal);
 }
 
 .prefilter-expression-label {
 	color: var(--gray-strongest);
 	text-shadow: 0 0 8px var(--gray-weakest);
+}
+
+.prefilter-table-sort-label {
+	color: var(--green);
+}
+
+.prefilter-similarity-label {
+	color: var(--teal);
 }
 
 .prefilter-columns-to-display-label {
@@ -1336,6 +1389,10 @@ td {
 	*/
 }
 
+.prefilter-summary-input-item-width {
+	width: 400px;
+}
+
 .prefilter-summary-input-wrapper {
 	position: relative;
 	display: inline-block;
@@ -1369,7 +1426,7 @@ td {
 	gap: 8px;
 }
 
-.prefilter-active-items {
+.prefilter-select-items {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 4px;
@@ -1416,9 +1473,9 @@ td {
 	color: var(--text-muted);
 }
 
-.prefilter-active-item,
+.prefilter-select-item,
 .prefilter-columns-to-display-item,
-.prefilter-similarity-active-item {
+.prefilter-similarity-select-item {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -1427,7 +1484,7 @@ td {
 	font-size: 13px;
 }
 
-.prefilter-active-item {
+.prefilter-select-item {
 	color: var(--text-main);
 	border: 1px solid var(--gray-weak);
 	cursor: pointer;
@@ -1445,12 +1502,12 @@ td {
 	transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease, opacity 0.1s ease;
 }
 
-.prefilter-similarity-active-item {
+.prefilter-similarity-select-item {
 	color: var(--teal);
 	border: 1px solid var(--teal-soft);
 }
 
-.prefilter-active-item:hover,
+.prefilter-select-item:hover,
 .prefilter-columns-to-display-item:hover {
 	color: var(--text-main);
 	background: transparent;
@@ -1458,7 +1515,7 @@ td {
 	box-shadow: 0 0 4px var(--gray-strong);
 }
 
-.prefilter-active-item.is-focused,
+.prefilter-select-item.is-focused,
 .prefilter-columns-to-display-item:focus {
 	background: rgba(var(--glow-rgb-numbers), 0.10);
 	border: 1px solid var(--glow);
@@ -1469,7 +1526,7 @@ td {
 	outline: none;
 }
 
-.prefilter-active-item .prefilter-remove-btn {
+.prefilter-select-item .prefilter-remove-btn {
 	background: transparent;
 	border: none;
 	cursor: pointer;
@@ -1479,7 +1536,7 @@ td {
 	line-height: 1;
 }
 
-.prefilter-active-item .prefilter-remove-btn:hover {
+.prefilter-select-item .prefilter-remove-btn:hover {
 	color: var(--glow-strong);
 	transform: scale(1.2);
 	transition: transform 0.15s ease;

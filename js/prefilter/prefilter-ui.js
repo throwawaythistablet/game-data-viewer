@@ -21,9 +21,10 @@
 
 	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async (shouldRestore) => {
 		try {
+			const affectedColumns = restorePrefilterValuesFromStateAndGetAffectedColumns();
+
 			initializePrefilterOverlayIfNeeded();
 			const { overlay, form } = prefilterOverlay;
-
 			if (shouldRestore) {
 				resetForNewPrefilterOverlay(form);
 			}
@@ -34,7 +35,9 @@
 				const cleanupFocus = showModalAccessibility(overlay, resolve);
 				if (shouldRestore) {
 					replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
-					restoreAndUpdateFromState(form);
+					renderAllSummariesAndWarning(form);
+					GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns(form, affectedColumns);
+					mutateAndRenderSimilarityScoreNameFromSimilarityChange(form);
 				}
 				waitForPrefilterFormSubmission(form, resolve, cleanupFocus);
 			});
@@ -43,6 +46,28 @@
 			return {};
 		}
 	};
+
+	function restorePrefilterValuesFromStateAndGetAffectedColumns() {
+		const oldPrefilterConditions = GDV.prefilter.getPrefilterConditions() || {};
+		const oldColumnsToDisplay = GDV.prefilter.getColumnsToDisplay() || [];
+		const newPrefilterConditions = structuredClone(GDV.state.getPrefilterConditions() || {});
+		const newPrefilterAst = structuredClone(GDV.state.getPrefilterAst());
+		const newColumnsToDisplay = structuredClone(GDV.state.getColumnsToDisplay() || []);
+		const newTableSortColumn = GDV.state.getTableSortColumn();
+		const newTableSortDirection = GDV.state.getTableSortDirection();
+		const newSimilarityReferenceGame = GDV.state.getSimilarityReferenceGame();
+		const newSimilarityComparisonScope = GDV.state.getSimilarityComparisonScope();
+
+		GDV.prefilter.setPrefilterConditionsAndAst(newPrefilterConditions, newPrefilterAst);
+		GDV.prefilter.setColumnsToDisplay(newColumnsToDisplay);
+		GDV.prefilter.setTableSortParameters(newTableSortColumn, newTableSortDirection);
+		GDV.prefilter.setSimilarityCriteria(newSimilarityReferenceGame, newSimilarityComparisonScope);
+		for (const column of Object.keys(newPrefilterConditions)) {
+			GDV.prefilter.addInColumnsToDisplay(column);
+		}
+
+		return [...new Set([...Object.keys(oldPrefilterConditions), ...oldColumnsToDisplay, ...Object.keys(newPrefilterConditions), ...newColumnsToDisplay])];
+	}
 
 	GDV.prefilter.hidePrefilterWarning = hidePrefilterWarning;
 	function hidePrefilterWarning() {
@@ -79,7 +104,7 @@
 	}
 
 	function createPrefilterOverlay() {
-		const overlay = createPrefilterOverlayContainer("Refine Your Search Using Prefilters");
+		const overlay = createPrefilterOverlayContainer();
 		document.body.appendChild(overlay);
 		overlay.style.display = "none";
 		bindPrefilterOverlayDragAndDrop(overlay);
@@ -89,7 +114,7 @@
 		form.className = "prefilter-form";
 		overlay.appendChild(form);
 		form.appendChild(createPrefilterSearchAndSummaryGroup(form));
-		form.appendChild(createPrefilterGrid(GDV.state.getPrefilterConditions()));
+		form.appendChild(createPrefilterGrid());
 		form.appendChild(createPrefilterGridLimitIndicator(form));
 		form.appendChild(createPrefilterGridNoResultsDisplay());
 		updatePrefilterCards(form);
@@ -98,18 +123,12 @@
 	}
 
 	// Overlay container
-	function createPrefilterOverlayContainer(title) {
+	function createPrefilterOverlayContainer() {
 		const overlay = document.createElement("div");
 		overlay.id = "prefilterOverlay";
 		overlay.className = "prefilter-overlay";
 		overlay.setAttribute("role", "dialog");
 		overlay.setAttribute("aria-modal", "true");
-
-		const heading = document.createElement("h2");
-		heading.id = "prefilterOverlayHeading";
-		heading.textContent = title;
-		overlay.appendChild(heading);
-		overlay.setAttribute("aria-labelledby", "prefilterOverlayHeading");
 
 		return overlay;
 	}
@@ -165,13 +184,13 @@
 		});
 
 		select.addEventListener("change", () => {
-			updatePrefilterCategorySummary(form, select);
+			renderPrefilterCategorySummary(form, select);
 			updatePrefilterCards(form);
 		});
 		return select;
 	}
 
-	function updatePrefilterCategorySummary(form, select) {
+	function renderPrefilterCategorySummary(form, select) {
 		const categoryElement = form.querySelector("#prefilter-selected-category");
 		if (!categoryElement) return;
 		categoryElement.dataset.value = select.value;
@@ -245,10 +264,10 @@
 		prefilterLabel.textContent = "Prefilter Expression:";
 		prefilterExpressionSummary.appendChild(prefilterLabel);
 
-		const activeItems = document.createElement("div");
-		activeItems.id = "prefilter-active-items";
-		activeItems.className = "prefilter-active-items";
-		prefilterExpressionSummary.appendChild(activeItems);
+		const selectItems = document.createElement("div");
+		selectItems.id = "prefilter-select-items";
+		selectItems.className = "prefilter-select-items";
+		prefilterExpressionSummary.appendChild(selectItems);
 		return prefilterExpressionSummary;
 	}
 
@@ -274,7 +293,8 @@
 		rightGroup.className = "prefilter-summary-right";
 		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus));
 		rightGroup.appendChild(createPrefiltersSummaryPrefilterButtonsRow(form));
-		rightGroup.appendChild(createPrefilterSimilarityGameRow());
+		rightGroup.appendChild(createPrefilterSortTableRow(form));
+		rightGroup.appendChild(createPrefilterSimilarityGameRow(form));
 		rightGroup.appendChild(createPrefilterSimilarityScopeRow());
 		rightGroup.appendChild(createPrefiltersSummaryCategoryRow(form));
 		return rightGroup;
@@ -283,6 +303,7 @@
 	function createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus) {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-row";
+		buttonWrapper.appendChild(createPrefilterShareUrlButton());
 		buttonWrapper.appendChild(createPrefiltersCloseButton(resolve, cleanupFocus));
 		buttonWrapper.appendChild(createPrefilterSubmitButton("Generate Table"));
 		return buttonWrapper;
@@ -298,11 +319,90 @@
 		return buttonWrapper;
 	}
 
-	function createPrefilterSimilarityGameRow() {
+	function createPrefilterSortTableRow(form) {
+		const tableSortWrapper = document.createElement("div");
+		tableSortWrapper.className = "prefilter-summary-row";
+		tableSortWrapper.appendChild(createPrefilterTableSortLabel("Sort Table By:"));
+		tableSortWrapper.appendChild(createPrefilterTableSortColumnDropDown(form));
+		tableSortWrapper.appendChild(createPrefilterTableSortLabel("Sort Direction:"));
+		tableSortWrapper.appendChild(createPrefilterTableSortDirectionDropDown());
+		return tableSortWrapper;
+	}
+
+	function createPrefilterTableSortLabel(labelText) {
+		const label = document.createElement("span");
+		label.className = "prefilter-table-sort-label";
+		label.textContent = labelText;
+		return label;
+	}
+
+	function createPrefilterTableSortColumnDropDown(form) {
+		const select = document.createElement("select");
+		select.className = "table-sort-column-dropdown-select";
+
+		const opt = document.createElement("option");
+		opt.value = null;
+		opt.textContent = "";
+		select.appendChild(opt);
+		for (const category of GDV.state.getNonTagColumnsSet() || []) {
+			const opt = document.createElement("option");
+			opt.value = category;
+			opt.textContent = category;
+			select.appendChild(opt);
+		}
+
+		const actualValue = GDV.prefilter.getTableSortColumn();
+		if (actualValue) {
+			select.value = actualValue;
+		}
+
+		select.addEventListener("change", () => {
+			const oldTableSortColumn = GDV.prefilter.getTableSortColumn();
+			const newTableSortColumn = select.value;
+
+			GDV.prefilter.setTableSortColumn(newTableSortColumn);
+			if (oldTableSortColumn !== newTableSortColumn) {
+				GDV.prefilter.mutateColumnsToDisplayForColumn(form, oldTableSortColumn);
+				GDV.prefilter.mutateColumnsToDisplayForColumn(form, newTableSortColumn);
+			}
+			GDV.prefilter.forceToBeInFrontInColumnsToDisplay(newTableSortColumn);
+			renderPrefilterColumnsToDisplaySummary(form);
+		});
+		return select;
+	}
+
+	function createPrefilterTableSortDirectionDropDown() {
+		const select = document.createElement("select");
+		select.className = "table-sort-direction-dropdown-select";
+
+		const opt = document.createElement("option");
+		opt.value = null;
+		opt.textContent = "";
+		select.appendChild(opt);
+		for (const direction of ["Ascending", "Descending"]) {
+			const opt = document.createElement("option");
+			opt.value = direction;
+			opt.textContent = direction;
+			select.appendChild(opt);
+		}
+
+		const actualValue = GDV.prefilter.getTableSortDirection();
+		if (actualValue) {
+			select.value = actualValue;
+		}
+
+		select.addEventListener("change", () => {
+			GDV.prefilter.setTableSortDirection(select.value);
+		});
+		return select;
+	}
+
+
+	function createPrefilterSimilarityGameRow(form) {
 		const similarityWrapper = document.createElement("div");
 		similarityWrapper.className = "prefilter-summary-row";
 		similarityWrapper.appendChild(createPrefilterSimilarityLabel("Find games similar to:"));
-		similarityWrapper.appendChild(createPrefilterSimilarityGameInput());
+		similarityWrapper.appendChild(createPrefilterSimilarityGameInput(form));
 		return similarityWrapper;
 	}
 
@@ -321,14 +421,14 @@
 		return label;
 	}
 
-	function createPrefilterSimilarityGameInput() {
+	function createPrefilterSimilarityGameInput(form) {
 		clearSimilarityGameInputCommitTimer();
 
 		const similarityGameInputWrapper = document.createElement("div");
 		similarityGameInputWrapper.className = "prefilter-summary-input-wrapper";
 
 		const similarityInput = document.createElement("input");
-		similarityInput.className = "similarity-criteria-game-input similarity-criteria-input-item-width";
+		similarityInput.className = "similarity-criteria-game-input prefilter-summary-input-item-width";
 		similarityInput.type = "text";
 		similarityInput.name = "prefilterSimilaritySearch";
 		similarityInput.placeholder = "Find a game...";
@@ -349,39 +449,79 @@
 			clearSimilarityGameInputCommitTimer();
 			const query = this.value.trim();
 			if (!query) {
-				resetSimilarityBecauseOfEmptyInput(ghostText);
+				resetSimilarityBecauseOfEmptyInput(form, ghostText);
 				return;
 			}
 			const nearest = GDV.utils.findNearestGameKey(query);
 			ghostText.textContent = nearest.toLowerCase() !== query.toLowerCase() ? nearest : "";
-			similarityGameInputCommitTimer = setTimeout(() => { commitSimilarityGameInput(similarityInput, ghostText); }, 2000);
+			similarityGameInputCommitTimer = setTimeout(() => { commitSimilarityGameInput(form, similarityInput, ghostText); }, 2000);
 		});
 
 		return similarityGameInputWrapper;
 	}
 
-	function commitSimilarityGameInput(similarityInput, ghostText) {
+	function commitSimilarityGameInput(form, similarityInput, ghostText) {
 		similarityGameInputCommitTimer = null;
-		const query = similarityInput.value.trim();
+		const query = similarityInput?.value?.trim();
 		if (!query) {
-			resetSimilarityBecauseOfEmptyInput(ghostText);
+			resetSimilarityBecauseOfEmptyInput(form, ghostText);
 			return;
 		}
 		const nearest = GDV.utils.findNearestGameKey(query);
 		similarityInput.value = nearest;
 		ghostText.textContent = "";
-		GDV.prefilter.updatePrefilterSimilarityReferenceGame(nearest);
+		setAndRenderPrefilterSimilarityReferenceGame(form, nearest);
 	}
 
-	function resetSimilarityBecauseOfEmptyInput(ghostText) {
+	function resetSimilarityBecauseOfEmptyInput(form, ghostText) {
 		ghostText.textContent = "";
 		GDV.prefilter.resetSimilarityReferenceGame();
-		GDV.dom.resetSimilarityGameInputs();
+		GDV.dom.renderResetAllSimilarityGameInputs();
+		mutateAndRenderSimilarityScoreNameFromSimilarityChange(form);
+	}
+
+	GDV.prefilter.setAndRenderPrefilterSimilarityReferenceGame = setAndRenderPrefilterSimilarityReferenceGame;
+	function setAndRenderPrefilterSimilarityReferenceGame(form, value) {
+		GDV.prefilter.setSimilarityReferenceGame(value);
+		GDV.dom.renderAllSimilarityGameInputs(value);
+		mutateAndRenderSimilarityScoreNameFromSimilarityChange(form);
+	}
+
+	GDV.prefilter.mutateAndRenderSimilarityScoreNameFromSimilarityChange = mutateAndRenderSimilarityScoreNameFromSimilarityChange;
+	function mutateAndRenderSimilarityScoreNameFromSimilarityChange(form) {
+		const similarityScoreName = GDV.utils.getSimilarityScoreName();
+		const tableSortColumn = GDV.prefilter.getTableSortColumn();
+		if (GDV.prefilter.getSimilarityReferenceGame()) {
+			if (!tableSortColumn) {
+				GDV.prefilter.mutateColumnsToDisplayForColumn(form, similarityScoreName);
+				GDV.prefilter.setTableSortParameters(similarityScoreName, "Descending");
+				GDV.prefilter.forceToBeInFrontInColumnsToDisplay(similarityScoreName);
+			}
+		} else {
+			if (tableSortColumn === similarityScoreName) {
+				GDV.prefilter.resetTableSortParameters();
+			}
+			if (!GDV.prefilter.shouldBeIncludedInColumnsToDisplay(form, similarityScoreName)) {
+				GDV.prefilter.removeInColumnsToDisplay(similarityScoreName);
+			}
+		}
+		renderPrefilterColumnsToDisplaySummary(form);
+		renderPrefilterTableSortSummary(form);
+	}
+
+	GDV.prefilter.setAndRenderPrefilterSimilarityComparisonScope = setAndRenderPrefilterSimilarityComparisonScope;
+	function setAndRenderPrefilterSimilarityComparisonScope(value) {
+		GDV.prefilter.setSimilarityComparisonScope(value);
+		renderAllSimilarityScopeDropdowns(value);
+	}
+
+	function renderAllSimilarityScopeDropdowns(value) {
+		GDV.dom.renderAllSimilarityScopeDropdowns(value || "All Categories");
 	}
 
 	function createPrefilterSimilarityScopeDropDown() {
 		const select = document.createElement("select");
-		select.className = "similarity-scope-dropdown-select similarity-criteria-input-item-width";
+		select.className = "similarity-scope-dropdown-select prefilter-summary-input-item-width";
 
 		const columnCategoryDetails = GDV.state.getColumnCategoryDetails() || {};
 		Object.keys(columnCategoryDetails).forEach((category) => {
@@ -391,13 +531,13 @@
 			select.appendChild(opt);
 		});
 
-		const existingScope = GDV.prefilter.getSimilarityComparisonScope();
-		if (existingScope) {
-			select.value = existingScope;
+		const actualValue = GDV.prefilter.getSimilarityComparisonScope();
+		if (actualValue) {
+			select.value = actualValue;
 		}
 
 		select.addEventListener("change", () => {
-			GDV.prefilter.updatePrefilterSimilarityComparisonScope(select.value);
+			setAndRenderPrefilterSimilarityComparisonScope(select.value);
 		});
 		return select;
 	}
@@ -416,8 +556,39 @@
 		categoryElement.dataset.value = "All Categories";
 		categoryElement.textContent = "All Categories";
 		categoryWrapper.appendChild(categoryElement);
-		categoryWrapper.appendChild(createPrefilterSortButton(form));
+		categoryWrapper.appendChild(createPrefilterSortCardsButton(form));
 		return categoryWrapper;
+	}
+
+	function createPrefilterShareUrlButton() {
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.textContent = "Copy Shareable URL";
+		btn.className = "btn btn-gray";
+		btn.addEventListener("click", async () => {
+			try {
+				const shareUrl = GDV.utils.createShareUrl(GDV.prefilter.getSearchParameters());
+				await navigator.clipboard.writeText(shareUrl);
+				GDV.utils.showInfoBanner("Shareable URL Copied", "The shareable URL has been copied to your clipboard.");
+			} catch (err) {
+				GDV.utils.reportSoftWarning("Clipboard Copy Failed", "Failed to copy the shareable URL to the clipboard.", err);
+			}
+		});
+		return btn;
+	}
+
+	function createPrefiltersCloseButton(resolve, cleanupFocus) {
+		const btn = document.createElement("button");
+		btn.type = "button";
+		btn.textContent = "Close";
+		btn.className = "btn btn-danger btn-close";
+		btn.addEventListener("click", () => {
+			if (isPrefilterSubmissionPending) return;
+			if (cleanupFocus) cleanupFocus();
+			finalizeAndClose();
+			resolve(null);
+		});
+		return btn;
 	}
 
 	function createPrefilterSubmitButton(label = "Submit") {
@@ -444,7 +615,7 @@
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => {
 			GDV.prefilter.normalizePrefilterAst();
-			updateExpressionRelatedSummariesAndWarning(form);
+			renderExpressionRelatedSummariesAndWarning(form);
 		});
 		return btn;
 	}
@@ -456,8 +627,8 @@
 		btn.className = "btn btn-reset";
 		btn.addEventListener("click", () => {
 			GDV.prefilter.copyPrefiltersToClipboard();
-			updateAllSummariesAndWarning(form);
-			GDV.utils.showInfoBanner("Prefilters Copied", "The prefilter expression and conditions have been copied to your clipboard.");
+			renderAllSummariesAndWarning(form);
+			GDV.utils.showInfoBanner("Prefilters Copied", "The prefilter values have been copied to your clipboard.");
 		});
 		return btn;
 	}
@@ -473,26 +644,12 @@
 
 			await GDV.prefilter.pastePrefiltersFromClipboard();
 			GDV.prefilter.applyPrefilterConditionsAndColumnsToDisplayToForm(form);
-			updateAllSummariesAndWarning(form);
+			renderAllSummariesAndWarning(form);
 		});
 		return btn;
 	}
 
-	function createPrefiltersCloseButton(resolve, cleanupFocus) {
-		const btn = document.createElement("button");
-		btn.type = "button";
-		btn.textContent = "Close";
-		btn.className = "btn btn-danger btn-close";
-		btn.addEventListener("click", () => {
-			if (isPrefilterSubmissionPending) return;
-			if (cleanupFocus) cleanupFocus();
-			finalizeAndClose();
-			resolve(null);
-		});
-		return btn;
-	}
-
-	function createPrefilterSortButton(form) {
+	function createPrefilterSortCardsButton(form) {
 		GDV.prefilter.resetSortMode();
 		const btn = document.createElement("button");
 		btn.type = "button";
@@ -524,18 +681,18 @@
 		return loader;
 	}
 
-	function createPrefilterGrid(prefilterConditions) {
+	function createPrefilterGrid() {
 		const grid = document.createElement("div");
 		grid.className = "prefilter-grid";
 		const columnDetails = GDV.state.getColumnDetails() || {};
 		const tagFullMatchPatterns = GDV.state.getTagFullMatchPatterns() || {};
 		const tagQuickSearchPatterns = GDV.state.getTagQuickSearchPatterns() || {};
 		const columnOrder = Object.keys(columnDetails);
-		const savedColumnsToDisplaySet = new Set(GDV.state.getColumnsToDisplay() || []);
+		const prefilterConditions = GDV.state.getPrefilterConditions();
 		prefilterColumnToOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
 		prefilterColumnToSearchInfoMap = new Map();
 		for (const [columnName, columnDetail] of Object.entries(columnDetails)) {
-			const card = createPrefilterCard(columnName, columnDetail, prefilterConditions[columnName], savedColumnsToDisplaySet);
+			const card = createPrefilterCard(columnName, columnDetail, prefilterConditions[columnName]);
 			grid.appendChild(card);
 
 			const filterName = GDV.utils.normalizeFilterName(columnName);
@@ -551,7 +708,7 @@
 		return grid;
 	}
 
-	function createPrefilterCard(column, columnDetail, prefilterCondition, savedColumnsToDisplaySet) {
+	function createPrefilterCard(column, columnDetail, prefilterCondition) {
 		const card = document.createElement("section");
 		card.className = "prefilter-card";
 		card.dataset.col = String(column);
@@ -564,7 +721,7 @@
 		title.textContent = column;
 		header.appendChild(title);
 		card.appendChild(header);
-		header.appendChild(createColumnDisplayToggle(column, prefilterCondition != null, savedColumnsToDisplaySet));
+		header.appendChild(createColumnDisplayToggle(column));
 
 		if (columnDetail.type === "tag") {
 			card.appendChild(createTagFilter(column, prefilterCondition));
@@ -586,26 +743,26 @@
 		return card;
 	}
 
-	function createColumnDisplayToggle(column, isPrefilterActive, savedColumnsToDisplaySet) {
+	function createColumnDisplayToggle(column) {
 		const toggle = document.createElement("button");
 		toggle.type = "button";
 		toggle.className = "prefilter-column-to-display-toggle";
 		toggle.textContent = "👁︎";
 		toggle.title = "Add column to display list.";
 		toggle.name = column;
-		toggle.isOn = savedColumnsToDisplaySet.has(column) && !isPrefilterActive;
-		GDV.prefilter.updateColumnDisplayToggleState(toggle);
+		toggle.isOn = GDV.prefilter.getColumnsToDisplaySet().has(column) && !GDV.prefilter.isImplicitlyIncludedInColumnsToDisplay(column);
+		GDV.prefilter.applyColumnDisplayToggleState(toggle);
 
 		toggle.addEventListener("click", () => {
 			toggle.isOn = !toggle.isOn;
-			GDV.prefilter.updateColumnDisplayToggleState(toggle);
+			GDV.prefilter.applyColumnDisplayToggleState(toggle);
 			if (toggle.isOn) {
-				GDV.prefilter.addColumnsToDisplay(column);
-			} else if (!GDV.prefilter.getPrefilterConditions()[column]) {
-				GDV.prefilter.removeColumnsToDisplay(column);
+				GDV.prefilter.addInColumnsToDisplay(column);
+			} else if (!GDV.prefilter.isImplicitlyIncludedInColumnsToDisplay(column)) {
+				GDV.prefilter.removeInColumnsToDisplay(column);
 			}
 			const form = toggle.closest(".prefilter-form");
-			if (form) updatePrefilterColumnsToDisplaySummary(form);
+			if (form) renderPrefilterColumnsToDisplaySummary(form);
 		});
 		return toggle;
 	}
@@ -857,14 +1014,14 @@
 	}
 
 	function createPrefilterAstToolbarIfNeeded(form) {
-		const activeItems = form.querySelector("#prefilter-active-items");
-		if (!activeItems) return null;
-		let toolbar = activeItems.querySelector(".prefilter-ast-toolbar");
+		const selectItems = form.querySelector("#prefilter-select-items");
+		if (!selectItems) return null;
+		let toolbar = selectItems.querySelector(".prefilter-ast-toolbar");
 		if (toolbar) return toolbar;
 
 		toolbar = document.createElement("div");
 		toolbar.className = "prefilter-ast-toolbar";
-		activeItems.appendChild(toolbar);
+		selectItems.appendChild(toolbar);
 		return toolbar;
 	}
 
@@ -877,27 +1034,27 @@
 		return astGroup;
 	}
 
-	function createPrefilterActiveItem(form, node) {
+	function createPrefilterSelectItem(form, node) {
 		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
 		const prefilterAstCurrentNode = GDV.prefilter.getPrefilterAstCurrentNode();
 		const column = node.column;
 		const value = prefilterConditions[column];
 		if (!value) return null;
 
-		const activeItem = document.createElement("span");
-		activeItem.className = "prefilter-active-item";
-		activeItem.dataset.col = column;
+		const selectItem = document.createElement("span");
+		selectItem.className = "prefilter-select-item";
+		selectItem.dataset.col = column;
 		if (node === prefilterAstCurrentNode) {
-			activeItem.classList.add("is-focused");
+			selectItem.classList.add("is-focused");
 		}
 		const text = GDV.prefilter.getPrefilterDisplayText(column, value) || "";
-		activeItem.textContent = `${text} `;
-		activeItem.title = GDV.datatable.getColumnDescription(column) || "";
-		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(value) || "";
-		activeItem.appendChild(createPrefilterActiveItemRemoveButton(form, column, activeItem.dataset.type));
-		bindPrefilterAstNodeFocus(form, activeItem, node);
+		selectItem.textContent = `${text} `;
+		selectItem.title = GDV.datatable.getColumnDescription(column) || "";
+		selectItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(value) || "";
+		selectItem.appendChild(createPrefilterSelectItemRemoveButton(form, column, selectItem.dataset.type));
+		bindPrefilterAstNodeFocus(form, selectItem, node);
 
-		return activeItem;
+		return selectItem;
 	}
 
 	function createAstOperator(form, node, type) {
@@ -915,7 +1072,7 @@
 		return el;
 	}
 
-	function createPrefilterActiveItemRemoveButton(form, column, type) {
+	function createPrefilterSelectItemRemoveButton(form, column, type) {
 		const removeButton = document.createElement("button");
 		removeButton.type = "button";
 		removeButton.className = "prefilter-remove-btn";
@@ -923,7 +1080,7 @@
 		removeButton.setAttribute("aria-label", `Remove prefilter for ${column}`);
 		removeButton.addEventListener("click", (e) => {
 			e.stopPropagation();
-			removeColumnWithTypeAndUpdateAll(form, column, type)
+			removeColumnWithTypeAndUpdateAll(form, column, type);
 		});
 		return removeButton;
 	}
@@ -947,8 +1104,8 @@
 		button.textContent = "Remove";
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
-			GDV.prefilter.removeFromPrefilterAndColumnsToDisplay(form, node);
-			updateExpressionRelatedSummariesAndWarning(form);
+			GDV.prefilter.removeInPrefilterAndColumnsToDisplay(form, node);
+			renderExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -961,7 +1118,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyNotToNode(node);
-			updateExpressionRelatedSummariesAndWarning(form);
+			renderExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -974,7 +1131,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyAndToNode(node);
-			updateExpressionRelatedSummariesAndWarning(form);
+			renderExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -987,7 +1144,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.applyOrToNode(node);
-			updateExpressionRelatedSummariesAndWarning(form);
+			renderExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -1000,7 +1157,7 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeIntoGroup(node);
-			updateExpressionRelatedSummariesAndWarning(form);
+			renderExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
@@ -1013,57 +1170,100 @@
 		button.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.moveNodeOutOfGroup(node);
-			updateExpressionRelatedSummariesAndWarning(form);
+			renderExpressionRelatedSummariesAndWarning(form);
 		});
 		return button;
 	}
 
 	function removeColumnWithTypeAndUpdateAll(form, column, type) {
-		clearActiveItemParametersWithType(form, column, type);
-		updateAllBasedFromActiveItemParametersChanges(form, column);
+		renderClearedPrefilterParametersWithType(form, column, type);
+		mutateAndRenderBasedFromPrefilterParameterChanges(form, column);
 	}
 
-	function updateAllBasedFromActiveItemParametersChanges(form, column) {
-		GDV.prefilter.updatePrefilterAndColumnsToDisplayForColumn(form, column);
-		updateExpressionRelatedSummariesAndWarning(form);
+	function mutateAndRenderBasedFromPrefilterParameterChanges(form, column) {
+		GDV.prefilter.mutateConditionsAndAstAndColumnsToDisplayForColumn(form, column);
+		renderExpressionRelatedSummariesAndWarning(form);
 	}
 
-	function updateExpressionRelatedSummariesAndWarning(form) {
-		updatePrefilterExpressionSummary(form);
-		updatePrefilterColumnsToDisplaySummary(form);
-		updatePrefilterWarning();
+	function renderAllSummariesAndWarning(form) {
+		renderPrefilterExpressionSummary(form);
+		renderPrefilterColumnsToDisplaySummary(form);
+		renderPrefilterTableSortSummary(form);
+		renderPrefilterSimilaritySummary(form);
+		renderPrefilterWarning();
 	}
 
-	function updateAllSummariesAndWarning(form) {
-		updatePrefilterExpressionSummary(form);
-		updatePrefilterColumnsToDisplaySummary(form);
-		updatePrefilterSimilaritySummary(form);
-		updatePrefilterWarning();
+	function renderExpressionRelatedSummariesAndWarning(form) {
+		renderPrefilterExpressionSummary(form);
+		renderPrefilterColumnsToDisplaySummary(form);
+		renderPrefilterWarning();
 	}
 
-	function updatePrefilterExpressionSummary(form) {
-		const activeItems = form.querySelector("#prefilter-active-items");
-		if (!activeItems) return;
+	function renderPrefilterWarning() {
+		if (!doesPrefilterOverlayExist()) return;
+		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
+		const hasFilters = Object.keys(prefilterConditions).length > 0;
+		if (hasFilters) {
+			hidePrefilterWarning();
+		} else {
+			showPrefilterWarning();
+		}
+	}
+
+	function renderPrefilterExpressionSummary(form) {
+		const selectItems = form.querySelector("#prefilter-select-items");
+		if (!selectItems) return;
 
 		const prefilterAst = GDV.prefilter.getPrefilterAst();
 		if (!prefilterAst) {
-			activeItems.replaceChildren();
+			selectItems.replaceChildren();
 			return;
 		}
 		const prefilterAstDisplay = createPrefilterAstDisplay(form, prefilterAst, prefilterAst);
 		if (prefilterAstDisplay) {
-			activeItems.replaceChildren(prefilterAstDisplay);
+			selectItems.replaceChildren(prefilterAstDisplay);
 		} else {
-			activeItems.replaceChildren();
+			selectItems.replaceChildren();
 		}
 		renderPrefilterAstToolbar(form);
 	}
+
+	function renderPrefilterColumnsToDisplaySummary(form) {
+		const columnsToDisplayItems = form.querySelector("#prefilter-columns-to-display-items");
+		if (!columnsToDisplayItems) return;
+		columnsToDisplayItems.replaceChildren();
+
+		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
+		columnsToDisplay.forEach((column, index) => {
+			columnsToDisplayItems.appendChild(createColumnsToDisplayItem(form, column, index, columnsToDisplay.length));
+		});
+	}
+
+	function renderPrefilterSimilaritySummary() {
+		GDV.dom.renderAllSimilarityGameInputs(GDV.prefilter.getSimilarityReferenceGame());
+		renderAllSimilarityScopeDropdowns(GDV.prefilter.getSimilarityComparisonScope());
+	}
+
+	function renderPrefilterTableSortSummary(form) {
+		renderPrefilterTableSortColumnDropDown(form);
+		renderPrefilterTableSortDirectionDropDown(form);
+	};
+
+	function renderPrefilterTableSortColumnDropDown(form) {
+		const select = form.querySelector(".table-sort-column-dropdown-select");
+		if (select) select.value = GDV.prefilter.getTableSortColumn();
+	};
+
+	function renderPrefilterTableSortDirectionDropDown(form) {
+		const select = form.querySelector(".table-sort-direction-dropdown-select");
+		if (select) select.value = GDV.prefilter.getTableSortDirection();
+	};
 
 	function createPrefilterAstDisplay(form, node, root) {
 		if (!node) return null;
 		switch (node.ast_type) {
 			case "VALUE":
-				return createPrefilterActiveItem(form, node);
+				return createPrefilterSelectItem(form, node);
 			case "NOT": {
 				const container = createPrefilterAstGroup(form, node);
 				container.appendChild(createAstOperator(form, node, "NOT"));
@@ -1128,8 +1328,8 @@
 		const oldIndex = columnsToDisplay.indexOf(column);
 		const newIndex = oldIndex + direction;
 		if (oldIndex === -1 || newIndex < 0 || newIndex >= columnsToDisplay.length) return;
-		GDV.prefilter.moveColumnsToDisplay(column, newIndex);
-		updatePrefilterColumnsToDisplaySummary(form);
+		GDV.prefilter.moveInColumnsToDisplay(column, newIndex);
+		renderPrefilterColumnsToDisplaySummary(form);
 		const item = Array.from(form.querySelectorAll(".prefilter-columns-to-display-item"))
 			.find((item) => item.dataset.column === column);
 		item?.focus();
@@ -1161,16 +1361,16 @@
 		toolbar.style.top = `${top}px`;
 	}
 
-	GDV.prefilter.clearActiveItemParameters = clearActiveItemParameters;
-	function clearActiveItemParameters(column) {
+	GDV.prefilter.renderClearedPrefilterParameters = renderClearedPrefilterParameters;
+	function renderClearedPrefilterParameters(column) {
 		const form = document.querySelector(".prefilter-form");
 		if (!form) return;
-		const activeItem = form.querySelector(`.prefilter-active-item[data-col="${column}"]`);
-		if (!activeItem) return;
-		clearActiveItemParametersWithType(form, column, activeItem.dataset.type);
+		const selectItem = form.querySelector(`.prefilter-select-item[data-col="${column}"]`);
+		if (!selectItem) return;
+		renderClearedPrefilterParametersWithType(form, column, selectItem.dataset.type);
 	}
 
-	function clearActiveItemParametersWithType(form, column, type) {
+	function renderClearedPrefilterParametersWithType(form, column, type) {
 		const colEsc = window.CSS && CSS.escape ? CSS.escape(column) : column;
 		if (type === "checkbox") {
 			form.querySelectorAll(`input[name="${colEsc}"]`).forEach((i) => {
@@ -1187,74 +1387,8 @@
 		}
 	}
 
-	function updatePrefilterColumnsToDisplaySummary(form) {
-		const columnsToDisplayItems = form.querySelector("#prefilter-columns-to-display-items");
-		if (!columnsToDisplayItems) return;
-		columnsToDisplayItems.replaceChildren();
-
-		const columnsToDisplay = GDV.prefilter.getColumnsToDisplay();
-		columnsToDisplay.forEach((column, index) => {
-			columnsToDisplayItems.appendChild(createColumnsToDisplayItem(form, column, index, columnsToDisplay.length));
-		});
-	}
-
-	GDV.prefilter.updatePrefilterSimilaritySummary = updatePrefilterSimilaritySummary;
-	function updatePrefilterSimilaritySummary() {
-		GDV.dom.syncSimilarityGameInputs(GDV.prefilter.getSimilarityReferenceGame());
-		syncSimilarityScopeDropdowns(GDV.prefilter.getSimilarityComparisonScope());
-	}
-
-	GDV.prefilter.updatePrefilterSimilarityReferenceGame = updatePrefilterSimilarityReferenceGame;
-	function updatePrefilterSimilarityReferenceGame(value) {
-		GDV.prefilter.setSimilarityReferenceGame(value);
-		GDV.dom.syncSimilarityGameInputs(value);
-	}
-
-	GDV.prefilter.updatePrefilterSimilarityComparisonScope = updatePrefilterSimilarityComparisonScope;
-	function updatePrefilterSimilarityComparisonScope(value) {
-		GDV.prefilter.setSimilarityComparisonScope(value);
-		syncSimilarityScopeDropdowns(value);
-	}
-
-	function syncSimilarityScopeDropdowns(value) {
-		GDV.dom.syncSimilarityScopeDropdowns(value || "All Categories");
-	}
-
-	function updatePrefilterWarning() {
-		if (!doesPrefilterOverlayExist()) return;
-		const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-		const hasFilters = Object.keys(prefilterConditions).length > 0;
-		if (hasFilters) {
-			hidePrefilterWarning();
-		} else {
-			showPrefilterWarning();
-		}
-	}
-
 	function doesPrefilterOverlayExist() {
 		return !!document.getElementById("prefilterOverlay");
-	}
-
-	function restoreAndUpdateFromState(form) {
-		restorePrefilterValuesFromState(form);
-		updateAllSummariesAndWarning(form);
-	}
-
-	function restorePrefilterValuesFromState(form) {
-		const previousPrefilterConditions = GDV.prefilter.getPrefilterConditions() || {};
-		const previousColumnsToDisplay = GDV.prefilter.getColumnsToDisplay() || [];
-		const statePrefilterConditions = structuredClone(GDV.state.getPrefilterConditions() || {});
-		const statePrefilterAst = structuredClone(GDV.state.getPrefilterAst());
-		const stateColumnsToDisplay = structuredClone(GDV.state.getColumnsToDisplay() || []);
-		GDV.prefilter.setPrefilterConditionsAndAst(statePrefilterConditions, statePrefilterAst);
-		GDV.prefilter.setColumnsToDisplay(stateColumnsToDisplay);
-		GDV.prefilter.setSimilarityCriteria(structuredClone(GDV.state.getSimilarityReferenceGame()), structuredClone(GDV.state.getSimilarityComparisonScope()));
-		for (const column of Object.keys(statePrefilterConditions)) {
-			GDV.prefilter.addColumnsToDisplay(column);
-		}
-
-		const allColumns = [...new Set([...Object.keys(previousPrefilterConditions), ...previousColumnsToDisplay, ...Object.keys(statePrefilterConditions), ...stateColumnsToDisplay])];
-		GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns(form, allColumns);
 	}
 
 	function handlePrefilterGridSearchInput(form) {
@@ -1360,11 +1494,11 @@
 				cards.style.display = "";
 			}
 		});
-		updatePrefilterGridLimitIndicator(form, hiddenPastLimit);
-		updatePrefilterGridNoResults(form, visibleCount);
+		renderPrefilterGridLimitIndicator(form, hiddenPastLimit);
+		renderPrefilterGridNoResults(form, visibleCount);
 	}
 
-	function updatePrefilterGridLimitIndicator(form, hiddenPastLimit) {
+	function renderPrefilterGridLimitIndicator(form, hiddenPastLimit) {
 		const indicator = form.querySelector(".prefilter-grid-limit-indicator");
 		if (!indicator) return;
 
@@ -1378,7 +1512,7 @@
 		indicator.style.display = count > 0 ? "" : "none";
 	}
 
-	function updatePrefilterGridNoResults(form, visibleCount) {
+	function renderPrefilterGridNoResults(form, visibleCount) {
 		const noResults = form.querySelector(".prefilter-grid-no-results");
 		if (!noResults) return;
 		const hasResults = visibleCount > 0;
@@ -1482,7 +1616,7 @@
 			const column = input.dataset.prefilterColumn;
 			if (!column) return;
 			if (input.type === "text" || input instanceof HTMLTextAreaElement || input.classList.contains("range-input-min") || input.classList.contains("range-input-max")) {
-				updateAllBasedFromActiveItemParametersChanges(form, column);
+				mutateAndRenderBasedFromPrefilterParameterChanges(form, column);
 			}
 		});
 
@@ -1491,7 +1625,7 @@
 			if (!(input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement)) return;
 			const column = input.dataset.prefilterColumn;
 			if (!column) return;
-			updateAllBasedFromActiveItemParametersChanges(form, column);
+			mutateAndRenderBasedFromPrefilterParameterChanges(form, column);
 		});
 	}
 
@@ -1499,7 +1633,7 @@
 		element.addEventListener("click", (e) => {
 			e.stopPropagation();
 			GDV.prefilter.setPrefilterAstCurrentNode(node);
-			updatePrefilterExpressionSummary(form);
+			renderPrefilterExpressionSummary(form);
 		});
 	}
 
@@ -1583,8 +1717,8 @@
 			const oldIndex = columnsToDisplay.indexOf(draggedColumn);
 			const newIndex = getColumnsToDisplayDropIndex(container, event.screenX, draggedColumn);
 			if (oldIndex === -1 || newIndex === oldIndex) return;
-			GDV.prefilter.moveColumnsToDisplay(draggedColumn, newIndex);
-			updatePrefilterColumnsToDisplaySummary(container.closest(".prefilter-form"));
+			GDV.prefilter.moveInColumnsToDisplay(draggedColumn, newIndex);
+			renderPrefilterColumnsToDisplaySummary(container.closest(".prefilter-form"));
 		});
 	}
 
@@ -1611,7 +1745,7 @@
 		const similarityInput = form.querySelector('input[name="prefilterSimilaritySearch"]');
 		if (!similarityInput) return;
 		const ghostText = similarityInput.parentElement.querySelector(".similarity-criteria-game-input-ghost");
-		commitSimilarityGameInput(similarityInput, ghostText);
+		commitSimilarityGameInput(form, similarityInput, ghostText);
 	}
 
 	function finalizeAndClose() {
@@ -1630,7 +1764,8 @@
 		GDV.state.setPrefilterConditions(structuredClone(GDV.prefilter.getPrefilterConditions()));
 		GDV.state.setPrefilterAst(structuredClone(GDV.prefilter.getPrefilterAst()));
 		GDV.state.setColumnsToDisplay(structuredClone(GDV.prefilter.getColumnsToDisplay()));
-		GDV.state.setSimilarityCriteria(structuredClone(GDV.prefilter.getSimilarityReferenceGame()), structuredClone(GDV.prefilter.getSimilarityComparisonScope()));
+		GDV.state.setTableSortParameters(GDV.prefilter.getTableSortColumn(), GDV.prefilter.getTableSortDirection());
+		GDV.state.setSimilarityCriteria(GDV.prefilter.getSimilarityReferenceGame(), GDV.prefilter.getSimilarityComparisonScope());
 	}
 
 	async function confirmPrefiltersWarning() {
@@ -1721,15 +1856,16 @@
 
 		// Reset and update
 		GDV.prefilter.resetPrefilterAndColumnsToDisplay();
+		GDV.prefilter.resetTableSortParameters();
 		GDV.prefilter.resetSimilarityCriteria();
-		updateAllSummariesAndWarning(form);
+		renderAllSummariesAndWarning(form);
 	}
 
 	function resetPrefilterCategory(form) {
 		const categorySelect = form.querySelector(".category-dropdown-select");
 		if (!categorySelect) return;
 		categorySelect.value = "All Categories";
-		updatePrefilterCategorySummary(form, categorySelect);
+		renderPrefilterCategorySummary(form, categorySelect);
 		updatePrefilterCards(form);
 	}
 

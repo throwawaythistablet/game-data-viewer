@@ -6,12 +6,13 @@
 			prefilterConditions: extractPrefilterConditions(params),
 			prefilterAst: extractPrefilterAst(params),
 			columnsToDisplay: extractColumnsToDisplay(params),
+			tableSortParameters: extractTableSortParameters(params),
 			similarityCriteria: extractSimilarityCriteria(params),
 		};
 	}
 
 	GDV.urlParameters.encodeDataAsUrlParameters = encodeDataAsUrlParameters;
-	function encodeDataAsUrlParameters(prefilterConditions, prefilterAst, columnsToDisplay, similarityCriteria) {
+	function encodeDataAsUrlParameters(prefilterConditions, prefilterAst, columnsToDisplay, tableSortParameters, similarityCriteria) {
 		const parts = [];
 		const pfPart = encodePrefilterConditions(prefilterConditions);
 		if (pfPart) {
@@ -25,6 +26,10 @@
 		if (cdPart) {
 			parts.push(cdPart);
 		}
+		const tsPart = encodeTableSortParameters(tableSortParameters);
+		if (tsPart) {
+			parts.push(tsPart);
+		}
 		const sgPart = encodeSimilarityCriteria(similarityCriteria);
 		if (sgPart) {
 			parts.push(sgPart);
@@ -32,7 +37,6 @@
 		return parts.join("&");
 	}
 
-	GDV.urlParameters.extractPrefilterConditions = extractPrefilterConditions;
 	function extractPrefilterConditions(params) {
 		if (params.pf) {
 			let pfObj = decodeBase64UrlJson(params.pf);
@@ -75,11 +79,23 @@
 		return null;
 	}
 
+	function extractTableSortParameters(params) {
+		if (params.ts) {
+			const tsObj = decodeBase64UrlJson(params.ts);
+			if (tsObj === null) {
+				GDV.utils.reportSoftWarning("Invalid URL Table Sort Parameter", "The URL contained an invalid 'ts' parameter and it will be ignored.");
+				return null;
+			}
+			return tsObj;
+		}
+		return null;
+	}
+
 	function extractSimilarityCriteria(params) {
 		if (params.sg) {
 			const sgObj = decodeBase64UrlJson(params.sg);
 			if (sgObj === null) {
-				GDV.utils.reportSoftWarning("Invalid URL Similarity Game Parameter", "The URL contained an invalid 'sg' parameter and it will be ignored.");
+				GDV.utils.reportSoftWarning("Invalid URL Similarity Criteria Parameter", "The URL contained an invalid 'sg' parameter and it will be ignored.");
 				return null;
 			}
 			if (typeof sgObj === "string") {
@@ -88,7 +104,7 @@
 			if (typeof sgObj === "object") {
 				return sgObj;
 			}
-			GDV.utils.reportSoftWarning("Similarity Game Parameter Ignored", "The type of similarity game was not recognized and was ignored.");
+			GDV.utils.reportSoftWarning("Similarity Criteria Parameter Ignored", "The type of similarity criteria was not recognized and was ignored.");
 			return null;
 		}
 		return null;
@@ -119,6 +135,15 @@
 		const encoded = encodeJsonToBase64Url(columnsToDisplay);
 		if (!encoded) return null;
 		return `cd=${encoded}`;
+	}
+
+	function encodeTableSortParameters(tableSortParameters) {
+		if (!tableSortParameters || typeof tableSortParameters !== "object" || Object.keys(tableSortParameters).length === 0) {
+			return null;
+		}
+		const encoded = encodeJsonToBase64Url(tableSortParameters);
+		if (!encoded) return null;
+		return `ts=${encoded}`;
 	}
 
 	function encodeSimilarityCriteria(similarityCriteria) {
@@ -313,20 +338,13 @@
 	}
 
 	function normalizeSimilarityReferenceGame(similarityReferenceGame) {
-		if (similarityReferenceGame == null) {
-			return null;
-		}
-		if (typeof similarityReferenceGame !== "string") {
-			GDV.utils.reportSoftWarning("Similarity Game Parameter Ignored", "The similarity game given is not a string and was ignored.");
-			return null;
-		}
 		const normalized = similarityReferenceGame.trim();
 		if (normalized.length === 0) {
 			return null;
 		}
 		const MAX_LENGTH = 200;
 		if (normalized.length > MAX_LENGTH) {
-			GDV.utils.reportSoftWarning("Similarity Game Parameter Ignored", "The similarity game string was too long and was ignored.");
+			GDV.utils.reportSoftWarning("Similarity Criteria Parameter Ignored", "The similarity game string was too long and was ignored.");
 			return null;
 		}
 		return normalized;

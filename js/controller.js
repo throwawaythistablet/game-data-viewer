@@ -388,12 +388,13 @@
 	}
 
 	async function applyUrlPrefiltersOrPrompt() {
-		let { prefilterConditions = null, prefilterAst = null, columnsToDisplay = null, similarityCriteria = null } = GDV.urlParameters.getDataFromUrlParameters();
+		let { prefilterConditions = null, prefilterAst = null, columnsToDisplay = null, tableSortParameters = null, similarityCriteria = null } = GDV.urlParameters.getDataFromUrlParameters();
 		const hasConditions = prefilterConditions && Object.keys(prefilterConditions).length > 0;
 		let hasAst = prefilterAst && (typeof prefilterAst === "object") && Object.keys(prefilterAst).length > 0;
 		const hasColumnsToDisplay = Array.isArray(columnsToDisplay) && columnsToDisplay.length > 0;
+		const hasTableSortParameters = tableSortParameters && (typeof tableSortParameters === "object") && Object.keys(tableSortParameters).length > 0;
 		const hasSimilarityCriteria = similarityCriteria && (typeof similarityCriteria === "object") && Object.keys(similarityCriteria).length > 0;
-		const bannerMessage = getUrlParameterMessage(hasConditions, hasAst, hasColumnsToDisplay, hasSimilarityCriteria);
+		const bannerMessage = getUrlParameterMessage(hasConditions, hasAst, hasColumnsToDisplay, hasTableSortParameters, hasSimilarityCriteria);
 
 		if (hasConditions && !hasAst) {
 			prefilterAst = GDV.prefilter.createPrefilterAstFromConditions(prefilterConditions);
@@ -413,6 +414,17 @@
 		if (hasColumnsToDisplay) {
 			applied = true;
 			GDV.state.setColumnsToDisplay(GDV.prefilter.completeColumnsToDisplay(columnsToDisplay, prefilterConditions));
+		}
+		if (hasTableSortParameters) {
+			applied = true;
+			const tableSortColumn = tableSortParameters?.tableSortColumn;
+			if (tableSortColumn) {
+				GDV.state.setTableSortColumn(tableSortColumn);
+			}
+			const tableSortDirection = tableSortParameters?.tableSortDirection;
+			if (tableSortDirection) {
+				GDV.state.setTableSortDirection(tableSortDirection);
+			}
 		}
 		if (hasSimilarityCriteria) {
 			applied = true;
@@ -435,7 +447,7 @@
 		}
 	}
 
-	function getUrlParameterMessage(hasConditions, hasAst, hasColumnsToDisplay, hasSimilarityCriteria) {
+	function getUrlParameterMessage(hasConditions, hasAst, hasColumnsToDisplay, hasTableSortParameters, hasSimilarityCriteria) {
 		const appliedListParts = [];
 		if (hasConditions) {
 			appliedListParts.push("Prefilter Conditions");
@@ -446,8 +458,11 @@
 		if (hasColumnsToDisplay) {
 			appliedListParts.push("Columns To Display");
 		}
+		if (hasTableSortParameters) {
+			appliedListParts.push("Table Sort Parameters");
+		}
 		if (hasSimilarityCriteria) {
-			appliedListParts.push("Similarity Game");
+			appliedListParts.push("Similarity Criteria");
 		}
 		const appliedList = appliedListParts.join(" & ");
 		return `${appliedList} found in the URL. Applying now and performing an automatic search.`

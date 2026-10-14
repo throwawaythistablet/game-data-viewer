@@ -154,7 +154,7 @@
 		const container = document.createElement("div");
 		container.id = "mainPrefiltersPanel";
 		container.className = "prefilter-main-panel";
-		container.appendChild(createShareUrlButton());
+		container.appendChild(createDomShareUrlButton());
 		container.appendChild(createMainPanelSimilarityGameSection());
 		container.appendChild(createLastSearchedPrefiltersSection());
 		marker.replaceChildren(container);
@@ -342,25 +342,13 @@
 		}
 	}
 
-	function createShareUrlButton() {
+	function createDomShareUrlButton() {
 		const shareBtn = document.createElement("button");
-		shareBtn.className = "btn";
+		shareBtn.className = "btn btn-gray";
 		shareBtn.textContent = "Copy Shareable URL";
 		shareBtn.addEventListener("click", async () => {
 			try {
-				const lastSearchParameters = GDV.state.getLastSearchParameters();
-				const prefilterConditions = lastSearchParameters.prefilterConditions;
-				const prefilterAst = lastSearchParameters.prefilterAst;
-				const reducedSimilarityCriteria = GDV.prefilter.cleanSimilarityCriteria({ referenceGame: lastSearchParameters.similarityReferenceGame, comparisonScope: lastSearchParameters.similarityComparisonScope });
-				const reducedColumnsToDisplay = GDV.prefilter.removeRedundantColumnsToDisplay(lastSearchParameters.columnsToDisplay, prefilterConditions);
-				const encoded = GDV.urlParameters.encodeDataAsUrlParameters(prefilterConditions, prefilterAst, reducedColumnsToDisplay, reducedSimilarityCriteria);
-				if (!encoded && encoded !== "") {
-					GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode the data for sharing.");
-					return;
-				}
-
-				const baseUrl = "https://throwawaythistablet.github.io/game-data-viewer/";
-				const shareUrl = encoded ? `${baseUrl}?${encoded}` : baseUrl;
+				const shareUrl = GDV.utils.createShareUrl(GDV.state.getLastSearchParameters());
 				await navigator.clipboard.writeText(shareUrl);
 				GDV.utils.showInfoBanner("Shareable URL Copied", "The shareable URL has been copied to your clipboard.");
 			} catch (err) {
@@ -370,19 +358,19 @@
 		return shareBtn;
 	}
 
-	GDV.dom.resetSimilarityGameInputs = () => {
+	GDV.dom.renderResetAllSimilarityGameInputs = () => {
 		document.querySelectorAll(".similarity-criteria-game-input").forEach((input) => {
 			input.value = "";
 		});
 	};
 
-	GDV.dom.syncSimilarityGameInputs = (value) => {
+	GDV.dom.renderAllSimilarityGameInputs = (value) => {
 		document.querySelectorAll(".similarity-criteria-game-input").forEach((input) => {
 			input.value = value;
 		});
 	};
 
-	GDV.dom.syncSimilarityScopeDropdowns = (value) => {
+	GDV.dom.renderAllSimilarityScopeDropdowns = (value) => {
 		document.querySelectorAll(".similarity-scope-dropdown-select").forEach((select) => {
 			select.value = value;
 		});
@@ -404,7 +392,7 @@
 			container.appendChild(gamelabel);
 
 			const gameValue = document.createElement("span");
-			gameValue.className = "prefilter-similarity-active-item";
+			gameValue.className = "prefilter-similarity-select-item";
 			gameValue.title = similarityReferenceGame;
 			gameValue.textContent = similarityReferenceGame;
 			container.appendChild(gameValue);
@@ -417,7 +405,7 @@
 				container.appendChild(scopelabel);
 
 				const scopeValue = document.createElement("span");
-				scopeValue.className = "prefilter-similarity-active-item";
+				scopeValue.className = "prefilter-similarity-select-item";
 				scopeValue.title = similarityComparisonScope;
 				scopeValue.textContent = similarityComparisonScope;
 				container.appendChild(scopeValue);
@@ -449,7 +437,7 @@
 		if (!node) return null;
 		switch (node.ast_type) {
 			case "VALUE":
-				return createPrefilterActiveItem(node);
+				return createPrefilterSelectItem(node);
 			case "NOT": {
 				const container = createPrefilterAstGroup();
 				container.appendChild(createAstOperator("NOT"));
@@ -483,21 +471,21 @@
 		return astGroup;
 	}
 
-	function createPrefilterActiveItem(node) {
+	function createPrefilterSelectItem(node) {
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const column = node.column;
 		const value = prefilterConditions[column];
 		if (!value) return null;
 
-		const activeItem = document.createElement("span");
-		activeItem.className = "prefilter-active-item";
-		activeItem.dataset.col = column;
+		const selectItem = document.createElement("span");
+		selectItem.className = "prefilter-select-item";
+		selectItem.dataset.col = column;
 		const text = GDV.prefilter.getPrefilterDisplayText(column, value) || "";
-		activeItem.textContent = `${text} `;
-		activeItem.title = GDV.datatable.getColumnDescription(column) || "";
-		activeItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(value) || "";
+		selectItem.textContent = `${text} `;
+		selectItem.title = GDV.datatable.getColumnDescription(column) || "";
+		selectItem.dataset.type = GDV.prefilter.getPrefilterDisplayType(value) || "";
 
-		return activeItem;
+		return selectItem;
 	}
 
 	function createAstOperator(type) {

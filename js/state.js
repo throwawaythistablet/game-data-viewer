@@ -1,7 +1,9 @@
 (() => {
 	let csvFile = null;
 	let columnDetails = {};
-	let visibleColumnSet = new Set();
+	let nonTagColumnsSet = null;
+	let includedColumnSet = null;
+	let visibleColumnSet = null;
 	let gameKeys = null;
 	let columnCategoryDetails = {};
 	let columnToCategories = {};
@@ -13,6 +15,8 @@
 	let prefilterConditions = {};
 	let prefilterAst = null;
 	let columnsToDisplay = null;
+	let tableSortColumn = null;
+	let tableSortDirection = null;
 	let similarityReferenceGame = null;
 	let similarityComparisonScope = null;
 	let lastSearchParameters = null;
@@ -27,10 +31,33 @@
 
 	GDV.state.setColumnDetails = (columnDetails_) => {
 		columnDetails = columnDetails_;
-		visibleColumnSet = new Set(Object.entries(columnDetails || {}).filter(([, detail]) => detail?.is_visible === true).map(([column]) => column));
-	};
+		setOtherValuesFromColumnDetails(columnDetails)
+	}
+
+	GDV.state.setOtherValuesFromColumnDetails = setOtherValuesFromColumnDetails;
+	function setOtherValuesFromColumnDetails(columnDetails) {
+		nonTagColumnsSet = new Set();
+		includedColumnSet = new Set();
+		visibleColumnSet = new Set();
+		for (const [column, detail] of Object.entries(columnDetails || {})) {
+			if (detail?.type !== "tag") {
+				nonTagColumnsSet.add(column);
+			}
+			const table_content = detail?.table_content;
+			if (table_content === "shown") {
+				includedColumnSet.add(column);
+				visibleColumnSet.add(column);
+			} else if (table_content === "included") {
+				includedColumnSet.add(column);
+			}
+		}
+	}
 
 	GDV.state.hasValidColumnDetails = () => columnDetails && Object.keys(columnDetails).length > 0;
+
+	GDV.state.getNonTagColumnsSet = () => nonTagColumnsSet;
+
+	GDV.state.getIncludedColumnSet = () => includedColumnSet;
 
 	GDV.state.getVisibleColumnSet = () => visibleColumnSet;
 
@@ -100,6 +127,43 @@
 		columnsToDisplay = columnsToDisplay_;
 	};
 
+	GDV.state.getTableSortParameters = () => {
+		if (!tableSortColumn && !tableSortDirection) {
+			return null;
+		}
+		return { tableSortColumn, tableSortDirection };
+	};
+
+	GDV.state.setTableSortParameters = (tableSortColumn_, tableSortDirection_) => {
+		tableSortColumn = tableSortColumn_;
+		tableSortDirection = tableSortDirection_;
+	};
+
+	GDV.state.resetTableSortParameters = () => {
+		tableSortColumn = null;
+		tableSortDirection = null;
+	};
+
+	GDV.state.getTableSortColumn = () => tableSortColumn;
+
+	GDV.state.setTableSortColumn = (tableSortColumn_) => {
+		tableSortColumn = tableSortColumn_ || null;
+	};
+
+	GDV.state.resetTableSortColumn = () => {
+		tableSortColumn = null;
+	};
+
+	GDV.state.getTableSortDirection = () => tableSortDirection;
+
+	GDV.state.setTableSortDirection = (tableSortDirection_) => {
+		tableSortDirection = tableSortDirection_ || null;
+	};
+
+	GDV.state.resetTableSortDirection = () => {
+		tableSortDirection = null;
+	};
+
 	GDV.state.getSimilarityCriteria = () => {
 		if (!similarityReferenceGame && !similarityComparisonScope) {
 			return null;
@@ -107,14 +171,14 @@
 		return { referenceGame: similarityReferenceGame, comparisonScope: similarityComparisonScope };
 	};
 
-	GDV.state.resetSimilarityCriteria = () => {
-		similarityReferenceGame = null;
-		similarityComparisonScope = null;
-	};
-
 	GDV.state.setSimilarityCriteria = (similarityReferenceGame_, similarityComparisonScope_) => {
 		similarityReferenceGame = similarityReferenceGame_;
 		similarityComparisonScope = similarityComparisonScope_;
+	};
+
+	GDV.state.resetSimilarityCriteria = () => {
+		similarityReferenceGame = null;
+		similarityComparisonScope = null;
 	};
 
 	GDV.state.getSimilarityReferenceGame = () => similarityReferenceGame;
@@ -144,8 +208,10 @@
 			prefilterConditions: structuredClone(prefilterConditions),
 			prefilterAst: structuredClone(prefilterAst),
 			columnsToDisplay: structuredClone(columnsToDisplay),
-			similarityReferenceGame: structuredClone(similarityReferenceGame),
-			similarityComparisonScope: structuredClone(similarityComparisonScope)
+			tableSortColumn,
+			tableSortDirection,
+			similarityReferenceGame,
+			similarityComparisonScope,
 		};
 	};
 

@@ -1,5 +1,6 @@
 (() => {
 	const BRACKET_RE = /\s*\[[^\]]*\]/g;
+	const SIMILARITY_SCORE_NAME = "similarity_score";
 
 	GDV.utils.logInformation = logInformation;
 	function logInformation(level, label, description, context) {
@@ -307,6 +308,11 @@
 		return text.replace(/<[^>]*>/g, "").trim();
 	}
 
+	GDV.utils.getSimilarityScoreName = getSimilarityScoreName;
+	function getSimilarityScoreName() {
+		return SIMILARITY_SCORE_NAME;
+	}
+
 	GDV.utils.normalizeFilterName = (columnName) => {
 		const separatorIndex = columnName.indexOf(": ");
 		return separatorIndex !== -1 ? columnName.slice(separatorIndex + 2) : columnName;
@@ -319,7 +325,7 @@
 		const categoryPrefix = columnCategoryDetails[category]?.prefix;
 		const isAllCategories = category === "All Categories";
 		return { category, isAllCategories, categoryPrefix, columnToCategories };
-	}
+	};
 
 	GDV.utils.isACategoryMatch = (columnName, categoryMatchDetails) => {
 		if (categoryMatchDetails.isAllCategories) {
@@ -332,6 +338,74 @@
 		return (categoryMatchDetails.columnToCategories[filterName]?.categories || []).includes(
 			categoryMatchDetails.category
 		);
+	};
+
+	GDV.utils.createShareUrl = (searchParameters) => {
+		const prefilterConditions = searchParameters.prefilterConditions;
+		const prefilterAst = searchParameters.prefilterAst;
+		const reducedColumnsToDisplay = reduceColumnsToDisplay(searchParameters.columnsToDisplay, prefilterConditions);
+		const reducedTableSortParameters = reduceTableSortParameters({ tableSortColumn: searchParameters.tableSortColumn, tableSortDirection: searchParameters.tableSortDirection });
+		const reducedSimilarityCriteria = reduceSimilarityCriteria({ referenceGame: searchParameters.similarityReferenceGame, comparisonScope: searchParameters.similarityComparisonScope });
+		const encoded = GDV.urlParameters.encodeDataAsUrlParameters(prefilterConditions, prefilterAst, reducedColumnsToDisplay, reducedTableSortParameters, reducedSimilarityCriteria);
+		if (!encoded && encoded !== "") {
+			GDV.utils.reportSoftWarning("URL Encoding Failed", "Unable to encode the data for sharing.");
+			return;
+		}
+		const baseUrl = "https://throwawaythistablet.github.io/game-data-viewer/";
+		return encoded ? `${baseUrl}?${encoded}` : baseUrl;
+	};
+
+	function reduceColumnsToDisplay(columnsToDisplay, prefilterConditions) {
+		return removeRedundantColumnsToDisplay(columnsToDisplay, prefilterConditions);
+	}
+
+	function removeRedundantColumnsToDisplay(columnsToDisplay, prefilterConditions) {
+		if (!columnsToDisplay || (Array.isArray(columnsToDisplay) && columnsToDisplay.length === 0)) {
+			return null;
+		}
+		const prefilterColumns = Object.keys(prefilterConditions || {});
+		let columnsToDisplayIndex = columnsToDisplay.length - 1;
+		let prefilterColumnsIndex = prefilterColumns.length - 1;
+
+		while (
+			columnsToDisplayIndex >= 0 &&
+			prefilterColumnsIndex >= 0 &&
+			columnsToDisplay[columnsToDisplayIndex] === prefilterColumns[prefilterColumnsIndex]
+		) {
+			columnsToDisplayIndex--;
+			prefilterColumnsIndex--;
+		}
+
+		const remainingColumns = columnsToDisplay.slice(0, columnsToDisplayIndex + 1);
+		return remainingColumns.length > 0 ? remainingColumns : null;
+	};
+
+	function reduceTableSortParameters(tableSortParameters) {
+		if (!tableSortParameters) return null;
+		if (!tableSortParameters.tableSortColumn) {
+			delete tableSortParameters.tableSortColumn;
+		}
+		if (!tableSortParameters.tableSortDirection || tableSortParameters.tableSortDirection === "Descending") {
+			delete tableSortParameters.tableSortDirection;
+		}
+		if (Object.keys(tableSortParameters).length === 0) {
+			return null;
+		}
+		return tableSortParameters;
+	};
+
+	function reduceSimilarityCriteria(similarityCriteria) {
+		if (!similarityCriteria) return null;
+		if (!similarityCriteria.referenceGame) {
+			delete similarityCriteria.referenceGame;
+		}
+		if (!similarityCriteria.comparisonScope || similarityCriteria.comparisonScope === "All Categories") {
+			delete similarityCriteria.comparisonScope;
+		}
+		if (Object.keys(similarityCriteria).length === 0) {
+			return null;
+		}
+		return similarityCriteria;
 	};
 
 	GDV.utils.downloadBlob = (blob, filename) => {
@@ -407,7 +481,7 @@
 
 	GDV.utils.convertJsonObjectToMap = (object) => {
 		return new Map(Object.entries(object));
-	}
+	};
 
 	GDV.utils.convertJsonObjectToRegexMap = (object, maxLength = Infinity) => {
 		return new Map(

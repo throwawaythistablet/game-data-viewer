@@ -185,7 +185,7 @@
 	function buildDataColumns(columnNamesInTable) {
 		const prefilterConditions = GDV.state.getPrefilterConditions() || {};
 		const columnsToDisplay = GDV.state.getColumnsToDisplay() || [];
-		const prioritizedColumnSet = GDV.tableGenerator.getPrioritizedColumnSet();
+		const prioritizedColumnSet = GDV.tableGenerator.getPrioritizedColumnSet(GDV.state.getTableSortColumn(), GDV.state.getSimilarityReferenceGame());
 		const displayColumnSet = new Set(columnsToDisplay);
 		const tableColumnSet = new Set(columnNamesInTable);
 
@@ -194,11 +194,13 @@
 		const prefilterColumns = Object.keys(prefilterConditions).filter((column) => tableColumnSet.has(column));
 		const resultColumns = [...new Set([...prioritizedColumns, ...displayColumns, ...prefilterColumns, ...columnNamesInTable])];
 
-		const similarityScoreName = GDV.tableGenerator.getSimilarityScoreName();
+		const tableSortColumn = GDV.state.getTableSortColumn();
+		const similarityScoreName = GDV.utils.getSimilarityScoreName();
 		return resultColumns.map((columnName) => {
 			const isTealHighlight = similarityScoreName === columnName;
-			const isYellowHighlight = !isTealHighlight && prioritizedColumnSet.has(columnName);
-			const isWhiteHighlight = !isTealHighlight && !isYellowHighlight && (displayColumnSet.has(columnName) || !!prefilterConditions[columnName]);
+			const isGreenHighlight = !isTealHighlight && tableSortColumn === columnName;
+			const isYellowHighlight = !isTealHighlight && !isGreenHighlight && prioritizedColumnSet.has(columnName);
+			const isWhiteHighlight = !isTealHighlight && !isGreenHighlight && !isYellowHighlight && (displayColumnSet.has(columnName) || !!prefilterConditions[columnName]);
 			return {
 				title: columnName,
 				data: columnName,
@@ -206,6 +208,8 @@
 				createdCell: (td) => {
 					if (isTealHighlight) {
 						td.classList.add("teal-highlight");
+					} else if (isGreenHighlight) {
+						td.classList.add("green-highlight");
 					} else if (isYellowHighlight) {
 						td.classList.add("yellow-highlight");
 					} else if (isWhiteHighlight) {
@@ -213,6 +217,7 @@
 					}
 				},
 				teal_highlight: isTealHighlight,
+				green_highlight: isGreenHighlight,
 				white_highlight: isWhiteHighlight,
 				yellow_highlight: isYellowHighlight,
 			};
@@ -271,6 +276,8 @@
 			th.dataset.columnKey = column.data;
 			if (column.teal_highlight) {
 				th.classList.add("teal-highlight");
+			} else if (column.green_highlight) {
+				th.classList.add("green-highlight");
 			} else if (column.yellow_highlight) {
 				th.classList.add("yellow-highlight");
 			} else if (column.white_highlight) {
@@ -283,6 +290,8 @@
 			filterTh.dataset.columnKey = column.data;
 			if (column.teal_highlight) {
 				filterTh.classList.add("teal-highlight");
+			} else if (column.green_highlight) {
+				filterTh.classList.add("green-highlight");
 			} else if (column.yellow_highlight) {
 				filterTh.classList.add("yellow-highlight");
 			} else if (column.white_highlight) {
@@ -297,7 +306,7 @@
 	}
 
 	function initializeDataTableWithOptions(data, columns) {
-		const sortColumnName = getDefaultSortColumnName();
+		const sortColumnName = getTableSortColumn();
 		let sortColumnIndex = findIndexOfColumnByNameInColumns(columns, sortColumnName);
 		if (isInvalidColumnIndex(sortColumnIndex)) {
 			GDV.utils.reportSoftWarning("Invalid Column Index", `Cannot sort by "${sortColumnName}": the column index is missing or invalid.`);
@@ -318,7 +327,7 @@
 				columnDefs: [{ type: "html-num", targets: numericColumnIndexes }],
 				paging: true,
 				pageLength: 100,
-				order: [[sortColumnIndex, "desc"]],
+				order: [[sortColumnIndex, getTableSortDirection()]],
 				lengthMenu: [
 					[50, 100, 200, 500, 1000],
 					[50, 100, 200, 500, 1000],
@@ -509,13 +518,16 @@
 		const nearest = GDV.utils.findNearestGameKey(query);
 		similarityInput.value = nearest;
 		ghostText.textContent = "";
-		GDV.prefilter.updatePrefilterSimilarityReferenceGame(nearest);
+		const form = document.querySelector(".prefilter-form");
+		GDV.prefilter.setAndRenderPrefilterSimilarityReferenceGame(form, nearest);
 	}
 
 	function resetSimilarityBecauseOfEmptyInput(ghostText) {
 		ghostText.textContent = "";
 		GDV.prefilter.resetSimilarityReferenceGame();
-		GDV.dom.resetSimilarityGameInputs();
+		GDV.dom.renderResetAllSimilarityGameInputs();
+		const form = document.querySelector(".prefilter-form");
+		GDV.prefilter.mutateAndRenderSimilarityScoreNameFromSimilarityChange(form);
 	}
 
 	function flushAndCommitSimilarityGameInput() {
@@ -543,7 +555,7 @@
 		}
 
 		select.addEventListener("change", () => {
-			GDV.prefilter.updatePrefilterSimilarityComparisonScope(select.value);
+			GDV.prefilter.setAndRenderPrefilterSimilarityComparisonScope(select.value);
 		});
 		return select;
 	}
@@ -1124,7 +1136,20 @@
 	}
 
 	function sortTable() {
-		sortTableByColumn(getDefaultSortColumnName(), "desc");
+		sortTableByColumn(getTableSortColumn(), getTableSortDirection());
+	}
+
+	function getTableSortColumn() {
+		const tableSortColumn = GDV.state.getTableSortColumn();
+		if (tableSortColumn) return tableSortColumn;
+		if (GDV.state.getSimilarityReferenceGame()) {
+			return GDV.utils.getSimilarityScoreName();
+		}
+		return "bayesian_rating";
+	}
+
+	function getTableSortDirection() {
+		return GDV.state.getTableSortDirection() === "Ascending" ? "asc" : "desc";
 	}
 
 	function sortTableByColumn(columnName, order) {
@@ -1135,10 +1160,6 @@
 		}
 		const dt = csvTableElement.DataTable();
 		dt.order([[columnIndex, order]]).draw();
-	}
-
-	function getDefaultSortColumnName() {
-		return GDV.state.getSimilarityReferenceGame() ? GDV.tableGenerator.getSimilarityScoreName() : "bayesian_rating";
 	}
 
 	function createExcelHyperlinkNode(text) {

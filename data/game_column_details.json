@@ -1,31 +1,32 @@
 {
   "key": {
     "type": "str",
+    "table_content": "shown",
     "choices": [],
-    "is_visible": true,
     "description": "Unique identifier for the game, includes the title and developer in brackets."
   },
   "similarity_score": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": 0,
     "max": 100,
-    "is_visible": true,
     "description": "Numeric score representing the similarity of this game to the selected reference game, where 0 means no similarity and 100 means identical."
   },
   "status": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "Abandoned",
       "Completed",
       "Ongoing",
       "Onhold"
     ],
-    "is_visible": true,
     "description": "Current development status of the game (e.g., Abandoned, Completed, Ongoing, Onhold)."
   },
   "engine": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "ADRIFT",
       "Collection",
@@ -45,27 +46,27 @@
       "WebGL",
       "Wolf RPG"
     ],
-    "is_visible": true,
     "description": "The game engine used (e.g., Ren’Py, Unity)."
   },
   "bayesian_rating": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": 0,
     "max": 100,
-    "is_visible": true,
     "description": "Bayesian estimate of overall game quality based on F95 and VNDB ratings, weighted by rating confidence and review volume."
   },
   "play_time_hours": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": 0.0,
     "max": 240.0,
-    "is_visible": true,
     "description": "Estimated time to play the game, in hours."
   },
   "play_time_label": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "1. Very Long Game",
       "2. Long Game",
@@ -73,19 +74,19 @@
       "4. Short Game",
       "5. Unknown Length"
     ],
-    "is_visible": true,
     "description": "Human-readable label describing the estimated play time of the game (e.g., Short, Medium, Long, Very Long)."
   },
   "overall_sentiment": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": -100,
     "max": 100,
-    "is_visible": true,
     "description": "Aggregated sentiment score for the game based on user feedback and reviews."
   },
   "overall_sentiment_label": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "1. Very Positive",
       "2. Positive",
@@ -96,19 +97,19 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
-    "is_visible": true,
     "description": "Human-readable label for the overall sentiment score"
   },
   "art_sentiment": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": -100,
     "max": 100,
-    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s visual presentation, art style, animations, and overall visual quality."
   },
   "art_sentiment_label": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "1. Very Positive",
       "2. Positive",
@@ -119,19 +120,19 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
-    "is_visible": true,
     "description": "Human-readable label for the art sentiment score"
   },
   "story_sentiment": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": -100,
     "max": 100,
-    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s story, writing quality, characters, pacing, and narrative structure."
   },
   "story_sentiment_label": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "1. Very Positive",
       "2. Positive",
@@ -142,19 +143,19 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
-    "is_visible": true,
     "description": "Human-readable label for the story sentiment score."
   },
   "content_sentiment": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": -100,
     "max": 100,
-    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s content, including themes, fetishes/tags, variety, and depth of available content."
   },
   "content_sentiment_label": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "1. Very Positive",
       "2. Positive",
@@ -165,19 +166,19 @@
       "7. Mildly Negative",
       "8. Negative"
     ],
-    "is_visible": true,
     "description": "Human-readable label for the content sentiment score."
   },
   "gameplay_sentiment": {
     "type": "float",
+    "table_content": "shown",
     "choices": [],
     "min": -100,
     "max": 100,
-    "is_visible": true,
     "description": "Sentiment score reflecting opinions on the game’s mechanics, controls, level design, difficulty, and overall gameplay experience."
   },
   "gameplay_sentiment_label": {
     "type": "str",
+    "table_content": "shown",
     "choices": [
       "1. Very Positive",
       "2. Positive",
@@ -189,7 +190,6 @@
       "8. Negative",
       "9. Very Negative"
     ],
-    "is_visible": true,
     "description": "Human-readable label for the gameplay sentiment score."
   },
   "site_rating": {
@@ -285,8 +285,8 @@
   },
   "url": {
     "type": "str",
+    "table_content": "included",
     "choices": [],
-    "is_visible": true,
     "description": "Direct link to the game’s thread or page on the source site."
   },
   "site_last_update_date": {
@@ -306,8 +306,8 @@
   },
   "vndb_url": {
     "type": "str",
+    "table_content": "included",
     "choices": [],
-    "is_visible": true,
     "description": "Direct link to the game’s page on VNDB."
   },
   "vndb_last_visit": {

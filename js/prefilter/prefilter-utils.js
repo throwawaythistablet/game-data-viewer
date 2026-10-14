@@ -56,27 +56,6 @@
 		return true;
 	};
 
-	GDV.prefilter.removeRedundantColumnsToDisplay = (columnsToDisplay, prefilterConditions) => {
-		if (!columnsToDisplay || (Array.isArray(columnsToDisplay) && columnsToDisplay.length === 0)) {
-			return null;
-		}
-		const prefilterColumns = Object.keys(prefilterConditions || {});
-		let columnsToDisplayIndex = columnsToDisplay.length - 1;
-		let prefilterColumnsIndex = prefilterColumns.length - 1;
-
-		while (
-			columnsToDisplayIndex >= 0 &&
-			prefilterColumnsIndex >= 0 &&
-			columnsToDisplay[columnsToDisplayIndex] === prefilterColumns[prefilterColumnsIndex]
-		) {
-			columnsToDisplayIndex--;
-			prefilterColumnsIndex--;
-		}
-
-		const remainingColumns = columnsToDisplay.slice(0, columnsToDisplayIndex + 1);
-		return remainingColumns.length > 0 ? remainingColumns : null;
-	};
-
 	GDV.prefilter.completeColumnsToDisplay = (columnsToDisplay, prefilterConditions) => {
 		const completedColumnsToDisplay = Array.isArray(columnsToDisplay) ? [...columnsToDisplay] : [];
 		const columnsToDisplaySet = new Set(completedColumnsToDisplay);
@@ -87,20 +66,6 @@
 			}
 		}
 		return completedColumnsToDisplay;
-	};
-
-	GDV.prefilter.cleanSimilarityCriteria = (similarityCriteria) => {
-		if (!similarityCriteria) return null;
-		if (!similarityCriteria.referenceGame) {
-			delete similarityCriteria.referenceGame;
-		}
-		if (!similarityCriteria.comparisonScope || similarityCriteria.comparisonScope === "All Categories") {
-			delete similarityCriteria.comparisonScope;
-		}
-		if (Object.keys(similarityCriteria).length === 0) {
-			return null;
-		}
-		return similarityCriteria;
 	};
 
 	GDV.prefilter.getPrefilterDisplayText = (column, value) => {

@@ -1,9 +1,7 @@
 (() => {
-	const SIMILARITY_SCORE_NAME = "similarity_score";
-	const PRIORITIZED_COLUMNS_SET = new Set(["key", SIMILARITY_SCORE_NAME]);
 	const SIMILARITY_EXCLUDED_COLUMNS = new Set([
 		"key",
-		getSimilarityScoreName(),
+		GDV.utils.getSimilarityScoreName(),
 		"platforms",
 		"language",
 		"title",
@@ -17,22 +15,22 @@
 		"vndb_last_visit"
 	]);
 
-	GDV.tableGenerator.getSimilarityScoreName = getSimilarityScoreName;
-	function getSimilarityScoreName() {
-		return SIMILARITY_SCORE_NAME;
-	}
-
 	GDV.tableGenerator.getPrioritizedColumnSet = getPrioritizedColumnSet;
-	function getPrioritizedColumnSet() {
-		return PRIORITIZED_COLUMNS_SET;
+	function getPrioritizedColumnSet(tableSortColumn, similarityReferenceGame) {
+		if (!tableSortColumn && similarityReferenceGame) {
+			return new Set(["key", GDV.utils.getSimilarityScoreName()]);
+		}
+		return new Set(["key"]);
 	}
 
-	function createDataTableColumnsSet(columnsToDisplay, prefilterConditions) {
+	function createDataTableColumnsSet(columnsToDisplay, prefilterConditions, tableSortColumn, similarityReferenceGame) {
 		return new Set([
 			...GDV.tableGenerator.getPrioritizedColumnSet(),
 			...(columnsToDisplay || []),
 			...Object.keys(prefilterConditions || {}),
-			...GDV.state.getVisibleColumnSet(),
+			...(tableSortColumn ? [tableSortColumn] : []),
+			...(similarityReferenceGame ? [GDV.utils.getSimilarityScoreName()] : []),
+			...(GDV.state.getIncludedColumnSet() || new Set()),
 		]);
 	}
 
@@ -82,8 +80,9 @@
 		const prefilterAst = GDV.state.getPrefilterAst();
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		const columnsToDisplay = GDV.state.getColumnsToDisplay();
+		const tableSortColumn = GDV.state.getTableSortColumn();
 		const similarityReferenceGame = GDV.state.getSimilarityReferenceGame();
-		const dataTableColumnsSet = createDataTableColumnsSet(columnsToDisplay, prefilterConditions);
+		const dataTableColumnsSet = createDataTableColumnsSet(columnsToDisplay, prefilterConditions, tableSortColumn, similarityReferenceGame);
 		let rowsData = null;
 
 		GDV.datatable.destroyExistingTable(); // Destroy table early to free up memory
@@ -173,7 +172,7 @@
 					for (const rowDataRaw of results.data) {
 						const rowData = filterColumnsInRowData(rowDataRaw, dataTableColumnsSet);
 						if (similarityGameRowDataRaw) {
-							rowData[SIMILARITY_SCORE_NAME] = computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, columnsToCompare);
+							rowData[GDV.utils.getSimilarityScoreName()] = computeRowSimilarityPercent(similarityGameRowDataRaw, rowDataRaw, columnsToCompare);
 						}
 						if (hasNoPrefilters || isRowIncluded(rowData, prefilterAst, prefilterConditions, columnDetails, similarityReferenceGame)) {
 							rowsData.push(detachRowFromCsvBackingString(rowData));
