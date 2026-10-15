@@ -91,6 +91,13 @@
 		mainPrefiltersPanelSection.style.display = "";
 	};
 
+	GDV.dom.hasBannerWithLabel = hasBannerWithLabel;
+	function hasBannerWithLabel(label) {
+		return [...document.querySelectorAll(".log-banner")].some(
+			(banner) => banner.dataset.label === label
+		);
+	}
+
 	GDV.dom.showInfoBanner = (label, message, timeout) => showBanner("info", label, message, timeout);
 
 	GDV.dom.showWarningBanner = (label, message, timeout) => showBanner("warning", label, message, timeout);
@@ -123,7 +130,7 @@
 		messageDiv.textContent = message;
 		banner.appendChild(messageDiv);
 
-		document.body.appendChild(banner);
+		getBannerContainer().appendChild(banner);
 
 		// Show animation
 		requestAnimationFrame(() => banner.classList.add("show"));
@@ -132,6 +139,16 @@
 		if (timeout > 0) {
 			setTimeout(() => hideBannerWithElement(banner), timeout);
 		}
+	}
+
+	function getBannerContainer() {
+		let container = document.querySelector(".log-banner-container");
+		if (!container) {
+			container = document.createElement("div");
+			container.className = "log-banner-container";
+			document.body.appendChild(container);
+		}
+		return container;
 	}
 
 	GDV.dom.hideBannerWithLabel = hideBannerWithLabel;

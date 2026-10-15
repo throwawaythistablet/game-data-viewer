@@ -307,11 +307,27 @@ td {
    Banner
    ========================================================================== */
 
-.log-banner {
+.log-banner-container {
 	position: fixed;
 	top: 20px;
 	right: 20px;
-	max-width: 320px;
+	left: 20px;
+	max-height: calc(100vh - 40px);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-content: flex-start;
+	gap: 8px;
+	overflow-y: auto;
+	z-index: 800;
+	pointer-events: none;
+}
+
+.log-banner {
+	position: relative;
+	flex: 0 1 320px;
+	max-width: 100%;
+	box-sizing: border-box;
 	padding: 12px 16px;
 	border-radius: 6px;
 	border: 2px solid var(--text-muted);
@@ -322,12 +338,13 @@ td {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	z-index: 800;
 	opacity: 0;
 	transform: translateY(-20px);
 	transition:
 		opacity 0.3s ease,
 		transform 0.3s ease;
+	pointer-events: auto;
+	overflow-wrap: anywhere;
 }
 
 .log-banner.show {

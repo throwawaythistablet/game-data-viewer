@@ -76,7 +76,7 @@
 
 	GDV.prefilter.showPrefilterWarning = showPrefilterWarning;
 	function showPrefilterWarning() {
-		GDV.utils.hideBannerWithLabel(noPrefiltersLabel);
+		if (GDV.utils.hasBannerWithLabel(noPrefiltersLabel)) return;
 		GDV.utils.showPermanentWarningBanner(noPrefiltersLabel, noPrefiltersMessage);
 	}
 
@@ -91,7 +91,6 @@
 	}
 
 	function showPrefilterOverlay() {
-		hidePrefilterWarning();
 		if (prefilterOverlay?.overlay) {
 			prefilterOverlay.overlay.style.display = "";
 		}

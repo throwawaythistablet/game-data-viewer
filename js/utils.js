@@ -23,6 +23,11 @@
 		}
 	}
 
+	GDV.utils.hasBannerWithLabel = hasBannerWithLabel;
+	function hasBannerWithLabel(label) {
+		return GDV.dom.hasBannerWithLabel(label);
+	}
+
 	GDV.utils.showErrorBanner = showErrorBanner;
 	function showErrorBanner(label, description, error) {
 		GDV.dom.showErrorBanner(label, description + createErrorMessage(error));
