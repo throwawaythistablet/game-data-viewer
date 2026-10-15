@@ -107,6 +107,8 @@
 	GDV.dom.showPermanentWarningBanner = (label, message) => showBanner("warning", label, message, -1);
 
 	function showBanner(type, label, message, timeout = 10000) {
+		if (hasBannerWithLabel(label)) return;
+
 		const banner = document.createElement("div");
 		banner.className = `log-banner ${type}`;
 		banner.dataset.label = label;

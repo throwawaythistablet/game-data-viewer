@@ -76,7 +76,6 @@
 
 	GDV.prefilter.showPrefilterWarning = showPrefilterWarning;
 	function showPrefilterWarning() {
-		if (GDV.utils.hasBannerWithLabel(noPrefiltersLabel)) return;
 		GDV.utils.showPermanentWarningBanner(noPrefiltersLabel, noPrefiltersMessage);
 	}
 
