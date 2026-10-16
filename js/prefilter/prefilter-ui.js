@@ -3,14 +3,46 @@
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleCardsBatchSize = 99;
 	const includeFullMatchLengthThreshold = 4;
-	let isPrefilterSubmissionPending = false;
+	let isSessionActive = false;
+	let isProcessingPrefilterSubmission = false;
 	let prefilterOverlay = null;
+	let cleanupModalAccessibility = null;
 	let prefilterCards = null;
 	let maxVisibleCards = visibleCardsBatchSize;
 	let prefilterColumnToSearchInfoMap = new Map();
 	let prefilterColumnToOrderMap = new Map();
 	let similarityGameInputCommitTimer = null;
 	let draggedColumnsToDisplayColumn = null;
+
+	GDV.prefilter.getPrefiltersFromUser = async () => {
+		if (isSessionActive) {
+			reopenPrefilterOverlay();
+			return null;
+		}
+		isSessionActive = true;
+		try {
+			const affectedColumns = restorePrefilterValuesFromStateAndGetAffectedColumns();
+			initializePrefilterOverlayIfNeeded();
+			const { form } = prefilterOverlay;
+			resetForNewPrefilterOverlay(form);
+			replacePrefiltersSummaryWithNewOne(form);
+			showPrefilterOverlay();
+			renderAllSummariesAndWarning(form);
+			GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns(form, affectedColumns);
+			mutateAndRenderSimilarityScoreNameFromSimilarityChange(form);
+			activatePrefilterOverlayAccessibility();
+			return await new Promise((resolve) => {
+				waitForPrefilterFormSubmission(form, resolve);
+			});
+		} catch (err) {
+			GDV.utils.reportSoftWarning("Prefilter UI Failure", "Prefilter overlay failed to initialize, continuing without prefiltering.", err);
+			return {};
+		} finally {
+			isSessionActive = false;
+		}
+	};
+
+	GDV.prefilter.isSessionActive = () => isSessionActive;
 
 	GDV.prefilter.initializePrefilterOverlayIfNeeded = initializePrefilterOverlayIfNeeded;
 	function initializePrefilterOverlayIfNeeded() {
@@ -19,33 +51,45 @@
 		}
 	}
 
-	GDV.prefilter.showPrefilterOverlayAndCollectFilters = async (shouldRestore) => {
-		try {
-			const affectedColumns = restorePrefilterValuesFromStateAndGetAffectedColumns();
+	GDV.prefilter.reopenPrefilterOverlay = reopenPrefilterOverlay;
+	function reopenPrefilterOverlay() {
+		if (!isSessionActive) return;
+		showPrefilterOverlay();
+		renderPrefilterWarning();
+		activatePrefilterOverlayAccessibility();
+	}
 
-			initializePrefilterOverlayIfNeeded();
-			const { overlay, form } = prefilterOverlay;
-			if (shouldRestore) {
-				resetForNewPrefilterOverlay(form);
-			}
-			showPrefilterOverlay();
+	function closePrefilterOverlay() {
+		if (isProcessingPrefilterSubmission) return;
+		hidePrefilterWarning();
+		hidePrefilterOverlay();
+		deactivatePrefilterOverlayAccessibility();
+	}
 
-			// Return a fresh Promise for this overlay opening; await keeps Promise rejections within this try/catch.
-			return await new Promise((resolve) => {
-				const cleanupFocus = showModalAccessibility(overlay, resolve);
-				if (shouldRestore) {
-					replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus);
-					renderAllSummariesAndWarning(form);
-					GDV.prefilter.applyPrefilterAndColumnsToDisplayToFormForColumns(form, affectedColumns);
-					mutateAndRenderSimilarityScoreNameFromSimilarityChange(form);
-				}
-				waitForPrefilterFormSubmission(form, resolve, cleanupFocus);
-			});
-		} catch (err) {
-			GDV.utils.reportSoftWarning("Prefilter UI Failure", "Prefilter overlay failed to initialize, continuing without prefiltering.", err);
-			return {};
+	function activatePrefilterOverlayAccessibility() {
+		const overlay = prefilterOverlay?.overlay;
+		if (!overlay || overlay.style.display === "none" || cleanupModalAccessibility) return;
+		cleanupModalAccessibility = showModalAccessibility(overlay);
+	}
+
+	function deactivatePrefilterOverlayAccessibility() {
+		if (!cleanupModalAccessibility) return;
+		const cleanup = cleanupModalAccessibility;
+		cleanupModalAccessibility = null;
+		cleanup();
+	}
+
+	function showPrefilterOverlay() {
+		if (prefilterOverlay?.overlay) {
+			prefilterOverlay.overlay.style.display = "";
 		}
-	};
+	}
+
+	function hidePrefilterOverlay() {
+		if (prefilterOverlay?.overlay) {
+			prefilterOverlay.overlay.style.display = "none";
+		}
+	}
 
 	function restorePrefilterValuesFromStateAndGetAffectedColumns() {
 		const oldPrefilterConditions = GDV.prefilter.getPrefilterConditions() || {};
@@ -89,18 +133,6 @@
 		resetPrefilterCards(form);
 	}
 
-	function showPrefilterOverlay() {
-		if (prefilterOverlay?.overlay) {
-			prefilterOverlay.overlay.style.display = "";
-		}
-	}
-
-	function closePrefilterOverlay() {
-		if (prefilterOverlay?.overlay) {
-			prefilterOverlay.overlay.style.display = "none";
-		}
-	}
-
 	function createPrefilterOverlay() {
 		const overlay = createPrefilterOverlayContainer();
 		document.body.appendChild(overlay);
@@ -136,7 +168,7 @@
 		const container = document.createElement("div");
 		container.className = "prefilter-search-summary-group";
 		container.appendChild(createPrefilterSearchAndCategoryGroup(form));
-		container.appendChild(createPrefiltersSummary(form, null, null));
+		container.appendChild(createPrefiltersSummary(form));
 		container.appendChild(createPrefilterGridLoadingIndicator());
 		return container;
 	}
@@ -229,19 +261,19 @@
 		return container;
 	}
 
-	function replacePrefiltersSummaryWithNewOne(form, resolve, cleanupFocus) {
+	function replacePrefiltersSummaryWithNewOne(form) {
 		const oldSummary = form.querySelector(".prefilter-summary-container");
-		const newSummary = createPrefiltersSummary(form, resolve, cleanupFocus);
+		const newSummary = createPrefiltersSummary(form);
 		if (oldSummary) {
 			oldSummary.replaceWith(newSummary);
 		}
 	}
 
-	function createPrefiltersSummary(form, resolve, cleanupFocus) {
+	function createPrefiltersSummary(form) {
 		const container = document.createElement("div");
 		container.className = "prefilter-summary-container";
 		container.appendChild(createPrefiltersSummaryLeft());
-		container.appendChild(createPrefiltersSummaryRight(form, resolve, cleanupFocus));
+		container.appendChild(createPrefiltersSummaryRight(form));
 		return container;
 	}
 
@@ -286,10 +318,10 @@
 		return columnsToDisplaySummary;
 	}
 
-	function createPrefiltersSummaryRight(form, resolve, cleanupFocus) {
+	function createPrefiltersSummaryRight(form) {
 		const rightGroup = document.createElement("div");
 		rightGroup.className = "prefilter-summary-right";
-		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus));
+		rightGroup.appendChild(createPrefiltersSummaryActionButtonsRow());
 		rightGroup.appendChild(createPrefiltersSummaryPrefilterButtonsRow(form));
 		rightGroup.appendChild(createPrefilterSortTableRow(form));
 		rightGroup.appendChild(createPrefilterSimilarityGameRow(form));
@@ -298,11 +330,11 @@
 		return rightGroup;
 	}
 
-	function createPrefiltersSummaryActionButtonsRow(resolve, cleanupFocus) {
+	function createPrefiltersSummaryActionButtonsRow() {
 		const buttonWrapper = document.createElement("div");
 		buttonWrapper.className = "prefilter-summary-row";
 		buttonWrapper.appendChild(createPrefilterShareUrlButton());
-		buttonWrapper.appendChild(createPrefiltersCloseButton(resolve, cleanupFocus));
+		buttonWrapper.appendChild(createPrefiltersCloseButton());
 		buttonWrapper.appendChild(createPrefilterSubmitButton("Generate Table"));
 		return buttonWrapper;
 	}
@@ -575,17 +607,12 @@
 		return btn;
 	}
 
-	function createPrefiltersCloseButton(resolve, cleanupFocus) {
+	function createPrefiltersCloseButton() {
 		const btn = document.createElement("button");
 		btn.type = "button";
 		btn.textContent = "Close";
 		btn.className = "btn btn-danger btn-close";
-		btn.addEventListener("click", () => {
-			if (isPrefilterSubmissionPending) return;
-			if (cleanupFocus) cleanupFocus();
-			finalizeAndClose();
-			resolve(null);
-		});
+		btn.addEventListener("click", closePrefilterOverlay);
 		return btn;
 	}
 
@@ -1635,32 +1662,31 @@
 		});
 	}
 
-	function waitForPrefilterFormSubmission(form, resolve, cleanupFocus) {
+	function waitForPrefilterFormSubmission(form, resolve) {
 		form.onsubmit = async (e) => {
 			e.preventDefault();
-			if (isPrefilterSubmissionPending) return;
-			isPrefilterSubmissionPending = true;
+			if (isProcessingPrefilterSubmission) return;
+			isProcessingPrefilterSubmission = true;
 
 			let proceed = true;
 			if (Object.keys(GDV.prefilter.getPrefilterConditions()).length === 0) {
 				try {
 					proceed = await confirmPrefiltersWarning();
 				} catch (err) {
-					isPrefilterSubmissionPending = false;
+					isProcessingPrefilterSubmission = false;
 					GDV.utils.reportSoftWarning("Prefilter Confirmation Failed", "The confirmation dialog could not be completed.", err);
 					return;
 				}
 			}
 			if (!proceed) {
-				isPrefilterSubmissionPending = false;
+				isProcessingPrefilterSubmission = false;
 				return;
 			}
 
 			const prefilterConditions = GDV.prefilter.getPrefilterConditions();
-			if (cleanupFocus) cleanupFocus();
 			flushAndCommitSimilarityGameInput(form);
 			finalizeAndClose();
-			isPrefilterSubmissionPending = false;
+			isProcessingPrefilterSubmission = false;
 			resolve(prefilterConditions);
 		};
 	}
@@ -1750,7 +1776,8 @@
 		clearSimilarityGameInputCommitTimer();
 		commitPrefilterValuesToStateBeforeClosing();
 		hidePrefilterWarning();
-		closePrefilterOverlay();
+		hidePrefilterOverlay();
+		deactivatePrefilterOverlayAccessibility();
 	}
 
 	function clearSimilarityGameInputCommitTimer() {
@@ -1770,25 +1797,23 @@
 		return await GDV.utils.requestUserConfirmation("No Prefilters Applied", "⚠ You haven't applied any prefilters.\n" + "Loading the full dataset may be very memory-intensive and slow.\n\n" + "Do you want to continue anyway?");
 	}
 
-	// Accessibility: trap focus inside overlay and restore on close
-	function showModalAccessibility(overlay, resolve) {
+	// Accessibility: trap focus inside overlay
+	function showModalAccessibility(overlay) {
 		const previousActive = document.activeElement;
-		focusFirstModalElement(overlay);
-
 		function onKeydown(event) {
-			handleModalKeydown(event, overlay, resolve, cleanupFocus);
+			handleModalKeydown(event, overlay);
 		}
-		const cleanupFocus = () => {
+		overlay.addEventListener("keydown", onKeydown);
+		focusFirstModalElement(overlay);
+		return () => {
 			overlay.removeEventListener("keydown", onKeydown);
 			previousActive?.focus?.();
 		};
-		overlay.addEventListener("keydown", onKeydown);
-		return cleanupFocus;
 	}
 
-	function handleModalKeydown(event, overlay, resolve, cleanupFocus) {
+	function handleModalKeydown(event, overlay) {
 		if (event.key === "Escape") {
-			handleModalEscapeKey(resolve, cleanupFocus);
+			handleModalEscapeKey();
 		} else if (event.key === "Tab") {
 			handleModalTabKey(event, overlay);
 		} else if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -1796,11 +1821,8 @@
 		}
 	}
 
-	function handleModalEscapeKey(resolve, cleanupFocus) {
-		if (isPrefilterSubmissionPending) return;
-		cleanupFocus();
-		finalizeAndClose();
-		resolve(null);
+	function handleModalEscapeKey() {
+		closePrefilterOverlay();
 	}
 
 	function handleModalTabKey(event, overlay) {

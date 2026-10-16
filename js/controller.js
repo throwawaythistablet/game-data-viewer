@@ -105,7 +105,7 @@
 			return;
 		}
 		setCsvFile(file);
-		await GDV.tableGenerator.showPrefiltersAndGenerateTable(file, true);
+		await GDV.tableGenerator.showPrefiltersAndGenerateTable(file);
 	};
 
 	GDV.controller.loadColumnDetailsFile = async (file) => {
@@ -443,7 +443,7 @@
 			GDV.utils.showInfoBanner("URL Parameters Detected", bannerMessage);
 			await GDV.tableGenerator.runTableGeneration(csvFile);
 		} else {
-			await GDV.tableGenerator.showPrefiltersAndGenerateTable(csvFile, true);
+			await GDV.tableGenerator.showPrefiltersAndGenerateTable(csvFile);
 		}
 	}
 

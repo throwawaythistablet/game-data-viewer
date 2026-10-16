@@ -34,16 +34,16 @@
 		]);
 	}
 
-	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file, shouldRestore) => {
-		if (!file) return false;
+	GDV.tableGenerator.showPrefiltersAndGenerateTable = async (file) => {
+		if (!file) return;
 		try {
-			const collectedPrefilters = GDV.state.hasValidColumnDetails() ? await GDV.prefilter.showPrefilterOverlayAndCollectFilters(shouldRestore) : {};
+			const collectedPrefilters = GDV.state.hasValidColumnDetails() ? await GDV.prefilter.getPrefiltersFromUser() : {};
 			if (collectedPrefilters === null) {
-				return false;
+				return;
 			}
 		} catch (err) {
 			GDV.utils.reportHardError("Prefilters selection failure", "An error occurred while selecting prefilters.", err, { file });
-			return false;
+			return;
 		}
 		return await runTableGeneration(file);
 	};

@@ -533,7 +533,7 @@
 			return;
 		}
 
-		await GDV.tableGenerator.showPrefiltersAndGenerateTable(GDV.state.getCsvFile(), true);
+		await GDV.tableGenerator.showPrefiltersAndGenerateTable(GDV.state.getCsvFile());
 	});
 
 	// Download Data CSV button
