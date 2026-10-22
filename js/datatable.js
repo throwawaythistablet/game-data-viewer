@@ -1076,7 +1076,7 @@
 		}
 		const f95ReviewLink = document.createElement("a");
 		f95ReviewLink.className = "table-thumbnail-dropdown-item";
-		f95ReviewLink.href = getSubUrl(game_url, "br-reviews");
+		f95ReviewLink.href = getSubUrl(game_url, "reviews");
 		f95ReviewLink.target = "_blank";
 		f95ReviewLink.rel = "noopener noreferrer";
 		f95ReviewLink.textContent = "F95 📖 Reviews";
@@ -1087,7 +1087,7 @@
 
 		const writeReview = document.createElement("a");
 		writeReview.className = "table-thumbnail-action";
-		writeReview.href = getSubUrl(game_url, "br-rate");
+		writeReview.href = getSubUrl(game_url, "new-review");
 		writeReview.target = "_blank";
 		writeReview.rel = "noopener noreferrer";
 		writeReview.title = "Write a review for the game";
