@@ -2,6 +2,8 @@
 	const noPrefiltersLabel = "No Prefilters Applied";
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleCardsBatchSize = 99;
+	const quickSearchMaxPrefixLength = 3;
+	const quickSearchMinimumPrefixForAllResults = 3;
 	const includeFullMatchLengthThreshold = 4;
 	let isSessionActive = false;
 	let isProcessingPrefilterSubmission = false;
@@ -711,7 +713,6 @@
 		grid.className = "prefilter-grid";
 		const columnDetails = GDV.state.getColumnDetails() || {};
 		const tagFullMatchPatterns = GDV.state.getTagFullMatchPatterns() || {};
-		const tagQuickSearchPatterns = GDV.state.getTagQuickSearchPatterns() || {};
 		const columnOrder = Object.keys(columnDetails);
 		const prefilterConditions = GDV.state.getPrefilterConditions();
 		prefilterColumnToOrderMap = new Map(columnOrder.map((column, i) => [column, i]));
@@ -722,11 +723,9 @@
 
 			const filterName = GDV.utils.normalizeFilterName(columnName);
 			const fullMatchRegex = tagFullMatchPatterns.get(filterName) ?? null;
-			const quickSearchRegex = tagQuickSearchPatterns.get(filterName) ?? null;
 			prefilterColumnToSearchInfoMap.set(columnName, {
 				loweredDescription: columnDetail?.type === "tag" ? "" : columnDetail?.description?.toLowerCase() || "",
-				fullMatchRegex,
-				quickSearchRegex
+				fullMatchRegex
 			});
 		}
 		prefilterCards = Array.from(grid.querySelectorAll(".prefilter-card"));
@@ -1492,10 +1491,11 @@
 		const category = getCategoryInForm(form);
 		const categoryMatchDetails = GDV.utils.createCategoryMatchDetails(category);
 		const searchTokens = searchText ? searchText.split(/\W+/).filter(Boolean) : [];
+		const quickSearchResults = searchQuickSearchTrie(searchTokens);
 		const matchingCards = [];
 		for (const cards of prefilterCards) {
 			const columnName = cards.dataset.col;
-			if (GDV.utils.isACategoryMatch(columnName, categoryMatchDetails) && areSearchTokensMatching(columnName, searchTokens)) {
+			if (GDV.utils.isACategoryMatch(columnName, categoryMatchDetails) && doCardDetailsMatch(columnName, searchTokens, quickSearchResults)) {
 				matchingCards.push(cards);
 			}
 		}
@@ -1620,16 +1620,17 @@
 		renderPrefilterCards(form);
 	}
 
-	function areSearchTokensMatching(columnName, searchTokens) {
+	function doCardDetailsMatch(columnName, searchTokens, quickSearchResults) {
 		if (searchTokens.length === 0) {
 			return true;
 		}
+		const filterName = GDV.utils.normalizeFilterName(columnName);
+		if (quickSearchResults.has(filterName)) return true;
 		const searchInfo = prefilterColumnToSearchInfoMap.get(columnName);
 		if (!searchInfo) return false;
 		return searchTokens.every((token) => {
 			if (columnName.toLowerCase().includes(token)) return true;
 			if (searchInfo.loweredDescription.includes(token)) return true;
-			if (searchInfo.quickSearchRegex?.test(token)) return true;
 			return false;
 		});
 	}
@@ -1898,4 +1899,90 @@
 		const searchInput = form.querySelector(".prefilter-search-input");
 		return searchInput?.value || "";
 	}
+
+	function searchQuickSearchTrie(searchTokens) {
+		const { nodes, edges, tagIndexes, tagNames } = GDV.state.getTagQuickSearchTrie() || {};
+		if (!Array.isArray(searchTokens) || !nodes?.length || !edges?.length || !tagIndexes?.length || !tagNames?.length) {
+			return new Set();
+		}
+
+		const uniqueSearchTokens = [...new Set(searchTokens.filter(searchToken => typeof searchToken === "string" && searchToken.length))].sort();
+		if (!uniqueSearchTokens.length) {
+			return new Set();
+		}
+
+		const resultLimit = uniqueSearchTokens.some(searchToken => searchToken.length < quickSearchMinimumPrefixForAllResults)
+			? maxVisibleCards
+			: Infinity;
+
+		const matchingTagIndexes = new Set();
+		let previousSearchToken = "";
+		for (const searchToken of uniqueSearchTokens) {
+			if (matchingTagIndexes.size >= resultLimit) {
+				break;
+			}
+			if (previousSearchToken && searchToken.startsWith(previousSearchToken)) {
+				continue;
+			}
+			previousSearchToken = searchToken;
+			let nodeIndex = 0;
+			for (let i = 0; i < searchToken.length && i < quickSearchMaxPrefixLength; i++) {
+				nodeIndex = findQuickSearchTrieChild(nodes, edges, nodeIndex, searchToken.charCodeAt(i));
+				if (nodeIndex === -1) {
+					break;
+				}
+			}
+			if (nodeIndex === -1) {
+				continue;
+			}
+			collectQuickSearchTrieMatches(nodes, edges, tagIndexes, nodeIndex, matchingTagIndexes, resultLimit);
+		}
+
+		return new Set([...matchingTagIndexes].sort((a, b) => a - b).map(index => tagNames[index]));
+	}
+
+	function collectQuickSearchTrieMatches(nodes, edges, tagIndexes, nodeIndex, matchingTagIndexes, resultLimit) {
+		const nodesToVisit = [nodeIndex];
+		while (nodesToVisit.length) {
+			const currentNodeIndex = nodesToVisit.pop();
+			const nodeOffset = currentNodeIndex * 4;
+			const firstEdge = nodes[nodeOffset];
+			const edgeCount = nodes[nodeOffset + 1];
+			const firstTag = nodes[nodeOffset + 2];
+			const tagCount = nodes[nodeOffset + 3];
+
+			for (let i = 0; i < tagCount; i++) {
+				matchingTagIndexes.add(tagIndexes[firstTag + i]);
+				if (matchingTagIndexes.size >= resultLimit) {
+					return;
+				}
+			}
+			for (let i = 0; i < edgeCount; i++) {
+				nodesToVisit.push(edges[(firstEdge + i) * 2 + 1]);
+			}
+		}
+	}
+
+	function findQuickSearchTrieChild(nodes, edges, nodeIndex, characterCode) {
+		const nodeOffset = nodeIndex * 4;
+		let low = nodes[nodeOffset];
+		let high = low + nodes[nodeOffset + 1] - 1;
+
+		while (low <= high) {
+			const middle = Math.floor((low + high) / 2);
+			const edgeOffset = middle * 2;
+			const currentCharacterCode = edges[edgeOffset];
+
+			if (currentCharacterCode === characterCode) {
+				return edges[edgeOffset + 1];
+			}
+			if (currentCharacterCode < characterCode) {
+				low = middle + 1;
+			} else {
+				high = middle - 1;
+			}
+		}
+		return -1;
+	}
+
 })();

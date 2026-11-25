@@ -8,7 +8,7 @@
 	let columnCategoryDetails = {};
 	let columnToCategories = {};
 	let tagFullMatchPatterns = {};
-	let tagQuickSearchPatterns = {};
+	let tagQuickSearchTrie = {};
 	let thumbnails = null;
 	let gamesFolderHandle = null;
 	let dataFolderHandle = null;
@@ -85,10 +85,10 @@
 		tagFullMatchPatterns = tagFullMatchPatterns_;
 	};
 
-	GDV.state.getTagQuickSearchPatterns = () => tagQuickSearchPatterns;
+	GDV.state.getTagQuickSearchTrie = () => tagQuickSearchTrie;
 
-	GDV.state.setTagQuickSearchPatterns = (tagQuickSearchPatterns_) => {
-		tagQuickSearchPatterns = tagQuickSearchPatterns_;
+	GDV.state.setTagQuickSearchTrie = (tagQuickSearchTrie_) => {
+		tagQuickSearchTrie = tagQuickSearchTrie_;
 	};
 
 	GDV.state.getThumbnails = () => thumbnails;

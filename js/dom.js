@@ -20,7 +20,7 @@
 	const columnDetailsDisplay = document.getElementById("columnDetailsDisplay");
 	const gameKeysDisplay = document.getElementById("gameKeysDisplay");
 	const tagFullMatchPatternsDisplay = document.getElementById("tagFullMatchPatternsDisplay");
-	const tagQuickSearchPatternsDisplay = document.getElementById("tagQuickSearchPatternsDisplay");
+	const tagQuickSearchTrieDisplay = document.getElementById("tagQuickSearchTrieDisplay");
 	const columnCategoryDetails = document.getElementById("columnCategoryDetails");
 	const columnToCategories = document.getElementById("columnToCategories");
 	const thumbnailsDisplay = document.getElementById("thumbnailsDisplay");
@@ -71,8 +71,8 @@
 		tagFullMatchPatternsDisplay.textContent = fileName || "(None)";
 	};
 
-	GDV.dom.setTagQuickSearchPatterns = (fileName) => {
-		tagQuickSearchPatternsDisplay.textContent = fileName || "(None)";
+	GDV.dom.setTagQuickSearchTrie = (fileName) => {
+		tagQuickSearchTrieDisplay.textContent = fileName || "(None)";
 	};
 
 	GDV.dom.setThumbnails = (fileName) => {
