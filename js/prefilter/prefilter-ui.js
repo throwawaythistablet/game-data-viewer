@@ -2,9 +2,9 @@
 	const noPrefiltersLabel = "No Prefilters Applied";
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleCardsBatchSize = 99;
-	const quickSearchMaxPrefixLength = 3;
+	const quickSearchMaxPrefixLengthForFilter = 3;
 	const quickSearchMinimumPrefixForAllResults = 3;
-	const includeFullMatchLengthThreshold = 4;
+	const fullMatchLengthThresholdForSort = 4;
 	let isSessionActive = false;
 	let isProcessingPrefilterSubmission = false;
 	let prefilterOverlay = null;
@@ -1491,7 +1491,7 @@
 		const category = getCategoryInForm(form);
 		const categoryMatchDetails = GDV.utils.createCategoryMatchDetails(category);
 		const searchTokens = searchText ? searchText.split(/\W+/).filter(Boolean) : [];
-		const quickSearchResults = searchQuickSearchTrie(searchTokens);
+		const quickSearchResults = searchQuickSearchTrie(searchTokens, quickSearchMaxPrefixLengthForFilter);
 		const matchingCards = [];
 		for (const cards of prefilterCards) {
 			const columnName = cards.dataset.col;
@@ -1567,7 +1567,7 @@
 			const columnName = card.dataset.col;
 			const searchInfo = prefilterColumnToSearchInfoMap.get(columnName);
 			sortingInfo.set(columnName, {
-				isFullMatch: searchText.length >= includeFullMatchLengthThreshold && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
+				isFullMatch: searchText.length >= fullMatchLengthThresholdForSort && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
 				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
 				order: prefilterColumnToOrderMap.get(columnName)
 			});
@@ -1900,7 +1900,7 @@
 		return searchInput?.value || "";
 	}
 
-	function searchQuickSearchTrie(searchTokens) {
+	function searchQuickSearchTrie(searchTokens, quickSearchMaxPrefixLength) {
 		const { nodes, edges, tagIndexes, tagNames } = GDV.state.getTagQuickSearchTrie() || {};
 		if (!Array.isArray(searchTokens) || !nodes?.length || !edges?.length || !tagIndexes?.length || !tagNames?.length) {
 			return new Set();
