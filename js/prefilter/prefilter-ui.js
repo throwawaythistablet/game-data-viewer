@@ -3,6 +3,7 @@
 	const noPrefiltersMessage = "Loading the entire dataset may consume significant memory and slow the table.";
 	const visibleCardsBatchSize = 99;
 	const quickSearchMaxPrefixLengthForFilter = 3;
+	const quickSearchMaxPrefixLengthForSort = 5;
 	const quickSearchMinimumPrefixForAllResults = 3;
 	const fullMatchLengthThresholdForSort = 4;
 	let isSessionActive = false;
@@ -1562,12 +1563,17 @@
 			return;
 		}
 
+		const searchTokens = searchText ? searchText.split(/\W+/).filter(Boolean) : [];
+		const quickSearchResults = searchQuickSearchTrie(searchTokens, quickSearchMaxPrefixLengthForSort);
+
 		const sortingInfo = new Map();
 		for (const card of cardsToSort) {
 			const columnName = card.dataset.col;
+			const filterName = GDV.utils.normalizeFilterName(columnName);
 			const searchInfo = prefilterColumnToSearchInfoMap.get(columnName);
 			sortingInfo.set(columnName, {
 				isFullMatch: searchText.length >= fullMatchLengthThresholdForSort && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
+				isQuickSearchMatch: quickSearchResults.has(filterName),
 				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
 				order: prefilterColumnToOrderMap.get(columnName)
 			});
@@ -1578,6 +1584,9 @@
 			const B = sortingInfo.get(b.dataset.col);
 			if (A.isFullMatch !== B.isFullMatch) {
 				return B.isFullMatch - A.isFullMatch;
+			}
+			if (A.isQuickSearchMatch !== B.isQuickSearchMatch) {
+				return B.isQuickSearchMatch - A.isQuickSearchMatch;
 			}
 			if (A.score !== B.score) {
 				return B.score - A.score;
