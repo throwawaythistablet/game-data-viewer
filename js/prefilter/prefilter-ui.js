@@ -1571,12 +1571,12 @@
 			const columnName = card.dataset.col;
 			const filterName = GDV.utils.normalizeFilterName(columnName);
 			const searchInfo = prefilterColumnToSearchInfoMap.get(columnName);
-			sortingInfo.set(columnName, {
-				isFullMatch: searchText.length >= fullMatchLengthThresholdForSort && searchInfo?.fullMatchRegex !== null && Boolean(searchInfo?.fullMatchRegex?.test(searchText)),
-				isQuickSearchMatch: quickSearchResults.has(filterName),
-				score: GDV.utils.computeNearestMatchScore(columnName, searchText),
-				order: prefilterColumnToOrderMap.get(columnName)
-			});
+			const fullMatchRegex = searchInfo?.fullMatchRegex;
+			const isQuickSearchMatch = quickSearchResults.has(filterName);
+			const score = GDV.utils.computeNearestMatchScore(columnName, searchText);
+			const order = prefilterColumnToOrderMap.get(columnName);
+			const isFullMatch = searchText.length >= fullMatchLengthThresholdForSort && (fullMatchRegex != null ? fullMatchRegex.test(searchText) : score > 0.80);
+			sortingInfo.set(columnName, { isFullMatch, isQuickSearchMatch, score, order });
 		}
 
 		cardsToSort.sort((a, b) => {
@@ -1593,6 +1593,22 @@
 			}
 			return A.order - B.order;
 		});
+
+		// Debug: Display sorting information for the top 20 cards
+		// console.table(
+		// 	cardsToSort.slice(0, 20).map((card, index) => {
+		// 		const columnName = card.dataset.col;
+		// 		const info = sortingInfo.get(columnName);
+		// 		return {
+		// 			rank: index + 1,
+		// 			columnName,
+		// 			isFullMatch: info.isFullMatch,
+		// 			isQuickSearchMatch: info.isQuickSearchMatch,
+		// 			score: info.score,
+		// 			order: info.order
+		// 		};
+		// 	})
+		// );
 	}
 
 	function sortPrefilterCardsByUsage(cardsToSort) {
